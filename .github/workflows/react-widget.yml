@@ -1,0 +1,65 @@
+name: Publish React Widget to NPM
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/react/**'
+      - '!packages/widget/**'
+      - '!packages/sdk-manager/**'
+      - '!packages/wallet-manager/**'
+jobs:
+  maybe-release:
+    name: release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+        # you should probably do this after your regular CI checks passes
+      - uses: google-github-actions/release-please-action@v3 # it will analyze commits and create PR with new version and updated CHANGELOG:md file. On merging it will create github release page with changelog
+        id: release
+        with:
+          release-type: node
+          token: ${{secrets.RELEASE_TOKEN}}
+          path: packages/react
+          monorepo-tags: true
+          default-branch: main
+          package-name: '@wainola/react-widget'
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false},{"type":"revert","hidden":true}]'
+
+      - uses: actions/checkout@v3
+        # these if statements ensure that a publication only occurs when
+        # a new release is created:
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - name: Enable corepack
+        run: corepack enable
+        if: ${{ steps.release.outputs.releases_created }}
+      
+      - name: Install yarn
+        run: yarn set version stable
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - name: Install dependencies
+        run: yarn install
+        if: ${{ steps.release.outputs.releases_created }}
+        
+      - run: yarn build:all
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - run: yarn build:react-widget
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - run: npm publish --workspace=@wainola/react-widget --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        if: ${{ steps.release.outputs.releases_created }}
