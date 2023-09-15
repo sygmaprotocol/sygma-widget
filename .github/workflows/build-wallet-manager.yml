@@ -1,0 +1,30 @@
+name: "Lint and build Wallet Manager"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'packages/wallet-manager/**'
+      - '!packages/sdk-manager/**'
+      - '!packages/widget/**'
+      - '!packages/react/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [18]
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn' # cache node modules
+          node-version: ${{ matrix.node }}
+      - run: corepack enable
+      - run: yarn set version stable
+      - run: yarn
+      - run: yarn run lint:wallet-manager # lint code
+      - run: yarn run build:wallet-manager # build widget

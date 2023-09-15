@@ -6,6 +6,13 @@
   "module": "build/index.js",
   "license": "LGPL-3.0-or-later",
   "type": "module",
+  "dependencies": {
+    "@lit-labs/react": "2.0.3"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
   "scripts": {
     "build": "tsc --build --clean && tsc --build ./tsconfig.json",
     "dev": "tsc --build --clean && tsc --build ./tsconfig.json --watch",

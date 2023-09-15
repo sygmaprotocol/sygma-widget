@@ -1,0 +1,30 @@
+name: "Lint and build React"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'packages/react/**'
+      - '!packages/widget/**'
+      - '!packages/sdk-manager/**'
+      - '!packages/wallet-manager/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [18]
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn' # cache node modules
+          node-version: ${{ matrix.node }}
+      - run: corepack enable
+      - run: yarn set version stable
+      - run: yarn install --immutable # install dependencies
+      - run: yarn run lint:react-widget # lint code
+      - run: yarn run build:all # build react

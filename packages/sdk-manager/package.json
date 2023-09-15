@@ -13,5 +13,15 @@
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "yarn run lint --fix"
   },
-  "author": "Sygmaprotocol Product Team"
+  "author": "Sygmaprotocol Product Team",
+  "dependencies": {
+    "@buildwithsygma/sygma-sdk-core": "^2.2.0",
+    "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/transactions": "^5.7.0",
+    "@polkadot/api": "10.7.2"
+  },
+  "devDependencies": {
+    "@polkadot/types": "10.7.2",
+    "typescript": "^5.2.2"
+  }
 }

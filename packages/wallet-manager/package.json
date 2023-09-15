@@ -13,5 +13,14 @@
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "yarn run lint --fix"
   },
-  "author": "Sygmaprotocol Product Team"
+  "author": "Sygmaprotocol Product Team",
+  "devDependencies": {
+    "@polkadot/types": "10.7.2",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@polkadot/api": "10.7.2",
+    "@polkadot/extension-dapp": "^0.46.5",
+    "ethers": "5.7.2"
+  }
 }
