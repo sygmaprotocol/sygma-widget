@@ -1,0 +1,55 @@
+{
+  "extends": [
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript",
+    "plugin:lit/recommended",
+    "plugin:wc/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": "latest"
+  },
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "import/extensions": "off",
+    "import/no-import-module-exports": "off",
+    "import/no-unresolved": "off",
+    "import/prefer-default-export": "off",
+    "lit/no-template-map": "off",
+    "lit/prefer-static-styles": "off",
+    "class-methods-use-this": [
+      "error",
+      {
+        "exceptMethods": ["render", "update"]
+      }
+    ],
+    "no-console": ["warn", { "allow": ["warn"] }],
+    "no-param-reassign": "off",
+    "no-plusplus": "off",
+    "no-underscore-dangle": "off",
+    "prefer-destructuring": "off"
+  },
+  "plugins": ["@typescript-eslint", "wc", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "overrides": [
+    {
+      "files": ["src/@types/*.d.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["scripts/*.js"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off",
+        "no-console": "off",
+        "no-restricted-syntax": "off"
+      }
+    }
+  ]
+}
