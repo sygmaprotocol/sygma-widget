@@ -1,6 +1,6 @@
 {
   "name": "@builtwithsygma/sygma-widget",
-  "description": "Sygma Widget",
+  "description": "Sygma Widget Monorepo",
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
@@ -27,5 +27,18 @@
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
-  "packageManager": "yarn@3.6.3"
+  "packageManager": "yarn@3.6.3",
+  "scripts": {
+    "build:wallet-manager": "yarn workspace @builtwithsygma/sygmaprotocol-wallet-manager clean && yarn workspace @builtwithsygma/sygmaprotocol-wallet-manager build",
+    "build:sdk-manager": "yarn workspace @builtwithsygma/sygmaprotocol-sdk-manager clean && yarn workspace @builtwithsygma/sygmaprotocol-sdk-manager build",
+    "build:widget": "yarn workspace @builtwithsygma/sygmaprotocol-widget clean && yarn workspace @builtwithsygma/sygmaprotocol-widget build",
+    "build:react-widget": "yarn workspace @builtwithsygma/sygmaprotocol-react-widget clean && yarn workspace @builtwithsygma/sygmaprotocol-react-widget build",
+    "build:all": "yarn build:wallet-manager && yarn build:sdk-manager && yarn build:widget && yarn build:react-widget",
+    "lint:wallet-manager": "yarn workspace @builtwithsygma/sygmaprotocol-wallet-manager lint && yarn workspace @builtwithsygma/sygmaprotocol-wallet-manager lint:fix",
+    "lint:sdk-manager": "yarn workspace @builtwithsygma/sygmaprotocol-sdk-manager lint && yarn workspace @builtwithsygma/sygmaprotocol-sdk-manager lint:fix",
+    "lint:widget": "yarn workspace @builtwithsygma/sygmaprotocol-widget lint && yarn workspace @builtwithsygma/sygmaprotocol-widget lint:fix",
+    "lint:react-widget": "yarn workspace @builtwithsygma/sygmaprotocol-react-widget lint && yarn workspace @builtwithsygma/sygmaprotocol-react-widget lint:fix",
+    "lint:all": "yarn lint:wallet-manager && yarn lint:sdk-manager && yarn lint:widget && yarn lint:react-widget",
+    "clean:all": "yarn workspace @builtwithsygma/sygmaprotocol-wallet-manager clean && yarn workspace @builtwithsygma/sygmaprotocol-sdk-manager clean && yarn workspace @builtwithsygma/sygmaprotocol-widget clean && yarn workspace @builtwithsygma/sygmaprotocol-react-widget clean"
+  }
 }
