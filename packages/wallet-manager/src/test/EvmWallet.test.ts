@@ -1,12 +1,6 @@
-import { ExternalProvider } from '@ethersproject/providers';
+import { ethers } from 'ethers';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { EvmWallet } from '../';
-
-declare global {
-  interface Window {
-    ethereum: ExternalProvider;
-  }
-}
 
 describe('EvmWallet', () => {
   describe('EvmWallet + provider on window', () => {
@@ -16,10 +10,10 @@ describe('EvmWallet', () => {
       };
     });
     it('should be able to create an instance of EvmWallet', () => {
-      const evmWallet = new EvmWallet('metamask', 'icon', window.ethereum);
+      const w3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      const evmWallet = new EvmWallet(w3Provider);
 
       expect(evmWallet).toBeInstanceOf(EvmWallet);
-      expect(evmWallet.name).toBe('metamask');
     });
   });
 });

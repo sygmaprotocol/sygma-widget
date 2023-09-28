@@ -1,7 +1,7 @@
-import { Provider } from '@ethersproject/providers';
+import { ExternalProvider } from '@ethersproject/providers';
 
 declare global {
   interface Window {
-    ethereum: Provider;
+    ethereum: ExternalProvider;
   }
 }

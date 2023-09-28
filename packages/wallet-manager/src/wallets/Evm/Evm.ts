@@ -9,15 +9,11 @@ import { IEvmWallet } from '../interfaces';
 
 class EvmWallet extends events.EventEmitter implements IEvmWallet {
   public account: string | undefined;
-  public icon: string;
-  public name: string;
   public web3Provider!: Web3Provider;
   public windowConnector: Provider;
 
-  constructor(name: string, icon: string, provider?: Web3Provider) {
+  constructor(provider?: Web3Provider) {
     super();
-    this.name = name;
-    this.icon = icon;
 
     if (!window.ethereum) {
       throw new Error('window.ethereum is not defined.');
@@ -34,16 +30,12 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     this.appendProviderEvents();
   }
 
-  static initFromWeb3Provider(
-    name: string,
-    icon: string,
-    web3Provider: Web3Provider
-  ) {
-    return new EvmWallet(name, icon, web3Provider);
+  static initFromWeb3Provider(web3Provider: Web3Provider) {
+    return new EvmWallet(web3Provider);
   }
 
-  static initFromWindow(name: string, icon: string) {
-    return new EvmWallet(name, icon);
+  static initFromWindow() {
+    return new EvmWallet();
   }
 
   private async calculateAccountData(accounts?: string[]) {

@@ -1,4 +1,5 @@
 import { Provider, Web3Provider } from '@ethersproject/providers';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 
 export interface SupportedWallet {
   id: string;
@@ -10,8 +11,6 @@ export interface SupportedWallet {
 export interface IEvmWallet {
   web3Provider: Web3Provider;
   windowConnector: Provider;
-  name: string;
-  icon: string;
   account?: string;
   connect(): Promise<void>;
   addChain({
@@ -30,4 +29,8 @@ export interface IEvmWallet {
   }): Promise<void>;
 }
 
-export interface SusbtrateWallet {}
+export interface SusbtrateWallet {
+  wssProvider?: WsProvider;
+  apiPromise?: ApiPromise;
+  substrateAccount?: string;
+}
