@@ -11,12 +11,15 @@
     "dev": "tsc --build --clean && tsc --build ./tsconfig.json --watch",
     "clean": "rm -rf ./build",
     "lint": "eslint 'src/**/*.ts'",
-    "lint:fix": "yarn run lint --fix"
+    "lint:fix": "yarn run lint --fix",
+    "test": "vitest --config ./vite.config.ts"
   },
   "author": "Sygmaprotocol Product Team",
   "devDependencies": {
     "@polkadot/types": "10.7.2",
-    "typescript": "^5.2.2"
+    "jsdom": "^22.1.0",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.5"
   },
   "dependencies": {
     "@polkadot/api": "10.7.2",
