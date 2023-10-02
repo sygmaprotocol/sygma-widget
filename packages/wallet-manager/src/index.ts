@@ -1,1 +1,1 @@
-export { EvmWallet, Substrate } from './wallets';
+export { EvmWallet, SubstrateWallet } from './wallets';

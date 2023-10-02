@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 
-class Substrate {
+class SubstrateWallet {
   substrateAccount?: string;
   apiPromise?: ApiPromise;
   wssProvider?: WsProvider;
@@ -11,13 +11,13 @@ class Substrate {
   }
 
   static async connectFromWssProvider(wssProvider: string) {
-    const wsProvider = await Substrate.conntectToApi(wssProvider);
+    const wsProvider = await SubstrateWallet.conntectToApi(wssProvider);
     const apiPromise = await ApiPromise.create({ provider: wsProvider });
-    return new Substrate(apiPromise);
+    return new SubstrateWallet(apiPromise);
   }
 
   static connectFromApiPromise(apiPromise: ApiPromise) {
-    return new Substrate(apiPromise);
+    return new SubstrateWallet(apiPromise);
   }
 
   static async conntectToApi(wssProvider: string): Promise<WsProvider> {
@@ -41,4 +41,4 @@ class Substrate {
   }
 }
 
-export { Substrate };
+export { SubstrateWallet };

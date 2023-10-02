@@ -1,2 +1,2 @@
 export { EvmWallet } from './Evm';
-export { Substrate } from './Substrate';
+export { SubstrateWallet } from './Substrate';
