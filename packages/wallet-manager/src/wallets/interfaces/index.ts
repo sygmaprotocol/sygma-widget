@@ -1,5 +1,7 @@
-import { Provider, Web3Provider } from '@ethersproject/providers';
+import { Web3Provider, ExternalProvider } from '@ethersproject/providers';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ReactiveController } from 'lit';
+import { AddChain } from '../../types';
 
 export interface SupportedWallet {
   id: string;
@@ -10,7 +12,7 @@ export interface SupportedWallet {
 
 export interface IEvmWallet {
   web3Provider: Web3Provider;
-  windowConnector: Provider;
+  windowConnector: ExternalProvider;
   account?: string;
   connect(): Promise<void>;
   addChain({
@@ -29,8 +31,26 @@ export interface IEvmWallet {
   }): Promise<void>;
 }
 
-export interface SusbtrateWallet {
+export interface ISusbtrateWallet {
   wssProvider?: WsProvider;
   apiPromise?: ApiPromise;
   substrateAccount?: string;
+}
+
+export interface IWalletManagerController extends ReactiveController {
+  web3Provider?: Web3Provider;
+  apiPromise?: ApiPromise;
+  wsProviderUrl?: string;
+  evmWallet?: IEvmWallet;
+  substrateWallet?: ISusbtrateWallet;
+  account?: string;
+  substrateAccount?: string;
+
+  initFromWeb3Provider(web3Provider: Web3Provider): void;
+  initFromWindow(): void;
+  connectFromWssProvider(wssProvider: string): Promise<void>;
+  connectFromApiPromise(apiPromise: ApiPromise): void;
+  addChain(addChainParameters: AddChain): Promise<void>;
+  connectoToSubstrate(): Promise<void>;
+  connectEvmWallet(): Promise<void>;
 }

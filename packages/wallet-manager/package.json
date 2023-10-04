@@ -24,6 +24,7 @@
   "dependencies": {
     "@polkadot/api": "10.7.2",
     "@polkadot/extension-dapp": "^0.46.5",
-    "ethers": "5.7.2"
+    "ethers": "5.7.2",
+    "lit": "^2.8.0"
   }
 }

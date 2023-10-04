@@ -1,7 +1,8 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import { ISusbtrateWallet } from '../interfaces';
 
-class SubstrateWallet {
+class SubstrateWallet implements ISusbtrateWallet {
   substrateAccount?: string;
   apiPromise?: ApiPromise;
   wssProvider?: WsProvider;

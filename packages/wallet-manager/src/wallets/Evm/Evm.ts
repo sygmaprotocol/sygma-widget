@@ -6,11 +6,12 @@ import type {
   Provider
 } from '@ethersproject/providers';
 import { IEvmWallet } from '../interfaces';
+import { AddChain } from '../../types';
 
 class EvmWallet extends events.EventEmitter implements IEvmWallet {
   public account: string | undefined;
   public web3Provider!: Web3Provider;
-  public windowConnector: Provider;
+  public windowConnector: ExternalProvider;
 
   constructor(provider?: Web3Provider) {
     super();
@@ -18,7 +19,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     if (!window.ethereum) {
       throw new Error('window.ethereum is not defined.');
     } else {
-      this.windowConnector = window.ethereum as Provider;
+      this.windowConnector = window.ethereum as ExternalProvider;
     }
     if (!provider) {
       this.web3Provider = new ethers.providers.Web3Provider(
@@ -30,15 +31,31 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     this.appendProviderEvents();
   }
 
-  static initFromWeb3Provider(web3Provider: Web3Provider) {
+  /**
+   * @name initFromWeb3Provider
+   * @param web3Provider
+   * @returns EvmWallet
+   * @description Initializes the EvmWallet from a Web3Provider
+   */
+  static initFromWeb3Provider(web3Provider: Web3Provider): EvmWallet {
     return new EvmWallet(web3Provider);
   }
 
-  static initFromWindow() {
+  /**
+   * @name initFromWindow
+   * @returns EvmWallet
+   * @description Initializes the EvmWallet from a valid EIP-1193 provider
+   */
+  static initFromWindow(): EvmWallet {
     return new EvmWallet();
   }
 
-  private async calculateAccountData(accounts?: string[]) {
+  /**
+   * @name calculateAccountData
+   * @param accounts
+   * @returns void
+   */
+  private async calculateAccountData(accounts?: string[]): Promise<void> {
     if (accounts?.length) {
       this.account = accounts[0];
     }
@@ -52,24 +69,33 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     this.account = _accounts![0];
   }
 
-  private reConnectToProvider() {
+  /**
+   * @name reConnectToProvider
+   * @returns void
+   */
+  private reConnectToProvider(): void {
     this.web3Provider = new ethers.providers.Web3Provider(
       this.windowConnector as ExternalProvider
     );
   }
 
+  /**
+   * @name appendProviderEvents
+   * @returns void
+   * @description Appends the provider events to the windowConnector
+   */
   private appendProviderEvents(): void {
     try {
       this.checkWindow();
     } catch (e) {
       throw e;
     }
-    this.windowConnector.on('connect', async () => {
+    (this.windowConnector as Provider).on('connect', async () => {
       this.reConnectToProvider();
       await this.calculateAccountData();
     });
 
-    this.windowConnector.on(
+    (this.windowConnector as Provider).on(
       'disconnect',
       async (error: Error & { code: number; data?: unknown }) => {
         console.log(error);
@@ -78,19 +104,22 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
       }
     );
 
-    this.windowConnector.on('chainChanged', async () => {
+    (this.windowConnector as Provider).on('chainChanged', async () => {
       this.reConnectToProvider();
       await this.calculateAccountData();
 
       this.emit('walletChainChanged', this.web3Provider);
     });
 
-    this.windowConnector.on('accountsChanged', async (accounts: string[]) => {
-      this.reConnectToProvider();
-      await this.calculateAccountData(accounts);
+    (this.windowConnector as Provider).on(
+      'accountsChanged',
+      async (accounts: string[]) => {
+        this.reConnectToProvider();
+        await this.calculateAccountData(accounts);
 
-      this.emit('walletAccountChanged', this.account);
-    });
+        this.emit('walletAccountChanged', this.account);
+      }
+    );
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -123,27 +152,18 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     chainName,
     rpcUrl,
     nativeCurrency
-  }: {
-    chainId: number;
-    rpcUrl: string;
-    chainName: string;
-    nativeCurrency: {
-      name: string;
-      symbol: string;
-      decimals: number;
-    };
-  }): Promise<void> {
+  }: AddChain): Promise<void> {
     this.checkWindow();
 
     try {
-      await (this.windowConnector as ExternalProvider).request!({
+      await this.windowConnector.request!({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: `0x${chainId.toString(16)}` }]
       });
     } catch (switchError: unknown) {
       if ((switchError as { code: number }).code === 4902) {
         try {
-          await (this.windowConnector as ExternalProvider).request!({
+          await this.windowConnector.request!({
             method: 'wallet_addEthereumChain',
             params: [
               {
