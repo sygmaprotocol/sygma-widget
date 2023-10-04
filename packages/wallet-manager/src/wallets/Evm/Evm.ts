@@ -9,9 +9,10 @@ import { IEvmWallet } from '../interfaces';
 import { AddChain } from '../../types';
 
 class EvmWallet extends events.EventEmitter implements IEvmWallet {
-  public account: string | undefined;
-  public web3Provider!: Web3Provider;
-  public windowConnector: ExternalProvider;
+  address?: string;
+  signer?: ethers.Signer;
+  web3Provider!: Web3Provider;
+  windowConnector: ExternalProvider;
 
   constructor(provider?: Web3Provider) {
     super();
@@ -57,7 +58,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
    */
   private async calculateAccountData(accounts?: string[]): Promise<void> {
     if (accounts?.length) {
-      this.account = accounts[0];
+      this.address = accounts[0];
     }
 
     const _accounts = await this.web3Provider.listAccounts();
@@ -66,7 +67,8 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
       return;
     }
 
-    this.account = _accounts![0];
+    this.address = _accounts![0];
+    this.signer = this.web3Provider.getSigner();
   }
 
   /**
@@ -117,7 +119,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
         this.reConnectToProvider();
         await this.calculateAccountData(accounts);
 
-        this.emit('walletAccountChanged', this.account);
+        this.emit('walletAccountChanged', this.address);
       }
     );
   }
@@ -141,7 +143,8 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
         .request!({
         method: 'eth_requestAccounts'
       });
-      this.account = accounts[0];
+      this.address = accounts[0];
+      this.signer = this.web3Provider.getSigner();
     } catch (e) {
       throw e;
     }

@@ -2,6 +2,7 @@ import { Web3Provider, ExternalProvider } from '@ethersproject/providers';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { ReactiveController } from 'lit';
 import { AddChain } from '../../types';
+import { Signer } from '@ethersproject/abstract-signer';
 
 export interface SupportedWallet {
   id: string;
@@ -13,7 +14,8 @@ export interface SupportedWallet {
 export interface IEvmWallet {
   web3Provider: Web3Provider;
   windowConnector: ExternalProvider;
-  account?: string;
+  address?: string;
+  signer?: Signer;
   connect(): Promise<void>;
   addChain({
     chainId,
