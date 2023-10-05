@@ -150,6 +150,15 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     }
   }
 
+  /**
+   * @name addChain
+   * @param chainId
+   * @param chainName
+   * @param rpcUrl
+   * @param nativeCurrency - { name, symbol, decimals }
+   * @returns void
+   * @description Adds a new chain to the wallet
+   */
   public async addChain({
     chainId,
     chainName,

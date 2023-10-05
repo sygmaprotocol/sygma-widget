@@ -11,21 +11,46 @@ class SubstrateWallet implements ISusbtrateWallet {
     this.apiPromise = apiPromise;
   }
 
-  static async connectFromWssProvider(wssProvider: string) {
+  /**
+   * @name connectFromWssProvider
+   * @param wssProvider
+   * @returns SubstrateWallet
+   * @description Initializes the SubstrateWallet from a wssProvider
+   */
+  static async connectFromWssProvider(
+    wssProvider: string
+  ): Promise<SubstrateWallet> {
     const wsProvider = await SubstrateWallet.conntectToApi(wssProvider);
     const apiPromise = await ApiPromise.create({ provider: wsProvider });
     return new SubstrateWallet(apiPromise);
   }
 
-  static connectFromApiPromise(apiPromise: ApiPromise) {
+  /**
+   * @name connectFromApiPromise
+   * @param apiPromise
+   * @returns SubstrateWallet
+   * @description Initializes the SubstrateWallet from an ApiPromise
+   */
+  static connectFromApiPromise(apiPromise: ApiPromise): SubstrateWallet {
     return new SubstrateWallet(apiPromise);
   }
 
+  /**
+   * @name conntectToApi
+   * @param wssProvider
+   * @returns WsProvider
+   * @description Initializes the WsProvider
+   */
   static async conntectToApi(wssProvider: string): Promise<WsProvider> {
     const wsProvider = new WsProvider(wssProvider);
     return wsProvider;
   }
 
+  /**
+   * @name connect
+   * @returns void
+   * @description Connects to the Substrate Wallet
+   */
   public async connect() {
     const injectors = await web3Enable('Polkadot Wallet');
     // using polkadot-js extension
