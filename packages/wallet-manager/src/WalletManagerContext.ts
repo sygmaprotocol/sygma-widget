@@ -7,14 +7,14 @@ import {
 } from './WalletManagerController';
 import { ethers } from 'ethers';
 import { ApiPromise } from '@polkadot/api';
-import { SinteticEventCreator } from './types';
+import { SyntheticEventCreator } from './types';
 
 export const WalletManagerContext = createContext<
   TWalletManagerController | undefined
 >('wallet-context');
 
-export const SinteticEventCreatorContext =
-  createContext<SinteticEventCreator>('sintetic-event');
+export const SyntheticEventCreatorContext =
+  createContext<SyntheticEventCreator>('synthetic-event');
 
 @customElement('wallet-manager-context')
 export class WalletManagerContextProvider extends LitElement {
@@ -22,9 +22,9 @@ export class WalletManagerContextProvider extends LitElement {
   @state()
   walletManagerController?: WalletManagerController;
 
-  @provide({ context: SinteticEventCreatorContext })
+  @provide({ context: SyntheticEventCreatorContext })
   @state()
-  sinteticEventCreator: SinteticEventCreator = (
+  syntheticEventCreator: SyntheticEventCreator = (
     eventName: string,
     dataToPass: unknown
   ) => {

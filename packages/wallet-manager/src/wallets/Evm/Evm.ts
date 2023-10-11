@@ -100,7 +100,8 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     (this.windowConnector as Provider).on(
       'disconnect',
       async (error: Error & { code: number; data?: unknown }) => {
-        console.log(error);
+        // eslint-disable-next-line no-console
+        console.error(error);
         this.reConnectToProvider();
         await this.calculateAccountData();
       }

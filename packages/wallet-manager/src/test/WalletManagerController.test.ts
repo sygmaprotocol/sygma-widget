@@ -1,6 +1,6 @@
 import { LitElement } from 'lit';
 import { ExternalProvider } from '@ethersproject/providers';
-import { ethers } from 'ethers'
+import { ethers } from 'ethers';
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { WalletManagerController } from '..';
 

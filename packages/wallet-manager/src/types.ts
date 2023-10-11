@@ -17,7 +17,7 @@ export type AddChain = {
   };
 };
 
-export type SinteticEventCreator = (
+export type SyntheticEventCreator = (
   eventName: string,
   dataToPass: unknown
 ) => void;

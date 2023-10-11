@@ -3,7 +3,7 @@ export { WalletManagerController } from './WalletManagerController';
 export {
   WalletManagerContextProvider,
   WalletManagerContext,
-  SinteticEventCreatorContext
+  SyntheticEventCreatorContext
 } from './WalletManagerContext';
 
-export { type SinteticEventCreator } from './types';
+export { type SyntheticEventCreator } from './types';
