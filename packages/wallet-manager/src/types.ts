@@ -16,3 +16,8 @@ export type AddChain = {
     decimals: number;
   };
 };
+
+export type SinteticEventCreator = (
+  eventName: string,
+  dataToPass: unknown
+) => void;

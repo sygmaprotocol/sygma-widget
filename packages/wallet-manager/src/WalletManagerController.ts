@@ -3,7 +3,8 @@ import { EvmWallet, SubstrateWallet } from '.';
 import { Web3Provider } from '@ethersproject/providers';
 import { ApiPromise } from '@polkadot/api';
 import { AddChain } from './types';
-import { IWalletManagerController } from './wallets/interfaces';
+import { IWalletManagerController } from './interfaces';
+import { Signer } from '@ethersproject/abstract-signer';
 
 export class WalletManagerController implements IWalletManagerController {
   host: ReactiveControllerHost;
@@ -14,6 +15,13 @@ export class WalletManagerController implements IWalletManagerController {
 
   constructor(host: ReactiveControllerHost) {
     (this.host = host).addController(this as ReactiveController);
+  }
+
+  private appendProviderEvents(evmWallet: EvmWallet): void {
+    evmWallet.addListener('walletAccountChanged', (account) => {
+      this.account = account;
+      this.host.requestUpdate();
+    });
   }
 
   /**
@@ -99,6 +107,14 @@ export class WalletManagerController implements IWalletManagerController {
     this.host.requestUpdate();
   }
 
+  public getSigner(): Signer {
+    if (this.evmWallet) {
+      return this.evmWallet?.signer as Signer;
+    } else {
+      throw new Error('EvmWallet not initialized');
+    }
+  }
+
   get accountData(): string | undefined {
     return this.account;
   }
@@ -107,10 +123,15 @@ export class WalletManagerController implements IWalletManagerController {
     return this.substrateAccount;
   }
 
-  private appendProviderEvents(evmWallet: EvmWallet): void {
-    evmWallet.addListener('walletAccountChanged', (account) => {
-      this.account = account;
-      this.host.requestUpdate();
-    });
+  get provider(): Web3Provider | undefined {
+    return this.evmWallet?.web3Provider;
+  }
+
+  get apiPromise(): ApiPromise | undefined {
+    if (this.substrateWallet) {
+      return this.substrateWallet?.apiPromise;
+    } else {
+      throw new Error('SubstrateWallet not initialized');
+    }
   }
 }

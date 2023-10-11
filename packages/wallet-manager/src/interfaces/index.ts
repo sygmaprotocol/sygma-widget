@@ -1,7 +1,7 @@
 import { Web3Provider, ExternalProvider } from '@ethersproject/providers';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { ReactiveController } from 'lit';
-import { AddChain } from '../../types';
+import { AddChain } from '../types';
 import { Signer } from '@ethersproject/abstract-signer';
 
 export interface SupportedWallet {

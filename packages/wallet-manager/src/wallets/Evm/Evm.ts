@@ -5,7 +5,7 @@ import type {
   ExternalProvider,
   Provider
 } from '@ethersproject/providers';
-import { IEvmWallet } from '../interfaces';
+import { IEvmWallet } from '../../interfaces';
 import { AddChain } from '../../types';
 
 class EvmWallet extends events.EventEmitter implements IEvmWallet {
