@@ -45,3 +45,4 @@ public/sygma-runtime-config*
 .vscode
 
 /dist
+/examples
