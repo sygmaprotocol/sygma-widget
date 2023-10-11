@@ -37,14 +37,14 @@ export class WalletManagerContextProvider extends LitElement {
     this.dispatchEvent(event);
   };
 
-  @property({ type: String })
-  chainId?: string;
-
   @property({ type: Object })
   web3Provider?: ethers.providers.Web3Provider;
 
   @property({ type: Object })
   apiPromise?: ApiPromise;
+
+  @property({ type: String })
+  wssProvider?: string;
 
   constructor() {
     super();
@@ -55,6 +55,12 @@ export class WalletManagerContextProvider extends LitElement {
     super.connectedCallback();
     if (this.web3Provider) {
       this.walletManagerController?.initFromWeb3Provider(this.web3Provider);
+    } else if (this.apiPromise) {
+      this.walletManagerController?.connectFromApiPromise(this.apiPromise!);
+    } else if (this.wssProvider) {
+      this.walletManagerController?.connectFromWssProvider(this.wssProvider!);
+    } else {
+      this.walletManagerController?.initFromWindow();
     }
   }
 
