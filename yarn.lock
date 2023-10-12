@@ -462,13 +462,13 @@ __metadata:
   resolution: "@builtwithsygma/sygmaprotocol-wallet-manager@workspace:packages/wallet-manager"
   dependencies:
     "@ethersproject/abstract-signer": ^5.7.0
-    "@lit/context": ^1.0.0
+    "@lit/context": 1.0.0
     "@polkadot/api": 10.7.2
     "@polkadot/extension-dapp": ^0.46.5
     "@polkadot/types": 10.7.2
     ethers: 5.7.2
     jsdom: ^22.1.0
-    lit: ^2.8.0
+    lit: 3.0.0
     typescript: ^5.2.2
     vitest: ^0.34.5
   languageName: unknown
@@ -1796,7 +1796,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit/context@npm:^1.0.0":
+"@lit/context@npm:1.0.0, @lit/context@npm:^1.0.0":
   version: 1.0.0
   resolution: "@lit/context@npm:1.0.0"
   dependencies:
@@ -7724,7 +7724,7 @@ __metadata:
     "@lit/context": ^1.0.0
     "@polkadot/api": 10.7.2
     ethers: 5.7.2
-    lit: ^2.7.6
+    lit: 3.0.0
     typescript: ^5.0.2
     vite: ^4.4.5
   languageName: unknown
@@ -7748,7 +7748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lit@npm:^2.7.5 || ^3.0.0":
+"lit@npm:3.0.0, lit@npm:^2.7.5 || ^3.0.0":
   version: 3.0.0
   resolution: "lit@npm:3.0.0"
   dependencies:
@@ -7759,7 +7759,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lit@npm:^2.7.6, lit@npm:^2.8.0":
+"lit@npm:^2.8.0":
   version: 2.8.0
   resolution: "lit@npm:2.8.0"
   dependencies:

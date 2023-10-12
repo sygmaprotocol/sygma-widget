@@ -22,6 +22,27 @@ export class WalletManagerController implements IWalletManagerController {
       this.account = account;
       this.host.requestUpdate();
     });
+
+    evmWallet.addListener('walletChainChanged', () => {
+      this.account = evmWallet.address;
+      this.host.requestUpdate();
+    });
+  }
+
+  public addWalletAccountChangeEventListener(
+    callback: (account: string) => void
+  ): void {
+    this.evmWallet?.addListener('walletAccountChanged', (account) => {
+      this.account = account;
+      callback(account);
+    });
+  }
+
+  public addWalletChangedEventListener(callback: () => void): void {
+    this.evmWallet?.addListener('walletChainChanged', () => {
+      this.account = this.evmWallet?.address;
+      callback();
+    });
   }
 
   /**
