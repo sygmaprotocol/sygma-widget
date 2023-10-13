@@ -35,7 +35,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
   /**
    * @name initFromWeb3Provider
    * @param web3Provider
-   * @returns EvmWallet
+   * @returns {EvmWallet}
    * @description Initializes the EvmWallet from a Web3Provider
    */
   static initFromWeb3Provider(web3Provider: Web3Provider): EvmWallet {
@@ -44,7 +44,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
 
   /**
    * @name initFromWindow
-   * @returns EvmWallet
+   * @returns {EvmWallet}
    * @description Initializes the EvmWallet from a valid EIP-1193 provider
    */
   static initFromWindow(): EvmWallet {
@@ -54,7 +54,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
   /**
    * @name calculateAccountData
    * @param accounts
-   * @returns void
+   * @returns {Promise<void>}
    */
   private async calculateAccountData(accounts?: string[]): Promise<void> {
     if (accounts?.length) {
@@ -73,7 +73,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
 
   /**
    * @name reConnectToProvider
-   * @returns void
+   * @returns {void}
    */
   private reConnectToProvider(): void {
     this.web3Provider = new ethers.providers.Web3Provider(
@@ -83,7 +83,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
 
   /**
    * @name appendProviderEvents
-   * @returns void
+   * @returns {void}
    * @description Appends the provider events to the windowConnector
    */
   private appendProviderEvents(): void {
@@ -132,6 +132,12 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     }
   }
 
+  /**
+   * @name connect
+   * @description Connects the wallet to the provider
+   * @throws {Error} if the window object is not defined
+   * @returns {Promise<void>}
+   */
   public async connect() {
     try {
       this.checkWindow();

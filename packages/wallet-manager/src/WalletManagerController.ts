@@ -123,9 +123,13 @@ export class WalletManagerController implements IWalletManagerController {
    * @description Connects the EvmWallet
    */
   public async connectEvmWallet(): Promise<void> {
-    await this.evmWallet?.connect();
-    this.account = this.evmWallet?.address;
-    this.host.requestUpdate();
+    try {
+      await this.evmWallet?.connect();
+      this.account = this.evmWallet?.address;
+      this.host.requestUpdate();
+    } catch (e) {
+      throw e;
+    }
   }
 
   public getSigner(): Signer {

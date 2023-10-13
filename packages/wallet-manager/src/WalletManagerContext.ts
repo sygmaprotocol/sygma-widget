@@ -16,6 +16,29 @@ export const WalletManagerContext = createContext<
 export const SyntheticEventCreatorContext =
   createContext<SyntheticEventCreator>('synthetic-event');
 
+/**
+ * @name WalletManagerContextProvider
+ * @description This component is responsible for providing the WalletManagerController as a context to all its children.
+ * It also provides a synthetic event creator function that can be used to dispatch custom events.
+ * @example
+ * For you to consume the context objects, you need to wrap up your component with the wallet-manager-context on your render method.
+ * You can either pass a web3Provider, an apiPromise or a wssConnectionUrl to the component.
+ *
+ * Passing a web3Provider and an apiPromise
+ * <wallet-manager-context
+ *   .web3Provider=${web3Provider}
+ *   .apiPromise=${apiPromise}
+ * >
+ *    <your-component></your-component>
+ * </wallet-manager-context>
+ *
+ * Passing a wssConnectionUrl
+ * <wallet-manager-context
+ *  .wssConnectionUrl=${wssConnectionUrl}
+ * >
+ *   <your-component></your-component>
+ * </wallet-manager-context>
+ */
 @customElement('wallet-manager-context')
 export class WalletManagerContextProvider extends LitElement {
   @provide({ context: WalletManagerContext })
@@ -44,7 +67,7 @@ export class WalletManagerContextProvider extends LitElement {
   apiPromise?: ApiPromise;
 
   @property({ type: String })
-  wssProvider?: string;
+  wssConnectionUrl?: string;
 
   constructor() {
     super();
@@ -57,8 +80,10 @@ export class WalletManagerContextProvider extends LitElement {
       this.walletManagerController?.initFromWeb3Provider(this.web3Provider);
     } else if (this.apiPromise) {
       this.walletManagerController?.connectFromApiPromise(this.apiPromise!);
-    } else if (this.wssProvider) {
-      this.walletManagerController?.connectFromWssProvider(this.wssProvider!);
+    } else if (this.wssConnectionUrl) {
+      this.walletManagerController?.connectFromWssProvider(
+        this.wssConnectionUrl!
+      );
     } else {
       this.walletManagerController?.initFromWindow();
     }

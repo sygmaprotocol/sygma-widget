@@ -14,7 +14,7 @@ class SubstrateWallet implements ISusbtrateWallet {
   /**
    * @name connectFromWssProvider
    * @param wssProvider
-   * @returns SubstrateWallet
+   * @returns {Promise<SubstrateWallet>}
    * @description Initializes the SubstrateWallet from a wssProvider
    */
   static async connectFromWssProvider(
@@ -28,7 +28,7 @@ class SubstrateWallet implements ISusbtrateWallet {
   /**
    * @name connectFromApiPromise
    * @param apiPromise
-   * @returns SubstrateWallet
+   * @returns {SubstrateWallet}
    * @description Initializes the SubstrateWallet from an ApiPromise
    */
   static connectFromApiPromise(apiPromise: ApiPromise): SubstrateWallet {
@@ -38,7 +38,7 @@ class SubstrateWallet implements ISusbtrateWallet {
   /**
    * @name conntectToApi
    * @param wssProvider
-   * @returns WsProvider
+   * @returns {WsProvider}
    * @description Initializes the WsProvider
    */
   static async conntectToApi(wssProvider: string): Promise<WsProvider> {
@@ -48,10 +48,10 @@ class SubstrateWallet implements ISusbtrateWallet {
 
   /**
    * @name connect
-   * @returns void
+   * @returns {Promise<void>}
    * @description Connects to the Substrate Wallet
    */
-  public async connect() {
+  public async connect(): Promise<void> {
     const injectors = await web3Enable('Polkadot Wallet');
     // using polkadot-js extension
     const polkadotInjector = injectors.find(
