@@ -1,4 +1,4 @@
-import { Web3Provider, ExternalProvider } from '@ethersproject/providers';
+import { Web3Provider } from '@ethersproject/providers';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { ReactiveController } from 'lit';
 import { AddChain } from '../types';
@@ -13,7 +13,6 @@ export interface SupportedWallet {
 
 export interface IEvmWallet {
   web3Provider: Web3Provider;
-  windowConnector: ExternalProvider;
   address?: string;
   signer?: Signer;
   connect(): Promise<void>;

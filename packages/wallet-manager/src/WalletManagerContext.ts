@@ -7,14 +7,10 @@ import {
 } from './WalletManagerController';
 import { ethers } from 'ethers';
 import { ApiPromise } from '@polkadot/api';
-import { SyntheticEventCreator } from './types';
 
 export const WalletManagerContext = createContext<
   TWalletManagerController | undefined
 >('wallet-context');
-
-export const SyntheticEventCreatorContext =
-  createContext<SyntheticEventCreator>('synthetic-event');
 
 /**
  * @name WalletManagerContextProvider
@@ -44,21 +40,6 @@ export class WalletManagerContextProvider extends LitElement {
   @provide({ context: WalletManagerContext })
   @state()
   walletManagerController?: WalletManagerController;
-
-  @provide({ context: SyntheticEventCreatorContext })
-  @state()
-  syntheticEventCreator: SyntheticEventCreator = (
-    eventName: string,
-    dataToPass: unknown
-  ) => {
-    const event = new CustomEvent(eventName, {
-      bubbles: true,
-      composed: true,
-      detail: dataToPass
-    });
-
-    this.dispatchEvent(event);
-  };
 
   @property({ type: Object })
   web3Provider?: ethers.providers.Web3Provider;
