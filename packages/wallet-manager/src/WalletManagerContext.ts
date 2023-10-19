@@ -12,6 +12,10 @@ export const WalletManagerContext = createContext<
   TWalletManagerController | undefined
 >('wallet-context');
 
+export const AccountContext = createContext<string | undefined>(
+  'account-context'
+);
+
 /**
  * @name WalletManagerContextProvider
  * @description This component is responsible for providing the WalletManagerController as a context to all its children.
@@ -58,15 +62,15 @@ export class WalletManagerContextProvider extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     if (this.web3Provider) {
-      this.walletManagerController?.initFromWeb3Provider(this.web3Provider);
+      this.walletManagerController?.initWeb3Provider(this.web3Provider);
     } else if (this.apiPromise) {
-      this.walletManagerController?.connectFromApiPromise(this.apiPromise!);
+      this.walletManagerController?.connectFromApiPromise(this.apiPromise);
     } else if (this.wssConnectionUrl) {
       this.walletManagerController?.connectFromWssProvider(
-        this.wssConnectionUrl!
+        this.wssConnectionUrl
       );
     } else {
-      this.walletManagerController?.initFromWindow();
+      this.walletManagerController?.initWeb3Provider();
     }
   }
 

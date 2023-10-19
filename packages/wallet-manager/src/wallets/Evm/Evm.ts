@@ -7,6 +7,7 @@ import type {
 } from '@ethersproject/providers';
 import { IEvmWallet } from '../../interfaces';
 import { AddChain } from '../../types';
+import { checkWindow } from '../../utils';
 
 class EvmWallet extends events.EventEmitter implements IEvmWallet {
   address?: string;
@@ -19,12 +20,12 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     if (!window.ethereum) {
       throw new Error('window.ethereum is not defined.');
     }
-    if (!provider) {
+    if (provider) {
+      this.web3Provider = provider;
+    } else {
       this.web3Provider = new ethers.providers.Web3Provider(
         window.ethereum as ExternalProvider
       );
-    } else {
-      this.web3Provider = provider;
     }
     this.appendProviderEvents();
   }
@@ -69,10 +70,10 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
   }
 
   /**
-   * @name reConnectToProvider
+   * @name reconnectToProvider
    * @returns {void}
    */
-  private reConnectToProvider(): void {
+  private reconnectToProvider(): void {
     this.web3Provider = new ethers.providers.Web3Provider(
       window.ethereum as ExternalProvider
     );
@@ -85,12 +86,12 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
    */
   private appendProviderEvents(): void {
     try {
-      this.checkWindow();
+      checkWindow();
     } catch (e) {
       throw e;
     }
     (this.web3Provider.provider as Provider).on('connect', async () => {
-      this.reConnectToProvider();
+      this.reconnectToProvider();
       await this.calculateAccountData();
     });
 
@@ -99,13 +100,13 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
       async (error: Error & { code: number; data?: unknown }) => {
         // eslint-disable-next-line no-console
         console.error(error);
-        this.reConnectToProvider();
+        this.reconnectToProvider();
         await this.calculateAccountData();
       }
     );
 
     (this.web3Provider.provider as Provider).on('chainChanged', async () => {
-      this.reConnectToProvider();
+      this.reconnectToProvider();
       await this.calculateAccountData();
 
       this.emit('walletChainChanged', this.web3Provider);
@@ -114,21 +115,13 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     (this.web3Provider.provider as Provider).on(
       'accountsChanged',
       async (accounts: string[]) => {
-        this.reConnectToProvider();
+        this.reconnectToProvider();
         await this.calculateAccountData(accounts);
 
         this.emit('walletAccountChanged', this.address);
       }
     );
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  private checkWindow() {
-    if (window === undefined) {
-      throw new Error('window object is not defined.');
-    }
-  }
-
   /**
    * @name connect
    * @description Connects the wallet to the provider
@@ -137,7 +130,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
    */
   public async connect() {
     try {
-      this.checkWindow();
+      checkWindow();
     } catch (e) {
       throw e;
     }
@@ -169,7 +162,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     rpcUrl,
     nativeCurrency
   }: AddChain): Promise<void> {
-    this.checkWindow();
+    checkWindow();
 
     try {
       await this.web3Provider.provider.request!({

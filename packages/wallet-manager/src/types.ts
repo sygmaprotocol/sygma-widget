@@ -19,5 +19,5 @@ export type AddChain = {
 
 export type SyntheticEventCreator = (
   eventName: string,
-  dataToPass: unknown
+  dataToPass: Record<string, unknown> | number | string | Array<unknown>
 ) => void;

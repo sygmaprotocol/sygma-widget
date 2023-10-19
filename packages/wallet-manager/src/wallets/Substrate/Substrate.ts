@@ -1,13 +1,12 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
-import { ISusbtrateWallet } from '../../interfaces';
+import { ISubstrateWallet } from '../../interfaces';
 
-class SubstrateWallet implements ISusbtrateWallet {
+class SubstrateWallet implements ISubstrateWallet {
   substrateAccount?: string;
-  apiPromise?: ApiPromise;
-  wssProvider?: WsProvider;
+  apiPromise: ApiPromise;
 
-  constructor(apiPromise?: ApiPromise) {
+  constructor(apiPromise: ApiPromise) {
     this.apiPromise = apiPromise;
   }
 
@@ -20,7 +19,7 @@ class SubstrateWallet implements ISusbtrateWallet {
   static async connectFromWssProvider(
     wssProvider: string
   ): Promise<SubstrateWallet> {
-    const wsProvider = await SubstrateWallet.conntectToApi(wssProvider);
+    const wsProvider = await SubstrateWallet.connectToApi(wssProvider);
     const apiPromise = await ApiPromise.create({ provider: wsProvider });
     return new SubstrateWallet(apiPromise);
   }
@@ -36,12 +35,12 @@ class SubstrateWallet implements ISusbtrateWallet {
   }
 
   /**
-   * @name conntectToApi
+   * @name connectToApi
    * @param wssProvider
    * @returns {WsProvider}
    * @description Initializes the WsProvider
    */
-  static async conntectToApi(wssProvider: string): Promise<WsProvider> {
+  static async connectToApi(wssProvider: string): Promise<WsProvider> {
     const wsProvider = new WsProvider(wssProvider);
     return wsProvider;
   }

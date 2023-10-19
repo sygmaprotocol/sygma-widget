@@ -2,7 +2,8 @@ export { EvmWallet, SubstrateWallet } from './wallets';
 export { WalletManagerController } from './WalletManagerController';
 export {
   WalletManagerContextProvider,
-  WalletManagerContext
+  WalletManagerContext,
+  AccountContext
 } from './WalletManagerContext';
 
 export { type SyntheticEventCreator } from './types';

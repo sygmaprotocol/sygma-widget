@@ -1,8 +1,8 @@
 import { SyntheticEventCreator } from '..';
 
 export const syntheticEventCreator: SyntheticEventCreator = (
-  eventName: string,
-  dataToPass: unknown
+  eventName,
+  dataToPass
 ) => {
   const event = new CustomEvent(eventName, {
     bubbles: true,
@@ -11,4 +11,10 @@ export const syntheticEventCreator: SyntheticEventCreator = (
   });
 
   dispatchEvent(event);
+};
+
+export const checkWindow = (): void => {
+  if (window === undefined) {
+    throw new Error('window object is not defined.');
+  }
 };
