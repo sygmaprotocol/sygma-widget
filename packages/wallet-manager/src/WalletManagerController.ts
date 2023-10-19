@@ -52,9 +52,9 @@ export class WalletManagerController implements IWalletManagerController {
    */
   public initWeb3Provider(web3Provider?: Web3Provider): void {
     if (web3Provider) {
-      this.evmWallet = EvmWallet.initFromWeb3Provider(web3Provider);
+      this.evmWallet = new EvmWallet(web3Provider);
     } else {
-      this.evmWallet = EvmWallet.initFromWindow();
+      this.evmWallet = new EvmWallet();
     }
   }
 

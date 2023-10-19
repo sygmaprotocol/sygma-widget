@@ -31,25 +31,6 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
   }
 
   /**
-   * @name initFromWeb3Provider
-   * @param web3Provider
-   * @returns {EvmWallet}
-   * @description Initializes the EvmWallet from a Web3Provider
-   */
-  static initFromWeb3Provider(web3Provider: Web3Provider): EvmWallet {
-    return new EvmWallet(web3Provider);
-  }
-
-  /**
-   * @name initFromWindow
-   * @returns {EvmWallet}
-   * @description Initializes the EvmWallet from a valid EIP-1193 provider
-   */
-  static initFromWindow(): EvmWallet {
-    return new EvmWallet();
-  }
-
-  /**
    * @name calculateAccountData
    * @param accounts
    * @returns {Promise<void>}
