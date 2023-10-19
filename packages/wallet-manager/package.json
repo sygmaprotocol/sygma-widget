@@ -23,10 +23,12 @@
   },
   "dependencies": {
     "@ethersproject/abstract-signer": "^5.7.0",
-    "@lit/context": "1.0.0",
     "@polkadot/api": "10.7.2",
     "@polkadot/extension-dapp": "^0.46.5",
-    "ethers": "5.7.2",
     "lit": "3.0.0"
+  },
+  "peerDependencies": {
+    "@lit/context": "1.0.0",
+    "ethers": "5.7.2"
   }
 }

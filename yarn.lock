@@ -377,15 +377,16 @@ __metadata:
   resolution: "@builtwithsygma/sygmaprotocol-wallet-manager@workspace:packages/wallet-manager"
   dependencies:
     "@ethersproject/abstract-signer": ^5.7.0
-    "@lit/context": 1.0.0
     "@polkadot/api": 10.7.2
     "@polkadot/extension-dapp": ^0.46.5
     "@polkadot/types": 10.7.2
-    ethers: 5.7.2
     jsdom: ^22.1.0
     lit: 3.0.0
     typescript: ^5.2.2
     vitest: ^0.34.5
+  peerDependencies:
+    "@lit/context": 1.0.0
+    ethers: 5.7.2
   languageName: unknown
   linkType: soft
 
@@ -1543,16 +1544,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit/context@npm:1.0.0":
-  version: 1.0.0
-  resolution: "@lit/context@npm:1.0.0"
-  dependencies:
-    "@lit/reactive-element": ^1.6.2 || ^2.0.0
-    lit: ^2.7.5 || ^3.0.0
-  checksum: 01efda7c0fa2e5f9c26c9377f11f03e54dc4c86003d287e61ce2b88f7a771a7027cbd387e5efdb77d7ddaa53058f79ebe1abd29b541be42a4c4ef558ef70abc9
-  languageName: node
-  linkType: hard
-
 "@lit/reactive-element@npm:^1.3.0, @lit/reactive-element@npm:^1.6.0":
   version: 1.6.3
   resolution: "@lit/reactive-element@npm:1.6.3"
@@ -1562,7 +1553,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit/reactive-element@npm:^1.6.2 || ^2.0.0, @lit/reactive-element@npm:^2.0.0":
+"@lit/reactive-element@npm:^2.0.0":
   version: 2.0.0
   resolution: "@lit/reactive-element@npm:2.0.0"
   dependencies:
@@ -7130,7 +7121,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lit@npm:3.0.0, lit@npm:^2.7.5 || ^3.0.0":
+"lit@npm:3.0.0":
   version: 3.0.0
   resolution: "lit@npm:3.0.0"
   dependencies:
