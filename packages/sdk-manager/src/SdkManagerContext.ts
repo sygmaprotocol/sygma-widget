@@ -7,15 +7,39 @@ import {
 } from '@buildwithsygma/sygma-sdk-core';
 import { consume, createContext, provide } from '@lit/context';
 import { LitElement, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import {
   WalletManagerContext,
   WalletManagerController
 } from '@builtwithsygma/sygmaprotocol-wallet-manager';
-import { BaseProvider, TransactionRequest } from '@ethersproject/providers';
-import { Signer } from 'ethers';
+import { BaseProvider, Web3Provider } from '@ethersproject/providers';
 import { UnsignedTransaction } from '@ethersproject/transactions';
-import { SdkManagerState, SdkManagerStatus } from './types';
+
+export type SdkManagerStatus =
+  | 'idle'
+  | 'initialized'
+  | 'transferCreated'
+  | 'approvalsCompleted'
+  | 'deposited'
+  | 'completed';
+
+export type SdkManagerState = {
+  assetTransfer: EVMAssetTransfer;
+  status: SdkManagerStatus;
+  transfer?: Transfer<Fungible>;
+  fee?: EvmFee;
+  approvalTxs?: UnsignedTransaction[];
+  depositTx?: UnsignedTransaction;
+
+  initialize: (provider: BaseProvider, env?: Environment) => Promise<void>;
+  createTransfer: (
+    provider: BaseProvider,
+    destinationChainId: number,
+    destinationAddress: string,
+    resourceId: string,
+    amount: string
+  ) => Promise<void>;
+};
 
 export const SdkManagerContext = createContext<SdkManagerState | undefined>(
   'sdk-context'
@@ -39,18 +63,22 @@ export class SdkManager implements SdkManagerState {
     env: Environment = Environment.MAINNET
   ) {
     await this.assetTransfer.init(provider, env);
-    await this.checkSourceNetwork(provider);
+    this.status = 'initialized';
   }
 
   async createTransfer(
-    fromAddress: string,
+    provider: BaseProvider,
     destinationChainId: number,
     destinationAddress: string,
     resourceId: string,
     amount: string
   ) {
+    const sourceAddress = await (provider as Web3Provider)
+      .getSigner()
+      .getAddress();
+
     const transfer = await this.assetTransfer.createFungibleTransfer(
-      fromAddress,
+      sourceAddress,
       destinationChainId,
       destinationAddress,
       resourceId,
@@ -66,73 +94,6 @@ export class SdkManager implements SdkManagerState {
     this.approvalTxs = approvals;
     this.status =
       approvals.length > 0 ? 'transferCreated' : 'approvalsCompleted';
-
-    this.depositTx = await this.assetTransfer.buildTransferTransaction(
-      transfer,
-      fee
-    );
-  }
-
-  async performApprovals(signer: Signer) {
-    if (!this.transfer) {
-      throw new Error('No transfer');
-    }
-
-    if (!this.approvalTxs) {
-      throw new Error('No approvals');
-    }
-
-    if (!this.fee) {
-      throw new Error('No fee');
-    }
-
-    for (const approval of this.approvalTxs) {
-      await (
-        await signer.sendTransaction(approval as TransactionRequest)
-      ).wait();
-    }
-
-    const approvals = await this.assetTransfer.buildApprovals(
-      this.transfer,
-      this.fee
-    );
-
-    this.approvalTxs = approvals;
-    if (!approvals?.length) {
-      this.status = 'approvalsCompleted';
-      this.depositTx = await this.assetTransfer.buildTransferTransaction(
-        this.transfer,
-        this.fee
-      );
-    }
-  }
-
-  async performDeposit(signer: Signer) {
-    if (!this.transfer) {
-      throw new Error('No transfer');
-    }
-
-    if (!this.depositTx) {
-      throw new Error('No deposit');
-    }
-
-    await (
-      await signer.sendTransaction(this.depositTx as TransactionRequest)
-    ).wait();
-    this.status = 'deposited';
-  }
-
-  async checkSourceNetwork(provider: BaseProvider) {
-    const providerChainId = (await provider.getNetwork()).chainId;
-    const validEnvDomains = this.assetTransfer.config
-      .getDomains()
-      .map((d) => d.chainId);
-
-    if (!validEnvDomains.includes(providerChainId)) {
-      this.status = 'invalidSourceNetwork';
-    } else {
-      this.status = 'initialized';
-    }
   }
 }
 
@@ -144,32 +105,41 @@ export class SdkManager implements SdkManagerState {
 @customElement('sdk-manager-context-provider')
 export class SdkManagerContextProvider extends LitElement {
   @consume({ context: WalletManagerContext, subscribe: true })
-  @state()
+  @property({ attribute: false })
   walletManager?: WalletManagerController;
 
   @provide({ context: SdkManagerContext })
-  @state()
-  sdkManager?: SdkManager;
+  sdkManagerContext = new SdkManager();
 
-  constructor() {
-    super();
-    this.sdkManager = new SdkManager();
+  async initialize(env?: Environment) {
+    if (!this.walletManager?.provider) {
+      throw new Error('No wallet connected');
+    }
+
+    await this.sdkManagerContext.initialize(this.walletManager.provider, env);
   }
 
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
+  async createTransfer(
+    destinationChainId: number,
+    destinationAddress: string,
+    resourceId: string,
+    amount: string
+  ) {
+    if (!this.walletManager?.provider) {
+      throw new Error('No wallet connected');
+    }
 
-    this.walletManager?.addWalletAccountChangedEventListener(() => {
-      this.requestUpdate();
-    });
+    if (!(this.sdkManagerContext.status === 'initialized')) {
+      throw new Error('SdkManager not initialized');
+    }
 
-    this.walletManager?.addWalletChainChangedEventListener(async () => {
-      const provider = this.walletManager?.evmWallet?.web3Provider;
-      if (provider) {
-        this.sdkManager?.checkSourceNetwork(provider);
-      }
-      this.requestUpdate();
-    });
+    await this.sdkManagerContext.createTransfer(
+      this.walletManager.provider,
+      destinationChainId,
+      destinationAddress,
+      resourceId,
+      amount
+    );
   }
 
   render() {

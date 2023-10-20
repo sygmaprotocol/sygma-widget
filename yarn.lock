@@ -306,7 +306,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildwithsygma/sygma-sdk-core@npm:^2.3.0":
+"@buildwithsygma/sygma-sdk-core@npm:2.3.0, @buildwithsygma/sygma-sdk-core@npm:^2.3.0":
   version: 2.3.0
   resolution: "@buildwithsygma/sygma-sdk-core@npm:2.3.0"
   dependencies:
@@ -363,12 +363,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-sdk-manager@workspace:packages/sdk-manager"
   dependencies:
-    "@buildwithsygma/sygma-sdk-core": "npm:^2.2.0"
-    "@ethersproject/contracts": "npm:^5.7.0"
-    "@ethersproject/transactions": "npm:^5.7.0"
-    "@polkadot/api": "npm:10.7.2"
-    "@polkadot/types": "npm:10.7.2"
-    typescript: "npm:^5.2.2"
+    "@buildwithsygma/sygma-sdk-core": ^2.3.0
+    "@ethersproject/contracts": ^5.7.0
+    "@ethersproject/transactions": ^5.7.0
+    "@lit/context": 1.0.0
+    "@polkadot/api": 10.7.2
+    "@polkadot/types": 10.7.2
+    lit: 3.0.0
+    typescript: ^5.2.2
   languageName: unknown
   linkType: soft
 
@@ -394,9 +396,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-widget@workspace:packages/widget"
   dependencies:
-    "@buildwithsygma/sygma-sdk-core": "npm:^2.2.0"
-    ethers: "npm:5.7.2"
-    lit: "npm:^2.8.0"
+    "@buildwithsygma/sygma-sdk-core": 2.3.0
+    ethers: 5.7.2
+    lit: ^2.8.0
   languageName: unknown
   linkType: soft
 
