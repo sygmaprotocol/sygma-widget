@@ -7,7 +7,7 @@ import {
 } from '@buildwithsygma/sygma-sdk-core';
 import { consume, createContext, provide } from '@lit/context';
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import {
   WalletManagerContext,
   WalletManagerController
@@ -109,7 +109,13 @@ export class SdkManagerContextProvider extends LitElement {
   walletManager?: WalletManagerController;
 
   @provide({ context: SdkManagerContext })
+  @state()
   sdkManager?: SdkManager;
+
+  constructor() {
+    super();
+    this.sdkManager = new SdkManager();
+  }
 
   async initialize(env?: Environment) {
     if (!this.walletManager?.provider) {

@@ -39,7 +39,7 @@ export const AccountContext = createContext<string | undefined>(
  *   <your-component></your-component>
  * </wallet-manager-context>
  */
-@customElement('wallet-manager-context')
+@customElement('wallet-manager-context-provider')
 export class WalletManagerContextProvider extends LitElement {
   @provide({ context: WalletManagerContext })
   @state()
