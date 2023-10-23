@@ -109,14 +109,14 @@ export class SdkManagerContextProvider extends LitElement {
   walletManager?: WalletManagerController;
 
   @provide({ context: SdkManagerContext })
-  sdkManagerContext = new SdkManager();
+  sdkManager?: SdkManager;
 
   async initialize(env?: Environment) {
     if (!this.walletManager?.provider) {
       throw new Error('No wallet connected');
     }
 
-    await this.sdkManagerContext.initialize(this.walletManager.provider, env);
+    await this.sdkManager?.initialize(this.walletManager.provider, env);
   }
 
   async createTransfer(
@@ -129,11 +129,15 @@ export class SdkManagerContextProvider extends LitElement {
       throw new Error('No wallet connected');
     }
 
-    if (!(this.sdkManagerContext.status === 'initialized')) {
+    if (!this.sdkManager) {
       throw new Error('SdkManager not initialized');
     }
 
-    await this.sdkManagerContext.createTransfer(
+    if (!(this.sdkManager.status === 'initialized')) {
+      throw new Error('SdkManager not initialized');
+    }
+
+    await this.sdkManager.createTransfer(
       this.walletManager.provider,
       destinationChainId,
       destinationAddress,
