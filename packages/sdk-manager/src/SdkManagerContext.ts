@@ -12,7 +12,11 @@ import {
   WalletManagerContext,
   WalletManagerController
 } from '@builtwithsygma/sygmaprotocol-wallet-manager';
-import { BaseProvider, Web3Provider } from '@ethersproject/providers';
+import {
+  BaseProvider,
+  Web3Provider,
+  TransactionRequest
+} from '@ethersproject/providers';
 import { UnsignedTransaction } from '@ethersproject/transactions';
 
 export type SdkManagerStatus =
@@ -39,6 +43,9 @@ export type SdkManagerState = {
     resourceId: string,
     amount: string
   ) => Promise<void>;
+
+  performApprovals(provider: Web3Provider): Promise<void>;
+  performDeposit(provider: Web3Provider): Promise<void>;
 };
 
 export const SdkManagerContext = createContext<SdkManagerState | undefined>(
@@ -94,6 +101,63 @@ export class SdkManager implements SdkManagerState {
     this.approvalTxs = approvals;
     this.status =
       approvals.length > 0 ? 'transferCreated' : 'approvalsCompleted';
+
+    this.depositTx = await this.assetTransfer.buildTransferTransaction(
+      transfer,
+      fee
+    );
+  }
+
+  async performApprovals(provider: Web3Provider) {
+    if (!this.transfer) {
+      throw new Error('No transfer');
+    }
+
+    if (!this.approvalTxs) {
+      throw new Error('No approvals');
+    }
+
+    if (!this.fee) {
+      throw new Error('No fee');
+    }
+
+    const signer = provider.getSigner();
+    for (const approval of this.approvalTxs) {
+      await signer.sendTransaction(approval as TransactionRequest);
+    }
+
+    const approvals = await this.assetTransfer.buildApprovals(
+      this.transfer,
+      this.fee
+    );
+
+    this.approvalTxs = approvals;
+    this.status =
+      approvals.length > 0 ? 'transferCreated' : 'approvalsCompleted';
+    this.depositTx = await this.assetTransfer.buildTransferTransaction(
+      this.transfer,
+      this.fee
+    );
+  }
+
+  async performDeposit(provider: Web3Provider) {
+    if (!this.transfer) {
+      throw new Error('No transfer');
+    }
+
+    if (!this.approvalTxs) {
+      throw new Error('No approvals');
+    }
+
+    if (!this.fee) {
+      throw new Error('No fee');
+    }
+
+    const signer = provider.getSigner();
+    await (
+      await signer.sendTransaction(this.depositTx as TransactionRequest)
+    ).wait();
+    this.status = 'deposited';
   }
 }
 
