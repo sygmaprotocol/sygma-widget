@@ -184,41 +184,6 @@ export class SdkManagerContextProvider extends LitElement {
     this.sdkManager = new SdkManager();
   }
 
-  async initialize(env?: Environment) {
-    if (!this.walletManager?.provider) {
-      throw new Error('No wallet connected');
-    }
-
-    await this.sdkManager?.initialize(this.walletManager.provider, env);
-  }
-
-  async createTransfer(
-    destinationChainId: number,
-    destinationAddress: string,
-    resourceId: string,
-    amount: string
-  ) {
-    if (!this.walletManager?.provider) {
-      throw new Error('No wallet connected');
-    }
-
-    if (!this.sdkManager) {
-      throw new Error('SdkManager not initialized');
-    }
-
-    if (!(this.sdkManager.status === 'initialized')) {
-      throw new Error('SdkManager not initialized');
-    }
-
-    await this.sdkManager.createTransfer(
-      this.walletManager.provider,
-      destinationChainId,
-      destinationAddress,
-      resourceId,
-      amount
-    );
-  }
-
   render() {
     return html`<slot></slot>`;
   }
