@@ -123,7 +123,9 @@ export class SdkManager implements SdkManagerState {
 
     const signer = provider.getSigner();
     for (const approval of this.approvalTxs) {
-      await signer.sendTransaction(approval as TransactionRequest);
+      await (
+        await signer.sendTransaction(approval as TransactionRequest)
+      ).wait();
     }
 
     const approvals = await this.assetTransfer.buildApprovals(
@@ -132,12 +134,13 @@ export class SdkManager implements SdkManagerState {
     );
 
     this.approvalTxs = approvals;
-    this.status =
-      approvals.length > 0 ? 'transferCreated' : 'approvalsCompleted';
-    this.depositTx = await this.assetTransfer.buildTransferTransaction(
-      this.transfer,
-      this.fee
-    );
+    if (!approvals || approvals.length === 0) {
+      this.status = 'approvalsCompleted';
+      this.depositTx = await this.assetTransfer.buildTransferTransaction(
+        this.transfer,
+        this.fee
+      );
+    }
   }
 
   async performDeposit(provider: Web3Provider) {
