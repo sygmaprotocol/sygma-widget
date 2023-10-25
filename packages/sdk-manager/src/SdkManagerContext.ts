@@ -7,7 +7,7 @@ import {
 } from '@buildwithsygma/sygma-sdk-core';
 import { consume, createContext, provide } from '@lit/context';
 import { LitElement, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import {
   WalletManagerContext,
   WalletManagerController
@@ -18,35 +18,7 @@ import {
   TransactionRequest
 } from '@ethersproject/providers';
 import { UnsignedTransaction } from '@ethersproject/transactions';
-
-export type SdkManagerStatus =
-  | 'idle'
-  | 'initialized'
-  | 'transferCreated'
-  | 'approvalsCompleted'
-  | 'deposited'
-  | 'completed';
-
-export type SdkManagerState = {
-  assetTransfer: EVMAssetTransfer;
-  status: SdkManagerStatus;
-  transfer?: Transfer<Fungible>;
-  fee?: EvmFee;
-  approvalTxs?: UnsignedTransaction[];
-  depositTx?: UnsignedTransaction;
-
-  initialize: (provider: BaseProvider, env?: Environment) => Promise<void>;
-  createTransfer: (
-    provider: BaseProvider,
-    destinationChainId: number,
-    destinationAddress: string,
-    resourceId: string,
-    amount: string
-  ) => Promise<void>;
-
-  performApprovals(provider: Web3Provider): Promise<void>;
-  performDeposit(provider: Web3Provider): Promise<void>;
-};
+import { SdkManagerState, SdkManagerStatus } from './types';
 
 export const SdkManagerContext = createContext<SdkManagerState | undefined>(
   'sdk-context'
@@ -148,12 +120,8 @@ export class SdkManager implements SdkManagerState {
       throw new Error('No transfer');
     }
 
-    if (!this.approvalTxs) {
-      throw new Error('No approvals');
-    }
-
-    if (!this.fee) {
-      throw new Error('No fee');
+    if (!this.depositTx) {
+      throw new Error('No deposit');
     }
 
     const signer = provider.getSigner();
@@ -172,7 +140,7 @@ export class SdkManager implements SdkManagerState {
 @customElement('sdk-manager-context-provider')
 export class SdkManagerContextProvider extends LitElement {
   @consume({ context: WalletManagerContext, subscribe: true })
-  @property({ attribute: false })
+  @state()
   walletManager?: WalletManagerController;
 
   @provide({ context: SdkManagerContext })
