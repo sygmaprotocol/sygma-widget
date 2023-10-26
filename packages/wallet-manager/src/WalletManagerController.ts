@@ -29,7 +29,7 @@ export class WalletManagerController implements IWalletManagerController {
     }
   }
 
-  public addWalletAccountChangeEventListener(
+  public addWalletAccountChangedEventListener(
     callback: (account: string) => void
   ): void {
     this.evmWallet?.addListener(EVM_EVENTS.WalletAccountChanged, (account) => {

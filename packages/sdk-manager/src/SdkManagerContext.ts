@@ -14,9 +14,9 @@ import {
 } from '@builtwithsygma/sygmaprotocol-wallet-manager';
 import {
   BaseProvider,
-  Web3Provider,
   TransactionRequest
 } from '@ethersproject/providers';
+import { Signer } from 'ethers';
 import { UnsignedTransaction } from '@ethersproject/transactions';
 import { SdkManagerState, SdkManagerStatus } from './types';
 
@@ -46,18 +46,14 @@ export class SdkManager implements SdkManagerState {
   }
 
   async createTransfer(
-    provider: BaseProvider,
+    fromAddress: string,
     destinationChainId: number,
     destinationAddress: string,
     resourceId: string,
     amount: string
   ) {
-    const sourceAddress = await (provider as Web3Provider)
-      .getSigner()
-      .getAddress();
-
     const transfer = await this.assetTransfer.createFungibleTransfer(
-      sourceAddress,
+      fromAddress,
       destinationChainId,
       destinationAddress,
       resourceId,
@@ -80,7 +76,7 @@ export class SdkManager implements SdkManagerState {
     );
   }
 
-  async performApprovals(provider: Web3Provider) {
+  async performApprovals(signer: Signer) {
     if (!this.transfer) {
       throw new Error('No transfer');
     }
@@ -93,7 +89,6 @@ export class SdkManager implements SdkManagerState {
       throw new Error('No fee');
     }
 
-    const signer = provider.getSigner();
     for (const approval of this.approvalTxs) {
       await (
         await signer.sendTransaction(approval as TransactionRequest)
@@ -115,7 +110,7 @@ export class SdkManager implements SdkManagerState {
     }
   }
 
-  async performDeposit(provider: Web3Provider) {
+  async performDeposit(signer: Signer) {
     if (!this.transfer) {
       throw new Error('No transfer');
     }
@@ -124,7 +119,6 @@ export class SdkManager implements SdkManagerState {
       throw new Error('No deposit');
     }
 
-    const signer = provider.getSigner();
     await (
       await signer.sendTransaction(this.depositTx as TransactionRequest)
     ).wait();

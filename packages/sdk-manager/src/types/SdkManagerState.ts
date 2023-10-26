@@ -7,7 +7,8 @@ import {
 } from '@buildwithsygma/sygma-sdk-core';
 import { UnsignedTransaction } from '@ethersproject/transactions';
 import { SdkManagerStatus } from './SdkManagerStatus';
-import { BaseProvider, Web3Provider } from '@ethersproject/providers';
+import { BaseProvider } from '@ethersproject/providers';
+import { Signer } from 'ethers';
 
 export type SdkManagerState = {
   assetTransfer: EVMAssetTransfer;
@@ -19,13 +20,13 @@ export type SdkManagerState = {
 
   initialize: (provider: BaseProvider, env?: Environment) => Promise<void>;
   createTransfer: (
-    provider: BaseProvider,
+    fromAddress: string,
     destinationChainId: number,
     destinationAddress: string,
     resourceId: string,
     amount: string
   ) => Promise<void>;
 
-  performApprovals(provider: Web3Provider): Promise<void>;
-  performDeposit(provider: Web3Provider): Promise<void>;
+  performApprovals(signer: Signer): Promise<void>;
+  performDeposit(signer: Signer): Promise<void>;
 };
