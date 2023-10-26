@@ -12,7 +12,11 @@ import {
   WalletManagerContext,
   WalletManagerController
 } from '@builtwithsygma/sygmaprotocol-wallet-manager';
-import { BaseProvider, Web3Provider } from '@ethersproject/providers';
+import {
+  BaseProvider,
+  TransactionRequest
+} from '@ethersproject/providers';
+import { Signer } from 'ethers';
 import { UnsignedTransaction } from '@ethersproject/transactions';
 
 export type SdkManagerStatus =
@@ -67,18 +71,14 @@ export class SdkManager implements SdkManagerState {
   }
 
   async createTransfer(
-    provider: BaseProvider,
+    fromAddress: string,
     destinationChainId: number,
     destinationAddress: string,
     resourceId: string,
     amount: string
   ) {
-    const sourceAddress = await (provider as Web3Provider)
-      .getSigner()
-      .getAddress();
-
     const transfer = await this.assetTransfer.createFungibleTransfer(
-      sourceAddress,
+      fromAddress,
       destinationChainId,
       destinationAddress,
       resourceId,
@@ -94,6 +94,60 @@ export class SdkManager implements SdkManagerState {
     this.approvalTxs = approvals;
     this.status =
       approvals.length > 0 ? 'transferCreated' : 'approvalsCompleted';
+
+    this.depositTx = await this.assetTransfer.buildTransferTransaction(
+      transfer,
+      fee
+    );
+  }
+
+  async performApprovals(signer: Signer) {
+    if (!this.transfer) {
+      throw new Error('No transfer');
+    }
+
+    if (!this.approvalTxs) {
+      throw new Error('No approvals');
+    }
+
+    if (!this.fee) {
+      throw new Error('No fee');
+    }
+
+    for (const approval of this.approvalTxs) {
+      await (
+        await signer.sendTransaction(approval as TransactionRequest)
+      ).wait();
+    }
+
+    const approvals = await this.assetTransfer.buildApprovals(
+      this.transfer,
+      this.fee
+    );
+
+    this.approvalTxs = approvals;
+    if (!approvals || approvals.length === 0) {
+      this.status = 'approvalsCompleted';
+      this.depositTx = await this.assetTransfer.buildTransferTransaction(
+        this.transfer,
+        this.fee
+      );
+    }
+  }
+
+  async performDeposit(signer: Signer) {
+    if (!this.transfer) {
+      throw new Error('No transfer');
+    }
+
+    if (!this.depositTx) {
+      throw new Error('No deposit');
+    }
+
+    await (
+      await signer.sendTransaction(this.depositTx as TransactionRequest)
+    ).wait();
+    this.status = 'deposited';
   }
 }
 
