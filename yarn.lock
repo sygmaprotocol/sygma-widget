@@ -386,7 +386,7 @@ __metadata:
     typescript: ^5.2.2
     vitest: ^0.34.5
   peerDependencies:
-    ethers: 5.7.2
+    ethers: "*"
   languageName: unknown
   linkType: soft
 
