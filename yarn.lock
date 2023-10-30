@@ -363,13 +363,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-sdk-manager@workspace:packages/sdk-manager"
   dependencies:
-    "@buildwithsygma/sygma-sdk-core": "npm:^2.3.0"
+    "@buildwithsygma/sygma-sdk-core": "npm:^2.2.0"
     "@ethersproject/contracts": "npm:^5.7.0"
     "@ethersproject/transactions": "npm:^5.7.0"
-    "@lit/context": "npm:1.0.0"
     "@polkadot/api": "npm:10.7.2"
     "@polkadot/types": "npm:10.7.2"
-    lit: "npm:3.0.0"
     typescript: "npm:^5.2.2"
   languageName: unknown
   linkType: soft
@@ -378,15 +376,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-wallet-manager@workspace:packages/wallet-manager"
   dependencies:
-    "@ethersproject/abstract-signer": 5.7.0
-    "@lit/context": 1.0.0
-    "@polkadot/api": 10.7.2
-    "@polkadot/extension-dapp": 0.46.5
-    "@polkadot/types": 10.7.2
-    jsdom: ^22.1.0
-    lit: 3.0.0
-    typescript: ^5.2.2
-    vitest: ^0.34.5
+    "@ethersproject/abstract-signer": "npm:5.7.0"
+    "@lit/context": "npm:1.0.0"
+    "@polkadot/api": "npm:10.7.2"
+    "@polkadot/extension-dapp": "npm:0.46.5"
+    "@polkadot/types": "npm:10.7.2"
+    jsdom: "npm:^22.1.0"
+    lit: "npm:3.0.0"
+    typescript: "npm:^5.2.2"
+    vitest: "npm:^0.34.5"
   peerDependencies:
     ethers: "*"
   languageName: unknown
@@ -396,17 +394,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-widget@workspace:packages/widget"
   dependencies:
-    "@builtwithsygma/sygmaprotocol-sdk-manager": "npm:*"
-    "@builtwithsygma/sygmaprotocol-wallet-manager": "npm:*"
-    "@lit/context": "npm:1.0.0"
-    "@lit/reactive-element": "npm:2.0.0"
-    "@types/node": "npm:20.8.4"
+    "@buildwithsygma/sygma-sdk-core": "npm:^2.2.0"
     ethers: "npm:5.7.2"
-    lit: "npm:3.0.0"
-    lit-html: "npm:3.0.0"
-    rollup-plugin-visualizer: "npm:^5.9.2"
-    typescript: "npm:5.2.2"
-    vite: "npm:4.4.11"
+    lit: "npm:^2.8.0"
   languageName: unknown
   linkType: soft
 
@@ -5532,7 +5522,7 @@ __metadata:
   dependencies:
     bn.js: "npm:^4.11.8"
     ethereumjs-util: "npm:^6.0.0"
-  checksum: dd1f7fad25f6c36fa34877176fdb10e21bfab5b88030fc427829f52686bcad3215168f55e5ed93689a1c34d0d802f39dec25b50ce1914da5b59c50d5975ae30e
+  checksum: 25d2e1e5505d7df0683028a1b46b4c07d78f08ef38d20a93a4dbe18616479d3c314b5572bdf258605d70e939ac3fc01c893a3d97a4113a5a195ec39bf6ec4777
   languageName: node
   linkType: hard
 
@@ -6197,7 +6187,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@patch:fsevents@npm%3A~2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@npm%3A~2.3.3#~builtin<compat/fsevents>":
+"fsevents@patch:fsevents@npm%3A~2.3.2#optional!builtin<compat/fsevents>, fsevents@patch:fsevents@npm%3A~2.3.3#optional!builtin<compat/fsevents>":
   version: 2.3.3
   resolution: "fsevents@patch:fsevents@npm%3A2.3.3#optional!builtin<compat/fsevents>::version=2.3.3&hash=df0bf1"
   dependencies:
@@ -9084,7 +9074,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@npm%3A^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.4#~builtin<compat/resolve>":
+"resolve@patch:resolve@npm%3A^1.14.2#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.4#optional!builtin<compat/resolve>":
   version: 1.22.8
   resolution: "resolve@patch:resolve@npm%3A1.22.8#optional!builtin<compat/resolve>::version=1.22.8&hash=c3c19d"
   dependencies:
@@ -10209,7 +10199,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>":
   version: 5.2.2
   resolution: "typescript@patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"
   bin:
