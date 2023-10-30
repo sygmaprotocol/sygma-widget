@@ -5,7 +5,7 @@ import type {
   ExternalProvider,
   Provider
 } from '@ethersproject/providers';
-import { IEvmWallet } from '../../interfaces';
+import { customEVMEvents, IEvmWallet } from '../../interfaces';
 import { AddChain } from '../../types';
 import { checkWindow } from '../../utils';
 
@@ -35,7 +35,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
    * @param accounts
    * @returns {Promise<void>}
    */
-  private async calculateAccountData(accounts?: string[]): Promise<void> {
+  private async resetAccounts(accounts?: string[]): Promise<void> {
     if (accounts?.length) {
       this.address = accounts[0];
     }
@@ -66,40 +66,32 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
    * @description Appends the provider events to the windowConnector
    */
   private appendProviderEvents(): void {
-    try {
-      checkWindow();
-    } catch (e) {
-      throw e;
-    }
+    checkWindow();
+
     (this.web3Provider.provider as Provider).on('connect', async () => {
       this.reconnectToProvider();
-      await this.calculateAccountData();
+      await this.resetAccounts();
     });
 
-    (this.web3Provider.provider as Provider).on(
-      'disconnect',
-      async (error: Error & { code: number; data?: unknown }) => {
-        // eslint-disable-next-line no-console
-        console.error(error);
-        this.reconnectToProvider();
-        await this.calculateAccountData();
-      }
-    );
+    (this.web3Provider.provider as Provider).on('disconnect', async () => {
+      this.reconnectToProvider();
+      await this.resetAccounts();
+    });
 
     (this.web3Provider.provider as Provider).on('chainChanged', async () => {
       this.reconnectToProvider();
-      await this.calculateAccountData();
+      await this.resetAccounts();
 
-      this.emit('walletChainChanged', this.web3Provider);
+      this.emit(customEVMEvents.CHAIN_CHANGE, this.web3Provider);
     });
 
     (this.web3Provider.provider as Provider).on(
       'accountsChanged',
       async (accounts: string[]) => {
         this.reconnectToProvider();
-        await this.calculateAccountData(accounts);
+        await this.resetAccounts(accounts);
 
-        this.emit('walletAccountChanged', this.address);
+        this.emit(customEVMEvents.ACCOUNT_CHANGE, this.address);
       }
     );
   }
@@ -116,16 +108,11 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
       throw e;
     }
 
-    try {
-      const accounts = await (this.web3Provider.provider as ExternalProvider)
-        .request!({
-        method: 'eth_requestAccounts'
-      });
-      this.address = accounts[0];
-      this.signer = this.web3Provider.getSigner();
-    } catch (e) {
-      throw e;
-    }
+    const accounts = await this.web3Provider.provider.request!({
+      method: 'eth_requestAccounts'
+    });
+    this.address = accounts[0];
+    this.signer = this.web3Provider.getSigner();
   }
 
   /**

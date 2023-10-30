@@ -50,3 +50,8 @@ export interface IWalletManagerController extends ReactiveController {
   connectToSubstrate(): Promise<void>;
   connectEvmWallet(): Promise<void>;
 }
+
+export const customEVMEvents = {
+  ACCOUNT_CHANGE: 'account-change',
+  CHAIN_CHANGE: 'chain-change'
+} as const;

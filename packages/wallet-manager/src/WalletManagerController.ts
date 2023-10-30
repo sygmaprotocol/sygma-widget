@@ -3,13 +3,8 @@ import { EvmWallet, SubstrateWallet } from '.';
 import { Web3Provider } from '@ethersproject/providers';
 import { ApiPromise } from '@polkadot/api';
 import { AddChain } from './types';
-import { IWalletManagerController } from './interfaces';
+import { customEVMEvents, IWalletManagerController } from './interfaces';
 import { Signer } from '@ethersproject/abstract-signer';
-
-const EVM_EVENTS = {
-  WalletAccountChanged: 'walletAccountChanged',
-  WalletChainChanged: 'walletChainChanged'
-} as const;
 
 export class WalletManagerController implements IWalletManagerController {
   private host: ReactiveControllerHost;
@@ -18,28 +13,45 @@ export class WalletManagerController implements IWalletManagerController {
   account?: string;
   substrateAccount?: string;
 
-  constructor(host: ReactiveControllerHost) {
+  constructor(
+    host: ReactiveControllerHost,
+    initArguments?: {
+      web3Provider?: Web3Provider;
+      apiPromise?: ApiPromise;
+      wssConnectionUrl?: string;
+    }
+  ) {
     (this.host = host).addController(this);
+
+    if (initArguments?.web3Provider) {
+      this.initWeb3Provider(initArguments.web3Provider);
+    } else if (initArguments?.apiPromise) {
+      this.connectFromApiPromise(initArguments.apiPromise);
+    } else if (initArguments?.wssConnectionUrl) {
+      this.connectFromWssProvider(initArguments.wssConnectionUrl);
+    } else {
+      this.initWeb3Provider();
+    }
   }
 
   hostDisconnected(): void {
     if (this.evmWallet) {
-      this.evmWallet?.removeListener('walletAccountChanged', () => {});
-      this.evmWallet?.removeListener('walletChainChanged', () => {});
+      this.evmWallet?.removeListener(customEVMEvents.ACCOUNT_CHANGE, () => {});
+      this.evmWallet?.removeListener(customEVMEvents.CHAIN_CHANGE, () => {});
     }
   }
 
-  public addWalletAccountChangedEventListener(
+  public addAccountChangedEventListener(
     callback: (account: string) => void
   ): void {
-    this.evmWallet?.addListener(EVM_EVENTS.WalletAccountChanged, (account) => {
+    this.evmWallet?.addListener(customEVMEvents.ACCOUNT_CHANGE, (account) => {
       this.account = account;
       callback(account);
     });
   }
 
-  public addWalletChainChangedEventListener(callback: () => void): void {
-    this.evmWallet?.addListener(EVM_EVENTS.WalletChainChanged, () => {
+  public addChainChangedEventListener(callback: () => void): void {
+    this.evmWallet?.addListener(customEVMEvents.CHAIN_CHANGE, () => {
       this.account = this.evmWallet?.address;
       callback();
     });
@@ -51,11 +63,7 @@ export class WalletManagerController implements IWalletManagerController {
    * @description Initializes the EvmWallet from a Web3Provider
    */
   public initWeb3Provider(web3Provider?: Web3Provider): void {
-    if (web3Provider) {
-      this.evmWallet = new EvmWallet(web3Provider);
-    } else {
-      this.evmWallet = new EvmWallet();
-    }
+    this.evmWallet = new EvmWallet(web3Provider);
   }
 
   /**
@@ -112,13 +120,9 @@ export class WalletManagerController implements IWalletManagerController {
    * @description Connects the EvmWallet
    */
   public async connectEvmWallet(): Promise<void> {
-    try {
-      await this.evmWallet?.connect();
-      this.account = this.evmWallet?.address;
-      this.host.requestUpdate();
-    } catch (e) {
-      throw e;
-    }
+    await this.evmWallet?.connect();
+    this.account = this.evmWallet?.address;
+    this.host.requestUpdate();
   }
 
   public getSigner(): Signer {
@@ -143,7 +147,7 @@ export class WalletManagerController implements IWalletManagerController {
 
   get apiPromise(): ApiPromise | undefined {
     if (this.substrateWallet) {
-      return this.substrateWallet?.apiPromise;
+      return this.substrateWallet.apiPromise;
     } else {
       throw new Error('SubstrateWallet not initialized');
     }
