@@ -376,10 +376,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-wallet-manager@workspace:packages/wallet-manager"
   dependencies:
-    "@ethersproject/abstract-signer": ^5.7.0
+    "@ethersproject/abstract-signer": 5.7.0
     "@lit/context": 1.0.0
     "@polkadot/api": 10.7.2
-    "@polkadot/extension-dapp": ^0.46.5
+    "@polkadot/extension-dapp": 0.46.5
     "@polkadot/types": 10.7.2
     jsdom: ^22.1.0
     lit: 3.0.0
@@ -1851,7 +1851,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/extension-dapp@npm:^0.46.5":
+"@polkadot/extension-dapp@npm:0.46.5":
   version: 0.46.5
   resolution: "@polkadot/extension-dapp@npm:0.46.5"
   dependencies:
