@@ -378,15 +378,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-wallet-manager@workspace:packages/wallet-manager"
   dependencies:
-    "@ethersproject/abstract-signer": "npm:^5.7.0"
-    "@lit/context": "npm:1.0.0"
-    "@polkadot/api": "npm:10.7.2"
-    "@polkadot/extension-dapp": "npm:^0.46.5"
-    "@polkadot/types": "npm:10.7.2"
-    jsdom: "npm:^22.1.0"
-    lit: "npm:3.0.0"
-    typescript: "npm:^5.2.2"
-    vitest: "npm:^0.34.5"
+    "@ethersproject/abstract-signer": 5.7.0
+    "@lit/context": 1.0.0
+    "@polkadot/api": 10.7.2
+    "@polkadot/extension-dapp": 0.46.5
+    "@polkadot/types": 10.7.2
+    jsdom: ^22.1.0
+    lit: 3.0.0
+    typescript: ^5.2.2
+    vitest: ^0.34.5
   peerDependencies:
     ethers: "*"
   languageName: unknown
@@ -2006,7 +2006,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/extension-dapp@npm:^0.46.5":
+"@polkadot/api@npm:10.9.1, @polkadot/api@npm:^10.9.1":
+  version: 10.9.1
+  resolution: "@polkadot/api@npm:10.9.1"
+  dependencies:
+    "@polkadot/api-augment": 10.9.1
+    "@polkadot/api-base": 10.9.1
+    "@polkadot/api-derive": 10.9.1
+    "@polkadot/keyring": ^12.3.1
+    "@polkadot/rpc-augment": 10.9.1
+    "@polkadot/rpc-core": 10.9.1
+    "@polkadot/rpc-provider": 10.9.1
+    "@polkadot/types": 10.9.1
+    "@polkadot/types-augment": 10.9.1
+    "@polkadot/types-codec": 10.9.1
+    "@polkadot/types-create": 10.9.1
+    "@polkadot/types-known": 10.9.1
+    "@polkadot/util": ^12.3.1
+    "@polkadot/util-crypto": ^12.3.1
+    eventemitter3: ^5.0.1
+    rxjs: ^7.8.1
+    tslib: ^2.5.3
+  checksum: ec34908d953858e2b6dfeebcca22953c7a188562fc97be9aae3f0cb61eaff0e496c75fff7fdd6c767170cfecadce2cd46d1b5cd44081f7fb32cdd864468bd184
+  languageName: node
+  linkType: hard
+
+"@polkadot/extension-dapp@npm:0.46.5":
   version: 0.46.5
   resolution: "@polkadot/extension-dapp@npm:0.46.5"
   dependencies:
