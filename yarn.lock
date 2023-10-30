@@ -2,8 +2,8 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 6
-  cacheKey: 8c0
+  version: 8
+  cacheKey: 10c0
 
 "@aashutoshrathi/word-wrap@npm:^1.2.3":
   version: 1.2.6
@@ -334,17 +334,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygma-widget@workspace:."
   dependencies:
-    "@babel/core": ^7.22.20
-    "@typescript-eslint/eslint-plugin": ^6.6.0
-    "@typescript-eslint/parser": ^6.6.0
-    eslint: ^8.48.0
-    eslint-config-prettier: ^9.0.0
-    eslint-plugin-import: ^2.28.1
-    eslint-plugin-lit: ^1.9.1
-    eslint-plugin-prettier: ^5.0.0
-    eslint-plugin-wc: ^2.0.2
-    prettier: ^3.0.3
-    typescript: ^5.2.2
+    "@babel/core": "npm:^7.22.20"
+    "@typescript-eslint/eslint-plugin": "npm:^6.6.0"
+    "@typescript-eslint/parser": "npm:^6.6.0"
+    eslint: "npm:^8.48.0"
+    eslint-config-prettier: "npm:^9.0.0"
+    eslint-plugin-import: "npm:^2.28.1"
+    eslint-plugin-lit: "npm:^1.9.1"
+    eslint-plugin-prettier: "npm:^5.0.0"
+    eslint-plugin-wc: "npm:^2.0.2"
+    prettier: "npm:^3.0.3"
+    typescript: "npm:^5.2.2"
   languageName: unknown
   linkType: soft
 
@@ -352,7 +352,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-react-widget@workspace:packages/react"
   dependencies:
-    "@lit-labs/react": 2.0.3
+    "@lit-labs/react": "npm:2.0.3"
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
@@ -363,12 +363,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-sdk-manager@workspace:packages/sdk-manager"
   dependencies:
-    "@buildwithsygma/sygma-sdk-core": ^2.2.0
-    "@ethersproject/contracts": ^5.7.0
-    "@ethersproject/transactions": ^5.7.0
-    "@polkadot/api": 10.7.2
-    "@polkadot/types": 10.7.2
-    typescript: ^5.2.2
+    "@buildwithsygma/sygma-sdk-core": "npm:^2.2.0"
+    "@ethersproject/contracts": "npm:^5.7.0"
+    "@ethersproject/transactions": "npm:^5.7.0"
+    "@polkadot/api": "npm:10.7.2"
+    "@polkadot/types": "npm:10.7.2"
+    typescript: "npm:^5.2.2"
   languageName: unknown
   linkType: soft
 
@@ -376,15 +376,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-wallet-manager@workspace:packages/wallet-manager"
   dependencies:
-    "@ethersproject/abstract-signer": 5.7.0
-    "@lit/context": 1.0.0
-    "@polkadot/api": 10.7.2
-    "@polkadot/extension-dapp": 0.46.5
-    "@polkadot/types": 10.7.2
-    jsdom: ^22.1.0
-    lit: 3.0.0
-    typescript: ^5.2.2
-    vitest: ^0.34.5
+    "@ethersproject/abstract-signer": "npm:5.7.0"
+    "@lit/context": "npm:1.0.0"
+    "@polkadot/api": "npm:10.7.2"
+    "@polkadot/extension-dapp": "npm:0.46.5"
+    "@polkadot/types": "npm:10.7.2"
+    jsdom: "npm:^22.1.0"
+    lit: "npm:3.0.0"
+    typescript: "npm:^5.2.2"
+    vitest: "npm:^0.34.5"
   peerDependencies:
     ethers: "*"
   languageName: unknown
@@ -394,9 +394,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@builtwithsygma/sygmaprotocol-widget@workspace:packages/widget"
   dependencies:
-    "@buildwithsygma/sygma-sdk-core": ^2.2.0
-    ethers: 5.7.2
-    lit: ^2.8.0
+    "@buildwithsygma/sygma-sdk-core": "npm:^2.2.0"
+    ethers: "npm:5.7.2"
+    lit: "npm:^2.8.0"
   languageName: unknown
   linkType: soft
 
@@ -5149,7 +5149,7 @@ __metadata:
   dependencies:
     bn.js: "npm:^4.11.8"
     ethereumjs-util: "npm:^6.0.0"
-  checksum: dd1f7fad25f6c36fa34877176fdb10e21bfab5b88030fc427829f52686bcad3215168f55e5ed93689a1c34d0d802f39dec25b50ce1914da5b59c50d5975ae30e
+  checksum: 25d2e1e5505d7df0683028a1b46b4c07d78f08ef38d20a93a4dbe18616479d3c314b5572bdf258605d70e939ac3fc01c893a3d97a4113a5a195ec39bf6ec4777
   languageName: node
   linkType: hard
 
@@ -5814,9 +5814,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@patch:fsevents@npm%3A~2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@npm%3A~2.3.3#~builtin<compat/fsevents>":
+"fsevents@patch:fsevents@npm%3A~2.3.2#optional!builtin<compat/fsevents>, fsevents@patch:fsevents@npm%3A~2.3.3#optional!builtin<compat/fsevents>":
   version: 2.3.3
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.3#~builtin<compat/fsevents>::version=2.3.3&hash=df0bf1"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.3#optional!builtin<compat/fsevents>::version=2.3.3&hash=df0bf1"
   dependencies:
     node-gyp: "npm:latest"
   conditions: os=darwin
@@ -8674,9 +8674,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@npm%3A^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.4#~builtin<compat/resolve>":
+"resolve@patch:resolve@npm%3A^1.14.2#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.4#optional!builtin<compat/resolve>":
   version: 1.22.8
-  resolution: "resolve@patch:resolve@npm%3A1.22.8#~builtin<compat/resolve>::version=1.22.8&hash=c3c19d"
+  resolution: "resolve@patch:resolve@npm%3A1.22.8#optional!builtin<compat/resolve>::version=1.22.8&hash=c3c19d"
   dependencies:
     is-core-module: "npm:^2.13.0"
     path-parse: "npm:^1.0.7"
@@ -9702,9 +9702,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>":
   version: 5.2.2
-  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=f3b441"
+  resolution: "typescript@patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver

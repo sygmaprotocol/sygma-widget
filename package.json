@@ -31,7 +31,7 @@
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
-  "packageManager": "yarn@3.6.3",
+  "packageManager": "yarn@4.0.1",
   "scripts": {
     "build:wallet-manager": "yarn workspace @builtwithsygma/sygmaprotocol-wallet-manager clean && yarn workspace @builtwithsygma/sygmaprotocol-wallet-manager build",
     "build:sdk-manager": "yarn workspace @builtwithsygma/sygmaprotocol-sdk-manager clean && yarn workspace @builtwithsygma/sygmaprotocol-sdk-manager build",
