@@ -40,7 +40,7 @@ class SubstrateWallet implements ISubstrateWallet {
    * @returns {WsProvider}
    * @description Initializes the WsProvider
    */
-  static async connectToApi(wssProvider: string): Promise<WsProvider> {
+  static connectToApi(wssProvider: string): WsProvider {
     const wsProvider = new WsProvider(wssProvider);
     return wsProvider;
   }

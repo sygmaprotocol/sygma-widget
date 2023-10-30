@@ -43,7 +43,7 @@ export const AccountContext = createContext<string | undefined>(
 export class WalletManagerContextProvider extends LitElement {
   @provide({ context: WalletManagerContext })
   @state()
-  walletManagerController?: WalletManagerController;
+  walletManagerController: WalletManagerController;
 
   @property({ type: Object })
   web3Provider?: ethers.providers.Web3Provider;
@@ -56,22 +56,11 @@ export class WalletManagerContextProvider extends LitElement {
 
   constructor() {
     super();
-    this.walletManagerController = new WalletManagerController(this);
-  }
-
-  connectedCallback(): void {
-    super.connectedCallback();
-    if (this.web3Provider) {
-      this.walletManagerController?.initWeb3Provider(this.web3Provider);
-    } else if (this.apiPromise) {
-      this.walletManagerController?.connectFromApiPromise(this.apiPromise);
-    } else if (this.wssConnectionUrl) {
-      this.walletManagerController?.connectFromWssProvider(
-        this.wssConnectionUrl
-      );
-    } else {
-      this.walletManagerController?.initWeb3Provider();
-    }
+    this.walletManagerController = new WalletManagerController(this, {
+      web3Provider: this.web3Provider,
+      apiPromise: this.apiPromise,
+      wssConnectionUrl: this.wssConnectionUrl
+    });
   }
 
   render() {
