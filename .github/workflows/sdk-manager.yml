@@ -52,7 +52,7 @@ jobs:
         run: yarn install
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: yarn build:sdk-manager
+      - run: yarn build:all
         if: ${{ steps.release.outputs.releases_created }}
 
       # - run: npm publish --workspace=@builtwithsygma/sdk-manager --access public
