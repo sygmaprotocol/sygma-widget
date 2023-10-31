@@ -12,10 +12,7 @@ import {
   WalletManagerContext,
   WalletManagerController
 } from '@builtwithsygma/sygmaprotocol-wallet-manager';
-import {
-  BaseProvider,
-  TransactionRequest
-} from '@ethersproject/providers';
+import { BaseProvider, TransactionRequest } from '@ethersproject/providers';
 import { Signer } from 'ethers';
 import { UnsignedTransaction } from '@ethersproject/transactions';
 import { SdkManagerState, SdkManagerStatus } from './types';
@@ -42,7 +39,7 @@ export class SdkManager implements SdkManagerState {
     env: Environment = Environment.MAINNET
   ) {
     await this.assetTransfer.init(provider, env);
-    this.status = 'initialized';
+    await this.checkSourceNetwork(provider);
   }
 
   async createTransfer(
@@ -123,6 +120,19 @@ export class SdkManager implements SdkManagerState {
       await signer.sendTransaction(this.depositTx as TransactionRequest)
     ).wait();
     this.status = 'deposited';
+  }
+
+  async checkSourceNetwork(provider: BaseProvider) {
+    const providerChainId = (await provider.getNetwork()).chainId;
+    const validEnvDomains = this.assetTransfer.config
+      .getDomains()
+      .map((d) => d.chainId);
+
+    if (!validEnvDomains.includes(providerChainId)) {
+      this.status = 'invalidSourceNetwork';
+    } else {
+      this.status = 'initialized';
+    }
   }
 }
 
