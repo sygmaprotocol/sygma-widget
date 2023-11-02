@@ -29,11 +29,11 @@ yarn-error.log*
 .env
 
 # yarn NON Zero-install
+.yarn/*
 .pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
-!.yarn/releases
 !.yarn/sdks
 !.yarn/versions
 
@@ -46,4 +46,3 @@ public/sygma-runtime-config*
 
 /dist
 /examples
-./.yarn
