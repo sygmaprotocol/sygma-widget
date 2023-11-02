@@ -46,3 +46,4 @@ public/sygma-runtime-config*
 
 /dist
 /examples
+./.yarn
