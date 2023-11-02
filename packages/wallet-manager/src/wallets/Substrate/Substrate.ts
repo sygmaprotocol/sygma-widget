@@ -10,19 +10,19 @@ class SubstrateWallet implements ISubstrateWallet {
     this.apiPromise = apiPromise;
   }
 
-  static async connectFromWssProvider(
+  static async initFromWssProvider(
     wssProvider: string
   ): Promise<SubstrateWallet> {
-    const wsProvider = SubstrateWallet.connectToApi(wssProvider);
+    const wsProvider = SubstrateWallet.initWsProvider(wssProvider);
     const apiPromise = await ApiPromise.create({ provider: wsProvider });
     return new SubstrateWallet(apiPromise);
   }
 
-  static connectFromApiPromise(apiPromise: ApiPromise): SubstrateWallet {
+  static initFromApiPromise(apiPromise: ApiPromise): SubstrateWallet {
     return new SubstrateWallet(apiPromise);
   }
 
-  static connectToApi(wssProvider: string): WsProvider {
+  static initWsProvider(wssProvider: string): WsProvider {
     const wsProvider = new WsProvider(wssProvider);
     return wsProvider;
   }
