@@ -61,12 +61,12 @@ export class WalletManagerController implements IWalletManagerController {
   }
 
   public connectFromApiPromise(apiPromise: ApiPromise): void {
-    this.substrateWallet = SubstrateWallet.connectFromApiPromise(apiPromise);
+    this.substrateWallet = SubstrateWallet.initFromApiPromise(apiPromise);
   }
 
   public async connectFromWssProvider(wssProvider: string): Promise<void> {
     this.substrateWallet =
-      await SubstrateWallet.connectFromWssProvider(wssProvider);
+      await SubstrateWallet.initFromWssProvider(wssProvider);
   }
 
   public async addChain({
