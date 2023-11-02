@@ -36,8 +36,7 @@ export class WalletManagerController implements IWalletManagerController {
 
   hostDisconnected(): void {
     if (this.evmWallet) {
-      this.evmWallet?.removeListener(customEVMEvents.ACCOUNT_CHANGE, () => {});
-      this.evmWallet?.removeListener(customEVMEvents.CHAIN_CHANGE, () => {});
+      this.evmWallet?.removeAllListeners();
     }
   }
 
