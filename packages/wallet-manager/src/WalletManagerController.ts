@@ -57,36 +57,19 @@ export class WalletManagerController implements IWalletManagerController {
     });
   }
 
-  /**
-   *
-   * @name initWeb3Provider
-   * @description Initializes the EvmWallet from a Web3Provider
-   */
   public initWeb3Provider(web3Provider?: Web3Provider): void {
     this.evmWallet = new EvmWallet(web3Provider);
   }
 
-  /**
-   * @name connectFromApiPromise
-   * @description Initializes the SubstrateWallet from an ApiPromise
-   */
   public connectFromApiPromise(apiPromise: ApiPromise): void {
     this.substrateWallet = SubstrateWallet.connectFromApiPromise(apiPromise);
   }
 
-  /**
-   * @name connectFromWssProvider
-   * @description Initializes the SubstrateWallet from a wssProvider
-   */
   public async connectFromWssProvider(wssProvider: string): Promise<void> {
     this.substrateWallet =
       await SubstrateWallet.connectFromWssProvider(wssProvider);
   }
 
-  /**
-   * @name addChain
-   * @description Adds a chain to the EvmWallet
-   */
   public async addChain({
     chainId,
     chainName,
@@ -105,20 +88,12 @@ export class WalletManagerController implements IWalletManagerController {
     }
   }
 
-  /**
-   * @name connect
-   * @description Connects the Substrate extension key manager
-   */
   public async connectToSubstrate(): Promise<void> {
     await this.substrateWallet?.connect();
     this.substrateAccount = this.substrateWallet?.substrateAccount;
     this.host.requestUpdate();
   }
 
-  /**
-   * @name connectEvmWallet
-   * @description Connects the EvmWallet
-   */
   public async connectEvmWallet(): Promise<void> {
     await this.evmWallet?.connect();
     this.account = this.evmWallet?.address;

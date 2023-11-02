@@ -12,7 +12,7 @@ import { checkWindow } from '../../utils';
 class EvmWallet extends events.EventEmitter implements IEvmWallet {
   address?: string;
   signer?: ethers.Signer;
-  web3Provider!: Web3Provider;
+  web3Provider: Web3Provider;
 
   constructor(provider?: Web3Provider) {
     super();
@@ -30,11 +30,6 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     this.appendProviderEvents();
   }
 
-  /**
-   * @name calculateAccountData
-   * @param accounts
-   * @returns {Promise<void>}
-   */
   private async resetAccounts(accounts?: string[]): Promise<void> {
     if (accounts?.length) {
       this.address = accounts[0];
@@ -50,21 +45,12 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     this.signer = this.web3Provider.getSigner();
   }
 
-  /**
-   * @name reconnectToProvider
-   * @returns {void}
-   */
   private reconnectToProvider(): void {
     this.web3Provider = new ethers.providers.Web3Provider(
       window.ethereum as ExternalProvider
     );
   }
 
-  /**
-   * @name appendProviderEvents
-   * @returns {void}
-   * @description Appends the provider events to the windowConnector
-   */
   private appendProviderEvents(): void {
     checkWindow();
 
@@ -95,18 +81,9 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
       }
     );
   }
-  /**
-   * @name connect
-   * @description Connects the wallet to the provider
-   * @throws {Error} if the window object is not defined
-   * @returns {Promise<void>}
-   */
+
   public async connect() {
-    try {
-      checkWindow();
-    } catch (e) {
-      throw e;
-    }
+    checkWindow();
 
     const accounts = await this.web3Provider.provider.request!({
       method: 'eth_requestAccounts'
@@ -115,15 +92,6 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     this.signer = this.web3Provider.getSigner();
   }
 
-  /**
-   * @name addChain
-   * @param chainId
-   * @param chainName
-   * @param rpcUrl
-   * @param nativeCurrency - { name, symbol, decimals }
-   * @returns void
-   * @description Adds a new chain to the wallet
-   */
   public async addChain({
     chainId,
     chainName,
