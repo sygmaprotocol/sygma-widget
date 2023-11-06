@@ -7,6 +7,7 @@ import {
 } from './WalletManagerController';
 import { ethers } from 'ethers';
 import { ApiPromise } from '@polkadot/api';
+import { Networks } from './types';
 
 export const WalletManagerContext = createContext<
   TWalletManagerController | undefined
@@ -54,13 +55,21 @@ export class WalletManagerContextProvider extends LitElement {
   @property({ type: String })
   wssConnectionUrl?: string;
 
-  constructor() {
+  @property({ type: String })
+  networks: Networks;
+
+  constructor(networks: Networks) {
     super();
-    this.walletManagerController = new WalletManagerController(this, {
-      web3Provider: this.web3Provider,
-      apiPromise: this.apiPromise,
-      wssConnectionUrl: this.wssConnectionUrl
-    });
+    this.networks = networks;
+    this.walletManagerController = new WalletManagerController(
+      this,
+      this.networks,
+      {
+        web3Provider: this.web3Provider,
+        apiPromise: this.apiPromise,
+        wssConnectionUrl: this.wssConnectionUrl
+      }
+    );
   }
 
   render() {

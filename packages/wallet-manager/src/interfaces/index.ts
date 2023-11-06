@@ -44,8 +44,8 @@ export interface IWalletManagerController extends ReactiveController {
   substrateAccount?: string;
 
   initWeb3Provider(web3Provider?: Web3Provider): void;
-  connectFromWssProvider(wssProvider: string): Promise<void>;
-  connectFromApiPromise(apiPromise: ApiPromise): void;
+  initFromWssProvider(wssProvider: string): Promise<void>;
+  initFromApiPromise(apiPromise: ApiPromise): void;
   addChain(addChainParameters: AddChain): Promise<void>;
   connectToSubstrate(): Promise<void>;
   connectEvmWallet(): Promise<void>;

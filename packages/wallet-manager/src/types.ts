@@ -21,3 +21,8 @@ export type SyntheticEventCreator = (
   eventName: string,
   dataToPass: Record<string, unknown> | number | string | Array<unknown>
 ) => void;
+
+export enum Networks {
+  EVM = 'EVM',
+  Substrate = 'Substrate'
+}
