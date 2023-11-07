@@ -53,7 +53,8 @@ jobs:
         run: yarn install
         if: ${{ steps.release.outputs.releases_created }}
         
-      - run: yarn build:all
+      - name: Build all packages
+        run: yarn build:all
         if: ${{ steps.release.outputs.releases_created }}
 
       # - run: npm publish --workspace=@builtwithsygma/react-widget --access public

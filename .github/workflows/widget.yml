@@ -52,6 +52,10 @@ jobs:
         run: yarn install
         if: ${{ steps.release.outputs.releases_created }}
 
+      - name: Build all packages
+        run: yarn build:all
+        if: ${{ steps.release.outputs.releases_created }}
+
       # - run: npm publish --workspace=@builtwithsygma/widget --access public
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
