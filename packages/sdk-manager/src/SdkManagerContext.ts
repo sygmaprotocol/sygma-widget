@@ -126,7 +126,7 @@ export class SdkManager implements SdkManagerState {
     );
 
     this.approvalTxs = approvals;
-    if (!approvals || approvals.length === 0) {
+    if (!approvals?.length) {
       this.status = 'approvalsCompleted';
       this.depositTx = await this.assetTransfer.buildTransferTransaction(
         this.transfer,
@@ -204,6 +204,22 @@ export class SdkManagerContextProvider extends LitElement {
       resourceId,
       amount
     );
+  }
+
+  async connectedCallback(): Promise<void> {
+    super.connectedCallback();
+
+    this.walletManager?.addWalletAccountChangedEventListener(() => {
+      this.requestUpdate();
+    });
+
+    this.walletManager?.addWalletChainChangedEventListener(async () => {
+      const provider = this.walletManager?.evmWallet?.web3Provider;
+      if (provider) {
+        this.sdkManager?.checkSourceNetwork(provider);
+      }
+      this.requestUpdate();
+    });
   }
 
   render() {
