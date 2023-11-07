@@ -25,13 +25,13 @@ describe('SubstrateWallet', () => {
     const wsProvider = new WsProvider('wss:someurl');
     const apiPromise = await ApiPromise.create({ provider: wsProvider });
 
-    const substrateWallet = SubstrateWallet.connectFromApiPromise(apiPromise);
+    const substrateWallet = SubstrateWallet.initFromApiPromise(apiPromise);
     expect(substrateWallet).toBeInstanceOf(SubstrateWallet);
   });
 
   it('should be able to create an instance of SubstrateWallet passing a wssProvider', async () => {
     const substrateWallet =
-      await SubstrateWallet.connectFromWssProvider('wss:someurl');
+      await SubstrateWallet.initFromWssProvider('wss:someurl');
     expect(substrateWallet).toBeInstanceOf(SubstrateWallet);
   });
 });

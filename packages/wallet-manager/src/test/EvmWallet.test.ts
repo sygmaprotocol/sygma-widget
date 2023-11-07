@@ -13,13 +13,13 @@ describe('EvmWallet', () => {
     });
     it('should be able to create an instance of EvmWallet passing a web3Provider', () => {
       const w3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      const evmWallet = EvmWallet.initFromWeb3Provider(w3Provider);
+      const evmWallet = new EvmWallet(w3Provider);
 
       expect(evmWallet).toBeInstanceOf(EvmWallet);
     });
 
     it('should be able to create an instance of EvmWallet without passing a web3Provider', () => {
-      const evmWallet = EvmWallet.initFromWindow();
+      const evmWallet = new EvmWallet();
 
       expect(evmWallet).toBeInstanceOf(EvmWallet);
     });
