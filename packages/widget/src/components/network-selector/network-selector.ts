@@ -29,7 +29,7 @@ export default class NetworkSelector extends LitElement {
   @property({
     type: Boolean
   })
-  isHomeChainSelector = false;
+  isHomechainSelector = false;
 
   @property({
     type: Object,
@@ -45,7 +45,7 @@ export default class NetworkSelector extends LitElement {
   @property({
     type: String
   })
-  direction?: 'from' | 'to';
+  directionLabel?: 'from' | 'to';
 
   @property({
     type: Number
@@ -91,7 +91,7 @@ export default class NetworkSelector extends LitElement {
   }
 
   updated(): void {
-    if (this.isHomeChainSelector && this.homechain) {
+    if (this.isHomechainSelector && this.homechain) {
       this.selectedNetworkChainId = this.homechain.chainId;
     }
   }
@@ -100,7 +100,7 @@ export default class NetworkSelector extends LitElement {
     return html`
       <div class="selectorContainer">
         <label for="network-selector" class="directionLabel"
-          >${this.direction && directions[this.direction]}</label
+          >${this.directionLabel && directions[this.directionLabel]}</label
         >
         <section class="selectorSection">
           ${when(
@@ -113,7 +113,7 @@ export default class NetworkSelector extends LitElement {
           )}
           <select
             @change=${this.onChange}
-            ?disabled=${this.isHomeChainSelector}
+            ?disabled=${this.isHomechainSelector}
             id="network-selector"
             class="selector"
           >
