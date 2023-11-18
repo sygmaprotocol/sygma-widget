@@ -5,11 +5,10 @@ import {
   RawConfig,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 import { styles } from './styles';
 import { renderNetworkIcon } from '../../utils';
+import '../base-selector';
 
 const directions = {
   from: 'From',
@@ -48,7 +47,8 @@ export default class NetworkSelector extends LitElement {
   directionLabel?: 'from' | 'to';
 
   @property({
-    type: Number
+    type: Number,
+    hasChanged: (n, o) => n !== o
   })
   selectedNetworkChainId?: number;
 
@@ -57,43 +57,12 @@ export default class NetworkSelector extends LitElement {
   })
   networkIcons = false;
 
-  renderHomechainOptions() {
-    return html`<option
-      value="${ifDefined(this.homechain?.id)}"
-      ?selected="${!!this.homechain?.id}"
-    >
-      ${this.homechain?.name}
-    </option>`;
-  }
-
-  renderNetworkOptions() {
-    return html`${map(this.domains, (domain, idx) => {
-      if (idx === 0) {
-        return html`
-          <option
-            value="${domain.id}"
-            ?selected="${this.homechain?.id === domain.id}"
-          >
-            Network
-          </option>
-          <option value="${domain.id}" P>${domain.name}</option>
-        `;
-      }
-      return html`
-        <option
-          value="${domain.id}"
-          ?selected="${this.homechain?.id === domain.id}"
-        >
-          ${domain.name}
-        </option>
-      `;
-    })}`;
-  }
-
-  updated(): void {
-    if (this.isHomechainSelector && this.homechain) {
-      this.selectedNetworkChainId = this.homechain.chainId;
-    }
+  connectedCallback(): void {
+    super.connectedCallback();
+    addEventListener('base-selector-change', (event: unknown) => {
+      const { detail } = event as CustomEvent;
+      this.selectedNetworkChainId = Number(detail);
+    });
   }
 
   render() {
@@ -111,18 +80,12 @@ export default class NetworkSelector extends LitElement {
               </div>`,
             () => null // do not render network icon slot
           )}
-          <select
-            @change=${this.onChange}
-            ?disabled=${this.isHomechainSelector}
+          <base-selector
+            class="baseSelector"
             id="network-selector"
-            class="selector"
-          >
-            ${when(
-              this.homechain,
-              () => this.renderHomechainOptions(),
-              () => this.renderNetworkOptions()
-            )}
-          </select>
+            .entries=${this.domains}
+            .typeSelector=${'network'}
+          ></base-selector>
         </section>
       </div>
     `;

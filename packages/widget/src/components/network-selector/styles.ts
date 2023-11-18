@@ -32,14 +32,7 @@ export const styles = css`
     align-self: stretch;
     width: inherit;
   }
-  .selector {
-    width: inherit;
-    color: var(--neutral-600, #525252);
-    font-family: Inter;
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 26px;
-    border: none;
+  .baseSelector {
+    width: 100%;
   }
 `;
