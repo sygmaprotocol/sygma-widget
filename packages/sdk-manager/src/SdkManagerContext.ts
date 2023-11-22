@@ -12,38 +12,10 @@ import {
   WalletManagerContext,
   WalletManagerController
 } from '@builtwithsygma/sygmaprotocol-wallet-manager';
-import {
-  BaseProvider,
-  TransactionRequest
-} from '@ethersproject/providers';
+import { BaseProvider, TransactionRequest } from '@ethersproject/providers';
 import { Signer } from 'ethers';
 import { UnsignedTransaction } from '@ethersproject/transactions';
-
-export type SdkManagerStatus =
-  | 'idle'
-  | 'initialized'
-  | 'transferCreated'
-  | 'approvalsCompleted'
-  | 'deposited'
-  | 'completed';
-
-export type SdkManagerState = {
-  assetTransfer: EVMAssetTransfer;
-  status: SdkManagerStatus;
-  transfer?: Transfer<Fungible>;
-  fee?: EvmFee;
-  approvalTxs?: UnsignedTransaction[];
-  depositTx?: UnsignedTransaction;
-
-  initialize: (provider: BaseProvider, env?: Environment) => Promise<void>;
-  createTransfer: (
-    provider: BaseProvider,
-    destinationChainId: number,
-    destinationAddress: string,
-    resourceId: string,
-    amount: string
-  ) => Promise<void>;
-};
+import { SdkManagerState, SdkManagerStatus } from './types';
 
 export const SdkManagerContext = createContext<SdkManagerState | undefined>(
   'sdk-context'
@@ -62,12 +34,25 @@ export class SdkManager implements SdkManagerState {
     this.status = 'idle';
   }
 
+  async checkSourceNetwork(provider: BaseProvider) {
+    const providerChainId = (await provider.getNetwork()).chainId;
+    const validEnvDomains = this.assetTransfer.config
+      .getDomains()
+      .map((domain) => domain.chainId);
+
+    if (!validEnvDomains.includes(providerChainId)) {
+      this.status = 'invalidSourceNetwork';
+    } else {
+      this.status = 'initialized';
+    }
+  }
+
   async initialize(
     provider: BaseProvider,
     env: Environment = Environment.MAINNET
   ) {
     await this.assetTransfer.init(provider, env);
-    this.status = 'initialized';
+    await this.checkSourceNetwork(provider);
   }
 
   async createTransfer(
@@ -180,6 +165,7 @@ export class SdkManagerContextProvider extends LitElement {
   }
 
   async createTransfer(
+    fromAddress: string,
     destinationChainId: number,
     destinationAddress: string,
     resourceId: string,
@@ -198,7 +184,7 @@ export class SdkManagerContextProvider extends LitElement {
     }
 
     await this.sdkManager.createTransfer(
-      this.walletManager.provider,
+      fromAddress,
       destinationChainId,
       destinationAddress,
       resourceId,
@@ -209,11 +195,11 @@ export class SdkManagerContextProvider extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    this.walletManager?.addWalletAccountChangedEventListener(() => {
+    this.walletManager?.addAccountChangedEventListener(() => {
       this.requestUpdate();
     });
 
-    this.walletManager?.addWalletChainChangedEventListener(async () => {
+    this.walletManager?.addChainChangedEventListener(async () => {
       const provider = this.walletManager?.evmWallet?.web3Provider;
       if (provider) {
         this.sdkManager?.checkSourceNetwork(provider);
