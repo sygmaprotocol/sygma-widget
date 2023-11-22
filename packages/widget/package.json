@@ -7,16 +7,28 @@
   "license": "LGPL-3.0-or-later",
   "type": "module",
   "scripts": {
-    "build": "tsc --build --clean && tsc --build ./tsconfig.json",
-    "dev": "tsc --build --clean && tsc --build ./tsconfig.json --watch",
+    "start": "npm run dev",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "serve": "tsc && vite preview",
     "clean": "rm -rf ./build",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "yarn run lint --fix"
   },
   "author": "Sygmaprotocol Product Team",
   "dependencies": {
-    "@buildwithsygma/sygma-sdk-core": "2.3.0",
+    "@builtwithsygma/sygmaprotocol-sdk-manager": "*",
+    "@builtwithsygma/sygmaprotocol-wallet-manager": "*",
+    "@lit/context": "1.0.0",
+    "@lit/reactive-element": "2.0.0",
     "ethers": "5.7.2",
-    "lit": "^2.8.0"
+    "lit": "3.0.0",
+    "lit-html": "3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.8.4",
+    "rollup-plugin-visualizer": "^5.9.2",
+    "typescript": "5.2.2",
+    "vite": "4.4.11"
   }
 }

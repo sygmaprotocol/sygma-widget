@@ -6,5 +6,5 @@ export {
   AccountContext
 } from './WalletManagerContext';
 
-export { type SyntheticEventCreator } from './types';
+export { type SyntheticEventCreator, Networks } from './types';
 export { syntheticEventCreator } from './utils';
