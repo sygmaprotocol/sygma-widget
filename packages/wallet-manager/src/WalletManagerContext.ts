@@ -44,7 +44,7 @@ export const AccountContext = createContext<string | undefined>(
 export class WalletManagerContextProvider extends LitElement {
   @provide({ context: WalletManagerContext })
   @state()
-  walletManagerController: WalletManagerController;
+  walletManagerController?: WalletManagerController;
 
   @property({ type: Object })
   web3Provider?: ethers.providers.Web3Provider;
@@ -61,6 +61,9 @@ export class WalletManagerContextProvider extends LitElement {
   constructor(networks: Networks) {
     super();
     this.networks = networks;
+  }
+
+  connectedCallback(): void {
     this.walletManagerController = new WalletManagerController(
       this,
       this.networks,
