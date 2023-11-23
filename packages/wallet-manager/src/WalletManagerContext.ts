@@ -58,9 +58,9 @@ export class WalletManagerContextProvider extends LitElement {
   @property({ type: String })
   networks: Networks;
 
-  constructor(networks: Networks) {
+  constructor() {
     super();
-    this.networks = networks;
+    this.networks = Networks.EVM;
   }
 
   connectedCallback(): void {
