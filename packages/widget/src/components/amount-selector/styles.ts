@@ -6,7 +6,7 @@ export const styles = css`
     padding: 4px 12px;
     align-items: center;
     border-radius: 24px;
-    width: 290px;
+    width: 314px;
     height: 116px;
     flex-direction: column;
   }
