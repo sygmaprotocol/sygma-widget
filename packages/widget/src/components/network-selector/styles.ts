@@ -25,13 +25,6 @@ export const styles = css`
     flex: 1 0 0;
     align-self: stretch;
   }
-  .selectorSection {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    align-self: stretch;
-    width: inherit;
-  }
   .baseSelector {
     width: 100%;
   }

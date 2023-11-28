@@ -5,9 +5,7 @@ import {
   RawConfig,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
-import { when } from 'lit/directives/when.js';
 import { styles } from './styles';
-import { renderNetworkIcon } from '../../utils';
 import '../base-selector';
 
 const directions = {
@@ -71,22 +69,14 @@ export default class NetworkSelector extends LitElement {
         <label for="network-selector" class="directionLabel"
           >${this.directionLabel && directions[this.directionLabel]}</label
         >
-        <section class="selectorSection">
-          ${when(
-            this.networkIcons,
-            () =>
-              html`<div>
-                ${renderNetworkIcon(this.selectedNetworkChainId)}
-              </div>`,
-            () => null // do not render network icon slot
-          )}
-          <base-selector
-            class="baseSelector"
-            id="network-selector"
-            .entries=${this.domains}
-            .typeSelector=${'network'}
-          ></base-selector>
-        </section>
+        <base-selector
+          class="baseSelector"
+          id="network-selector"
+          .entries=${this.domains}
+          .typeSelector=${'network'}
+          .networkIcons=${this.networkIcons}
+          .selectedNetworkChainId=${this.selectedNetworkChainId}
+        ></base-selector>
       </div>
     `;
   }

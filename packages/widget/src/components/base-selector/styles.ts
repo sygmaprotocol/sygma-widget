@@ -11,4 +11,11 @@ export const styles = css`
     line-height: 26px;
     border: none;
   }
+  .selectorSection {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    align-self: stretch;
+    width: inherit;
+  }
 `;
