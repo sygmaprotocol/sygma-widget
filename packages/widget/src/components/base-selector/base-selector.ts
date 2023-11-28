@@ -52,8 +52,14 @@ export default class BaseSelector extends LitElement {
       <section class="selectorSection">
         ${when(
           this.networkIcons,
-          () =>
-            html`<div>${renderNetworkIcon(this.selectedNetworkChainId)}</div>`,
+          () => {
+            if (this.typeSelector === 'network') {
+              return renderNetworkIcon(this.selectedNetworkChainId);
+            } else if (this.selectedNetworkChainId) {
+              return renderNetworkIcon(this.selectedNetworkChainId);
+            }
+            return null;
+          },
           () => null // do not render network icon slot
         )}
         <select
