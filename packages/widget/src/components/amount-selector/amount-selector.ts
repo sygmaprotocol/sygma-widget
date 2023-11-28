@@ -45,10 +45,12 @@ export default class AmountSelector extends LitElement {
       <div class="amountSelectorContainer">
         <label class="amountSelectorLabel">Amount to transfer</label>
         <section class="amountSelectorSection">
-          <input type="text" class="amountSelectorInput" @input=${
-            this.handleAmountChange
-          }
-          placeholder="0" />
+          <input 
+          type="text" 
+          class="amountSelectorInput" 
+          placeholder="0" 
+          @input=${this.handleAmountChange}
+           />
           <base-selector
             .entries=${this.resources}
             .typeSelector=${'token'}
