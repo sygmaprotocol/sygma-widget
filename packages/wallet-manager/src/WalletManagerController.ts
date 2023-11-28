@@ -2,7 +2,7 @@ import { ReactiveControllerHost } from 'lit';
 import { EvmWallet, SubstrateWallet } from '.';
 import { Web3Provider } from '@ethersproject/providers';
 import { ApiPromise } from '@polkadot/api';
-import { AddChain, Networks } from './types';
+import { AddChain, Network } from './types';
 import { customEVMEvents, IWalletManagerController } from './interfaces';
 import { Signer } from '@ethersproject/abstract-signer';
 
@@ -15,7 +15,7 @@ export class WalletManagerController implements IWalletManagerController {
 
   constructor(
     host: ReactiveControllerHost,
-    networks: Networks,
+    networks: Network,
     initArgument: {
       web3Provider?: Web3Provider;
       apiPromise?: ApiPromise;
@@ -24,12 +24,12 @@ export class WalletManagerController implements IWalletManagerController {
   ) {
     (this.host = host).addController(this);
 
-    if (networks === Networks.EVM) {
+    if (networks === Network.EVM) {
       this.initWeb3Provider(initArgument.web3Provider);
-    } else if (networks === Networks.Substrate) {
+    } else if (networks === Network.Substrate) {
       this.initFromApiPromise(initArgument as ApiPromise);
     } else if (
-      networks === Networks.Substrate &&
+      networks === Network.Substrate &&
       initArgument.wssConnectionUrl
     ) {
       this.initFromWssProvider(initArgument as string);

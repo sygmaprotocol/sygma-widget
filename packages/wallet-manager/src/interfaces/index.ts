@@ -20,16 +20,7 @@ export interface IEvmWallet {
     chainId,
     rpcUrl,
     chainName
-  }: {
-    chainId: number;
-    rpcUrl: string;
-    chainName: string;
-    nativeCurrency: {
-      name: string;
-      symbol: string;
-      decimals: number;
-    };
-  }): Promise<void>;
+  }: Pick<AddChain, 'chainId' | 'rpcUrl' | 'chainName'>): Promise<void>;
 }
 
 export interface ISubstrateWallet {

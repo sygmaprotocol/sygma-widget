@@ -22,7 +22,7 @@ export type SyntheticEventCreator = (
   dataToPass: Record<string, unknown> | number | string | Array<unknown>
 ) => void;
 
-export enum Networks {
+export enum Network {
   EVM = 'EVM',
   Substrate = 'Substrate'
 }
