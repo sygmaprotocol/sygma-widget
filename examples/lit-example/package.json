@@ -1,0 +1,20 @@
+{
+  "name": "lit-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@buildwithsygma/sygma-sdk-core": "^2.3.0",
+    "@builtwithsygma/sygmaprotocol-widget": "workspace:*",
+    "lit": "^3.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  }
+}
