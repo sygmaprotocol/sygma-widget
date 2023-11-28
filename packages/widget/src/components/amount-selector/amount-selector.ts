@@ -13,32 +13,15 @@ export default class AmountSelector extends LitElement {
   resources?: Resource[];
 
   @property({
-    type: Array,
-    hasChanged: (n, o) => n !== o
-  })
-  domains?: RawConfig['domains'];
-
-  @property({
     type: Boolean
   })
   disabled = false;
-
-  @state({
-    hasChanged: (n, o) => n !== o
-  })
-  selectedResourceId?: string;
 
   @property({
     type: Boolean,
     hasChanged: (n, o) => n !== o
   })
   isNativeToken?: boolean;
-
-  @property({
-    type: Object,
-    hasChanged: (n, o) => n !== o
-  })
-  selectedDomain?: RawConfig['domains'][0];
 
   @state({
     hasChanged: (n, o) => n !== o

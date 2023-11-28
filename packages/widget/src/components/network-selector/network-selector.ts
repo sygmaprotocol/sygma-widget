@@ -2,7 +2,6 @@ import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
   EthereumConfig,
-  RawConfig,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
 import { styles } from './styles';
@@ -21,7 +20,7 @@ export default class NetworkSelector extends LitElement {
     type: Array,
     hasChanged: (n, o) => n !== o
   })
-  domains?: RawConfig['domains'];
+  domains?: EthereumConfig[] | SubstrateConfig[];
 
   @property({
     type: Boolean
@@ -33,11 +32,6 @@ export default class NetworkSelector extends LitElement {
     hasChanged: (n, o) => n !== o
   })
   homechain?: EthereumConfig | SubstrateConfig;
-
-  @property({
-    type: Object
-  })
-  onChange?: (event: Event) => void;
 
   @property({
     type: String
