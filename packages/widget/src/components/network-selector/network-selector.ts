@@ -57,7 +57,7 @@ export default class NetworkSelector extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    addEventListener('base-selector-change', (event: unknown) => {
+    addEventListener('network-change', (event: unknown) => {
       const { detail } = event as CustomEvent;
       this.selectedNetworkChainId = Number(detail);
     });

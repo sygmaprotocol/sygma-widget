@@ -38,13 +38,23 @@ export default class BaseSelector extends LitElement {
   // eslint-disable-next-line class-methods-use-this
   onChange(event: Event): void {
     const { value } = event.target as HTMLInputElement;
-    dispatchEvent(
-      new CustomEvent('base-selector-change', {
-        detail: value,
-        bubbles: true,
-        composed: true
-      })
-    );
+    if (this.typeSelector === 'network') {
+      dispatchEvent(
+        new CustomEvent('network-change', {
+          detail: value,
+          bubbles: true,
+          composed: true
+        })
+      );
+    } else {
+      dispatchEvent(
+        new CustomEvent('token-change', {
+          detail: value,
+          bubbles: true,
+          composed: true
+        })
+      );
+    }
   }
 
   render() {

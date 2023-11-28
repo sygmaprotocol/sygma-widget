@@ -57,18 +57,6 @@ export default class AmountSelector extends LitElement {
     );
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    addEventListener('base-selector-change', (event: unknown) => {
-      const { detail } = event as CustomEvent;
-      this.selectedResourceId = detail as string;
-    });
-
-    if (this.selectedDomain) {
-      this.selectedNetworkChainId = this.selectedDomain.chainId;
-    }
-  }
-
   render() {
     return html`
       <div class="amountSelectorContainer">
