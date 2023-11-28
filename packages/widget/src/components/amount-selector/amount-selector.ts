@@ -1,4 +1,4 @@
-import { RawConfig, Resource } from '@buildwithsygma/sygma-sdk-core';
+import { Resource } from '@buildwithsygma/sygma-sdk-core';
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styles } from './styles';
