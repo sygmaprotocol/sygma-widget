@@ -11,7 +11,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import {
   WalletManagerContext,
   WalletManagerController
-} from '@builtwithsygma/sygmaprotocol-wallet-manager';
+} from '@buildwithsygma/sygmaprotocol-wallet-manager';
 import { BaseProvider, TransactionRequest } from '@ethersproject/providers';
 import { Signer } from 'ethers';
 import { UnsignedTransaction } from '@ethersproject/transactions';

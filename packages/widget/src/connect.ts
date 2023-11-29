@@ -4,12 +4,12 @@ import { customElement, property, state } from 'lit/decorators.js';
 import {
   WalletManagerContext,
   WalletManagerController
-} from '@builtwithsygma/sygmaprotocol-wallet-manager';
+} from '@buildwithsygma/sygmaprotocol-wallet-manager';
 
 import {
   SdkManagerContext,
   SdkManager
-} from '@builtwithsygma/sygmaprotocol-sdk-manager';
+} from '@buildwithsygma/sygmaprotocol-sdk-manager';
 
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
 
@@ -46,7 +46,7 @@ class ConnectDialog extends LitElement {
 
   async connect() {
     console.log('connect');
-    
+
     await this.walletManager?.connectEvmWallet();
     this.requestUpdate();
   }

@@ -1,9 +1,9 @@
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import '@builtwithsygma/sygmaprotocol-wallet-manager';
-import '@builtwithsygma/sygmaprotocol-sdk-manager';
+import '@buildwithsygma/sygmaprotocol-wallet-manager';
+import '@buildwithsygma/sygmaprotocol-sdk-manager';
 import './connect';
-import { Networks } from '@builtwithsygma/sygmaprotocol-wallet-manager';
+import { Networks } from '@buildwithsygma/sygmaprotocol-wallet-manager';
 
 @customElement('widget-root')
 class WidgetRoot extends LitElement {
