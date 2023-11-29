@@ -57,7 +57,7 @@ jobs:
         run: yarn build:all
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: npm publish --workspace=@builtwithsygma/sygmaprotocol-react-widget --access public
+      - run: npm publish --workspace=@buildwithsygma/sygmaprotocol-react-widget --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         if: ${{ steps.release.outputs.releases_created }}

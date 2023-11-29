@@ -1,5 +1,5 @@
 {
-  "name": "@builtwithsygma/sygmaprotocol-react-widget",
+  "name": "@buildwithsygma/sygmaprotocol-react-widget",
   "description": "Sygma Protocol Widget",
   "version": "1.0.0",
   "main": "build/index.js",

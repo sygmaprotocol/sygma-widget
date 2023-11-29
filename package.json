@@ -1,5 +1,5 @@
 {
-  "name": "@builtwithsygma/sygma-widget",
+  "name": "@buildwithsygma/sygma-widget",
   "description": "Sygma Widget Monorepo",
   "version": "1.0.0",
   "main": "index.js",
