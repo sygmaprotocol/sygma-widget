@@ -1,0 +1,1 @@
+export { SubstrateWallet } from './Substrate';
