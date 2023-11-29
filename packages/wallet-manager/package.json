@@ -1,5 +1,5 @@
 {
-  "name": "@builtwithsygma/sygmaprotocol-wallet-manager",
+  "name": "@buildwithsygma/sygmaprotocol-wallet-manager",
   "description": "Sygma Protocol Widget",
   "version": "1.0.0",
   "main": "build/index.js",
