@@ -23,7 +23,7 @@ jobs:
           path: packages/wallet-manager
           monorepo-tags: true
           default-branch: main
-          package-name: '@builtwithsygma/wallet-manager'
+          package-name: '@buildwithsygma/wallet-manager'
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false},{"type":"revert","hidden":true}]'
 
       - uses: actions/checkout@v3
@@ -52,10 +52,11 @@ jobs:
         run: yarn install
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: yarn build:wallet-manager
+      - name: Build all packages
+        run: yarn build:all
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: npm publish --workspace=@builtwithsygma/sygmaprotocol-wallet-manager --access public
+      - run: npm publish --workspace=@buildwithsygma/sygmaprotocol-wallet-manager --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         if: ${{ steps.release.outputs.releases_created }}
