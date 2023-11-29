@@ -27,4 +27,4 @@ jobs:
       - run: yarn set version stable
       - run: yarn
       - run: yarn run lint:wallet-manager # lint code
-      - run: yarn run build:wallet-manager # build widget
+      - run: yarn run build:wallet-manager # build wallet

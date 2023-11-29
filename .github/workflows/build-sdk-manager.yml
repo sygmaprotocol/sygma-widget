@@ -28,4 +28,4 @@ jobs:
       - run: yarn
       - run: yarn run lint:sdk-manager # lint code
       - run: yarn run build:wallet-manager # build wallet-manager
-      - run: yarn run build:sdk-manager # build widget
+      - run: yarn run build:sdk-manager # build sdk-manager
