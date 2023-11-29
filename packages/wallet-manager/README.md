@@ -37,3 +37,10 @@ cd ./packages/wallet-manager
 # start watch mode
 yarn dev
 ```
+
+## Build
+
+```bash
+yarn lint
+yarn build
+```
