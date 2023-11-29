@@ -38,7 +38,7 @@ cd ./packages/wallet-manager
 yarn dev
 ```
 
-## Build
+## Build the package
 
 ```bash
 yarn lint
