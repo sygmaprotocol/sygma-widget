@@ -15,7 +15,7 @@ export class WalletManagerController implements IWalletManagerController {
 
   constructor(
     host: ReactiveControllerHost,
-    networks: Network,
+    network: Network,
     initArgument: {
       web3Provider?: Web3Provider;
       apiPromise?: ApiPromise;
@@ -24,14 +24,11 @@ export class WalletManagerController implements IWalletManagerController {
   ) {
     (this.host = host).addController(this);
 
-    if (networks === Network.EVM) {
+    if (network === Network.EVM) {
       this.initWeb3Provider(initArgument.web3Provider);
-    } else if (networks === Network.Substrate) {
+    } else if (network === Network.Substrate) {
       this.initFromApiPromise(initArgument as ApiPromise);
-    } else if (
-      networks === Network.Substrate &&
-      initArgument.wssConnectionUrl
-    ) {
+    } else if (network === Network.Substrate && initArgument.wssConnectionUrl) {
       this.initFromWssProvider(initArgument as string);
     }
   }

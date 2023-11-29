@@ -56,17 +56,17 @@ export class WalletManagerContextProvider extends LitElement {
   wssConnectionUrl?: string;
 
   @property({ type: String })
-  networks: Network;
+  network: Network;
 
   constructor() {
     super();
-    this.networks = Network.EVM;
+    this.network = Network.EVM;
   }
 
   connectedCallback(): void {
     this.walletManagerController = new WalletManagerController(
       this,
-      this.networks,
+      this.network,
       {
         web3Provider: this.web3Provider,
         apiPromise: this.apiPromise,
