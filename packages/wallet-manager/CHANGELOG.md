@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/sygmaprotocol/sygma-widget/compare/wallet-manager-v1.0.0...wallet-manager-v1.0.1) (2023-11-29)
+
+
+### Bug Fixes
+
+* fix sygma namespace ([f9ab963](https://github.com/sygmaprotocol/sygma-widget/commit/f9ab9637ea2b797086cee6c0a12b046e3cb2e14c))
+
 ## 1.0.0 (2023-11-29)
 
 
