@@ -23,7 +23,7 @@ jobs:
           path: packages/sdk-manager
           monorepo-tags: true
           default-branch: main
-          package-name: '@builttwithsygma/sdk-manager'
+          package-name: '@buildwithsygma/sdk-manager'
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false},{"type":"revert","hidden":true}]'
 
       - uses: actions/checkout@v3

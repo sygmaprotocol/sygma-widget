@@ -24,7 +24,7 @@ jobs:
           path: packages/react
           monorepo-tags: true
           default-branch: main
-          package-name: '@wainola/react-widget'
+          package-name: '@buildwithsygma/react-widget'
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false},{"type":"revert","hidden":true}]'
 
       - uses: actions/checkout@v3
