@@ -45,8 +45,6 @@ class ConnectDialog extends LitElement {
   }
 
   async connect() {
-    console.log('connect');
-
     await this.walletManager?.connectEvmWallet();
     this.requestUpdate();
   }
@@ -57,7 +55,7 @@ class ConnectDialog extends LitElement {
     }
     await this.sdkManager?.initialize(
       this.walletManager.evmWallet?.web3Provider,
-      Environment.LOCAL
+      Environment.TESTNET
     );
     this.requestUpdate();
   }
@@ -68,7 +66,7 @@ class ConnectDialog extends LitElement {
     }
     await this.sdkManager?.createTransfer(
       this.walletManager.evmWallet.address,
-      this.chainId === 1337 ? 1338 : 1337,
+      this.chainId === 11155111 ? 5 : 11155111,
       this.walletManager.evmWallet.address,
       '0x0000000000000000000000000000000000000000000000000000000000000300',
       '5000000000000000000' // 18 decimal places

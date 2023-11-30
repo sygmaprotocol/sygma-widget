@@ -1,7 +1,8 @@
 export {
-  SdkManager,
   SdkManagerContext,
   SdkManagerContextProvider
-} from './SdkManagerContext';
+} from './SdkManagerContextProvider';
+
+export { SdkManager } from './SdkManager';
 
 export type { SdkManagerState, SdkManagerStatus } from './types/index';

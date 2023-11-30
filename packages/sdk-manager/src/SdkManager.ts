@@ -5,21 +5,10 @@ import {
   Fungible,
   Transfer
 } from '@buildwithsygma/sygma-sdk-core';
-import { consume, createContext, provide } from '@lit/context';
-import { LitElement, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import {
-  WalletManagerContext,
-  WalletManagerController
-} from '@buildwithsygma/sygmaprotocol-wallet-manager';
 import { BaseProvider, TransactionRequest } from '@ethersproject/providers';
 import { Signer } from 'ethers';
 import { UnsignedTransaction } from '@ethersproject/transactions';
 import { SdkManagerState, SdkManagerStatus } from './types';
-
-export const SdkManagerContext = createContext<SdkManagerState | undefined>(
-  'sdk-context'
-);
 
 export class SdkManager implements SdkManagerState {
   assetTransfer: EVMAssetTransfer;
@@ -133,82 +122,5 @@ export class SdkManager implements SdkManagerState {
       await signer.sendTransaction(this.depositTx as TransactionRequest)
     ).wait();
     this.status = 'deposited';
-  }
-}
-
-/**
- * @name SdkManagerContextProvider
- * @description This component is responsible for providing the SdkManagerController as a context to all its children.
- */
-
-@customElement('sdk-manager-context-provider')
-export class SdkManagerContextProvider extends LitElement {
-  @consume({ context: WalletManagerContext, subscribe: true })
-  @property({ attribute: false })
-  walletManager?: WalletManagerController;
-
-  @provide({ context: SdkManagerContext })
-  @state()
-  sdkManager?: SdkManager;
-
-  constructor() {
-    super();
-    this.sdkManager = new SdkManager();
-  }
-
-  async initialize(env?: Environment) {
-    if (!this.walletManager?.provider) {
-      throw new Error('No wallet connected');
-    }
-
-    await this.sdkManager?.initialize(this.walletManager.provider, env);
-  }
-
-  async createTransfer(
-    fromAddress: string,
-    destinationChainId: number,
-    destinationAddress: string,
-    resourceId: string,
-    amount: string
-  ) {
-    if (!this.walletManager?.provider) {
-      throw new Error('No wallet connected');
-    }
-
-    if (!this.sdkManager) {
-      throw new Error('SdkManager not initialized');
-    }
-
-    if (!(this.sdkManager.status === 'initialized')) {
-      throw new Error('SdkManager not initialized');
-    }
-
-    await this.sdkManager.createTransfer(
-      fromAddress,
-      destinationChainId,
-      destinationAddress,
-      resourceId,
-      amount
-    );
-  }
-
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-
-    this.walletManager?.addAccountChangedEventListener(() => {
-      this.requestUpdate();
-    });
-
-    this.walletManager?.addChainChangedEventListener(async () => {
-      const provider = this.walletManager?.evmWallet?.web3Provider;
-      if (provider) {
-        this.sdkManager?.checkSourceNetwork(provider);
-      }
-      this.requestUpdate();
-    });
-  }
-
-  render() {
-    return html`<slot></slot>`;
   }
 }
