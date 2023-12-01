@@ -3,7 +3,7 @@ import { ExternalProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { WalletManagerController } from '..';
-import { Networks } from '../types';
+import { Network } from '../types';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 class WidgetTestFixture extends LitElement {
@@ -26,7 +26,7 @@ describe('WalletManagerController', () => {
 
     walletController = new WalletManagerController(
       walletTextFixture,
-      Networks.EVM,
+      Network.EVM,
       {
         web3Provider: new ethers.providers.Web3Provider(window.ethereum)
       }
@@ -44,7 +44,7 @@ describe('WalletManagerController', () => {
 
     walletController = new WalletManagerController(
       walletTextFixture,
-      Networks.EVM,
+      Network.EVM,
       {
         web3Provider: provider
       }
@@ -54,7 +54,7 @@ describe('WalletManagerController', () => {
   it('should initialize substrate wallet from wss provider', () => {
     walletController = new WalletManagerController(
       walletTextFixture,
-      Networks.Substrate,
+      Network.Substrate,
       {
         wssConnectionUrl: 'wss:someurl'
       }
@@ -66,7 +66,7 @@ describe('WalletManagerController', () => {
     const apiPromise = await ApiPromise.create({ provider: wsProvider });
     walletController = new WalletManagerController(
       walletTextFixture,
-      Networks.Substrate,
+      Network.Substrate,
       {
         apiPromise
       }

@@ -42,5 +42,8 @@ yarn dev
 
 ```bash
 yarn lint
+# if needed lint fix
+yarn lint:fix
+
 yarn build
 ```
