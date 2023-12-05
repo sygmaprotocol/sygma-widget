@@ -111,14 +111,14 @@ class ConnectDialog extends LitElement {
           ? html`<button @click=${this.createTransfer}>create transfer</button>`
           : undefined}
         ${this.sdkManager &&
-          this.sdkManager.status === 'transferCreated' &&
-          this.sdkManager.approvalTxs &&
-          this.sdkManager.approvalTxs.length > 0
+        this.sdkManager.status === 'transferCreated' &&
+        this.sdkManager.approvalTxs &&
+        this.sdkManager.approvalTxs.length > 0
           ? html`<button @click=${this.approveTokens}>approve</button>`
           : undefined}
         ${this.sdkManager &&
-          this.sdkManager.status === 'approvalsCompleted' &&
-          this.sdkManager.depositTx
+        this.sdkManager.status === 'approvalsCompleted' &&
+        this.sdkManager.depositTx
           ? html`<button @click=${this.performDeposit}>Transfer</button>`
           : undefined}
       </div>`;
