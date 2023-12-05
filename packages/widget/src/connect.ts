@@ -1,6 +1,6 @@
 import { consume } from '@lit/context';
 import { LitElement, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import {
   WalletManagerContext,
   WalletManagerController
@@ -16,11 +16,11 @@ import { Environment } from '@buildwithsygma/sygma-sdk-core';
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
   @consume({ context: WalletManagerContext, subscribe: true })
-  @property({ attribute: false })
+  @state()
   walletManager?: WalletManagerController;
 
   @consume({ context: SdkManagerContext, subscribe: true })
-  @property({ attribute: false })
+  @state()
   sdkManager?: SdkManager;
 
   @state()
@@ -111,14 +111,14 @@ class ConnectDialog extends LitElement {
           ? html`<button @click=${this.createTransfer}>create transfer</button>`
           : undefined}
         ${this.sdkManager &&
-        this.sdkManager.status === 'transferCreated' &&
-        this.sdkManager.approvalTxs &&
-        this.sdkManager.approvalTxs.length > 0
+          this.sdkManager.status === 'transferCreated' &&
+          this.sdkManager.approvalTxs &&
+          this.sdkManager.approvalTxs.length > 0
           ? html`<button @click=${this.approveTokens}>approve</button>`
           : undefined}
         ${this.sdkManager &&
-        this.sdkManager.status === 'approvalsCompleted' &&
-        this.sdkManager.depositTx
+          this.sdkManager.status === 'approvalsCompleted' &&
+          this.sdkManager.depositTx
           ? html`<button @click=${this.performDeposit}>Transfer</button>`
           : undefined}
       </div>`;
