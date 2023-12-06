@@ -8,3 +8,4 @@ export {
 
 export { type SyntheticEventCreator } from './types';
 export { syntheticEventCreator } from './utils';
+export { Network } from './types';
