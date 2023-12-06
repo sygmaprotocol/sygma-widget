@@ -31,6 +31,6 @@
   },
   "peerDependencies": {
     "ethers": "*",
-    "events": "^3.3.0"
+    "events": "*"
   }
 }
