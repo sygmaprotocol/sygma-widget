@@ -42,15 +42,15 @@ export class SdkManagerContextProvider extends LitElement {
     this.sdkManager = new SdkManager();
   }
 
-  async initialize(env?: Environment) {
+  async initializeSdk(env?: Environment) {
     if (!this.walletManager?.provider) {
       throw new Error('No wallet connected');
     }
 
-    await this.sdkManager?.initialize(this.walletManager.provider, env);
+    await this.sdkManager?.initializeSdk(this.walletManager.provider, env);
   }
 
-  async createTransfer(
+  async initializeTransfer(
     fromAddress: string,
     destinationChainId: number,
     destinationAddress: string,
@@ -69,7 +69,7 @@ export class SdkManagerContextProvider extends LitElement {
       throw new Error('SdkManager not initialized');
     }
 
-    await this.sdkManager.createTransfer(
+    await this.sdkManager.initializeTransfer(
       fromAddress,
       destinationChainId,
       destinationAddress,

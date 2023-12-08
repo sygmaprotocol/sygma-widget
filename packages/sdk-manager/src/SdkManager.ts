@@ -36,7 +36,7 @@ export class SdkManager implements SdkManagerState {
     }
   }
 
-  async initialize(
+  async initializeSdk(
     provider: BaseProvider,
     env: Environment = Environment.MAINNET
   ) {
@@ -44,7 +44,7 @@ export class SdkManager implements SdkManagerState {
     await this.checkSourceNetwork(provider);
   }
 
-  async createTransfer(
+  async initializeTransfer(
     fromAddress: string,
     destinationChainId: number,
     destinationAddress: string,

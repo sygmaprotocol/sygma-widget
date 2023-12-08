@@ -53,7 +53,7 @@ class ConnectDialog extends LitElement {
     if (!this.walletManager?.evmWallet?.web3Provider) {
       throw new Error('No provider');
     }
-    await this.sdkManager?.initialize(
+    await this.sdkManager?.initializeSdk(
       this.walletManager.evmWallet?.web3Provider,
       Environment.TESTNET
     );
@@ -64,7 +64,7 @@ class ConnectDialog extends LitElement {
     if (!this.walletManager?.evmWallet?.address) {
       throw new Error('No wallet connected');
     }
-    await this.sdkManager?.createTransfer(
+    await this.sdkManager?.initializeTransfer(
       this.walletManager.evmWallet.address,
       this.chainId === 11155111 ? 5 : 11155111,
       this.walletManager.evmWallet.address,

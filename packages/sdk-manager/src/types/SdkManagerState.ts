@@ -18,8 +18,8 @@ export type SdkManagerState = {
   approvalTxs?: UnsignedTransaction[];
   depositTx?: UnsignedTransaction;
 
-  initialize: (provider: BaseProvider, env?: Environment) => Promise<void>;
-  createTransfer: (
+  initializeSdk: (provider: BaseProvider, env?: Environment) => Promise<void>;
+  initializeTransfer: (
     fromAddress: string,
     destinationChainId: number,
     destinationAddress: string,
