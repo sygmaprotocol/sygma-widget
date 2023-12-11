@@ -16,7 +16,7 @@
   },
   "author": "Sygmaprotocol Product Team",
   "dependencies": {
-    "@buildwithsygma/sygma-sdk-core": "^2.3.0",
+    "@buildwithsygma/sygma-sdk-core": "2.4.0",
     "@ethersproject/contracts": "^5.7.0",
     "@ethersproject/transactions": "^5.7.0",
     "@lit/context": "1.0.0",

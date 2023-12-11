@@ -306,9 +306,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildwithsygma/sygma-sdk-core@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.3.0"
+"@buildwithsygma/sygma-sdk-core@npm:2.4.0":
+  version: 2.4.0
+  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.4.0"
   dependencies:
     "@buildwithsygma/sygma-contracts": "npm:2.4.1"
     "@ethersproject/abi": "npm:^5.7.0"
@@ -326,7 +326,7 @@ __metadata:
     axios: "npm:^1.4.0"
     cross-fetch: "npm:^3.1.5"
     ethers: "npm:5.6.2"
-  checksum: c83d49ca66335bb4a8c3088b2ff8715203bea3dae372ba61eb47c856306092688616c435e5cb098a4281de66a69da05f0d113430879b65a07adfb58629aeb15c
+  checksum: b9d71dde944fab46e293367ee185d9f00c0a9df9593c86cf2274276755f355239fdfd24b890dd670a7ba1fae7988a7c24340dcb5f818e9fde09f859028d7c5b0
   languageName: node
   linkType: hard
 
@@ -363,7 +363,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-sdk-manager@workspace:packages/sdk-manager"
   dependencies:
-    "@buildwithsygma/sygma-sdk-core": "npm:^2.3.0"
+    "@buildwithsygma/sygma-sdk-core": "npm:2.4.0"
     "@ethersproject/contracts": "npm:^5.7.0"
     "@ethersproject/transactions": "npm:^5.7.0"
     "@lit/context": "npm:1.0.0"
@@ -1858,9 +1858,9 @@ __metadata:
   linkType: hard
 
 "@openzeppelin/contracts@npm:^4.5.0":
-  version: 4.9.3
-  resolution: "@openzeppelin/contracts@npm:4.9.3"
-  checksum: 3d22eca3a13314f1950bde5738b12a56ebb0a2538a07769ea68a1130bbb21e28a46961130d1acce6e9bd3c40ff81cddd88b6644e10e12c2efec31b37ed6afc81
+  version: 4.9.5
+  resolution: "@openzeppelin/contracts@npm:4.9.5"
+  checksum: bf5b38320c09f33ecbd7bbf5f6dc8a3a94d3771ee4a1c0dcfc517c05bd03f61b3b3cb263c608e323780994b7686a21fdce2674ca5d127674c3292e5578335032
   languageName: node
   linkType: hard
 
