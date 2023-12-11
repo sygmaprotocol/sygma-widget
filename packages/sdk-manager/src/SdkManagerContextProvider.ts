@@ -16,10 +16,10 @@ export const SdkManagerContext = createContext<SdkManagerState | undefined>(
 /**
  * @name SdkManagerContextProvider
  * @description This component is responsible for providing the SdkManagerController as a context to all its children.
- * 
+ *
  * @example
  * For you to consume the context objects, you need to wrap up your component with the sdk-manager-context on your render method.
- * 
+ *
  * <wallet-manager-context>
  *   <sdk-manager-context-provider>
  *     <your-component></your-component>
