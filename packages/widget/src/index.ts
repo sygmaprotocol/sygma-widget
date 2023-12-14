@@ -1,1 +1,1 @@
-export { default } from './widget';
+export { default } from './components/';
