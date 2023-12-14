@@ -6,6 +6,7 @@
   "module": "build/index.js",
   "license": "LGPL-3.0-or-later",
   "type": "module",
+  "types": "./build/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc --build ./tsconfig.json",
     "dev": "tsc --build --clean && tsc --build ./tsconfig.json --watch",
@@ -29,6 +30,7 @@
     "lit": "3.0.0"
   },
   "peerDependencies": {
-    "ethers": "*"
+    "ethers": "*",
+    "events": "*"
   }
 }

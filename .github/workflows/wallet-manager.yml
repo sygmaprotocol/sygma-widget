@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-        # you should probably do this after your regular CI checks passes
+      # you should probably do this after your regular CI checks passes
       - uses: google-github-actions/release-please-action@v3 # it will analyze commits and create PR with new version and updated CHANGELOG:md file. On merging it will create github release page with changelog
         id: release
         with:
@@ -43,7 +43,7 @@ jobs:
       - name: Enable corepack
         run: corepack enable
         if: ${{ steps.release.outputs.releases_created }}
-      
+
       - name: Install yarn
         run: yarn set version stable
         if: ${{ steps.release.outputs.releases_created }}
@@ -60,4 +60,3 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         if: ${{ steps.release.outputs.releases_created }}
-
