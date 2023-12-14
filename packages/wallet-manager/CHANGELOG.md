@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-wallet-manager-v0.0.1...sygmaprotocol-wallet-manager-v0.1.0) (2023-12-14)
+
+
+### Features
+
+* SDK Manager package ([#25](https://github.com/sygmaprotocol/sygma-widget/issues/25)) ([f9a8793](https://github.com/sygmaprotocol/sygma-widget/commit/f9a87932f5ffe7961c551e644ff20e2293fa4816))
+
 ## 0.0.1 (2023-12-01)
 
 
