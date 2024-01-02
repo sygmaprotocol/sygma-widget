@@ -17,6 +17,8 @@ export type SdkManagerState = {
   fee?: EvmFee;
   approvalTxs?: UnsignedTransaction[];
   depositTx?: UnsignedTransaction;
+  destinationChainId?: number;
+  destinationAddress?: string;
 
   initializeSdk: (provider: BaseProvider, env?: Environment) => Promise<void>;
   initializeTransfer: (
@@ -30,4 +32,6 @@ export type SdkManagerState = {
   performApprovals(signer: Signer): Promise<void>;
   performDeposit(signer: Signer): Promise<void>;
   checkSourceNetwork(provider: BaseProvider): Promise<void>;
+  setDestinationAddress(destinationAddress: string): void;
+  setDestinationChainId(destinationChainId: number): void;
 };

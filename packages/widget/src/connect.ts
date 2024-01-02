@@ -13,6 +13,8 @@ import {
 
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
 
+import './components/DestinationAddressInput/DestinationAddressInput';
+
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
   @consume({ context: WalletManagerContext, subscribe: true })
@@ -108,17 +110,20 @@ class ConnectDialog extends LitElement {
           ? html`<button @click=${this.initSdk}>initialize sdk</button>`
           : undefined}
         ${this.sdkManager && this.sdkManager.status === 'initialized'
-          ? html`<button @click=${this.createTransfer}>create transfer</button>`
+          ? html`<div>
+              <destination-address-input></destination-address-input>
+              <button @click=${this.createTransfer}>create the transfer</button>
+            </div>`
           : undefined}
         ${this.sdkManager &&
-        this.sdkManager.status === 'transferCreated' &&
-        this.sdkManager.approvalTxs &&
-        this.sdkManager.approvalTxs.length > 0
+          this.sdkManager.status === 'transferCreated' &&
+          this.sdkManager.approvalTxs &&
+          this.sdkManager.approvalTxs.length > 0
           ? html`<button @click=${this.approveTokens}>approve</button>`
           : undefined}
         ${this.sdkManager &&
-        this.sdkManager.status === 'approvalsCompleted' &&
-        this.sdkManager.depositTx
+          this.sdkManager.status === 'approvalsCompleted' &&
+          this.sdkManager.depositTx
           ? html`<button @click=${this.performDeposit}>Transfer</button>`
           : undefined}
       </div>`;

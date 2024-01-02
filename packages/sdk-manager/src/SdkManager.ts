@@ -17,10 +17,20 @@ export class SdkManager implements SdkManagerState {
   fee?: EvmFee;
   approvalTxs?: UnsignedTransaction[];
   depositTx?: UnsignedTransaction;
+  destinationChainId?: number | undefined;
+  destinationAddress?: string | undefined;
 
   constructor() {
     this.assetTransfer = new EVMAssetTransfer();
     this.status = 'idle';
+  }
+
+  setDestinationAddress(destinationAddress: string): void {
+    this.destinationAddress = destinationAddress;
+  }
+
+  setDestinationChainId(destinationChainId: number): void {
+    this.destinationChainId = destinationChainId;
   }
 
   async checkSourceNetwork(provider: BaseProvider) {
@@ -110,10 +120,6 @@ export class SdkManager implements SdkManagerState {
   }
 
   async performDeposit(signer: Signer) {
-    if (!this.transfer) {
-      throw new Error('No transfer');
-    }
-
     if (!this.depositTx) {
       throw new Error('No deposit');
     }
