@@ -14,6 +14,7 @@ import {
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
 
 import './components/DestinationAddressInput/DestinationAddressInput';
+import { threadId } from 'worker_threads';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
@@ -59,6 +60,11 @@ class ConnectDialog extends LitElement {
       this.walletManager.evmWallet?.web3Provider,
       Environment.TESTNET
     );
+
+    // This will be removed once we have a way to set the destination chain
+    const destinationChainId = this.chainId === 11155111 ? 5 : 11155111;
+
+    this.sdkManager?.setDestinationChainId(destinationChainId);
     this.requestUpdate();
   }
 
@@ -66,9 +72,14 @@ class ConnectDialog extends LitElement {
     if (!this.walletManager?.evmWallet?.address) {
       throw new Error('No wallet connected');
     }
+
+    if (!this.sdkManager?.destinationChainId) {
+      throw new Error('No destination chain');
+    }
+
     await this.sdkManager?.initializeTransfer(
       this.walletManager.evmWallet.address,
-      this.chainId === 11155111 ? 5 : 11155111,
+      this.sdkManager.destinationChainId,
       this.walletManager.evmWallet.address,
       '0x0000000000000000000000000000000000000000000000000000000000000300',
       '5000000000000000000' // 18 decimal places

@@ -10,7 +10,7 @@ import { Signer } from 'ethers';
 import { UnsignedTransaction } from '@ethersproject/transactions';
 import { SdkManagerState, SdkManagerStatus } from './types';
 
-export class SdkManager implements SdkManagerState {
+class SdkManager implements SdkManagerState {
   assetTransfer: EVMAssetTransfer;
   status: SdkManagerStatus;
   transfer?: Transfer<Fungible>;
@@ -130,3 +130,5 @@ export class SdkManager implements SdkManagerState {
     this.status = 'deposited';
   }
 }
+
+export { SdkManager };

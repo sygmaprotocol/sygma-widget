@@ -9,7 +9,7 @@ import {
 import { SdkManagerState } from './types';
 import { SdkManager } from './SdkManager';
 
-export const SdkManagerContext = createContext<SdkManagerState | undefined>(
+const SdkManagerContext = createContext<SdkManagerState | undefined>(
   'sdk-context'
 );
 
@@ -28,7 +28,7 @@ export const SdkManagerContext = createContext<SdkManagerState | undefined>(
  */
 
 @customElement('sdk-manager-context-provider')
-export class SdkManagerContextProvider extends LitElement {
+class SdkManagerContextProvider extends LitElement {
   @consume({ context: WalletManagerContext, subscribe: true })
   @state()
   walletManager?: WalletManagerController;
@@ -98,3 +98,5 @@ export class SdkManagerContextProvider extends LitElement {
     return html`<slot></slot>`;
   }
 }
+
+export { SdkManagerContextProvider, SdkManagerContext };

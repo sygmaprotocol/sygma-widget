@@ -14,7 +14,8 @@ class DestinationAddressInput extends LitElement {
   sdkManager?: SdkManager;
 
   render() {
-    const destinationNetwork = this.sdkManager.assetTransfer.config
+    console.log(this.sdkManager);
+    const destinationNetwork = this.sdkManager?.assetTransfer.config
       .getDomains()
       .find(
         (domain: Domain) =>
