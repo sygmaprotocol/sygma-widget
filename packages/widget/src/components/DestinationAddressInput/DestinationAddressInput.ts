@@ -3,9 +3,9 @@ import { LitElement, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import {
   SdkManagerContext,
-  SdkManager,
-  Domain,
+  SdkManager
 } from '@buildwithsygma/sygmaprotocol-sdk-manager';
+import { Domain } from '@buildwithsygma/sygma-sdk-core';
 
 @customElement('destination-address-input')
 class DestinationAddressInput extends LitElement {
