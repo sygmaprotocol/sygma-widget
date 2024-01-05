@@ -23,8 +23,7 @@
     "@lit/reactive-element": "2.0.0",
     "ethers": "5.7.2",
     "events": "^3.3.0",
-    "lit": "3.0.0",
-    "lit-html": "3.0.0"
+    "lit": "3.0.0"
   },
   "devDependencies": {
     "@types/node": "20.8.4",

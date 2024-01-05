@@ -306,9 +306,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildwithsygma/sygma-sdk-core@npm:2.4.0":
-  version: 2.4.0
-  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.4.0"
+"@buildwithsygma/sygma-sdk-core@npm:2.5.0":
+  version: 2.5.0
+  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.5.0"
   dependencies:
     "@buildwithsygma/sygma-contracts": "npm:2.4.1"
     "@ethersproject/abi": "npm:^5.7.0"
@@ -326,7 +326,7 @@ __metadata:
     axios: "npm:^1.4.0"
     cross-fetch: "npm:^3.1.5"
     ethers: "npm:5.6.2"
-  checksum: b9d71dde944fab46e293367ee185d9f00c0a9df9593c86cf2274276755f355239fdfd24b890dd670a7ba1fae7988a7c24340dcb5f818e9fde09f859028d7c5b0
+  checksum: bd606479c39703d2943e9be89c97d1fe1ed0a1e2a6b9418dd48bdd842798dbd6d50bf57dcd0da362eab6e223601b4e843174f3cfe54ad977d4d631a37bb97a37
   languageName: node
   linkType: hard
 
@@ -363,7 +363,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-sdk-manager@workspace:packages/sdk-manager"
   dependencies:
-    "@buildwithsygma/sygma-sdk-core": "npm:2.4.0"
+    "@buildwithsygma/sygma-sdk-core": "npm:2.5.0"
     "@ethersproject/contracts": "npm:^5.7.0"
     "@ethersproject/transactions": "npm:^5.7.0"
     "@lit/context": "npm:1.0.0"
@@ -411,7 +411,6 @@ __metadata:
     ethers: "npm:5.7.2"
     events: "npm:^3.3.0"
     lit: "npm:3.0.0"
-    lit-html: "npm:3.0.0"
     rollup-plugin-visualizer: "npm:^5.9.2"
     typescript: "npm:5.2.2"
     vite: "npm:4.4.11"
@@ -7449,7 +7448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lit-html@npm:3.0.0, lit-html@npm:^3.0.0":
+"lit-html@npm:^3.0.0":
   version: 3.0.0
   resolution: "lit-html@npm:3.0.0"
   dependencies:
