@@ -1,1 +1,1 @@
-export { default } from './components';
+export { WidgetRoot } from './widget-root';
