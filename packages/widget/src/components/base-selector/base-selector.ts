@@ -4,7 +4,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 import { styles } from './styles';
-import { renderNetworkIcon } from '../../utils';
+import { capitalize, renderNetworkIcon } from '../../utils';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('base-selector')
 export default class BaseSelector extends LitElement {
@@ -35,6 +36,16 @@ export default class BaseSelector extends LitElement {
   })
   selectedNetworkChainId?: number;
 
+  @property({
+    type: Boolean
+  })
+  isHomechain = false;
+
+  @property({
+    type: Object
+  })
+  homechain?: Domain;
+
   // eslint-disable-next-line class-methods-use-this
   onChange(event: Event): void {
     const { value } = event.target as HTMLInputElement;
@@ -57,6 +68,34 @@ export default class BaseSelector extends LitElement {
     }
   }
 
+  renderEntries() {
+    return map(this.entries, (entry: Domain | Resource, index: number) => {
+      if (index === 0) {
+        return html`<option selected value="">
+            ${this.typeSelector === 'network' ? 'Network' : 'Select Token'}
+          </option>
+          <option
+            value=${this.typeSelector === 'network'
+              ? (entry as Domain).chainId
+              : (entry as Resource).resourceId}
+          >
+            ${this.typeSelector === 'network'
+              ? capitalize((entry as Domain).name)
+              : (entry as Resource).symbol}
+          </option>`;
+      }
+      return html`<option
+        value=${this.typeSelector === 'network'
+          ? (entry as Domain).chainId
+          : (entry as Resource).resourceId}
+      >
+        ${this.typeSelector === 'network'
+          ? capitalize((entry as Domain).name)
+          : (entry as Resource).symbol}
+      </option>`;
+    });
+  }
+
   render() {
     return html`
       <section class="selectorSection">
@@ -64,8 +103,6 @@ export default class BaseSelector extends LitElement {
           this.networkIcons,
           () => {
             if (this.typeSelector === 'network') {
-              return renderNetworkIcon(this.selectedNetworkChainId);
-            } else if (this.selectedNetworkChainId) {
               return renderNetworkIcon(this.selectedNetworkChainId);
             }
             return null;
@@ -77,33 +114,14 @@ export default class BaseSelector extends LitElement {
           ?disabled=${this.disabled}
           class="selector"
         >
-          ${map(this.entries, (entry: Domain | Resource, index: number) => {
-            if (index === 0) {
-              return html`<option selected value="">
-                  ${this.typeSelector === 'network'
-                    ? 'Network'
-                    : 'Select Token'}
-                </option>
-                <option
-                  value=${this.typeSelector === 'network'
-                    ? (entry as Domain).chainId
-                    : (entry as Resource).resourceId}
-                >
-                  ${this.typeSelector === 'network'
-                    ? (entry as Domain).name
-                    : (entry as Resource).symbol}
-                </option>`;
-            }
-            return html`<option
-              value=${this.typeSelector === 'network'
-                ? (entry as Domain).chainId
-                : (entry as Resource).resourceId}
-            >
-              ${this.typeSelector === 'network'
-                ? (entry as Domain).name
-                : (entry as Resource).symbol}
-            </option>`;
-          })}
+          ${when(
+            !this.isHomechain,
+            () => this.renderEntries(),
+            () =>
+              html`<option selected value=${ifDefined(this.homechain?.chainId)}>
+                ${capitalize(this.homechain?.name as string)}
+              </option>`
+          )}
         </select>
       </section>
     `;

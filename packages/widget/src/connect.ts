@@ -11,7 +11,13 @@ import {
   SdkManager
 } from '@buildwithsygma/sygmaprotocol-sdk-manager';
 
-import { Environment } from '@buildwithsygma/sygma-sdk-core';
+import {
+  Environment,
+  EthereumConfig,
+  SubstrateConfig
+} from '@buildwithsygma/sygma-sdk-core';
+import { when } from 'lit/directives/when.js';
+import './components/network-selector';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
@@ -25,6 +31,21 @@ class ConnectDialog extends LitElement {
 
   @state()
   chainId?: number;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  domains?: EthereumConfig[] | SubstrateConfig[];
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  homechain?: EthereumConfig | SubstrateConfig;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  selectedNetworkChainId?: number;
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -42,6 +63,13 @@ class ConnectDialog extends LitElement {
 
       this.requestUpdate();
     });
+
+    // listen to the custom event for network change
+    addEventListener('network-change', (event: unknown) => {
+      const { detail } = event as CustomEvent;
+      this.selectedNetworkChainId = Number(detail);
+      this.requestUpdate();
+    });
   }
 
   async connect() {
@@ -57,6 +85,11 @@ class ConnectDialog extends LitElement {
       this.walletManager.evmWallet?.web3Provider,
       Environment.TESTNET
     );
+
+    const domains = this.sdkManager?.assetTransfer.config.getDomains();
+    this.domains = domains as EthereumConfig[] | SubstrateConfig[];
+    this.homechain =
+      this.sdkManager?.assetTransfer.config.getSourceDomainConfig();
     this.requestUpdate();
   }
 
@@ -97,6 +130,8 @@ class ConnectDialog extends LitElement {
   }
 
   render() {
+    console.log('this.sdkManager', this.sdkManager?.assetTransfer.config);
+
     if (!this.walletManager || !this.walletManager.accountData) {
       return html`<button @click=${this.connect}>Connect</button> `;
     } else {
@@ -107,9 +142,27 @@ class ConnectDialog extends LitElement {
         ${this.sdkManager?.status === 'idle'
           ? html`<button @click=${this.initSdk}>initialize sdk</button>`
           : undefined}
-        ${this.sdkManager && this.sdkManager.status === 'initialized'
-          ? html`<button @click=${this.createTransfer}>create transfer</button>`
-          : undefined}
+        ${when(
+          this.sdkManager?.status === 'initialized' &&
+            this.domains &&
+            this.homechain,
+          () => html`
+            <network-selector
+              .directionLabel=${'from'}
+              .networkIcons=${true}
+              .homechain=${this.homechain}
+              isHomechain=${true}
+              .selectedNetworkChainId=${this.chainId}
+              .disabled=${true}
+            ></network-selector>
+            <network-selector
+              .domains=${this.domains}
+              .directionLabel=${'to'}
+              .networkIcons=${true}
+              .selectedNetworkChainId=${this.selectedNetworkChainId}
+            ></network-selector>
+          `
+        )}
         ${this.sdkManager &&
         this.sdkManager.status === 'transferCreated' &&
         this.sdkManager.approvalTxs &&

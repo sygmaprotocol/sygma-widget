@@ -25,7 +25,7 @@ export default class NetworkSelector extends LitElement {
   @property({
     type: Boolean
   })
-  isHomechainSelector = false;
+  isHomechain = false;
 
   @property({
     type: Object,
@@ -49,13 +49,10 @@ export default class NetworkSelector extends LitElement {
   })
   networkIcons = false;
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    addEventListener('network-change', (event: unknown) => {
-      const { detail } = event as CustomEvent;
-      this.selectedNetworkChainId = Number(detail);
-    });
-  }
+  @property({
+    type: Boolean
+  })
+  disabled = false;
 
   render() {
     return html`
@@ -66,10 +63,13 @@ export default class NetworkSelector extends LitElement {
         <base-selector
           class="baseSelector"
           id="network-selector"
+          .isHomechain=${this.isHomechain}
+          .homechain=${this.homechain}
           .entries=${this.domains}
           .typeSelector=${'network'}
           .networkIcons=${this.networkIcons}
           .selectedNetworkChainId=${this.selectedNetworkChainId}
+          .disabled=${this.disabled}
         ></base-selector>
       </div>
     `;

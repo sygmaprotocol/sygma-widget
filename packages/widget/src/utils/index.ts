@@ -34,3 +34,9 @@ export const renderNetworkIcon = (networkChainId?: number) => {
       return html`${noNetworkIcon}`;
   }
 };
+
+export const capitalize = (s: string) => {
+  const firstLetter = s.charAt(0).toUpperCase();
+  const rest = s.slice(1);
+  return `${firstLetter}${rest}`;
+};
