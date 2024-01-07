@@ -55,8 +55,6 @@ export default class AmountSelector extends LitElement {
             .entries=${this.resources}
             .typeSelector=${'token'}
             .disabled=${this.disabled}
-            .networkIcons=${this.isNativeToken}
-            .selectedNetworkChainId=${this.selectedNetworkChainId}
           ></base-selector>
           </section>
         </div>
