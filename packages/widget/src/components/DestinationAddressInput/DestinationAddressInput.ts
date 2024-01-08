@@ -27,7 +27,7 @@ class DestinationAddressInput extends LitElement {
   @state()
   error?: string;
 
-  handleChange(e: Event) {
+  handleTextboxChange(e: Event) {
     const target = e.target as HTMLInputElement;
 
     this.sdkManager?.setDestinationAddress(target.value);
@@ -67,7 +67,7 @@ class DestinationAddressInput extends LitElement {
         <label for="destination-address">Destination Address</label>
         <input
           id="destination-address"
-          @change=${this.handleChange}
+          @change=${this.handleTextboxChange}
           ?disabled=${this.sameAddress}
           value=${this.sameAddress ? this.walletManager?.accountData ?? '' : ''}
         />
