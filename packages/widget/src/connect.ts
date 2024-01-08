@@ -14,7 +14,6 @@ import {
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
 
 import './components/DestinationAddressInput/DestinationAddressInput';
-import { threadId } from 'worker_threads';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
