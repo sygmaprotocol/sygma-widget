@@ -28,14 +28,13 @@ class DestinationAddressInput extends LitElement {
   error?: string;
 
   handleChange(e: Event) {
-    console.log('handleChange');
     const target = e.target as HTMLInputElement;
+
     this.sdkManager?.setDestinationAddress(target.value);
     this.requestUpdate();
   }
 
   handleCheckboxChange(e: Event) {
-    console.log('handleCheckboxChange');
     const target = e.target as HTMLInputElement;
     this.sameAddress = target.checked;
   }
@@ -63,7 +62,6 @@ class DestinationAddressInput extends LitElement {
           type="checkbox"
           @change=${this.handleCheckboxChange}
           value=${this.sameAddress}
-
         />
         <br />
         <label for="destination-address">Destination Address</label>
