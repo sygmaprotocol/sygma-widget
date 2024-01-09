@@ -79,10 +79,13 @@ class ConnectDialog extends LitElement {
     this.walletManager?.addAccountChangedEventListener(() => {
       this.requestUpdate();
     });
+
     this.walletManager?.addChainChangedEventListener(async () => {
       this.chainId = (
         await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
       )?.chainId;
+
+      this.initSdk();
 
       this.requestUpdate();
     });
