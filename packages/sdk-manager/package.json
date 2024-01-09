@@ -1,11 +1,12 @@
 {
   "name": "@buildwithsygma/sygmaprotocol-sdk-manager",
   "description": "Sygma Protocol Widget",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "build/index.js",
   "module": "build/index.js",
   "license": "LGPL-3.0-or-later",
   "type": "module",
+  "types": "./build/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc --build ./tsconfig.json",
     "dev": "tsc --build --clean && tsc --build ./tsconfig.json --watch",
@@ -15,10 +16,12 @@
   },
   "author": "Sygmaprotocol Product Team",
   "dependencies": {
-    "@buildwithsygma/sygma-sdk-core": "^2.2.0",
+    "@buildwithsygma/sygma-sdk-core": "2.4.0",
     "@ethersproject/contracts": "^5.7.0",
     "@ethersproject/transactions": "^5.7.0",
-    "@polkadot/api": "10.7.2"
+    "@lit/context": "1.0.0",
+    "@polkadot/api": "10.7.2",
+    "lit": "3.0.0"
   },
   "devDependencies": {
     "@polkadot/types": "10.7.2",
