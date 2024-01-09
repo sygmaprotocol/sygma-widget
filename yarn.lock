@@ -330,6 +330,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@buildwithsygma/sygma-sdk-core@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.5.0"
+  dependencies:
+    "@buildwithsygma/sygma-contracts": "npm:2.4.1"
+    "@ethersproject/abi": "npm:^5.7.0"
+    "@ethersproject/bytes": "npm:^5.7.0"
+    "@ethersproject/contracts": "npm:^5.7.0"
+    "@ethersproject/providers": "npm:^5.7.2"
+    "@polkadot/api": "npm:10.7.2"
+    "@polkadot/api-augment": "npm:10.7.2"
+    "@polkadot/extension-inject": "npm:0.46.3"
+    "@polkadot/keyring": "npm:12.2.1"
+    "@polkadot/rpc-provider": "npm:10.7.2"
+    "@polkadot/ui-keyring": "npm:3.4.1"
+    "@polkadot/util": "npm:12.2.1"
+    "@polkadot/util-crypto": "npm:12.2.1"
+    axios: "npm:^1.4.0"
+    cross-fetch: "npm:^3.1.5"
+    ethers: "npm:5.6.2"
+  checksum: bd606479c39703d2943e9be89c97d1fe1ed0a1e2a6b9418dd48bdd842798dbd6d50bf57dcd0da362eab6e223601b4e843174f3cfe54ad977d4d631a37bb97a37
+  languageName: node
+  linkType: hard
+
 "@buildwithsygma/sygma-widget@workspace:.":
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygma-widget@workspace:."
@@ -397,6 +421,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-widget@workspace:packages/widget"
   dependencies:
+    "@buildwithsygma/sygma-sdk-core": "npm:^2.5.0"
     "@buildwithsygma/sygmaprotocol-sdk-manager": "npm:*"
     "@buildwithsygma/sygmaprotocol-wallet-manager": "npm:*"
     "@lit/context": "npm:1.0.0"
@@ -411,7 +436,6 @@ __metadata:
     ethers: "npm:5.7.2"
     events: "npm:^3.3.0"
     lit: "npm:3.0.0"
-    lit-html: "npm:3.0.0"
     rollup-plugin-visualizer: "npm:^5.9.2"
     typescript: "npm:5.2.2"
     vite: "npm:4.4.11"
@@ -7449,7 +7473,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lit-html@npm:3.0.0, lit-html@npm:^3.0.0":
+"lit-html@npm:^3.0.0":
   version: 3.0.0
   resolution: "lit-html@npm:3.0.0"
   dependencies:
