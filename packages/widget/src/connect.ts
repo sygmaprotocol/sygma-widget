@@ -11,7 +11,16 @@ import {
   SdkManager
 } from '@buildwithsygma/sygmaprotocol-sdk-manager';
 
-import { Environment } from '@buildwithsygma/sygma-sdk-core';
+import {
+  Environment,
+  EthereumConfig,
+  Resource,
+  SubstrateConfig
+} from '@buildwithsygma/sygma-sdk-core';
+import { when } from 'lit/directives/when.js';
+import { choose } from 'lit/directives/choose.js';
+import './components/network-selector';
+import './components/amount-selector';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
@@ -26,6 +35,41 @@ class ConnectDialog extends LitElement {
   @state()
   chainId?: number;
 
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  domains?: EthereumConfig[] | SubstrateConfig[];
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  homechain?: EthereumConfig | SubstrateConfig;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  selectedNetworkChainId?: number;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  destinationDomains?: EthereumConfig[] | SubstrateConfig[];
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  resources?: Resource[];
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  selectedAmount?: number;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  selectedToken?: Pick<Resource, 'resourceId'>;
+
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     this.chainId = (
@@ -35,11 +79,33 @@ class ConnectDialog extends LitElement {
     this.walletManager?.addAccountChangedEventListener(() => {
       this.requestUpdate();
     });
+
     this.walletManager?.addChainChangedEventListener(async () => {
       this.chainId = (
         await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
       )?.chainId;
 
+      this.initSdk();
+
+      this.requestUpdate();
+    });
+
+    // listen to the custom event for network change
+    addEventListener('network-change', (event: unknown) => {
+      const { detail } = event as CustomEvent;
+      this.selectedNetworkChainId = Number(detail);
+      this.requestUpdate();
+    });
+
+    addEventListener('amount-selector-change', (event: unknown) => {
+      const { detail } = event as CustomEvent;
+      this.selectedAmount = Number(detail);
+      this.requestUpdate();
+    });
+
+    addEventListener('token-change', (event: unknown) => {
+      const { detail } = event as CustomEvent;
+      this.selectedToken = detail;
       this.requestUpdate();
     });
   }
@@ -57,6 +123,19 @@ class ConnectDialog extends LitElement {
       this.walletManager.evmWallet?.web3Provider,
       Environment.TESTNET
     );
+
+    const domains = this.sdkManager?.assetTransfer.config.getDomains();
+    this.domains = domains as EthereumConfig[] | SubstrateConfig[];
+
+    this.homechain =
+      this.sdkManager?.assetTransfer.config.getSourceDomainConfig();
+
+    this.resources = this.homechain?.resources;
+
+    this.destinationDomains = this.domains?.filter(
+      (domain) => domain.chainId !== this.chainId
+    ) as EthereumConfig[] | SubstrateConfig[];
+
     this.requestUpdate();
   }
 
@@ -107,20 +186,50 @@ class ConnectDialog extends LitElement {
         ${this.sdkManager?.status === 'idle'
           ? html`<button @click=${this.initSdk}>initialize sdk</button>`
           : undefined}
-        ${this.sdkManager && this.sdkManager.status === 'initialized'
-          ? html`<button @click=${this.createTransfer}>create transfer</button>`
-          : undefined}
-        ${this.sdkManager &&
-        this.sdkManager.status === 'transferCreated' &&
-        this.sdkManager.approvalTxs &&
-        this.sdkManager.approvalTxs.length > 0
-          ? html`<button @click=${this.approveTokens}>approve</button>`
-          : undefined}
-        ${this.sdkManager &&
-        this.sdkManager.status === 'approvalsCompleted' &&
-        this.sdkManager.depositTx
-          ? html`<button @click=${this.performDeposit}>Transfer</button>`
-          : undefined}
+        ${when(
+          this.sdkManager?.status !== 'idle' && this.domains && this.homechain,
+          () => html`
+            <network-selector
+              .directionLabel=${'from'}
+              .networkIcons=${true}
+              .homechain=${this.homechain}
+              isHomechain=${true}
+              .selectedNetworkChainId=${this.chainId}
+              .disabled=${true}
+            ></network-selector>
+            <network-selector
+              .domains=${this.destinationDomains}
+              .directionLabel=${'to'}
+              .networkIcons=${true}
+              .selectedNetworkChainId=${this.selectedNetworkChainId}
+            ></network-selector>
+            <amount-selector
+              .disabled=${false}
+              .selectedNetworkChainId=${this.selectedNetworkChainId}
+              .resources=${this.resources}
+            >
+            </amount-selector>
+            ${choose(this.sdkManager?.status, [
+              [
+                'initialized',
+                () =>
+                  html`<button @click=${this.createTransfer}>
+                    Create transfer
+                  </button>`
+              ],
+              [
+                'transferCreated',
+                () =>
+                  html`<button @click=${this.approveTokens}>Approve</button>`
+              ],
+              [
+                'approvalsCompleted',
+                () =>
+                  html`<button @click=${this.performDeposit}>Transfer</button>`
+              ]
+            ])}
+          `
+        )}
       </div>`;
     }
   }
