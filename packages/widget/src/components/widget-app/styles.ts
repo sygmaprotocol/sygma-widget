@@ -2,7 +2,11 @@ import { css } from 'lit';
 
 export const styles = css`
   .widgetContainer {
-    width: 314px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    width: 350px;
     height: 476px;
     padding: 24px;
     border-radius: 12px;
@@ -12,6 +16,8 @@ export const styles = css`
     box-shadow:
       0px 4px 6px -1px rgba(0, 0, 0, 0.1),
       0px 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+    font-family: 'Bungee Spice';
   }
 
   .switchNetwork {
@@ -42,10 +48,38 @@ export const styles = css`
     background: var(--primary-300, #a5b4fc);
     color: #ffffff;
     border: none;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 16px;
+  }
+
+  .actionButton:hover {
+    cursor: pointer;
   }
 
   .actionButton:active {
     background: var(--primary-500-main, #6366f1);
+  }
+
+  .actionButtonReady {
+    display: flex;
+    width: 314px;
+    padding: 12px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 16px;
+    background: var(--primary-500-main, #6366f1);
+    color: #ffffff;
+    border: none;
+  }
+
+  .actionButtonReady:active {
+    background: var(--primary-300, #a5b4fc);
+  }
+
+  .actionButtonReady:hover {
+    cursor: pointer;
   }
 
   .poweredBy {

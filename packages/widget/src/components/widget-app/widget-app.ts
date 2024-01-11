@@ -1,5 +1,5 @@
-import { consume } from '@lit/context';
 import { LitElement, html } from 'lit';
+import { consume } from '@lit/context';
 import { customElement, state } from 'lit/decorators.js';
 import {
   WalletManagerContext,
@@ -17,13 +17,18 @@ import {
   Resource,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
-import { when } from 'lit/directives/when.js';
-import { choose } from 'lit/directives/choose.js';
-import './components/network-selector';
-import './components/amount-selector';
 
-@customElement('connect-dialog')
-class ConnectDialog extends LitElement {
+import '../network-selector';
+import '../amount-selector';
+
+import { styles } from './styles';
+import { switchNetworkIcon, sygmaLogo } from '../../assets';
+import { when } from 'lit/directives/when.js';
+
+@customElement('widget-app')
+export default class WidgetApp extends LitElement {
+  static styles = styles;
+
   @consume({ context: WalletManagerContext, subscribe: true })
   @state()
   walletManager?: WalletManagerController;
@@ -70,11 +75,22 @@ class ConnectDialog extends LitElement {
   })
   selectedToken?: Pick<Resource, 'resourceId'>;
 
+  // eslint-disable-next-line class-methods-use-this
+  async handleTransfer() {}
+
+  async getChainId() {
+    if (this.walletManager?.evmWallet?.web3Provider) {
+      const chainId = (
+        await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
+      ).chainId;
+      return chainId;
+    }
+  }
+
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    this.chainId = (
-      await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
-    )?.chainId;
+    console.log('connected callback');
+    this.chainId = await this.getChainId();
 
     this.walletManager?.addAccountChangedEventListener(() => {
       this.requestUpdate();
@@ -112,6 +128,7 @@ class ConnectDialog extends LitElement {
 
   async connect() {
     await this.walletManager?.connectEvmWallet();
+    await this.initSdk();
     this.requestUpdate();
   }
 
@@ -135,6 +152,10 @@ class ConnectDialog extends LitElement {
     this.destinationDomains = this.domains?.filter(
       (domain) => domain.chainId !== this.chainId
     ) as EthereumConfig[] | SubstrateConfig[];
+
+    if (!this.chainId) {
+      this.chainId = await this.getChainId();
+    }
 
     this.requestUpdate();
   }
@@ -176,63 +197,65 @@ class ConnectDialog extends LitElement {
   }
 
   render() {
-    if (!this.walletManager || !this.walletManager.accountData) {
-      return html`<button @click=${this.connect}>Connect</button> `;
-    } else {
-      return html`<div>
-        <p>EVM Account: ${this.walletManager.accountData}</p>
-        <p>Network: ${this.chainId}</p>
-        <p>SDK Status: ${this.sdkManager?.status}</p>
-        ${this.sdkManager?.status === 'idle'
-          ? html`<button @click=${this.initSdk}>initialize sdk</button>`
-          : undefined}
-        ${when(
-          this.sdkManager?.status !== 'idle' && this.domains && this.homechain,
-          () => html`
-            <network-selector
+    return html`
+      <section class="widgetContainer">
+        <form @submit=${this.handleTransfer}>
+          <section class="switchNetwork">
+            <span>${switchNetworkIcon}</span>
+            <span>Switch Network</span>
+          </section>
+          <section>
+          <network-selector
               .directionLabel=${'from'}
               .networkIcons=${true}
               .homechain=${this.homechain}
-              isHomechain=${true}
+              .isHomechain=${true}
               .selectedNetworkChainId=${this.chainId}
               .disabled=${true}
             ></network-selector>
-            <network-selector
+          </section>
+          <section>
+          <network-selector
               .domains=${this.destinationDomains}
               .directionLabel=${'to'}
               .networkIcons=${true}
               .selectedNetworkChainId=${this.selectedNetworkChainId}
             ></network-selector>
-            <amount-selector
+            </section>
+          <section>
+          <amount-selector
               .disabled=${false}
               .selectedNetworkChainId=${this.selectedNetworkChainId}
               .resources=${this.resources}
             >
             </amount-selector>
-            ${choose(this.sdkManager?.status, [
-              [
-                'initialized',
-                () =>
-                  html`<button @click=${this.createTransfer}>
-                    Create transfer
-                  </button>`
-              ],
-              [
-                'transferCreated',
-                () =>
-                  html`<button @click=${this.approveTokens}>Approve</button>`
-              ],
-              [
-                'approvalsCompleted',
-                () =>
-                  html`<button @click=${this.performDeposit}>Transfer</button>`
-              ]
-            ])}
-          `
-        )}
-      </div>`;
-    }
+          </section>
+          <section>
+            Transfer to the same address
+          </section>
+          <section>
+            ${when(
+              !this.walletManager || !this.walletManager.accountData,
+              () =>
+                html`<button
+                  @click=${this.connect}
+                  type="button"
+                  class="actionButton"
+                >
+                  Connect
+                </button> `,
+              () =>
+                html`<button type="submit" class="actionButtonReady">
+                  Transfer
+                </button>`
+            )}
+          </section>
+          <section class="poweredBy">
+            <span>${sygmaLogo}</span>
+            <span>Powered by Sygma</span>
+          </section>
+        </section>
+        </form>
+    `;
   }
 }
-
-export { ConnectDialog };
