@@ -14,6 +14,7 @@ import {
 import {
   Environment,
   EthereumConfig,
+  EvmResource,
   Resource,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
@@ -21,6 +22,8 @@ import { when } from 'lit/directives/when.js';
 import { choose } from 'lit/directives/choose.js';
 import './components/network-selector';
 import './components/amount-selector';
+import { ethers } from 'ethers';
+import { abi } from './utils';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
@@ -68,7 +71,22 @@ class ConnectDialog extends LitElement {
   @state({
     hasChanged: (n, o) => n !== o
   })
-  selectedToken?: Pick<Resource, 'resourceId'>;
+  selectedToken?: string;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  tokenBalance?: string;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  tokenName?: string;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  selectedTokenAddress?: string;
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -103,11 +121,39 @@ class ConnectDialog extends LitElement {
       this.requestUpdate();
     });
 
-    addEventListener('token-change', (event: unknown) => {
+    addEventListener('token-change', async (event: unknown) => {
       const { detail } = event as CustomEvent;
       this.selectedToken = detail;
+
+      const tokenInfo = this.resources?.find(
+        (resource) => resource.resourceId === this.selectedToken
+      );
+
+      this.tokenName = tokenInfo?.symbol;
+
+      if (this.homechain?.type === 'evm') {
+        this.selectedTokenAddress = (tokenInfo as EvmResource).address;
+        await this.fetchTokenBalance();
+      }
+
       this.requestUpdate();
     });
+  }
+
+  async fetchTokenBalance() {
+    if (this.homechain?.type === 'evm' && this.selectedTokenAddress) {
+      const tokenContract = new ethers.Contract(
+        this.selectedTokenAddress,
+        abi,
+        await this.walletManager?.getSigner()
+      );
+
+      const balance = (await tokenContract.balanceOf(
+        this.walletManager?.accountData
+      )) as ethers.BigNumber;
+
+      this.tokenBalance = ethers.utils.formatUnits(balance, 18);
+    }
   }
 
   async connect() {
@@ -176,6 +222,7 @@ class ConnectDialog extends LitElement {
   }
 
   render() {
+    console.log('token selected', this.selectedToken);
     if (!this.walletManager || !this.walletManager.accountData) {
       return html`<button @click=${this.connect}>Connect</button> `;
     } else {
@@ -207,6 +254,8 @@ class ConnectDialog extends LitElement {
               .disabled=${false}
               .selectedNetworkChainId=${this.selectedNetworkChainId}
               .resources=${this.resources}
+              .tokenBalance=${this.tokenBalance}
+              .tokenName=${this.tokenName}
             >
             </amount-selector>
             ${choose(this.sdkManager?.status, [

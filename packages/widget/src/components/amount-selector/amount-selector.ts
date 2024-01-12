@@ -2,6 +2,7 @@ import { Resource } from '@buildwithsygma/sygma-sdk-core';
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styles } from './styles';
+import { when } from 'lit/directives/when.js';
 
 @customElement('amount-selector')
 export default class AmountSelector extends LitElement {
@@ -27,6 +28,16 @@ export default class AmountSelector extends LitElement {
     hasChanged: (n, o) => n !== o
   })
   selectedNetworkChainId?: number;
+
+  @property({
+    type: Number
+  })
+  tokenBalance?: string;
+
+  @property({
+    type: String
+  })
+  tokenName?: string;
 
   // eslint-disable-next-line class-methods-use-this
   handleAmountChange(event: Event): void {
@@ -57,6 +68,12 @@ export default class AmountSelector extends LitElement {
             .disabled=${this.disabled}
           ></base-selector>
           </section>
+          <section class="tokenBalanceSection">
+            ${when(
+              this.tokenBalance,
+              () => html`<span>${`Balance: ${this.tokenBalance}`}</span>`
+            )}
+            </section>
         </div>
       </div>
     `;

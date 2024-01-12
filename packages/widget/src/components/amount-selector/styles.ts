@@ -40,4 +40,11 @@ export const styles = css`
     letter-spacing: -0.68px;
     width: 137px;
   }
+
+  .tokenBalanceSection {
+    display: flex;
+    flex-direction: row;
+    align-self: flex-start;
+    margin-top: 8px;
+  }
 `;
