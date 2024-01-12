@@ -89,7 +89,6 @@ export default class WidgetApp extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    console.log('connected callback');
     this.chainId = await this.getChainId();
 
     this.walletManager?.addAccountChangedEventListener(() => {
