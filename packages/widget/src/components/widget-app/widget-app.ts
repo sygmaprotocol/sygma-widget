@@ -1,80 +1,17 @@
 import { LitElement, html } from 'lit';
-import { consume } from '@lit/context';
-import { customElement, state } from 'lit/decorators.js';
-import {
-  WalletManagerContext,
-  WalletManagerController
-} from '@buildwithsygma/sygmaprotocol-wallet-manager';
-
-import {
-  SdkManagerContext,
-  SdkManager
-} from '@buildwithsygma/sygmaprotocol-sdk-manager';
+import { customElement } from 'lit/decorators.js';
 
 import {
   Environment,
   EthereumConfig,
-  Resource,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
 
-import '../network-selector';
-import '../amount-selector';
-
-import { styles } from './styles';
-import { switchNetworkIcon, sygmaLogo } from '../../assets';
-import { when } from 'lit/directives/when.js';
+import './widget-view';
+import WidgetMixin from './widget-mixin';
 
 @customElement('widget-app')
-export default class WidgetApp extends LitElement {
-  static styles = styles;
-
-  @consume({ context: WalletManagerContext, subscribe: true })
-  @state()
-  walletManager?: WalletManagerController;
-
-  @consume({ context: SdkManagerContext, subscribe: true })
-  @state()
-  sdkManager?: SdkManager;
-
-  @state()
-  chainId?: number;
-
-  @state({
-    hasChanged: (n, o) => n !== o
-  })
-  domains?: EthereumConfig[] | SubstrateConfig[];
-
-  @state({
-    hasChanged: (n, o) => n !== o
-  })
-  homechain?: EthereumConfig | SubstrateConfig;
-
-  @state({
-    hasChanged: (n, o) => n !== o
-  })
-  selectedNetworkChainId?: number;
-
-  @state({
-    hasChanged: (n, o) => n !== o
-  })
-  destinationDomains?: EthereumConfig[] | SubstrateConfig[];
-
-  @state({
-    hasChanged: (n, o) => n !== o
-  })
-  resources?: Resource[];
-
-  @state({
-    hasChanged: (n, o) => n !== o
-  })
-  selectedAmount?: number;
-
-  @state({
-    hasChanged: (n, o) => n !== o
-  })
-  selectedToken?: Pick<Resource, 'resourceId'>;
-
+export default class WidgetApp extends WidgetMixin(LitElement) {
   // eslint-disable-next-line class-methods-use-this
   async handleTransfer() {}
 
@@ -123,12 +60,13 @@ export default class WidgetApp extends LitElement {
       this.selectedToken = detail;
       this.requestUpdate();
     });
-  }
 
-  async connect() {
-    await this.walletManager?.connectEvmWallet();
-    await this.initSdk();
-    this.requestUpdate();
+    addEventListener('connectionInitialized', async (event: unknown) => {
+      const { detail } = event as CustomEvent;
+      if (detail.connectionInitiliazed) {
+        await this.connect();
+      }
+    });
   }
 
   async initSdk() {
@@ -159,6 +97,12 @@ export default class WidgetApp extends LitElement {
     this.requestUpdate();
   }
 
+  async connect() {
+    await this.walletManager?.connectEvmWallet();
+    await this.initSdk();
+    this.requestUpdate();
+  }
+
   async createTransfer() {
     if (!this.walletManager?.evmWallet?.address) {
       throw new Error('No wallet connected');
@@ -180,7 +124,9 @@ export default class WidgetApp extends LitElement {
     if (!this.walletManager?.evmWallet?.signer) {
       throw new Error('No wallet connected');
     }
-    await this.sdkManager.performApprovals(this.walletManager.evmWallet.signer);
+    await this.sdkManager.performApprovals(
+      this.walletManager!.evmWallet.signer
+    );
     this.requestUpdate();
   }
 
@@ -197,64 +143,19 @@ export default class WidgetApp extends LitElement {
 
   render() {
     return html`
-      <section class="widgetContainer">
-        <form @submit=${this.handleTransfer}>
-          <section class="switchNetwork">
-            <span>${switchNetworkIcon}</span>
-            <span>Switch Network</span>
-          </section>
-          <section>
-          <network-selector
-              .directionLabel=${'from'}
-              .networkIcons=${true}
-              .homechain=${this.homechain}
-              .isHomechain=${true}
-              .selectedNetworkChainId=${this.chainId}
-              .disabled=${true}
-            ></network-selector>
-          </section>
-          <section>
-          <network-selector
-              .domains=${this.destinationDomains}
-              .directionLabel=${'to'}
-              .networkIcons=${true}
-              .selectedNetworkChainId=${this.selectedNetworkChainId}
-            ></network-selector>
-            </section>
-          <section>
-          <amount-selector
-              .disabled=${false}
-              .selectedNetworkChainId=${this.selectedNetworkChainId}
-              .resources=${this.resources}
-            >
-            </amount-selector>
-          </section>
-          <section>
-            Transfer to the same address
-          </section>
-          <section>
-            ${when(
-              !this.walletManager || !this.walletManager.accountData,
-              () =>
-                html`<button
-                  @click=${this.connect}
-                  type="button"
-                  class="actionButton"
-                >
-                  Connect
-                </button> `,
-              () =>
-                html`<button type="submit" class="actionButtonReady">
-                  Transfer
-                </button>`
-            )}
-          </section>
-          <section class="poweredBy">
-            <span>${sygmaLogo}</span>
-            <span>Powered by Sygma</span>
-          </section>
-        </section>
-        </form>
+      <widget-view
+        .chainId=${this.chainId}
+        .domains=${this.domains}
+        .homechain=${this.homechain}
+        .resources=${this.resources}
+        .selectedAmount=${this.selectedAmount}
+        .selectedToken=${this.selectedToken}
+        .selectedNetworkChainId=${this.selectedNetworkChainId}
+        .walletManager=${this.walletManager}
+        .connect=${this.connect}
+        .handleTransfer=${this.handleTransfer}
+        .destinationDomains=${this.destinationDomains}
+      ></widget-view>
     `;
   }
 }
