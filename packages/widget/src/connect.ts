@@ -16,14 +16,14 @@ import {
   EthereumConfig,
   EvmResource,
   Resource,
-  SubstrateConfig
+  SubstrateConfig,
+  getEvmErc20Balance
 } from '@buildwithsygma/sygma-sdk-core';
 import { when } from 'lit/directives/when.js';
 import { choose } from 'lit/directives/choose.js';
 import './components/network-selector';
 import './components/amount-selector';
 import { ethers } from 'ethers';
-import { abi } from './utils';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
@@ -142,15 +142,12 @@ class ConnectDialog extends LitElement {
 
   async fetchTokenBalance() {
     if (this.homechain?.type === 'evm' && this.selectedTokenAddress) {
-      const tokenContract = new ethers.Contract(
+      const balance = await getEvmErc20Balance(
+        this.walletManager?.accountData as string,
         this.selectedTokenAddress,
-        abi,
-        await this.walletManager?.getSigner()
+        this.walletManager?.evmWallet
+          ?.web3Provider as ethers.providers.Web3Provider
       );
-
-      const balance = (await tokenContract.balanceOf(
-        this.walletManager?.accountData
-      )) as ethers.BigNumber;
 
       this.tokenBalance = ethers.utils.formatUnits(balance, 18);
     }

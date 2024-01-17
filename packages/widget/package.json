@@ -17,7 +17,7 @@
   },
   "author": "Sygmaprotocol Product Team",
   "dependencies": {
-    "@buildwithsygma/sygma-sdk-core": "^2.5.0",
+    "@buildwithsygma/sygma-sdk-core": "2.6.0",
     "@buildwithsygma/sygmaprotocol-sdk-manager": "*",
     "@buildwithsygma/sygmaprotocol-wallet-manager": "*",
     "@lit/context": "1.0.0",
