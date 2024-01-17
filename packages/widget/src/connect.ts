@@ -14,13 +14,16 @@ import {
 import {
   Environment,
   EthereumConfig,
+  EvmResource,
   Resource,
-  SubstrateConfig
+  SubstrateConfig,
+  getEvmErc20Balance
 } from '@buildwithsygma/sygma-sdk-core';
 import { when } from 'lit/directives/when.js';
 import { choose } from 'lit/directives/choose.js';
 import './components/network-selector';
 import './components/amount-selector';
+import { ethers } from 'ethers';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
@@ -68,7 +71,22 @@ class ConnectDialog extends LitElement {
   @state({
     hasChanged: (n, o) => n !== o
   })
-  selectedToken?: Pick<Resource, 'resourceId'>;
+  selectedToken?: string;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  tokenBalance?: string;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  tokenName?: string;
+
+  @state({
+    hasChanged: (n, o) => n !== o
+  })
+  selectedTokenAddress?: string;
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -103,11 +121,36 @@ class ConnectDialog extends LitElement {
       this.requestUpdate();
     });
 
-    addEventListener('token-change', (event: unknown) => {
+    addEventListener('token-change', async (event: unknown) => {
       const { detail } = event as CustomEvent;
       this.selectedToken = detail;
+
+      const tokenInfo = this.resources?.find(
+        (resource) => resource.resourceId === this.selectedToken
+      );
+
+      this.tokenName = tokenInfo?.symbol;
+
+      if (this.homechain?.type === 'evm') {
+        this.selectedTokenAddress = (tokenInfo as EvmResource).address;
+        await this.fetchTokenBalance();
+      }
+
       this.requestUpdate();
     });
+  }
+
+  async fetchTokenBalance() {
+    if (this.homechain?.type === 'evm' && this.selectedTokenAddress) {
+      const balance = await getEvmErc20Balance(
+        this.walletManager?.accountData as string,
+        this.selectedTokenAddress,
+        this.walletManager?.evmWallet
+          ?.web3Provider as ethers.providers.Web3Provider
+      );
+
+      this.tokenBalance = ethers.utils.formatUnits(balance, 18);
+    }
   }
 
   async connect() {
@@ -207,6 +250,8 @@ class ConnectDialog extends LitElement {
               .disabled=${false}
               .selectedNetworkChainId=${this.selectedNetworkChainId}
               .resources=${this.resources}
+              .tokenBalance=${this.tokenBalance}
+              .tokenName=${this.tokenName}
             >
             </amount-selector>
             ${choose(this.sdkManager?.status, [
