@@ -219,7 +219,6 @@ class ConnectDialog extends LitElement {
   }
 
   render() {
-    console.log('token selected', this.selectedToken);
     if (!this.walletManager || !this.walletManager.accountData) {
       return html`<button @click=${this.connect}>Connect</button> `;
     } else {
