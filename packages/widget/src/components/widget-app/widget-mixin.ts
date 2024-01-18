@@ -65,6 +65,15 @@ const WidgetMixin = <T extends Constructor<LitElement>>(superClass: T) => {
     })
     selectedToken?: Pick<Resource, 'resourceId'>;
 
+    @state()
+    selectedTokenAddress?: string;
+
+    @state()
+    tokenBalance?: string;
+
+    @state()
+    tokenName?: string;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...rest: any[]) {
       super(rest);

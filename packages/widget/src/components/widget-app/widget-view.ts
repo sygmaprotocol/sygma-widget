@@ -65,6 +65,11 @@ export class WidgetView extends LitElement {
   })
   walletManager?: WalletManagerController;
 
+  @property({
+    type: Number
+  })
+  tokenBalance?: string;
+
   @state()
   connectionInitiliazed: boolean = false;
 
@@ -110,6 +115,7 @@ export class WidgetView extends LitElement {
               .disabled=${false}
               .selectedNetworkChainId=${this.selectedNetworkChainId}
               .resources=${this.resources}
+              .tokenBalance=${this.tokenBalance}
             >
             </amount-selector>
           </section>

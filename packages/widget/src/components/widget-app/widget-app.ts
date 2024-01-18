@@ -4,11 +4,15 @@ import { customElement } from 'lit/decorators.js';
 import {
   Environment,
   EthereumConfig,
+  EvmResource,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
 
+import { getEvmErc20Balance } from '@buildwithsygma/sygma-sdk-core/evm';
+
 import './widget-view';
 import WidgetMixin from './widget-mixin';
+import { ethers } from 'ethers';
 
 @customElement('widget-app')
 export default class WidgetApp extends WidgetMixin(LitElement) {
@@ -55,9 +59,21 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
       this.requestUpdate();
     });
 
-    addEventListener('token-change', (event: unknown) => {
+    addEventListener('token-change', async (event: unknown) => {
       const { detail } = event as CustomEvent;
       this.selectedToken = detail;
+
+      const tokenInfo = this.resources?.find(
+        (resource) => resource.resourceId === this.selectedToken
+      );
+
+      this.tokenName = tokenInfo?.symbol;
+
+      if (this.homechain?.type === 'evm') {
+        this.selectedTokenAddress = (tokenInfo as EvmResource).address;
+        await this.fetchTokenBalance();
+      }
+
       this.requestUpdate();
     });
 
@@ -141,6 +157,19 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
     this.requestUpdate();
   }
 
+  async fetchTokenBalance() {
+    if (this.homechain?.type === 'evm' && this.selectedTokenAddress) {
+      const balance = await getEvmErc20Balance(
+        this.walletManager?.accountData as string,
+        this.selectedTokenAddress,
+        this.walletManager?.evmWallet
+          ?.web3Provider as ethers.providers.Web3Provider
+      );
+
+      this.tokenBalance = ethers.utils.formatUnits(balance, 18);
+    }
+  }
+
   render() {
     return html`
       <widget-view
@@ -155,6 +184,7 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
         .connect=${this.connect}
         .handleTransfer=${this.handleTransfer}
         .destinationDomains=${this.destinationDomains}
+        .tokenBalance=${this.tokenBalance}
       ></widget-view>
     `;
   }

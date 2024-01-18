@@ -16,5 +16,8 @@ export interface IWidgetMixin {
   destinationDomains?: EthereumConfig[] | SubstrateConfig[];
   resources?: Resource[];
   selectedAmount?: number;
-  selectedToken?: Pick<Resource, 'resourceId'>;
+  selectedToken?: string;
+  selectedTokenAddress?: string;
+  tokenBalance?: string;
+  tokenName?: string;
 }
