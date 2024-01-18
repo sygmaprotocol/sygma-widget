@@ -1,5 +1,5 @@
 {
-  "name": "@buildwithsygma/sygma-widget",
+  "name": "root",
   "description": "Sygma Widget Monorepo",
   "version": "1.0.0",
   "main": "index.js",
@@ -33,16 +33,21 @@
   },
   "packageManager": "yarn@4.0.1",
   "scripts": {
-    "build:wallet-manager": "yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager clean && yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager build",
-    "build:sdk-manager": "yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager clean && yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager build",
-    "build:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget clean && yarn workspace @buildwithsygma/sygmaprotocol-widget build",
-    "build:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget clean && yarn workspace @buildwithsygma/sygmaprotocol-react-widget build",
-    "build:all": "yarn build:wallet-manager && yarn build:sdk-manager && yarn build:widget && yarn build:react-widget",
-    "lint:wallet-manager": "yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager lint && yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager lint:fix",
-    "lint:sdk-manager": "yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager lint && yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager lint:fix",
-    "lint:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget lint && yarn workspace @buildwithsygma/sygmaprotocol-widget lint:fix",
-    "lint:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget lint && yarn workspace @buildwithsygma/sygmaprotocol-react-widget lint:fix",
-    "lint:all": "yarn lint:wallet-manager && yarn lint:sdk-manager && yarn lint:widget && yarn lint:react-widget",
-    "clean:all": "yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager clean && yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager clean && yarn workspace @buildwithsygma/sygmaprotocol-widget clean && yarn workspace @buildwithsygma/sygmaprotocol-react-widget clean"
+    "clean": "yarn workspaces foreach --all -pt run clean",
+    "build": "yarn workspaces foreach --all -pt run build",
+    "lint": "yarn workspaces foreach --all -pt run lint",
+    "test:unit": "yarn workspaces foreach --all -pt run test:unit",
+    "build:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget build",
+    "build:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget build",
+    "lint:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget lint",
+    "lint:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget lint"
+  },
+  "resolutions": {
+    "@polkadot/api": "10.7.2",
+    "@polkadot/util": "12.5.1",
+    "@polkadot/util-crypto": "12.5.1",
+    "@polkadot/wasm-bridge": "7.2.2",
+    "@polkadot/keyring": "12.5.1",
+    "@polkadot/wasm-crypto": "7.2.2"
   }
 }

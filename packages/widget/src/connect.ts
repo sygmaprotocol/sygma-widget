@@ -2,16 +2,6 @@ import { consume } from '@lit/context';
 import { LitElement, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import {
-  WalletManagerContext,
-  WalletManagerController
-} from '@buildwithsygma/sygmaprotocol-wallet-manager';
-
-import {
-  SdkManagerContext,
-  SdkManager
-} from '@buildwithsygma/sygmaprotocol-sdk-manager';
-
-import {
   Environment,
   EthereumConfig,
   EvmResource,
@@ -24,6 +14,12 @@ import { choose } from 'lit/directives/choose.js';
 import './components/network-selector';
 import './components/amount-selector';
 import { ethers } from 'ethers';
+import {
+  SdkManager,
+  SdkManagerContext,
+  WalletManagerContext,
+  WalletManagerController
+} from './controllers';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {

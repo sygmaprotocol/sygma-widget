@@ -7,35 +7,43 @@
   "license": "LGPL-3.0-or-later",
   "type": "module",
   "scripts": {
-    "start": "npm run dev",
+    "start": "yarn run dev",
     "dev": "vite",
-    "build": "tsc && vite build",
-    "serve": "tsc && vite preview",
+    "lint:types": "tsc -p ./tsconfig.build.json --noEmit",
+    "build": "yarn run lint:types && yarn run clean && vite build",
+    "serve": "vite preview",
     "clean": "rm -rf ./build",
-    "lint": "eslint 'src/**/*.ts'",
-    "lint:fix": "yarn run lint --fix"
+    "lint": "eslint '{src,tests}/**/*.ts'",
+    "lint:fix": "yarn run lint --fix",
+    "test": "yarn run test:unit",
+    "test:unit": "vitest --run --config ./vite.config.ts"
   },
   "author": "Sygmaprotocol Product Team",
   "dependencies": {
-    "@buildwithsygma/sygma-sdk-core": "2.6.0",
-    "@buildwithsygma/sygmaprotocol-sdk-manager": "*",
-    "@buildwithsygma/sygmaprotocol-wallet-manager": "*",
-    "@lit/context": "1.0.0",
-    "@lit/reactive-element": "2.0.0",
+    "@buildwithsygma/sygma-sdk-core": "^2.6.0",
+    "@ethersproject/abstract-signer": "^5.7.0",
+    "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/transactions": "^5.7.0",
+    "@lit/context": "^1.1.0",
+    "@lit/reactive-element": "^2.0.3",
+    "@polkadot/api": "^10.11.2",
+    "@polkadot/extension-dapp": "^0.46.6",
     "ethers": "5.7.2",
     "events": "^3.3.0",
     "lit": "3.0.0"
   },
   "devDependencies": {
-    "@types/node": "20.8.4",
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-lit": "^1.9.1",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-wc": "^2.0.2",
+    "jsdom": "^23.2.0",
     "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "5.2.2",
-    "vite": "4.4.11"
+    "vite": "4.4.11",
+    "vite-plugin-clean": "^1.0.0",
+    "vitest": "^1.2.1"
   }
 }

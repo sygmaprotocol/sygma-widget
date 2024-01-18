@@ -2,12 +2,9 @@ import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import { consume, createContext, provide } from '@lit/context';
 import { LitElement, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import {
-  WalletManagerContext,
-  WalletManagerController
-} from '@buildwithsygma/sygmaprotocol-wallet-manager';
 import { SdkManagerState } from './types';
 import { SdkManager } from './SdkManager';
+import { WalletManagerContext, WalletManagerController } from '..';
 
 export const SdkManagerContext = createContext<SdkManagerState | undefined>(
   'sdk-context'

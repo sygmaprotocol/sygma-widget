@@ -26,9 +26,9 @@ export class WalletManagerController implements IWalletManagerController {
 
     if (network === Network.EVM) {
       this.initWeb3Provider(initArgument.web3Provider);
-    } else if (network === Network.Substrate) {
+    } else if (network === Network.SUBSTRATE) {
       this.initFromApiPromise(initArgument as ApiPromise);
-    } else if (network === Network.Substrate && initArgument.wssConnectionUrl) {
+    } else if (network === Network.SUBSTRATE && initArgument.wssConnectionUrl) {
       this.initFromWssProvider(initArgument as string);
     }
   }

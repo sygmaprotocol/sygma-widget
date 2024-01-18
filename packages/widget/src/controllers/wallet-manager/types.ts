@@ -24,5 +24,5 @@ export type SyntheticEventCreator = (
 
 export enum Network {
   EVM = 'EVM',
-  Substrate = 'Substrate'
+  SUBSTRATE = 'Substrate'
 }

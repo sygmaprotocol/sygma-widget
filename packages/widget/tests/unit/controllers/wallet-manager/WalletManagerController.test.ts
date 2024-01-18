@@ -2,8 +2,10 @@ import { LitElement } from 'lit';
 import { ExternalProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { WalletManagerController } from '..';
-import { Network } from '../types';
+import {
+  Network,
+  WalletManagerController
+} from '../../../../src/controllers/wallet-manager';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 class WidgetTestFixture extends LitElement {
@@ -54,19 +56,21 @@ describe('WalletManagerController', () => {
   it('should initialize substrate wallet from wss provider', () => {
     walletController = new WalletManagerController(
       walletTextFixture,
-      Network.Substrate,
+      Network.SUBSTRATE,
       {
         wssConnectionUrl: 'wss:someurl'
       }
     );
     expect(walletController.substrateWallet).toBeDefined();
   });
-  it('should initialize substrate wallet from api promise', async () => {
+
+  //TODO: this should not connect to real network
+  it.skip('should initialize substrate wallet from api promise', async () => {
     const wsProvider = new WsProvider('wss://rpc.polkadot.io');
     const apiPromise = await ApiPromise.create({ provider: wsProvider });
     walletController = new WalletManagerController(
       walletTextFixture,
-      Network.Substrate,
+      Network.SUBSTRATE,
       {
         apiPromise
       }

@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { SubstrateWallet } from '../wallets';
+import { SubstrateWallet } from '../../../../src/controllers/wallet-manager/wallets';
 
 vi.mock('@polkadot/api', async () => {
   const mod =
