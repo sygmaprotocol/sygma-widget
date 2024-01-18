@@ -30,9 +30,11 @@ export const renderNetworkIcon = (networkChainId?: number) => {
     case 80001:
     case 137:
       return html`${polygonNetworkIcon}`;
-    default:
-      return html`${noNetworkIcon}`;
   }
+};
+
+export const renderNoNetworkIcon = () => {
+  return html`${noNetworkIcon}`;
 };
 
 export const capitalize = (s: string) => {
