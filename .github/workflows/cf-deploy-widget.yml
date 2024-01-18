@@ -26,8 +26,8 @@ jobs:
       - run: corepack enable
       - run: yarn set version stable
       - run: yarn install --immutable
-      - run: yarn run lint:widget
-      - run: yarn run build:widget
+      - run: yarn run lint:all
+      - run: yarn run build:all
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@1
