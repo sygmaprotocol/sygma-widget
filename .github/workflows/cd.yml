@@ -1,62 +1,57 @@
-name: Publish Widget to NPM
+name: Publish packages to NPM
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'packages/widget/**'
-      - '!packages/sdk-manager/**'
-      - '!packages/wallet-manager/**'
 jobs:
   maybe-release:
     name: release
     runs-on: ubuntu-latest
+    # add check if ci is successfull
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-        # you should probably do this after your regular CI checks passes
-      - uses: google-github-actions/release-please-action@v3 # it will analyze commits and create PR with new version and updated CHANGELOG:md file. On merging it will create github release page with changelog
+      - uses: google-github-actions/release-please-action@v3
         id: release
         with:
-          release-type: node
+          command: manifest
           token: ${{secrets.RELEASE_TOKEN}}
-          path: packages/widget
-          monorepo-tags: true
           default-branch: main
-          package-name: '@buildwithsygma/widget'
+          release-type: node
+          monorepo-tags: true
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false},{"type":"revert","hidden":true}]'
 
-      - uses: actions/checkout@v3
-        # these if statements ensure that a publication only occurs when
-        # a new release is created:
+      - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.releases_created }}
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
+        if: ${{ steps.release.outputs.releases_created }}
+        with:
+          node-version: 18
+
+      - run: corepack enable
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - uses: actions/setup-node@v4
         with:
           cache: 'yarn'
           node-version: 18
           registry-url: 'https://registry.npmjs.org'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        if: ${{ steps.release.outputs.releases_created }}
-
-      - name: Enable corepack
-        run: corepack enable
-        if: ${{ steps.release.outputs.releases_created }}
-      
-      - name: Install yarn
-        run: yarn set version stable
         if: ${{ steps.release.outputs.releases_created }}
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
         if: ${{ steps.release.outputs.releases_created }}
 
       - name: Build all packages
-        run: yarn build:all
+        run: yarn build
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: npm publish --workspace=@buildwithsygma/sygmaprotocol-widget --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ steps.release.outputs.releases_created }}
+        run: |
+          echo npmAuthToken: "$NODE_AUTH_TOKEN" >> ./.yarnrc.yml
+          
+      - run: yarn workspaces foreach -v --exclude root --no-private npm publish --tolerate-republish --access public
         if: ${{ steps.release.outputs.releases_created }}
