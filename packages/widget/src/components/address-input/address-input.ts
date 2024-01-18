@@ -49,7 +49,7 @@ export default class AddressInput extends LitElement {
             @change=${this.handleSwitch}
           ></md-switch>
         </span>
-        <span> Transfer to the different address </span>
+        <span> Transfer to different address </span>
       </div>
       ${when(this.selected, () => this.renderInputAddress())}
     </section>`;
