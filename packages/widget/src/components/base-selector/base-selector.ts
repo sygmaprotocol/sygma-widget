@@ -5,7 +5,11 @@ import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
-import { capitalize, renderNetworkIcon } from '../../utils';
+import {
+  capitalize,
+  renderNetworkIcon,
+  renderNoNetworkIcon
+} from '../../utils';
 import { styles } from './styles';
 
 @customElement('base-selector')
@@ -68,32 +72,37 @@ export default class BaseSelector extends LitElement {
     }
   };
 
-  renderEntries(): Generator<unknown, void> {
-    return map(this.entries, (entry: Domain | Resource, index: number) => {
-      if (index === 0) {
-        return html`<option selected value="">
-            ${this.typeSelector === 'network' ? 'Network' : 'Select Token'}
-          </option>
-          <option
-            value=${this.typeSelector === 'network'
-              ? (entry as Domain).chainId
-              : (entry as Resource).resourceId}
-          >
-            ${this.typeSelector === 'network'
-              ? capitalize((entry as Domain).name)
-              : (entry as Resource).symbol}
-          </option>`;
-      }
-      return html`<option
-        value=${this.typeSelector === 'network'
-          ? (entry as Domain).chainId
-          : (entry as Resource).resourceId}
-      >
-        ${this.typeSelector === 'network'
-          ? capitalize((entry as Domain).name)
-          : (entry as Resource).symbol}
-      </option>`;
-    });
+  renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
+    if (this.entries) {
+      return map(this.entries, (entry: Domain | Resource, index: number) => {
+        if (index === 0) {
+          return html`<option selected value="">
+              ${this.typeSelector === 'network' ? 'Network' : 'Select Token'}
+            </option>
+            <option
+              value=${this.typeSelector === 'network'
+                ? (entry as Domain).chainId
+                : (entry as Resource).resourceId}
+            >
+              ${this.typeSelector === 'network'
+                ? capitalize((entry as Domain).name)
+                : (entry as Resource).symbol}
+            </option>`;
+        }
+        return html`<option
+          value=${this.typeSelector === 'network'
+            ? (entry as Domain).chainId
+            : (entry as Resource).resourceId}
+        >
+          ${this.typeSelector === 'network'
+            ? capitalize((entry as Domain).name)
+            : (entry as Resource).symbol}
+        </option>`;
+      });
+    }
+    return html`<option selected value="">
+      ${this.typeSelector === 'network' ? 'Network' : 'Select Token'}
+    </option>`;
   }
 
   render(): HTMLTemplateResult {
@@ -103,7 +112,19 @@ export default class BaseSelector extends LitElement {
           this.networkIcons,
           () => {
             if (this.typeSelector === 'network') {
-              return renderNetworkIcon(this.selectedNetworkChainId);
+              console.log(
+                !!(this.selectedNetworkChainId && this.entries?.length)
+              );
+
+              return when(
+                !!(
+                  this.selectedNetworkChainId &&
+                  (this.entries?.length || this.homechain)
+                ),
+                () => renderNetworkIcon(this.selectedNetworkChainId as number),
+
+                () => renderNoNetworkIcon()
+              );
             }
             return null;
           },
@@ -118,9 +139,22 @@ export default class BaseSelector extends LitElement {
             !this.isHomechain,
             () => this.renderEntries(),
             () =>
-              html`<option selected value=${ifDefined(this.homechain?.chainId)}>
-                ${capitalize(this.homechain?.name as string)}
-              </option>`
+              when(
+                this.homechain,
+                () =>
+                  html`<option
+                    selected
+                    value=${ifDefined(this.homechain?.chainId)}
+                  >
+                    ${capitalize(this.homechain?.name as string)}
+                  </option>`,
+                () =>
+                  html`<option selected value="">
+                    ${this.typeSelector === 'network'
+                      ? 'Network'
+                      : 'Select Token'}
+                  </option>`
+              )
           )}
         </select>
       </section>

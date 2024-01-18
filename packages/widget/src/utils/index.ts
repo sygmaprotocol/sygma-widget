@@ -12,7 +12,7 @@ import {
 
 export const renderNetworkIcon = (
   networkChainId?: number
-): HTMLTemplateResult => {
+): HTMLTemplateResult | undefined => {
   switch (networkChainId) {
     case 1:
     case 5:
@@ -33,9 +33,12 @@ export const renderNetworkIcon = (
     case 80001:
     case 137:
       return html`${polygonNetworkIcon}`;
-    default:
-      return html`${noNetworkIcon}`;
   }
+  return undefined;
+};
+
+export const renderNoNetworkIcon = (): HTMLTemplateResult => {
+  return html`${noNetworkIcon}`;
 };
 
 export const capitalize = (s: string): string => {
