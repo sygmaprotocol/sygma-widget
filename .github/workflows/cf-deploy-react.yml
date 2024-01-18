@@ -1,15 +1,15 @@
-name: Cloudflare Deploy Widget
+name: Cloudflare Deploy React Widget
 on:
   push:
     branches:
       - main
     paths:
-    - 'packages/widget/**'
+    - 'packages/react/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'packages/widget/**'
+      - 'packages/react/**'
 
 jobs:
   deploy:
@@ -26,15 +26,15 @@ jobs:
       - run: corepack enable
       - run: yarn set version stable
       - run: yarn install --immutable
-      - run: yarn run lint:widget
-      - run: yarn run build:widget
+      - run: yarn run lint:react-widget
+      - run: yarn run build:react-widget
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: sygma-widget
-          directory: ./packages/widget/build
+          projectName: sygma-react-widget
+          directory: ./packages/react/build
           branch: main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
