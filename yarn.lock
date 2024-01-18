@@ -330,9 +330,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildwithsygma/sygma-sdk-core@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.5.0"
+"@buildwithsygma/sygma-sdk-core@npm:2.6.0":
+  version: 2.6.0
+  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.6.0"
   dependencies:
     "@buildwithsygma/sygma-contracts": "npm:2.4.1"
     "@ethersproject/abi": "npm:^5.7.0"
@@ -350,7 +350,7 @@ __metadata:
     axios: "npm:^1.4.0"
     cross-fetch: "npm:^3.1.5"
     ethers: "npm:5.6.2"
-  checksum: bd606479c39703d2943e9be89c97d1fe1ed0a1e2a6b9418dd48bdd842798dbd6d50bf57dcd0da362eab6e223601b4e843174f3cfe54ad977d4d631a37bb97a37
+  checksum: c18a45829759e3a9db7bb8e274f22350d969d0d0c71eb91aba824a2b82496811cde41a9b65635d9d2c6e34277ec7216e426a1aa86fdf5fb068039a0c356c0dac
   languageName: node
   linkType: hard
 
@@ -421,7 +421,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-widget@workspace:packages/widget"
   dependencies:
-    "@buildwithsygma/sygma-sdk-core": "npm:^2.5.0"
+    "@buildwithsygma/sygma-sdk-core": "npm:2.6.0"
     "@buildwithsygma/sygmaprotocol-sdk-manager": "npm:*"
     "@buildwithsygma/sygmaprotocol-wallet-manager": "npm:*"
     "@lit/context": "npm:1.0.0"

@@ -10,6 +10,7 @@ export const styles = css`
     height: 116px;
     flex-direction: column;
   }
+
   .amountSelectorLabel {
     display: flex;
     width: 100%;
@@ -22,6 +23,7 @@ export const styles = css`
     font-weight: 500;
     line-height: 20px; /* 142.857% */
   }
+
   .amountSelectorSection {
     display: flex;
     width: 100%;
@@ -29,6 +31,7 @@ export const styles = css`
     justify-content: space-between;
     align-items: center;
   }
+
   .amountSelectorInput {
     border: none;
     color: var(--neutral-600, #525252);
@@ -39,5 +42,31 @@ export const styles = css`
     line-height: 40px; /* 117.647% */
     letter-spacing: -0.68px;
     width: 137px;
+  }
+
+  .tokenBalanceSection {
+    display: flex;
+    flex-direction: row;
+    align-self: flex-start;
+    margin-top: 8px;
+    width: 100%;
+  }
+
+  .balanceContent {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .balanceContent > span {
+    margin-right: 6px;
+  }
+
+  .maxButton {
+    color: var(--blue-600, #2563eb);
+    border: none;
+    background: none;
+    font-weight: 500;
   }
 `;
