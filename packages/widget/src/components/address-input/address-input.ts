@@ -1,7 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { styles } from './styles';
-import { when } from 'lit/directives/when.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import '@material/web/switch/switch';
 
@@ -11,21 +10,14 @@ export default class AddressInput extends LitElement {
   @property({
     type: String
   })
-  selectedAddress?: string;
-
-  @property({
-    type: Boolean
-  })
-  selected: boolean = false;
-
-  @property()
-  handleSwitch?: (e: Event) => void;
+  addressToTransfer?: string;
 
   @property()
   handleAddress?: (e: Event) => void;
 
-  renderInputAddress() {
-    return html`
+  render() {
+    console.log('address to transfer', this.addressToTransfer);
+    return html`<section class="switch-container">
       <div class="input-address-container">
         <label>Send to</label>
         <input
@@ -33,25 +25,9 @@ export default class AddressInput extends LitElement {
           name="address"
           type="text"
           @change=${this.handleAddress}
-          value=${ifDefined(this.selectedAddress)}
+          value=${ifDefined(this.addressToTransfer)}
         />
       </div>
-    `;
-  }
-
-  render() {
-    return html`<section class="switch-container">
-      <div class="switch-toggle-container">
-        <span>
-          <md-switch
-            class="switcher"
-            .selected=${this.selected}
-            @change=${this.handleSwitch}
-          ></md-switch>
-        </span>
-        <span> Transfer to different address </span>
-      </div>
-      ${when(this.selected, () => this.renderInputAddress())}
     </section>`;
   }
 }

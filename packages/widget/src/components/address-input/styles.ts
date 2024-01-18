@@ -36,7 +36,9 @@ export const styles = css`
   .input-address {
     border-radius: 24px;
     border: 1px solid var(--zinc-200, #e4e4e7);
-    width: 277px;
+    width: 320px;
     height: 35px;
+    font-size: 13px;
+    text-align: center;
   }
 `;
