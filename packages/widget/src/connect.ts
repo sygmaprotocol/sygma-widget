@@ -21,6 +21,7 @@ import { when } from 'lit/directives/when.js';
 import { choose } from 'lit/directives/choose.js';
 import './components/network-selector';
 import './components/amount-selector';
+import './components/address-input';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
@@ -69,6 +70,20 @@ class ConnectDialog extends LitElement {
     hasChanged: (n, o) => n !== o
   })
   selectedToken?: Pick<Resource, 'resourceId'>;
+
+  @state()
+  selectedAddress?: string;
+
+  @state()
+  selected: boolean = false;
+
+  handleSwitchChange(e: Event): void {
+    this.selected = (e.target as unknown as { selected: boolean })?.selected;
+  }
+
+  handleAddress(e: Event): void {
+    this.selectedAddress = (e.target as HTMLInputElement).value;
+  }
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -209,6 +224,12 @@ class ConnectDialog extends LitElement {
               .resources=${this.resources}
             >
             </amount-selector>
+            <address-input
+              .handleSwitch=${this.handleSwitchChange}
+              .handleAddress=${this.handleAddress}
+              .selected=${this.selected}
+              .selectedAddress=${this.selectedAddress}
+            ></address-input>
             ${choose(this.sdkManager?.status, [
               [
                 'initialized',
