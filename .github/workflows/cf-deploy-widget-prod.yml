@@ -1,0 +1,33 @@
+name: Cloudflare Deploy Widget (Production)
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+          node-version: 18
+      - run: corepack enable
+      - run: yarn set version stable
+      - run: yarn install --immutable
+      - run: yarn run lint:widget
+      - run: yarn run build:widget
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: sygma-widget-prod
+          directory: ./build
+          branch: main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
