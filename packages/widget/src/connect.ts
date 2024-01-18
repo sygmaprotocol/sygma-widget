@@ -90,17 +90,13 @@ class ConnectDialog extends LitElement {
   selectedTokenAddress?: string;
 
   @state()
-  selectedAddress?: string;
+  addressToTransfer?: string;
 
   @state()
   selected: boolean = false;
 
-  handleSwitchChange(e: Event): void {
-    this.selected = (e.target as unknown as { selected: boolean })?.selected;
-  }
-
   handleAddress(e: Event): void {
-    this.selectedAddress = (e.target as HTMLInputElement).value;
+    this.addressToTransfer = (e.target as HTMLInputElement).value;
   }
 
   async connectedCallback(): Promise<void> {
@@ -170,6 +166,7 @@ class ConnectDialog extends LitElement {
 
   async connect() {
     await this.walletManager?.connectEvmWallet();
+    this.addressToTransfer = this.walletManager?.accountData;
     this.requestUpdate();
   }
 
@@ -234,6 +231,7 @@ class ConnectDialog extends LitElement {
   }
 
   render() {
+    console.log('selectedAddress', this.addressToTransfer);
     if (!this.walletManager || !this.walletManager.accountData) {
       return html`<button @click=${this.connect}>Connect</button> `;
     } else {
@@ -270,10 +268,9 @@ class ConnectDialog extends LitElement {
             >
             </amount-selector>
             <address-input
-              .handleSwitch=${this.handleSwitchChange}
               .handleAddress=${this.handleAddress}
               .selected=${this.selected}
-              .selectedAddress=${this.selectedAddress}
+              .addressToTransfer=${this.addressToTransfer}
             ></address-input>
             ${choose(this.sdkManager?.status, [
               [
