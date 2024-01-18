@@ -1,14 +1,14 @@
-import {
+import type {
   EVMAssetTransfer,
   Environment,
   EvmFee,
   Fungible,
   Transfer
 } from '@buildwithsygma/sygma-sdk-core';
-import { UnsignedTransaction } from '@ethersproject/transactions';
-import { SdkManagerStatus } from './SdkManagerStatus';
-import { BaseProvider } from '@ethersproject/providers';
-import { Signer } from 'ethers';
+import type { BaseProvider } from '@ethersproject/providers';
+import type { UnsignedTransaction } from '@ethersproject/transactions';
+import type { Signer } from 'ethers';
+import type { SdkManagerStatus } from './SdkManagerStatus';
 
 export type SdkManagerState = {
   assetTransfer: EVMAssetTransfer;

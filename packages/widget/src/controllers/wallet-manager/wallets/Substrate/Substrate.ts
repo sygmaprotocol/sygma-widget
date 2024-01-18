@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
-import { ISubstrateWallet } from '../../interfaces';
+import type { ISubstrateWallet } from '../../interfaces';
 
 class SubstrateWallet implements ISubstrateWallet {
   substrateAccount?: string;
@@ -35,7 +35,6 @@ class SubstrateWallet implements ISubstrateWallet {
     );
 
     if (polkadotInjector) {
-      // eslint-disable-next-line no-console
       console.log('polkadot-js extension found');
       const allAccounts = await web3Accounts();
       this.substrateAccount = allAccounts[0].address;

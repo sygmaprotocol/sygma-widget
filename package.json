@@ -19,16 +19,9 @@
     "node": ">=16.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.20",
-    "@typescript-eslint/eslint-plugin": "^6.6.0",
-    "@typescript-eslint/parser": "^6.6.0",
+    "@chainsafe/eslint-config": "^2.1.1",
     "eslint": "^8.48.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-lit": "^1.9.1",
-    "eslint-plugin-prettier": "^5.0.0",
-    "eslint-plugin-wc": "^2.0.2",
-    "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
   "packageManager": "yarn@4.0.1",

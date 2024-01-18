@@ -1,0 +1,12 @@
+{
+    "plugins": [
+        "lit"
+    ],
+    "extends": [
+        "../../.eslintrc.json",
+        "plugin:lit/recommended"
+    ],
+    "parserOptions": {
+        "project": "./tsconfig.json"
+      }
+  }

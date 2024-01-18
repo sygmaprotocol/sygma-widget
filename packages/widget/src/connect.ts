@@ -1,25 +1,25 @@
-import { consume } from '@lit/context';
-import { LitElement, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
-import {
-  Environment,
+import type {
   EthereumConfig,
   EvmResource,
   Resource,
-  SubstrateConfig,
+  SubstrateConfig
+} from '@buildwithsygma/sygma-sdk-core';
+import {
+  Environment,
+  Network,
   getEvmErc20Balance
 } from '@buildwithsygma/sygma-sdk-core';
-import { when } from 'lit/directives/when.js';
-import { choose } from 'lit/directives/choose.js';
-import './components/network-selector';
-import './components/amount-selector';
+import { consume } from '@lit/context';
 import { ethers } from 'ethers';
-import {
-  SdkManager,
-  SdkManagerContext,
-  WalletManagerContext,
-  WalletManagerController
-} from './controllers';
+import type { HTMLTemplateResult } from 'lit';
+import { LitElement, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { choose } from 'lit/directives/choose.js';
+import { when } from 'lit/directives/when.js';
+import './components/amount-selector';
+import './components/network-selector';
+import type { SdkManager, WalletManagerController } from './controllers';
+import { SdkManagerContext, WalletManagerContext } from './controllers';
 
 @customElement('connect-dialog')
 class ConnectDialog extends LitElement {
@@ -94,31 +94,37 @@ class ConnectDialog extends LitElement {
       this.requestUpdate();
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.walletManager?.addChainChangedEventListener(async () => {
       this.chainId = (
         await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
       )?.chainId;
 
-      this.initSdk();
+      void this.initSdk();
 
       this.requestUpdate();
     });
 
     // listen to the custom event for network change
     addEventListener('network-change', (event: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const { detail } = event as CustomEvent;
       this.selectedNetworkChainId = Number(detail);
       this.requestUpdate();
     });
 
     addEventListener('amount-selector-change', (event: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const { detail } = event as CustomEvent;
       this.selectedAmount = Number(detail);
       this.requestUpdate();
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     addEventListener('token-change', async (event: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const { detail } = event as CustomEvent;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.selectedToken = detail;
 
       const tokenInfo = this.resources?.find(
@@ -127,7 +133,7 @@ class ConnectDialog extends LitElement {
 
       this.tokenName = tokenInfo?.symbol;
 
-      if (this.homechain?.type === 'evm') {
+      if (this.homechain?.type === Network.EVM) {
         this.selectedTokenAddress = (tokenInfo as EvmResource).address;
         await this.fetchTokenBalance();
       }
@@ -136,8 +142,8 @@ class ConnectDialog extends LitElement {
     });
   }
 
-  async fetchTokenBalance() {
-    if (this.homechain?.type === 'evm' && this.selectedTokenAddress) {
+  async fetchTokenBalance(): Promise<void> {
+    if (this.homechain?.type === Network.EVM && this.selectedTokenAddress) {
       const balance = await getEvmErc20Balance(
         this.walletManager?.accountData as string,
         this.selectedTokenAddress,
@@ -149,12 +155,12 @@ class ConnectDialog extends LitElement {
     }
   }
 
-  async connect() {
+  async connect(): Promise<void> {
     await this.walletManager?.connectEvmWallet();
     this.requestUpdate();
   }
 
-  async initSdk() {
+  async initSdk(): Promise<void> {
     if (!this.walletManager?.evmWallet?.web3Provider) {
       throw new Error('No provider');
     }
@@ -178,7 +184,7 @@ class ConnectDialog extends LitElement {
     this.requestUpdate();
   }
 
-  async createTransfer() {
+  async createTransfer(): Promise<void> {
     if (!this.walletManager?.evmWallet?.address) {
       throw new Error('No wallet connected');
     }
@@ -192,7 +198,7 @@ class ConnectDialog extends LitElement {
     this.requestUpdate();
   }
 
-  async approveTokens() {
+  async approveTokens(): Promise<void> {
     if (!this.sdkManager) {
       throw new Error('SDK Manager not initialized');
     }
@@ -203,7 +209,7 @@ class ConnectDialog extends LitElement {
     this.requestUpdate();
   }
 
-  async performDeposit() {
+  async performDeposit(): Promise<void> {
     if (!this.sdkManager) {
       throw new Error('SDK Manager not initialized');
     }
@@ -214,8 +220,9 @@ class ConnectDialog extends LitElement {
     this.requestUpdate();
   }
 
-  render() {
+  render(): HTMLTemplateResult {
     if (!this.walletManager || !this.walletManager.accountData) {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       return html`<button @click=${this.connect}>Connect</button> `;
     } else {
       return html`<div>
@@ -223,7 +230,8 @@ class ConnectDialog extends LitElement {
         <p>Network: ${this.chainId}</p>
         <p>SDK Status: ${this.sdkManager?.status}</p>
         ${this.sdkManager?.status === 'idle'
-          ? html`<button @click=${this.initSdk}>initialize sdk</button>`
+          ? // eslint-disable-next-line @typescript-eslint/unbound-method
+            html`<button @click=${this.initSdk}>initialize sdk</button>`
           : undefined}
         ${when(
           this.sdkManager?.status !== 'idle' && this.domains && this.homechain,
@@ -254,6 +262,7 @@ class ConnectDialog extends LitElement {
               [
                 'initialized',
                 () =>
+                  // eslint-disable-next-line @typescript-eslint/unbound-method
                   html`<button @click=${this.createTransfer}>
                     Create transfer
                   </button>`
@@ -261,11 +270,13 @@ class ConnectDialog extends LitElement {
               [
                 'transferCreated',
                 () =>
+                  // eslint-disable-next-line @typescript-eslint/unbound-method
                   html`<button @click=${this.approveTokens}>Approve</button>`
               ],
               [
                 'approvalsCompleted',
                 () =>
+                  // eslint-disable-next-line @typescript-eslint/unbound-method
                   html`<button @click=${this.performDeposit}>Transfer</button>`
               ]
             ])}

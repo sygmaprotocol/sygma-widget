@@ -1,10 +1,12 @@
-import { Resource } from '@buildwithsygma/sygma-sdk-core';
+import type { Resource } from '@buildwithsygma/sygma-sdk-core';
+import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { styles } from './styles';
-import { when } from 'lit/directives/when.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { Ref, createRef, ref } from 'lit/directives/ref.js';
+import type { Ref } from 'lit/directives/ref.js';
+import { createRef, ref } from 'lit/directives/ref.js';
+import { when } from 'lit/directives/when.js';
+import { styles } from './styles';
 
 @customElement('amount-selector')
 export default class AmountSelector extends LitElement {
@@ -48,7 +50,7 @@ export default class AmountSelector extends LitElement {
 
   inputRef: Ref<HTMLInputElement> = createRef();
 
-  handleAmountChange(event: Event): void {
+  handleAmountChange = (event: Event): void => {
     const { value } = event.target as HTMLInputElement;
 
     this.selectedAmount = Number.parseFloat(value);
@@ -60,9 +62,9 @@ export default class AmountSelector extends LitElement {
         composed: true
       })
     );
-  }
+  };
 
-  useMaxBalance() {
+  useMaxBalance = (): void => {
     this.selectedAmount = Number.parseFloat(this.tokenBalance!);
 
     (this.inputRef.value as HTMLInputElement).value = `${this.selectedAmount}`;
@@ -71,9 +73,9 @@ export default class AmountSelector extends LitElement {
     });
 
     this.inputRef.value?.dispatchEvent(event);
-  }
+  };
 
-  renderBalance() {
+  renderBalance(): HTMLTemplateResult {
     return html`
       <section class="balanceContent">
         <span>${`${Number.parseFloat(this.tokenBalance!).toFixed(4)}`}</span>
@@ -82,7 +84,7 @@ export default class AmountSelector extends LitElement {
     `;
   }
 
-  render() {
+  render(): HTMLTemplateResult {
     return html`
       <div class="amountSelectorContainer">
       <section class="tokenBalanceSection">

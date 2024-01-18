@@ -4,6 +4,7 @@ import { SubstrateWallet } from '../../../../src/controllers/wallet-manager/wall
 
 vi.mock('@polkadot/api', async () => {
   const mod =
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
     await vi.importActual<typeof import('@polkadot/api')>('@polkadot/api');
   const WsProviderMock = vi.fn();
   const ApiPromiseMock = {

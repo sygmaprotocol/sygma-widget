@@ -1,12 +1,12 @@
 import { LitElement } from 'lit';
-import { ExternalProvider } from '@ethersproject/providers';
+import type { ExternalProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import {
   Network,
   WalletManagerController
 } from '../../../../src/controllers/wallet-manager';
-import { ApiPromise, WsProvider } from '@polkadot/api';
 
 class WidgetTestFixture extends LitElement {
   constructor() {

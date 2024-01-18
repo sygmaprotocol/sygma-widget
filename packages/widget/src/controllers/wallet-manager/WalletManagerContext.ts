@@ -1,12 +1,13 @@
-import { provide, createContext } from '@lit/context';
+import { createContext, provide } from '@lit/context';
+import type { ApiPromise } from '@polkadot/api';
+import type { ethers } from 'ethers';
+import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {
-  type WalletManagerController as TWalletManagerController,
-  WalletManagerController
+  WalletManagerController,
+  type WalletManagerController as TWalletManagerController
 } from './WalletManagerController';
-import { ethers } from 'ethers';
-import { ApiPromise } from '@polkadot/api';
 import { Network } from './types';
 
 export const WalletManagerContext = createContext<
@@ -75,7 +76,7 @@ export class WalletManagerContextProvider extends LitElement {
     );
   }
 
-  render() {
+  render(): HTMLTemplateResult {
     return html` <slot></slot>`;
   }
 }

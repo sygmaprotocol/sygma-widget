@@ -1,8 +1,8 @@
-import { Web3Provider } from '@ethersproject/providers';
-import { ApiPromise } from '@polkadot/api';
-import { ReactiveController } from 'lit';
-import { AddChain } from '../types';
-import { Signer } from '@ethersproject/abstract-signer';
+import type { Signer } from '@ethersproject/abstract-signer';
+import type { Web3Provider } from '@ethersproject/providers';
+import type { ApiPromise } from '@polkadot/api';
+import type { ReactiveController } from 'lit';
+import type { AddChain } from '../types';
 
 export interface SupportedWallet {
   id: string;

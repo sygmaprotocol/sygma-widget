@@ -1,4 +1,4 @@
-import { SyntheticEventCreator } from '..';
+import type { SyntheticEventCreator } from '..';
 
 export const syntheticEventCreator: SyntheticEventCreator = (
   eventName,

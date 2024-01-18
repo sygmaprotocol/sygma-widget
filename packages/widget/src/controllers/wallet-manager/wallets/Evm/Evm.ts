@@ -1,12 +1,9 @@
-import { ethers } from 'ethers';
 import events from 'events';
-import type {
-  Web3Provider,
-  ExternalProvider,
-  Provider
-} from '@ethersproject/providers';
-import { customEVMEvents, IEvmWallet } from '../../interfaces';
-import { AddChain } from '../../types';
+import type { Provider, Web3Provider } from '@ethersproject/providers';
+import { ethers } from 'ethers';
+import type { IEvmWallet } from '../../interfaces';
+import { customEVMEvents } from '../../interfaces';
+import type { AddChain } from '../../types';
 import { checkWindow } from '../../utils';
 
 class EvmWallet extends events.EventEmitter implements IEvmWallet {
@@ -23,9 +20,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     if (provider) {
       this.web3Provider = provider;
     } else {
-      this.web3Provider = new ethers.providers.Web3Provider(
-        window.ethereum as ExternalProvider
-      );
+      this.web3Provider = new ethers.providers.Web3Provider(window.ethereum);
     }
     this.appendProviderEvents();
   }
@@ -41,29 +36,30 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
       return;
     }
 
-    this.address = _accounts![0];
+    this.address = _accounts[0];
     this.signer = this.web3Provider.getSigner();
   }
 
   private reconnectToProvider(): void {
-    this.web3Provider = new ethers.providers.Web3Provider(
-      window.ethereum as ExternalProvider
-    );
+    this.web3Provider = new ethers.providers.Web3Provider(window.ethereum);
   }
 
   private appendProviderEvents(): void {
     checkWindow();
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     (this.web3Provider.provider as Provider).on('connect', async () => {
       this.reconnectToProvider();
       await this.resetAccounts();
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     (this.web3Provider.provider as Provider).on('disconnect', async () => {
       this.reconnectToProvider();
       await this.resetAccounts();
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     (this.web3Provider.provider as Provider).on('chainChanged', async () => {
       this.reconnectToProvider();
       await this.resetAccounts();
@@ -73,6 +69,7 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
 
     (this.web3Provider.provider as Provider).on(
       'accountsChanged',
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       async (accounts: string[]) => {
         this.reconnectToProvider();
         await this.resetAccounts(accounts);
@@ -82,12 +79,14 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
     );
   }
 
-  public async connect() {
+  public async connect(): Promise<void> {
     checkWindow();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const accounts = await this.web3Provider.provider.request!({
       method: 'eth_requestAccounts'
     });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     this.address = accounts[0];
     this.signer = this.web3Provider.getSigner();
   }

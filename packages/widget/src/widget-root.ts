@@ -1,12 +1,12 @@
+import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import './controllers';
 import './connect';
 import { Network } from './controllers';
 
 @customElement('widget-root')
 class WidgetRoot extends LitElement {
-  render() {
+  render(): HTMLTemplateResult {
     return html`<wallet-manager-context-provider .network=${Network.EVM}>
       <sdk-manager-context-provider>
         <connect-dialog></connect-dialog>

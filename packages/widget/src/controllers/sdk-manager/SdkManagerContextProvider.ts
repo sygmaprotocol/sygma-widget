@@ -1,10 +1,12 @@
-import { Environment } from '@buildwithsygma/sygma-sdk-core';
+import type { Environment } from '@buildwithsygma/sygma-sdk-core';
 import { consume, createContext, provide } from '@lit/context';
+import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { SdkManagerState } from './types';
+import type { WalletManagerController } from '..';
+import { WalletManagerContext } from '..';
 import { SdkManager } from './SdkManager';
-import { WalletManagerContext, WalletManagerController } from '..';
+import type { SdkManagerState } from './types';
 
 export const SdkManagerContext = createContext<SdkManagerState | undefined>(
   'sdk-context'
@@ -39,7 +41,7 @@ export class SdkManagerContextProvider extends LitElement {
     this.sdkManager = new SdkManager();
   }
 
-  async initializeSdk(env?: Environment) {
+  async initializeSdk(env?: Environment): Promise<void> {
     if (!this.walletManager?.provider) {
       throw new Error('No wallet connected');
     }
@@ -53,7 +55,7 @@ export class SdkManagerContextProvider extends LitElement {
     destinationAddress: string,
     resourceId: string,
     amount: string
-  ) {
+  ): Promise<void> {
     if (!this.walletManager?.provider) {
       throw new Error('No wallet connected');
     }
@@ -75,6 +77,7 @@ export class SdkManagerContextProvider extends LitElement {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
@@ -82,16 +85,16 @@ export class SdkManagerContextProvider extends LitElement {
       this.requestUpdate();
     });
 
-    this.walletManager?.addChainChangedEventListener(async () => {
+    this.walletManager?.addChainChangedEventListener(() => {
       const provider = this.walletManager?.evmWallet?.web3Provider;
       if (provider) {
-        this.sdkManager?.checkSourceNetwork(provider);
+        void this.sdkManager?.checkSourceNetwork(provider);
       }
       this.requestUpdate();
     });
   }
 
-  render() {
+  render(): HTMLTemplateResult {
     return html`<slot></slot>`;
   }
 }

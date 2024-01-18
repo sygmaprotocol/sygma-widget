@@ -1,14 +1,16 @@
-import {
-  EVMAssetTransfer,
-  Environment,
+import type {
   EvmFee,
   Fungible,
   Transfer
 } from '@buildwithsygma/sygma-sdk-core';
-import { BaseProvider, TransactionRequest } from '@ethersproject/providers';
-import { Signer } from 'ethers';
-import { UnsignedTransaction } from '@ethersproject/transactions';
-import { SdkManagerState, SdkManagerStatus } from './types';
+import { EVMAssetTransfer, Environment } from '@buildwithsygma/sygma-sdk-core';
+import type {
+  BaseProvider,
+  TransactionRequest
+} from '@ethersproject/providers';
+import type { UnsignedTransaction } from '@ethersproject/transactions';
+import type { Signer } from 'ethers';
+import type { SdkManagerState, SdkManagerStatus } from './types';
 
 export class SdkManager implements SdkManagerState {
   assetTransfer: EVMAssetTransfer;
@@ -23,7 +25,7 @@ export class SdkManager implements SdkManagerState {
     this.status = 'idle';
   }
 
-  async checkSourceNetwork(provider: BaseProvider) {
+  async checkSourceNetwork(provider: BaseProvider): Promise<void> {
     const providerChainId = (await provider.getNetwork()).chainId;
     const validEnvDomains = this.assetTransfer.config
       .getDomains()
@@ -39,7 +41,7 @@ export class SdkManager implements SdkManagerState {
   async initializeSdk(
     provider: BaseProvider,
     env: Environment = Environment.MAINNET
-  ) {
+  ): Promise<void> {
     await this.assetTransfer.init(provider, env);
     await this.checkSourceNetwork(provider);
   }
@@ -50,7 +52,7 @@ export class SdkManager implements SdkManagerState {
     destinationAddress: string,
     resourceId: string,
     amount: string
-  ) {
+  ): Promise<void> {
     const transfer = await this.assetTransfer.createFungibleTransfer(
       fromAddress,
       destinationChainId,
@@ -75,7 +77,7 @@ export class SdkManager implements SdkManagerState {
     );
   }
 
-  async performApprovals(signer: Signer) {
+  async performApprovals(signer: Signer): Promise<void> {
     if (!this.transfer) {
       throw new Error('No transfer');
     }
@@ -109,7 +111,7 @@ export class SdkManager implements SdkManagerState {
     }
   }
 
-  async performDeposit(signer: Signer) {
+  async performDeposit(signer: Signer): Promise<void> {
     if (!this.transfer) {
       throw new Error('No transfer');
     }

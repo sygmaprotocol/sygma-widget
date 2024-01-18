@@ -1,10 +1,12 @@
-import { ReactiveControllerHost } from 'lit';
+import type { Signer } from '@ethersproject/abstract-signer';
+import type { Web3Provider } from '@ethersproject/providers';
+import type { ApiPromise } from '@polkadot/api';
+import type { ReactiveControllerHost } from 'lit';
+import type { IWalletManagerController } from './interfaces';
+import { customEVMEvents } from './interfaces';
+import type { AddChain } from './types';
+import { Network } from './types';
 import { EvmWallet, SubstrateWallet } from '.';
-import { Web3Provider } from '@ethersproject/providers';
-import { ApiPromise } from '@polkadot/api';
-import { AddChain, Network } from './types';
-import { customEVMEvents, IWalletManagerController } from './interfaces';
-import { Signer } from '@ethersproject/abstract-signer';
 
 export class WalletManagerController implements IWalletManagerController {
   private host: ReactiveControllerHost;
@@ -28,8 +30,9 @@ export class WalletManagerController implements IWalletManagerController {
       this.initWeb3Provider(initArgument.web3Provider);
     } else if (network === Network.SUBSTRATE) {
       this.initFromApiPromise(initArgument as ApiPromise);
+      // eslint-disable-next-line no-dupe-else-if
     } else if (network === Network.SUBSTRATE && initArgument.wssConnectionUrl) {
-      this.initFromWssProvider(initArgument as string);
+      void this.initFromWssProvider(initArgument as string);
     }
   }
 
@@ -43,7 +46,9 @@ export class WalletManagerController implements IWalletManagerController {
     callback: (account: string) => void
   ): void {
     this.evmWallet?.addListener(customEVMEvents.ACCOUNT_CHANGE, (account) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.account = account;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       callback(account);
     });
   }
@@ -74,16 +79,12 @@ export class WalletManagerController implements IWalletManagerController {
     rpcUrl,
     nativeCurrency
   }: AddChain): Promise<void> {
-    try {
-      await this.evmWallet?.addChain({
-        chainId,
-        chainName,
-        rpcUrl,
-        nativeCurrency
-      });
-    } catch (error) {
-      throw error;
-    }
+    await this.evmWallet?.addChain({
+      chainId,
+      chainName,
+      rpcUrl,
+      nativeCurrency
+    });
   }
 
   public async connectToSubstrate(): Promise<void> {

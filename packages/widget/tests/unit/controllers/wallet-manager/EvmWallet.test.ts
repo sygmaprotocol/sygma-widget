@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { ExternalProvider } from '@ethersproject/providers';
+import type { ExternalProvider } from '@ethersproject/providers';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EvmWallet } from '../../../../src/controllers/wallet-manager';
 
