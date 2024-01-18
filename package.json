@@ -26,6 +26,7 @@
   },
   "packageManager": "yarn@4.0.1",
   "scripts": {
+    "demo": "yarn workspace @buildwithsygma/sygmaprotocol-widget run dev",
     "clean": "yarn workspaces foreach --all -pt run clean",
     "build": "yarn workspaces foreach --all -pt run build",
     "lint": "yarn workspaces foreach --all -pt run lint",
