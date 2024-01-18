@@ -28,6 +28,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: sygma-widget-prod
-          directory: ./build
+          directory: ./packages/widget/build
           branch: main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
