@@ -1,1 +1,1 @@
-export { WidgetRoot } from './widget-root';
+export { SygmaProtocolWidget } from './widget';

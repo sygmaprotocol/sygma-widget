@@ -1,3 +1,5 @@
+export { default as switchNetworkIcon } from './icons/switchNetwork';
+export { default as sygmaLogo } from './icons/sygmaLogo';
 export { default as noNetworkIcon } from './icons/noNetworkIcon';
 export { default as ethereumIcon } from './icons/ethereumNetworkIcon';
 export { default as polygonNetworkIcon } from './icons/polygonNetworkIcon';
