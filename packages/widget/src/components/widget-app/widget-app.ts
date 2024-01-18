@@ -19,6 +19,10 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
   // eslint-disable-next-line class-methods-use-this
   async handleTransfer() {}
 
+  handleAddress(e: Event): void {
+    this.addressToTransfer = (e.target as HTMLInputElement).value;
+  }
+
   async getChainId() {
     if (this.walletManager?.evmWallet?.web3Provider) {
       const chainId = (
@@ -115,6 +119,8 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
 
   async connect() {
     await this.walletManager?.connectEvmWallet();
+    this.addressToTransfer = this.walletManager?.accountData;
+    console.log('this.addressToTransfer', this.addressToTransfer);
     await this.initSdk();
     this.requestUpdate();
   }
@@ -185,6 +191,8 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
         .handleTransfer=${this.handleTransfer}
         .destinationDomains=${this.destinationDomains}
         .tokenBalance=${this.tokenBalance}
+        .addressToTransfer=${this.addressToTransfer}
+        .handleAddress=${this.handleAddress}
       ></widget-view>
     `;
   }

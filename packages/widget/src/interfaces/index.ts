@@ -20,4 +20,5 @@ export interface IWidgetMixin {
   selectedTokenAddress?: string;
   tokenBalance?: string;
   tokenName?: string;
+  addressToTransfer?: string;
 }

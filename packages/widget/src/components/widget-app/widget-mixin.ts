@@ -74,6 +74,9 @@ const WidgetMixin = <T extends Constructor<LitElement>>(superClass: T) => {
     @state()
     tokenName?: string;
 
+    @state()
+    addressToTransfer?: string;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...rest: any[]) {
       super(rest);

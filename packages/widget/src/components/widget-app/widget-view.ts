@@ -10,6 +10,7 @@ import { WalletManagerController } from '@buildwithsygma/sygmaprotocol-wallet-ma
 import { when } from 'lit/directives/when.js';
 import '../network-selector';
 import '../amount-selector';
+import '../address-input';
 import { styles } from './styles';
 
 @customElement('widget-view')
@@ -70,6 +71,14 @@ export class WidgetView extends LitElement {
   })
   tokenBalance?: string;
 
+  @property({
+    type: String
+  })
+  addressToTransfer?: string;
+
+  @property()
+  handleAddress?: (e: Event) => void;
+
   @state()
   connectionInitiliazed: boolean = false;
 
@@ -120,7 +129,10 @@ export class WidgetView extends LitElement {
             </amount-selector>
           </section>
           <section>
-            Transfer to the same address
+          <address-input
+              .handleAddress=${this.handleAddress}
+              .addressToTransfer=${this.addressToTransfer}
+            ></address-input>
           </section>
           <section>
             ${when(
