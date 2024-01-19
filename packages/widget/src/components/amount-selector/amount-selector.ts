@@ -34,7 +34,7 @@ export default class AmountSelector extends LitElement {
   selectedNetworkChainId?: number;
 
   @property({
-    type: Number
+    type: String
   })
   tokenBalance?: string;
 
