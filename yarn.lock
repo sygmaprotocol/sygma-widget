@@ -426,7 +426,6 @@ __metadata:
     "@buildwithsygma/sygmaprotocol-wallet-manager": "npm:*"
     "@lit/context": "npm:1.0.0"
     "@lit/reactive-element": "npm:2.0.0"
-    "@material/web": "npm:^1.1.1"
     "@types/node": "npm:20.8.4"
     eslint: "npm:^8.48.0"
     eslint-config-prettier: "npm:^9.0.0"
@@ -1757,16 +1756,6 @@ __metadata:
   dependencies:
     "@lit-labs/ssr-dom-shim": "npm:^1.1.2-pre.0"
   checksum: 5063c4470040e78d9adb47449fbd1f037fa0c184b778134f07d6d1e1cc3983d9e6a3e03929a6000b8c6b6148c40131d19c1a8a34828e6efb580b739a95fee399
-  languageName: node
-  linkType: hard
-
-"@material/web@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@material/web@npm:1.1.1"
-  dependencies:
-    lit: "npm:^2.7.4 || ^3.0.0"
-    tslib: "npm:^2.4.0"
-  checksum: 82cf8495a43d542ed5daf7c42ebb8beb659cf25ebaa408d6bd1de24dc8bba71660e7c2fbc96cae6bc6d9a532c42cd877bc794a57d061cdf7ea8225cea5d667b8
   languageName: node
   linkType: hard
 
@@ -7513,17 +7502,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lit@npm:^2.7.4 || ^3.0.0":
-  version: 3.1.1
-  resolution: "lit@npm:3.1.1"
-  dependencies:
-    "@lit/reactive-element": "npm:^2.0.0"
-    lit-element: "npm:^4.0.0"
-    lit-html: "npm:^3.1.0"
-  checksum: fea579d9e7e27bf984a9dfe2b617e4c21d3bd428a38de63719797b266b1548cc3a89155bbb630f46edf337641d9d02106f749b6ca4a439daba47a1e1045937b7
-  languageName: node
-  linkType: hard
-
 "lit@npm:^2.7.5 || ^3.0.0":
   version: 3.1.0
   resolution: "lit@npm:3.1.0"
@@ -10031,7 +10009,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.5.2, tslib@npm:^2.5.3, tslib@npm:^2.6.0, tslib@npm:^2.6.1, tslib@npm:^2.6.2":
+"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.5.0, tslib@npm:^2.5.2, tslib@npm:^2.5.3, tslib@npm:^2.6.0, tslib@npm:^2.6.1, tslib@npm:^2.6.2":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: e03a8a4271152c8b26604ed45535954c0a45296e32445b4b87f8a5abdb2421f40b59b4ca437c4346af0f28179780d604094eb64546bee2019d903d01c6c19bdb
