@@ -21,9 +21,9 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
 
   async getChainId(): Promise<number | undefined> {
     if (this.walletManager?.evmWallet?.web3Provider) {
-      const chainId = // eslint-disable-next-line no-unsafe-optional-chaining
-        (await this.walletManager?.evmWallet?.web3Provider?.getNetwork())
-          .chainId;
+      const chainId = (
+        await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
+      )?.chainId;
       return chainId;
     }
   }
