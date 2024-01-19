@@ -1,15 +1,16 @@
-import {
+import type {
   EthereumConfig,
   Resource,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
+import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { switchNetworkIcon, sygmaLogo } from '../../assets';
-import { WalletManagerController } from '@buildwithsygma/sygmaprotocol-wallet-manager';
 import { when } from 'lit/directives/when.js';
+import { switchNetworkIcon, sygmaLogo } from '../../assets';
 import '../network-selector';
 import '../amount-selector';
+import type { WalletManagerController } from '../../controllers';
 import { styles } from './styles';
 
 @customElement('widget-view')
@@ -71,20 +72,20 @@ export class WidgetView extends LitElement {
   tokenBalance?: string;
 
   @state()
-  connectionInitiliazed: boolean = false;
+  connectionInitialized: boolean = false;
 
-  initConnect() {
-    this.connectionInitiliazed = true;
+  initConnect = (): void => {
+    this.connectionInitialized = true;
     dispatchEvent(
       new CustomEvent('connectionInitialized', {
-        detail: { connectionInitiliazed: this.connectionInitiliazed },
+        detail: { connectionInitialized: this.connectionInitialized },
         bubbles: true,
         composed: true
       })
     );
-  }
+  };
 
-  render() {
+  render(): HTMLTemplateResult {
     return html`
     <section class="widgetContainer">
         <form @submit=${this.handleTransfer}>

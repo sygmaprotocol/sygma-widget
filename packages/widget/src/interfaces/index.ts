@@ -1,10 +1,9 @@
-import { WalletManagerController } from '@buildwithsygma/sygmaprotocol-wallet-manager';
-import { SdkManager } from '@buildwithsygma/sygmaprotocol-sdk-manager';
-import {
+import type {
   EthereumConfig,
   Resource,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
+import type { SdkManager, WalletManagerController } from '../controllers';
 
 export interface IWidgetMixin {
   walletManager?: WalletManagerController;

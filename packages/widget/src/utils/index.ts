@@ -1,3 +1,4 @@
+import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import {
   baseNetworkIcon,
@@ -9,7 +10,9 @@ import {
   polygonNetworkIcon
 } from '../assets';
 
-export const renderNetworkIcon = (networkChainId?: number) => {
+export const renderNetworkIcon = (
+  networkChainId?: number
+): HTMLTemplateResult | undefined => {
   switch (networkChainId) {
     case 1:
     case 5:
@@ -31,13 +34,14 @@ export const renderNetworkIcon = (networkChainId?: number) => {
     case 137:
       return html`${polygonNetworkIcon}`;
   }
+  return undefined;
 };
 
-export const renderNoNetworkIcon = () => {
+export const renderNoNetworkIcon = (): HTMLTemplateResult => {
   return html`${noNetworkIcon}`;
 };
 
-export const capitalize = (s: string) => {
+export const capitalize = (s: string): string => {
   const firstLetter = s.charAt(0).toUpperCase();
   const rest = s.slice(1);
   return `${firstLetter}${rest}`;

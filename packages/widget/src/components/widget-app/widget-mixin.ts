@@ -1,23 +1,19 @@
-import { Constructor } from '@lit/reactive-element/decorators/base.js';
-import {
-  WalletManagerContext,
-  WalletManagerController
-} from '@buildwithsygma/sygmaprotocol-wallet-manager';
-import {
-  SdkManager,
-  SdkManagerContext
-} from '@buildwithsygma/sygmaprotocol-sdk-manager';
-import { LitElement } from 'lit';
+import type { Constructor } from '@lit/reactive-element/decorators/base.js';
+import type { LitElement } from 'lit';
 import { state } from 'lit/decorators.js';
 import { consume } from '@lit/context';
-import { IWidgetMixin } from '../../interfaces';
-import {
+import type {
   EthereumConfig,
   Resource,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
+import type { IWidgetMixin } from '../../interfaces';
+import type { SdkManager, WalletManagerController } from '../../controllers';
+import { SdkManagerContext, WalletManagerContext } from '../../controllers';
 
-const WidgetMixin = <T extends Constructor<LitElement>>(superClass: T) => {
+const WidgetMixin = <T extends Constructor<LitElement>>(
+  superClass: T
+): Constructor<IWidgetMixin> & T => {
   class Mixin extends superClass {
     @consume({ context: WalletManagerContext, subscribe: true })
     @state()
@@ -73,11 +69,6 @@ const WidgetMixin = <T extends Constructor<LitElement>>(superClass: T) => {
 
     @state()
     tokenName?: string;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    constructor(...rest: any[]) {
-      super(rest);
-    }
   }
 
   return Mixin as Constructor<IWidgetMixin> & T;

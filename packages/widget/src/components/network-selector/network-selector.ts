@@ -1,11 +1,12 @@
-import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import {
+import type {
   EthereumConfig,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
-import { styles } from './styles';
+import type { HTMLTemplateResult } from 'lit';
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import '../base-selector';
+import { styles } from './styles';
 
 const directions = {
   from: 'From',
@@ -54,7 +55,7 @@ export default class NetworkSelector extends LitElement {
   })
   disabled = false;
 
-  render() {
+  render(): HTMLTemplateResult {
     return html`
       <div class="selectorContainer">
         <label for="network-selector" class="directionLabel"
