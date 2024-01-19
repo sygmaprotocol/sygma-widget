@@ -77,8 +77,7 @@ export class SdkManagerContextProvider extends LitElement {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async connectedCallback(): Promise<void> {
+  connectedCallback(): void {
     super.connectedCallback();
 
     this.walletManager?.addAccountChangedEventListener(() => {

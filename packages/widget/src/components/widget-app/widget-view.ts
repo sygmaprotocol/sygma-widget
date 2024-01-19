@@ -72,13 +72,13 @@ export class WidgetView extends LitElement {
   tokenBalance?: string;
 
   @state()
-  connectionInitiliazed: boolean = false;
+  connectionInitialized: boolean = false;
 
   initConnect = (): void => {
-    this.connectionInitiliazed = true;
+    this.connectionInitialized = true;
     dispatchEvent(
       new CustomEvent('connectionInitialized', {
-        detail: { connectionInitiliazed: this.connectionInitiliazed },
+        detail: { connectionInitialized: this.connectionInitialized },
         bubbles: true,
         composed: true
       })

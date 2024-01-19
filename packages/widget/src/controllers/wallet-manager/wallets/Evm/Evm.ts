@@ -47,34 +47,33 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
   private appendProviderEvents(): void {
     checkWindow();
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    (this.web3Provider.provider as Provider).on('connect', async () => {
+    (this.web3Provider.provider as Provider).on('connect', () => {
       this.reconnectToProvider();
-      await this.resetAccounts();
+
+      void this.resetAccounts();
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    (this.web3Provider.provider as Provider).on('disconnect', async () => {
+    (this.web3Provider.provider as Provider).on('disconnect', () => {
       this.reconnectToProvider();
-      await this.resetAccounts();
+
+      void this.resetAccounts();
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    (this.web3Provider.provider as Provider).on('chainChanged', async () => {
+    (this.web3Provider.provider as Provider).on('chainChanged', () => {
       this.reconnectToProvider();
-      await this.resetAccounts();
 
-      this.emit(customEVMEvents.CHAIN_CHANGE, this.web3Provider);
+      void this.resetAccounts().then(() => {
+        this.emit(customEVMEvents.CHAIN_CHANGE, this.web3Provider);
+      });
     });
 
     (this.web3Provider.provider as Provider).on(
       'accountsChanged',
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      async (accounts: string[]) => {
+      (accounts: string[]) => {
         this.reconnectToProvider();
-        await this.resetAccounts(accounts);
-
-        this.emit(customEVMEvents.ACCOUNT_CHANGE, this.address);
+        void this.resetAccounts(accounts).then(() => {
+          this.emit(customEVMEvents.ACCOUNT_CHANGE, this.address);
+        });
       }
     );
   }
@@ -82,11 +81,10 @@ class EvmWallet extends events.EventEmitter implements IEvmWallet {
   public async connect(): Promise<void> {
     checkWindow();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const accounts = await this.web3Provider.provider.request!({
+    const accounts = (await this.web3Provider.provider.request!({
       method: 'eth_requestAccounts'
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    })) as Array<string>;
+
     this.address = accounts[0];
     this.signer = this.web3Provider.getSigner();
   }

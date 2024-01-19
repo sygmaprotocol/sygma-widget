@@ -21,10 +21,8 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
 
   async getChainId(): Promise<number | undefined> {
     if (this.walletManager?.evmWallet?.web3Provider) {
-      const chainId = (
-        await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
-      )?.chainId;
-      return chainId;
+      return (await this.walletManager?.evmWallet?.web3Provider?.getNetwork())
+        ?.chainId;
     }
   }
 
@@ -36,7 +34,6 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
       this.requestUpdate();
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.walletManager?.addChainChangedEventListener(async () => {
       this.chainId = (
         await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
@@ -49,24 +46,20 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
 
     // listen to the custom event for network change
     addEventListener('network-change', (event: unknown) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const { detail } = event as CustomEvent;
+      const { detail } = event as CustomEvent<string>;
       this.selectedNetworkChainId = Number(detail);
       this.requestUpdate();
     });
 
     addEventListener('amount-selector-change', (event: unknown) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const { detail } = event as CustomEvent;
+      const { detail } = event as CustomEvent<string>;
       this.selectedAmount = Number(detail);
       this.requestUpdate();
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    addEventListener('token-change', async (event: unknown) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const { detail } = event as CustomEvent;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    addEventListener('token-change', (event: unknown) => {
+      const { detail } = event as CustomEvent<string>;
+
       this.selectedToken = detail;
 
       const tokenInfo = this.resources?.find(
@@ -77,19 +70,20 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
 
       if (this.homechain?.type === Network.EVM) {
         this.selectedTokenAddress = (tokenInfo as EvmResource).address;
-        await this.fetchTokenBalance();
-      }
 
-      this.requestUpdate();
+        void this.fetchTokenBalance().then(() => this.requestUpdate());
+      } else {
+        this.requestUpdate();
+      }
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    addEventListener('connectionInitialized', async (event: unknown) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const { detail } = event as CustomEvent;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (detail.connectionInitiliazed) {
-        await this.connect();
+    addEventListener('connectionInitialized', (event: unknown) => {
+      const { detail } = event as CustomEvent<{
+        connectionInitialized: boolean;
+      }>;
+
+      if (detail.connectionInitialized) {
+        void this.connect();
       }
     });
   }

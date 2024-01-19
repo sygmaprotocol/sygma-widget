@@ -28,9 +28,8 @@ export class WalletManagerController implements IWalletManagerController {
 
     if (network === Network.EVM) {
       this.initWeb3Provider(initArgument.web3Provider);
-    } else if (network === Network.SUBSTRATE) {
-      this.initFromApiPromise(initArgument as ApiPromise);
-      // eslint-disable-next-line no-dupe-else-if
+    } else if (network === Network.SUBSTRATE && initArgument.apiPromise) {
+      this.initFromApiPromise(initArgument.apiPromise);
     } else if (network === Network.SUBSTRATE && initArgument.wssConnectionUrl) {
       void this.initFromWssProvider(initArgument as string);
     }
@@ -45,18 +44,21 @@ export class WalletManagerController implements IWalletManagerController {
   public addAccountChangedEventListener(
     callback: (account: string) => void
   ): void {
-    this.evmWallet?.addListener(customEVMEvents.ACCOUNT_CHANGE, (account) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      this.account = account;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      callback(account);
-    });
+    this.evmWallet?.addListener(
+      customEVMEvents.ACCOUNT_CHANGE,
+      (account: string) => {
+        this.account = account;
+        callback(account);
+      }
+    );
   }
 
-  public addChainChangedEventListener(callback: () => void): void {
+  public addChainChangedEventListener(
+    callback: () => void | Promise<void>
+  ): void {
     this.evmWallet?.addListener(customEVMEvents.CHAIN_CHANGE, () => {
       this.account = this.evmWallet?.address;
-      callback();
+      void callback();
     });
   }
 

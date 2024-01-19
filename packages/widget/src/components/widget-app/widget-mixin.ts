@@ -69,11 +69,6 @@ const WidgetMixin = <T extends Constructor<LitElement>>(
 
     @state()
     tokenName?: string;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    constructor(...rest: any[]) {
-      super(rest);
-    }
   }
 
   return Mixin as Constructor<IWidgetMixin> & T;
