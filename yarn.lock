@@ -180,7 +180,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-react-widget@workspace:packages/react"
   dependencies:
-    "@lit-labs/react": "npm:2.0.3"
+    "@lit-labs/react": "npm:2.1.2"
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
@@ -1504,12 +1504,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit-labs/react@npm:2.0.3":
-  version: 2.0.3
-  resolution: "@lit-labs/react@npm:2.0.3"
-  peerDependencies:
-    "@types/react": 17 || 18
-  checksum: 4fb12580e474cd2f68d5dc4f1a9a95ef9e1c3fde281ae89b2a93d19e1ab7bbb46193474becd6270feb5b7345064024a83e3d0f15c9065dc96b22343efd945db1
+"@lit-labs/react@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@lit-labs/react@npm:2.1.2"
+  dependencies:
+    "@lit/react": "npm:^1.0.0"
+  checksum: 57862918da988114555c4b736d684200534a0e6e97c97b753db27d7ba3a953b23ba9730132c00e314551ccffb7ed666e5d3351688b2ec0515f59c7f793584f4c
   languageName: node
   linkType: hard
 
@@ -1526,6 +1526,15 @@ __metadata:
   dependencies:
     "@lit/reactive-element": "npm:^1.6.2 || ^2.0.0"
   checksum: 8766195943e7a1729b52da96823046a5c86794d15b27a833218cfd59e22dbd0e67945d0aa0c9984c5af146cb84d7e1f6b819a274ae6080806640b37dd42b04bd
+  languageName: node
+  linkType: hard
+
+"@lit/react@npm:^1.0.0":
+  version: 1.0.2
+  resolution: "@lit/react@npm:1.0.2"
+  peerDependencies:
+    "@types/react": 17 || 18
+  checksum: 5abc4d7df2f9c6fd72ffc4eb7f43e363216a50d7a9adae215e1452615ef2a96e6879650621bf95a1acfd41561cc12ef0114ed21b8de3ca9a377f76fb0fdf4008
   languageName: node
   linkType: hard
 
