@@ -16,6 +16,8 @@
 
 # production
 /build
+packages/wallet-manager/build
+packages/sdk-manager/build
 
 # misc
 .DS_Store
