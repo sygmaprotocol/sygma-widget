@@ -32,8 +32,7 @@ export class AmountSelector extends LitElement {
   preselectedToken?: string;
 
   @property({
-    type: Number,
-    hasChanged: (n, o) => n !== o
+    type: Number
   })
   preselectedAmount?: number;
 
@@ -59,6 +58,7 @@ export class AmountSelector extends LitElement {
     const amount = Number.parseFloat(this._input.value);
     this.onAmountChange?.(amount);
   };
+
   _onResourceSelected = (event: Event): void => {
     const { value } = event.target as HTMLOptionElement;
     const resource = this.resources.find((n) => String(n.resourceId) == value);
