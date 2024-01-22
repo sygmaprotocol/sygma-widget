@@ -1,0 +1,57 @@
+name: Publish packages to NPM
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  maybe-release:
+    name: release
+    runs-on: ubuntu-latest
+    # add check if ci is successfull
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          command: manifest
+          token: ${{secrets.RELEASE_TOKEN}}
+          default-branch: main
+          release-type: node
+          monorepo-tags: true
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false},{"type":"revert","hidden":true}]'
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - uses: actions/setup-node@v4
+        if: ${{ steps.release.outputs.releases_created }}
+        with:
+          node-version: 18
+
+      - run: corepack enable
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'yarn'
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - name: Install dependencies
+        run: yarn install --immutable
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - name: Build all packages
+        run: yarn build
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ steps.release.outputs.releases_created }}
+        run: |
+          echo npmAuthToken: "$NODE_AUTH_TOKEN" >> ./.yarnrc.yml
+          
+      - run: yarn workspaces foreach -v --exclude root --no-private npm publish --tolerate-republish --access public
+        if: ${{ steps.release.outputs.releases_created }}

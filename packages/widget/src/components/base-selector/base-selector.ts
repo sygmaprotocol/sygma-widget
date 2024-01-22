@@ -1,15 +1,16 @@
-import { Domain, Resource } from '@buildwithsygma/sygma-sdk-core';
+import type { Domain, Resource } from '@buildwithsygma/sygma-sdk-core';
+import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
-import { styles } from './styles';
 import {
   capitalize,
   renderNetworkIcon,
   renderNoNetworkIcon
 } from '../../utils';
-import { ifDefined } from 'lit/directives/if-defined.js';
+import { styles } from './styles';
 
 @customElement('base-selector')
 export default class BaseSelector extends LitElement {
@@ -50,8 +51,7 @@ export default class BaseSelector extends LitElement {
   })
   homechain?: Domain;
 
-  // eslint-disable-next-line class-methods-use-this
-  onChange(event: Event): void {
+  onChange = (event: Event): void => {
     const { value } = event.target as HTMLInputElement;
     if (this.typeSelector === 'network') {
       dispatchEvent(
@@ -70,9 +70,9 @@ export default class BaseSelector extends LitElement {
         })
       );
     }
-  }
+  };
 
-  renderEntries() {
+  renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
     if (this.entries) {
       return map(this.entries, (entry: Domain | Resource, index: number) => {
         if (index === 0) {
@@ -105,7 +105,7 @@ export default class BaseSelector extends LitElement {
     </option>`;
   }
 
-  render() {
+  render(): HTMLTemplateResult {
     return html`
       <section class="selectorSection">
         ${when(
@@ -115,12 +115,14 @@ export default class BaseSelector extends LitElement {
               console.log(
                 !!(this.selectedNetworkChainId && this.entries?.length)
               );
+
               return when(
                 !!(
                   this.selectedNetworkChainId &&
                   (this.entries?.length || this.homechain)
                 ),
                 () => renderNetworkIcon(this.selectedNetworkChainId as number),
+
                 () => renderNoNetworkIcon()
               );
             }

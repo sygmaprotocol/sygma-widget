@@ -1,6 +1,7 @@
-import { PluginOption, defineConfig } from 'vite';
+/// <reference types="vitest" />
 import { resolve } from 'path';
-import { visualizer } from "rollup-plugin-visualizer";
+import { visualizer } from 'rollup-plugin-visualizer';
+import { PluginOption, defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -26,5 +27,10 @@ export default defineConfig({
         }) as PluginOption
       ]
     }
+  },
+  test: {
+    environment: 'jsdom',
+    include: ['**/*.test.ts'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/build/**']
   }
 });

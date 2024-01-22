@@ -1,5 +1,5 @@
 {
-  "name": "@buildwithsygma/sygma-widget",
+  "name": "root",
   "description": "Sygma Widget Monorepo",
   "version": "1.0.0",
   "main": "index.js",
@@ -19,30 +19,29 @@
     "node": ">=16.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.20",
-    "@typescript-eslint/eslint-plugin": "^6.6.0",
-    "@typescript-eslint/parser": "^6.6.0",
+    "@chainsafe/eslint-config": "^2.1.1",
     "eslint": "^8.48.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-lit": "^1.9.1",
-    "eslint-plugin-prettier": "^5.0.0",
-    "eslint-plugin-wc": "^2.0.2",
-    "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
   "packageManager": "yarn@4.0.1",
   "scripts": {
-    "build:wallet-manager": "yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager clean && yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager build",
-    "build:sdk-manager": "yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager clean && yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager build",
-    "build:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget clean && yarn workspace @buildwithsygma/sygmaprotocol-widget build",
-    "build:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget clean && yarn workspace @buildwithsygma/sygmaprotocol-react-widget build",
-    "build:all": "yarn build:wallet-manager && yarn build:sdk-manager && yarn build:widget && yarn build:react-widget",
-    "lint:wallet-manager": "yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager lint && yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager lint:fix",
-    "lint:sdk-manager": "yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager lint && yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager lint:fix",
-    "lint:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget lint && yarn workspace @buildwithsygma/sygmaprotocol-widget lint:fix",
-    "lint:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget lint && yarn workspace @buildwithsygma/sygmaprotocol-react-widget lint:fix",
-    "lint:all": "yarn lint:wallet-manager && yarn lint:sdk-manager && yarn lint:widget && yarn lint:react-widget",
-    "clean:all": "yarn workspace @buildwithsygma/sygmaprotocol-wallet-manager clean && yarn workspace @buildwithsygma/sygmaprotocol-sdk-manager clean && yarn workspace @buildwithsygma/sygmaprotocol-widget clean && yarn workspace @buildwithsygma/sygmaprotocol-react-widget clean"
+    "demo": "yarn workspace @buildwithsygma/sygmaprotocol-widget run dev",
+    "clean": "yarn workspaces foreach --all -pt run clean",
+    "build": "yarn workspaces foreach --all -pt run build",
+    "lint": "yarn workspaces foreach --all -pt run lint",
+    "test:unit": "yarn workspaces foreach --all -pt run test:unit",
+    "build:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget build",
+    "build:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget build",
+    "lint:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget lint",
+    "lint:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget lint"
+  },
+  "resolutions": {
+    "@polkadot/api": "10.7.2",
+    "@polkadot/util": "12.5.1",
+    "@polkadot/util-crypto": "12.5.1",
+    "@polkadot/wasm-bridge": "7.2.2",
+    "@polkadot/keyring": "12.5.1",
+    "@polkadot/wasm-crypto": "7.2.2"
   }
 }

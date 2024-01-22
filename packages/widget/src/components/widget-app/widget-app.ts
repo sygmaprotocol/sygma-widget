@@ -1,34 +1,32 @@
+import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import {
-  Environment,
+import type {
   EthereumConfig,
   EvmResource,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
+import { Environment, Network } from '@buildwithsygma/sygma-sdk-core';
 
 import { getEvmErc20Balance } from '@buildwithsygma/sygma-sdk-core/evm';
 
 import './widget-view';
-import WidgetMixin from './widget-mixin';
 import { ethers } from 'ethers';
+import WidgetMixin from './widget-mixin';
 
 @customElement('widget-app')
 export default class WidgetApp extends WidgetMixin(LitElement) {
-  // eslint-disable-next-line class-methods-use-this
-  async handleTransfer() {}
+  handleTransfer = async (): Promise<void> => {};
 
   handleAddress(e: Event): void {
     this.addressToTransfer = (e.target as HTMLInputElement).value;
   }
 
-  async getChainId() {
+  async getChainId(): Promise<number | undefined> {
     if (this.walletManager?.evmWallet?.web3Provider) {
-      const chainId = (
-        await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
-      ).chainId;
-      return chainId;
+      return (await this.walletManager?.evmWallet?.web3Provider?.getNetwork())
+        ?.chainId;
     }
   }
 
@@ -45,26 +43,27 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
         await this.walletManager?.evmWallet?.web3Provider?.getNetwork()
       )?.chainId;
 
-      this.initSdk();
+      void this.initSdk();
 
       this.requestUpdate();
     });
 
     // listen to the custom event for network change
     addEventListener('network-change', (event: unknown) => {
-      const { detail } = event as CustomEvent;
+      const { detail } = event as CustomEvent<string>;
       this.selectedNetworkChainId = Number(detail);
       this.requestUpdate();
     });
 
     addEventListener('amount-selector-change', (event: unknown) => {
-      const { detail } = event as CustomEvent;
+      const { detail } = event as CustomEvent<string>;
       this.selectedAmount = Number(detail);
       this.requestUpdate();
     });
 
-    addEventListener('token-change', async (event: unknown) => {
-      const { detail } = event as CustomEvent;
+    addEventListener('token-change', (event: unknown) => {
+      const { detail } = event as CustomEvent<string>;
+
       this.selectedToken = detail;
 
       const tokenInfo = this.resources?.find(
@@ -73,23 +72,27 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
 
       this.tokenName = tokenInfo?.symbol;
 
-      if (this.homechain?.type === 'evm') {
+      if (this.homechain?.type === Network.EVM) {
         this.selectedTokenAddress = (tokenInfo as EvmResource).address;
-        await this.fetchTokenBalance();
-      }
 
-      this.requestUpdate();
+        void this.fetchTokenBalance().then(() => this.requestUpdate());
+      } else {
+        this.requestUpdate();
+      }
     });
 
-    addEventListener('connectionInitialized', async (event: unknown) => {
-      const { detail } = event as CustomEvent;
-      if (detail.connectionInitiliazed) {
-        await this.connect();
+    addEventListener('connectionInitialized', (event: unknown) => {
+      const { detail } = event as CustomEvent<{
+        connectionInitialized: boolean;
+      }>;
+
+      if (detail.connectionInitialized) {
+        void this.connect();
       }
     });
   }
 
-  async initSdk() {
+  async initSdk(): Promise<void> {
     if (!this.walletManager?.evmWallet?.web3Provider) {
       throw new Error('No provider');
     }
@@ -117,15 +120,15 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
     this.requestUpdate();
   }
 
-  async connect() {
+  connect = async (): Promise<void> => {
     await this.walletManager?.connectEvmWallet();
     this.addressToTransfer = this.walletManager?.accountData;
     console.log('this.addressToTransfer', this.addressToTransfer);
     await this.initSdk();
     this.requestUpdate();
-  }
+  };
 
-  async createTransfer() {
+  async createTransfer(): Promise<void> {
     if (!this.walletManager?.evmWallet?.address) {
       throw new Error('No wallet connected');
     }
@@ -139,20 +142,18 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
     this.requestUpdate();
   }
 
-  async approveTokens() {
+  async approveTokens(): Promise<void> {
     if (!this.sdkManager) {
       throw new Error('SDK Manager not initialized');
     }
     if (!this.walletManager?.evmWallet?.signer) {
       throw new Error('No wallet connected');
     }
-    await this.sdkManager.performApprovals(
-      this.walletManager!.evmWallet.signer
-    );
+    await this.sdkManager.performApprovals(this.walletManager.evmWallet.signer);
     this.requestUpdate();
   }
 
-  async performDeposit() {
+  async performDeposit(): Promise<void> {
     if (!this.sdkManager) {
       throw new Error('SDK Manager not initialized');
     }
@@ -163,8 +164,8 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
     this.requestUpdate();
   }
 
-  async fetchTokenBalance() {
-    if (this.homechain?.type === 'evm' && this.selectedTokenAddress) {
+  async fetchTokenBalance(): Promise<void> {
+    if (this.homechain?.type === Network.EVM && this.selectedTokenAddress) {
       const balance = await getEvmErc20Balance(
         this.walletManager?.accountData as string,
         this.selectedTokenAddress,
@@ -176,7 +177,7 @@ export default class WidgetApp extends WidgetMixin(LitElement) {
     }
   }
 
-  render() {
+  render(): HTMLTemplateResult {
     return html`
       <widget-view
         .chainId=${this.chainId}

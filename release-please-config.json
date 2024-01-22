@@ -1,0 +1,19 @@
+{
+    "plugins": ["node-workspace"],
+    "packages": {
+      "packages/react": {
+        "releaseType": "node",
+        "draft": false,
+        "prerelease": false,
+        "changelogPath": "CHANGELOG.md",
+        "versioning": "default"
+      },
+      "packages/widget": {
+        "releaseType": "node",
+        "draft": false,
+        "prerelease": false,
+        "changelogPath": "CHANGELOG.md",
+        "versioning": "default"
+      }
+    }
+  }
