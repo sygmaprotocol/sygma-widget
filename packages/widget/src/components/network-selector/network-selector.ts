@@ -5,10 +5,12 @@ import { map } from 'lit/directives/map.js';
 import { capitalize } from '../../utils';
 import { styles } from './styles';
 
-const directions = {
-  from: 'From',
-  to: 'To'
-};
+export const Directions = {
+  FROM: 'From',
+  TO: 'To'
+} as const;
+
+type Direction = (typeof Directions)[keyof typeof Directions];
 
 @customElement('sygma-network-selector')
 export class NetworkSelector extends LitElement {
@@ -27,7 +29,7 @@ export class NetworkSelector extends LitElement {
   @property({
     type: String
   })
-  direction?: 'from' | 'to';
+  direction?: Direction;
 
   @property({
     type: Object,
@@ -66,9 +68,7 @@ export class NetworkSelector extends LitElement {
 
   render(): HTMLTemplateResult {
     return html` <div class="selectorContainer">
-      <label for="selector" class="directionLabel"
-        >${this.direction && directions[this.direction]}</label
-      >
+      <label for="selector" class="directionLabel">${this.direction}</label>
       <section class="selectorSection">
         <select
           @change=${(event: Event) => this.onChange.bind(this)(event)}
