@@ -19,9 +19,9 @@ import WidgetMixin from './widget-mixin';
 export default class WidgetApp extends WidgetMixin(LitElement) {
   handleTransfer = async (): Promise<void> => {};
 
-  handleAddress(e: Event): void {
+  handleAddress = (e: Event): void => {
     this.addressToTransfer = (e.target as HTMLInputElement).value;
-  }
+  };
 
   async getChainId(): Promise<number | undefined> {
     if (this.walletManager?.evmWallet?.web3Provider) {
