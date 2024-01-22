@@ -6,6 +6,7 @@ import { switchNetworkIcon, sygmaLogo } from './assets';
 import { WidgetController } from './controllers/widget';
 import './components/network-selector';
 import './components/amount-selector';
+import { Directions } from './components/network-selector/network-selector';
 
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget extends LitElement {
@@ -24,7 +25,7 @@ class SygmaProtocolWidget extends LitElement {
           </section>
           <section>
             <sygma-network-selector
-              .direction=${'from'}
+              .direction=${Directions.FROM}
               .icons=${true}
               .onNetworkSelected=${this.widgetController
                 .onSourceNetworkSelected}
@@ -34,7 +35,7 @@ class SygmaProtocolWidget extends LitElement {
           </section>
           <section>
             <sygma-network-selector
-              .direction=${'from'}
+              .direction=${Directions.TO}
               .icons=${true}
               .onNetworkSelected=${this.widgetController
                 .onDestinationNetworkSelected}
