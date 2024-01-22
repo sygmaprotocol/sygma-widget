@@ -20,8 +20,7 @@ class SygmaProtocolWidget extends LitElement {
       <section class="widgetContainer">
         <form @submit=${() => {}}>
           <section class="connectAccount">
-            <span>${switchNetworkIcon}</span>
-            <span>Connect Wallet</span>
+            ${switchNetworkIcon} Connect Wallet
           </section>
           <section>
             <sygma-network-selector
@@ -63,10 +62,7 @@ class SygmaProtocolWidget extends LitElement {
             </button>
           </section>
         </form>
-        <section class="poweredBy">
-          <span>${sygmaLogo}</span>
-          <span>Powered by Sygma</span>
-        </section>
+        <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
       </section>
     `;
   }
