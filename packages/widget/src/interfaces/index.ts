@@ -1,8 +1,11 @@
 import type {
   EthereumConfig,
+  Network,
   Resource,
   SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
+import type { ethers } from 'ethers';
+import type { ApiPromise } from '@polkadot/api';
 import type { SdkManager, WalletManagerController } from '../controllers';
 
 export interface IWidgetMixin {
@@ -19,4 +22,11 @@ export interface IWidgetMixin {
   selectedTokenAddress?: string;
   tokenBalance?: string;
   tokenName?: string;
+}
+
+export interface ISygmaProtocolWidget {
+  networks?: Network;
+  web3Provider?: ethers.providers.Web3Provider;
+  apiPromise?: ApiPromise;
+  wssConnectionUrl?: string;
 }
