@@ -48,8 +48,8 @@ export class NetworkSelector extends LitElement {
   })
   networks: Domain[] = [];
 
-  onChange(event: Event): void {
-    const { value } = event.target as HTMLOptionElement;
+  onChange({ target }: Event): void {
+    const { value } = target as HTMLOptionElement;
     const network = this.networks.find((n) => String(n.chainId) == value);
     this.onNetworkSelected?.(network);
   }
