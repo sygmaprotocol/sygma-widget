@@ -16,7 +16,7 @@
     "examples/*"
   ],
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.10.0"
   },
   "devDependencies": {
     "@chainsafe/eslint-config": "^2.1.1",
