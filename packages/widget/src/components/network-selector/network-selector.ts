@@ -32,8 +32,7 @@ export class NetworkSelector extends LitElement {
   direction?: Direction;
 
   @property({
-    type: Object,
-    hasChanged: (n, o) => n !== o
+    type: Object
   })
   selected?: Domain;
 
@@ -43,8 +42,7 @@ export class NetworkSelector extends LitElement {
   onNetworkSelected?: (network?: Domain) => void;
 
   @property({
-    type: Array,
-    hasChanged: (n, o) => n !== o
+    type: Array
   })
   networks: Domain[] = [];
 
