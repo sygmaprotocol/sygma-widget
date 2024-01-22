@@ -1,7 +1,8 @@
 import { LitElement, html } from 'lit';
+import type { HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { styles } from './styles';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { styles } from './styles';
 
 @customElement('address-input')
 export default class AddressInput extends LitElement {
@@ -14,7 +15,7 @@ export default class AddressInput extends LitElement {
   @property()
   handleAddress?: (e: Event) => void;
 
-  render() {
+  render(): HTMLTemplateResult {
     return html`<section class="switch-container">
       <div class="input-address-container">
         <label>Send to</label>
