@@ -44,7 +44,6 @@ class SygmaProtocolWidget extends LitElement {
           </section>
           <section>
             <sygma-resource-selector
-              .disabled=${false}
               .resources=${this.widgetController.supportedResources}
               .onResourceSelected=${this.widgetController.onResourceSelected}
               .onAmountChange=${this.widgetController.onResourceAmountChange}
