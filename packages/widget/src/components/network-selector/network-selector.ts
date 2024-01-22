@@ -1,11 +1,8 @@
-import type {
-  EthereumConfig,
-  SubstrateConfig
-} from '@buildwithsygma/sygma-sdk-core';
-import type { HTMLTemplateResult } from 'lit';
-import { LitElement, html } from 'lit';
+import type { Domain } from '@buildwithsygma/sygma-sdk-core';
+import { LitElement, html, type HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import '../base-selector';
+import { map } from 'lit/directives/map.js';
+import { capitalize } from '../../utils';
 import { styles } from './styles';
 
 const directions = {
@@ -13,66 +10,80 @@ const directions = {
   to: 'To'
 };
 
-@customElement('network-selector')
-export default class NetworkSelector extends LitElement {
+@customElement('sygma-network-selector')
+export class NetworkSelector extends LitElement {
   static styles = styles;
-
-  @property({
-    type: Array,
-    hasChanged: (n, o) => n !== o
-  })
-  domains?: EthereumConfig[] | SubstrateConfig[];
-
-  @property({
-    type: Boolean
-  })
-  isHomechain = false;
-
-  @property({
-    type: Object,
-    hasChanged: (n, o) => n !== o
-  })
-  homechain?: EthereumConfig | SubstrateConfig;
-
-  @property({
-    type: String
-  })
-  directionLabel?: 'from' | 'to';
-
-  @property({
-    type: Number,
-    hasChanged: (n, o) => n !== o
-  })
-  selectedNetworkChainId?: number;
-
-  @property({
-    type: Boolean
-  })
-  networkIcons = false;
 
   @property({
     type: Boolean
   })
   disabled = false;
 
+  @property({
+    type: Boolean
+  })
+  icons = true;
+
+  @property({
+    type: String
+  })
+  direction?: 'from' | 'to';
+
+  @property({
+    type: Object,
+    hasChanged: (n, o) => n !== o
+  })
+  selected?: Domain;
+
+  @property({
+    attribute: false
+  })
+  onNetworkSelected?: (network: Domain | undefined) => void;
+
+  @property({
+    type: Array,
+    hasChanged: (n, o) => n !== o
+  })
+  networks: Domain[] = [];
+
+  onChange(event: Event): void {
+    const { value } = event.target as HTMLOptionElement;
+    const network = this.networks.find((n) => String(n.chainId) == value);
+    this.onNetworkSelected?.(network);
+  }
+
+  renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
+    if (this.networks) {
+      return map(this.networks, (entry: Domain) => {
+        // TODO: render network icon
+        return html`<option value=${entry.chainId} class="network-option">
+          ${capitalize(entry.name)}
+        </option>`;
+      });
+    }
+    return html`<option selected value="">Network</option>`;
+  }
+
   render(): HTMLTemplateResult {
-    return html`
-      <div class="selectorContainer">
-        <label for="network-selector" class="directionLabel"
-          >${this.directionLabel && directions[this.directionLabel]}</label
+    return html` <div class="selectorContainer">
+      <label for="selector" class="directionLabel"
+        >${this.direction && directions[this.direction]}</label
+      >
+      <section class="selectorSection">
+        <select
+          @change=${(event: Event) => this.onChange.bind(this)(event)}
+          ?disabled=${this.disabled}
+          class="selector"
         >
-        <base-selector
-          class="baseSelector"
-          id="network-selector"
-          .isHomechain=${this.isHomechain}
-          .homechain=${this.homechain}
-          .entries=${this.domains}
-          .typeSelector=${'network'}
-          .networkIcons=${this.networkIcons}
-          .selectedNetworkChainId=${this.selectedNetworkChainId}
-          .disabled=${this.disabled}
-        ></base-selector>
-      </div>
-    `;
+          <option class="network-option" value="-1">-</option>
+          ${this.renderEntries()}
+        </select>
+      </section>
+    </div>`;
+  }
+}
+declare global {
+  interface HTMLElementTagNameMap {
+    'sygma-network-selector': NetworkSelector;
   }
 }
