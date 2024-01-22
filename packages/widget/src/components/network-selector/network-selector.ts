@@ -40,7 +40,7 @@ export class NetworkSelector extends LitElement {
   @property({
     attribute: false
   })
-  onNetworkSelected?: (network: Domain | undefined) => void;
+  onNetworkSelected?: (network?: Domain) => void;
 
   @property({
     type: Array,
