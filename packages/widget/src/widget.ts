@@ -55,7 +55,7 @@ class SygmaProtocolWidget extends LitElement {
             <button
               .disabled=${!this.widgetController.isReadyForTransfer}
               type="button"
-              @click="${() => this.widgetController.makeTranssaction()}"
+              @click="${() => this.widgetController.makeTransaction()}"
               class="actionButtonReady"
             >
               Transfer or Approve

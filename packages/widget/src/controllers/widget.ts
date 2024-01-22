@@ -55,7 +55,7 @@ export class WidgetController implements ReactiveController {
     this.host.requestUpdate();
   }
 
-  async makeTranssaction(): Promise<void> {
+  async makeTransaction(): Promise<void> {
     //TODO: trigger next tx from AssetTransfer class (approval or actual transfer)
   }
 
