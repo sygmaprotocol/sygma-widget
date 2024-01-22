@@ -2,10 +2,15 @@
   "name": "@buildwithsygma/sygmaprotocol-widget",
   "description": "Sygma Protocol Widget",
   "version": "0.1.0",
-  "main": "build/index.js",
-  "module": "build/index.js",
+  "main": "build/sygmaprotocol-widget.js",
+  "module": "build/sygmaprotocol-widget.js",
+  "types": "build/index.d.ts",
   "license": "LGPL-3.0-or-later",
   "type": "module",
+  "files": [
+    "build",
+    "src"
+  ],
   "scripts": {
     "start": "yarn run dev",
     "dev": "vite",
@@ -13,7 +18,7 @@
     "serve": "vite preview",
     "clean": "rm -rf ./build",
     "lint": "yarn run lint:types && yarn run lint:code && yarn run lint:lit",
-    "lint:types": "tsc -p ./tsconfig.build.json --noEmit",
+    "lint:types": "tsc -p ./tsconfig.json --noEmit",
     "lint:code": "eslint '{src,tests}/**/*.ts'",
     "lint:lit": "lit-analyzer",
     "test": "yarn run test:unit",
@@ -35,6 +40,8 @@
     "lit": "3.0.0"
   },
   "devDependencies": {
+    "@open-wc/semantic-dom-diff": "^0.20.1",
+    "@open-wc/testing-helpers": "^3.0.0",
     "eslint": "^8.48.0",
     "eslint-plugin-lit": "^1.9.1",
     "jsdom": "^23.2.0",
@@ -43,6 +50,7 @@
     "typescript": "5.2.2",
     "vite": "4.4.11",
     "vite-plugin-clean": "^1.0.0",
+    "vite-plugin-dts": "^3.7.1",
     "vitest": "^1.2.1"
   }
 }
