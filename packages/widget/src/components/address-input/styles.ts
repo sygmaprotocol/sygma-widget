@@ -1,17 +1,7 @@
 import { css } from 'lit';
 
 export const styles = css`
-  .switcher {
-    --md-sys-color-primary: var(--primary-500-main, #6366f1);
-    --md-switch-track-color: #ffffff;
-    --md-switch-selected-handle-color: #ffffff;
-    --md-switch-track-height: 25px;
-    --md-switch-track-width: 45px;
-    --md-switch-selected-handle-height: 17px;
-    --md-switch-selected-handle-width: 17px;
-  }
-
-  .switch-container {
+  .address-input-container {
     display: flex;
     flex-direction: column;
     justify-content: center;

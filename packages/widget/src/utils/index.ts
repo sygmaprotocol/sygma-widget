@@ -1,5 +1,7 @@
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import { hexToU8a, isHex } from '@polkadot/util';
 import {
   baseNetworkIcon,
   cronosNetworkIcon,
@@ -45,4 +47,13 @@ export const capitalize = (s: string): string => {
   const firstLetter = s.charAt(0).toUpperCase();
   const rest = s.slice(1);
   return `${firstLetter}${rest}`;
+};
+
+export const validatePolkadotAddress = (address: string): boolean => {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
+    return true;
+  } catch (error) {
+    return false;
+  }
 };

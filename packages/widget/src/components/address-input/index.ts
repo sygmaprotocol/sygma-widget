@@ -1,1 +1,1 @@
-export { default } from './address-input';
+export { AddressInput } from './address-input';

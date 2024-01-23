@@ -250,6 +250,8 @@ __metadata:
     "@open-wc/testing-helpers": "npm:^3.0.0"
     "@polkadot/api": "npm:^10.11.2"
     "@polkadot/extension-dapp": "npm:^0.46.6"
+    "@polkadot/keyring": "npm:^12.6.2"
+    "@polkadot/util": "npm:^12.6.2"
     eslint: "npm:^8.48.0"
     eslint-plugin-lit: "npm:^1.9.1"
     ethers: "npm:5.7.2"

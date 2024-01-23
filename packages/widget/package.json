@@ -35,6 +35,8 @@
     "@lit/reactive-element": "^2.0.3",
     "@polkadot/api": "^10.11.2",
     "@polkadot/extension-dapp": "^0.46.6",
+    "@polkadot/keyring": "^12.6.2",
+    "@polkadot/util": "^12.6.2",
     "ethers": "5.7.2",
     "events": "^3.3.0",
     "lit": "3.0.0"
