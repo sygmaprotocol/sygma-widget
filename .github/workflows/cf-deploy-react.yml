@@ -1,0 +1,40 @@
+name: Cloudflare Deploy React Widget
+on:
+  push:
+    branches:
+      - main
+    paths:
+    - 'packages/react/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/react/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'yarn'
+          node-version: 18
+      - run: corepack enable
+      - run: yarn set version stable
+      - run: yarn install --immutable
+      - run: yarn run lint:react-widget
+      - run: yarn run build:react-widget
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: sygma-react-widget
+          directory: ./packages/react/build
+          branch: main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
