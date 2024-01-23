@@ -1,1 +1,1 @@
-export { default } from './amount-selector';
+export { AmountSelector } from './amount-selector';

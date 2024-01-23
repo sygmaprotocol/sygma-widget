@@ -1,6 +1,6 @@
-import { ethers } from 'ethers';
 import type { ExternalProvider } from '@ethersproject/providers';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { ethers } from 'ethers';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EvmWallet } from '../../../../src/controllers/wallet-manager';
 
 describe('EvmWallet', () => {

@@ -1,1 +1,1 @@
-export { default } from './network-selector';
+export { NetworkSelector } from './network-selector';

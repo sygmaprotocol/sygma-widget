@@ -1,32 +1,20 @@
 /// <reference types="vitest" />
-import { resolve } from 'path';
-import { visualizer } from 'rollup-plugin-visualizer';
-import { PluginOption, defineConfig } from 'vite';
+import { defineConfig } from 'vite';
+import dts from "vite-plugin-dts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  plugins: [
+    dts({ rollupTypes: true }),
+  ],
   base: '/',
   build: {
+    sourcemap: true,
     outDir: 'build',
     lib: {
       entry: 'src/index.ts',
       formats: ['es']
     },
-    manifest: true,
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html')
-      },
-      plugins: [
-        visualizer({
-          template: 'sunburst', // or sunburst
-          open: false,
-          gzipSize: true,
-          brotliSize: true,
-          filename: 'bundle/analyse.html' // will be saved in project's root
-        }) as PluginOption
-      ]
-    }
   },
   test: {
     environment: 'jsdom',
