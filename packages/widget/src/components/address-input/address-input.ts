@@ -14,7 +14,7 @@ export class AddressInput extends LitElement {
   })
   address: string = '';
 
-  @property()
+  @property({attribute: false})
   handleAddress?: (address: string) => void;
 
   @property({
