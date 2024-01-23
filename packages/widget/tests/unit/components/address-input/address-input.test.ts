@@ -8,7 +8,7 @@ describe('address-input component', function () {
     fixtureCleanup();
   });
 
-  const handleAddress = (address: string) => console.log(address);
+  const handleAddress = (address: string): string => address;
 
   it('is defined', () => {
     const el = document.createElement('sygma-address-input');
