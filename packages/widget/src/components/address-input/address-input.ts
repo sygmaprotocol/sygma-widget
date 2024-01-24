@@ -39,11 +39,13 @@ export class AddressInput extends LitElement {
 
       if (!validPolkadotAddress) {
         this.errorMessage = 'Invalid Substrate address';
+        return;
       }
     } else {
       const isAddress = ethers.utils.isAddress(value);
       if (!isAddress) {
         this.errorMessage = 'Invalid Ethereum Address';
+        return;
       }
     }
     return void this.handleAddress?.(value);
@@ -55,9 +57,7 @@ export class AddressInput extends LitElement {
         <label>Send to</label>
         ${when(
           this.errorMessage,
-          () => html`
-            <span class="error-message"> ${this.errorMessage} </span>
-          `
+          () => html` <span class="error-message">${this.errorMessage}</span> `
         )}
         <input
           class=${this.errorMessage ? 'input-address error' : 'input-address'}
