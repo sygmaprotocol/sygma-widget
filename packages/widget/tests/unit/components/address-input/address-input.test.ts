@@ -20,18 +20,18 @@ describe('address-input component', function () {
     const el = await fixture(html`
       <sygma-address-input
         .address=${'0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'}
-        .handleAddress=${mockAddressChangeHandler}
+        .onOnHandleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
     const input = el.shadowRoot!.querySelector(
-      '.input-address'
+      '.inputAddress'
     ) as HTMLInputElement;
 
     assert.equal(input.value, '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492');
 
     const errorMessage = el.shadowRoot!.querySelector(
-      '.error-message'
+      '.errorMessage'
     ) as HTMLInputElement;
 
     assert.equal(errorMessage, null);
@@ -43,18 +43,18 @@ describe('address-input component', function () {
     let el = await fixture(html`
       <sygma-address-input
         .address=${'0x123'}
-        .handleAddress=${mockAddressChangeHandler}
+        .onHandleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
     let input = el.shadowRoot!.querySelector(
-      '.input-address'
+      '.inputAddress'
     ) as HTMLInputElement;
 
     assert.equal(input.value, '0x123');
 
     let errorMessage = el.shadowRoot!.querySelector(
-      '.error-message'
+      '.errorMessage'
     ) as HTMLInputElement;
 
     assert.equal(errorMessage.textContent, 'Invalid Ethereum Address');
@@ -63,16 +63,16 @@ describe('address-input component', function () {
       <sygma-address-input
         .network=${Network.SUBSTRATE}
         .address=${'42sy'}
-        .handleAddress=${mockAddressChangeHandler}
+        .onHandleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
-    input = el.shadowRoot!.querySelector('.input-address') as HTMLInputElement;
+    input = el.shadowRoot!.querySelector('.inputAddress') as HTMLInputElement;
 
     assert.equal(input.value, '42sy');
 
     errorMessage = el.shadowRoot!.querySelector(
-      '.error-message'
+      '.errorMessage'
     ) as HTMLInputElement;
 
     assert.equal(errorMessage.textContent, 'Invalid Substrate address');
@@ -84,12 +84,12 @@ describe('address-input component', function () {
     const el = await fixture(html`
       <sygma-address-input
         .address=${'0x123'}
-        .handleAddress=${mockAddressChangeHandler}
+        .onHandleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
     const input = el.shadowRoot!.querySelector(
-      '.input-address'
+      '.inputAddress'
     ) as HTMLInputElement;
 
     assert.equal(input.value, '0x123');
@@ -113,12 +113,12 @@ describe('address-input component', function () {
     const el = await fixture(html`
       <sygma-address-input
         .network=${Network.SUBSTRATE}
-        .handleAddress=${mockAddressChangeHandler}
+        .onHandleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
     const input = el.shadowRoot!.querySelector(
-      '.input-address'
+      '.inputAddress'
     ) as HTMLInputElement;
 
     const listener = oneEvent(input, 'change', false);
@@ -140,12 +140,12 @@ describe('address-input component', function () {
 
     const el = await fixture(html`
       <sygma-address-input
-        .handleAddress=${mockAddressChangeHandler}
+        .onHandleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
     const input = el.shadowRoot!.querySelector(
-      '.input-address'
+      '.inputAddress'
     ) as HTMLInputElement;
 
     const listener = oneEvent(input, 'change', false);
@@ -168,12 +168,12 @@ describe('address-input component', function () {
     const el = await fixture(html`
       <sygma-address-input
         .network=${Network.SUBSTRATE}
-        .handleAddress=${mockAddressChangeHandler}
+        .onHandleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
     const input = el.shadowRoot!.querySelector(
-      '.input-address'
+      '.inputAddress'
     ) as HTMLInputElement;
 
     const listener = oneEvent(input, 'change', false);
@@ -187,7 +187,7 @@ describe('address-input component', function () {
     assert.equal(mockAddressChangeHandler.mock.calls.length, 0);
 
     const errorMessage = el.shadowRoot!.querySelector(
-      '.error-message'
+      '.errorMessage'
     ) as HTMLInputElement;
 
     assert.equal(errorMessage.textContent, 'Invalid Substrate address');
@@ -198,12 +198,12 @@ describe('address-input component', function () {
 
     const el = await fixture(html`
       <sygma-address-input
-        .handleAddress=${mockAddressChangeHandler}
+        .onHandleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
     const input = el.shadowRoot!.querySelector(
-      '.input-address'
+      '.inputAddress'
     ) as HTMLInputElement;
 
     const listener = oneEvent(input, 'change', false);
@@ -217,7 +217,7 @@ describe('address-input component', function () {
     assert.equal(mockAddressChangeHandler.mock.calls.length, 0);
 
     const errorMessage = el.shadowRoot!.querySelector(
-      '.error-message'
+      '.errorMessage'
     ) as HTMLInputElement;
 
     assert.equal(errorMessage.textContent, 'Invalid Ethereum Address');
