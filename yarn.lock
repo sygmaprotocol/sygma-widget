@@ -200,9 +200,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildwithsygma/sygma-sdk-core@npm:2.6.1":
-  version: 2.6.1
-  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.6.1"
+"@buildwithsygma/sygma-sdk-core@npm:^2.6.2":
+  version: 2.6.2
+  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.6.2"
   dependencies:
     "@buildwithsygma/sygma-contracts": "npm:2.4.1"
     "@ethersproject/abi": "npm:^5.7.0"
@@ -220,7 +220,7 @@ __metadata:
     axios: "npm:^1.4.0"
     cross-fetch: "npm:^3.1.5"
     ethers: "npm:5.6.2"
-  checksum: 6d8951247765cd11226c41a4d3f527e14d778a6b6ffa3f74b789620b7cd575fa6bb6efe6f6da7522126071c5aeda753a63ddc340813e3fb3ac8c6884cc898eea
+  checksum: 705bbd76fb71da7b530ac49668d5f2811dc97c38625558e7ac34ea041fd10d688ebc080dd26fccfb5b8188200a6156a52e70410cb9d64b918db808fab94e482a
   languageName: node
   linkType: hard
 
@@ -239,7 +239,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-widget@workspace:packages/widget"
   dependencies:
-    "@buildwithsygma/sygma-sdk-core": "npm:2.6.1"
+    "@buildwithsygma/sygma-sdk-core": "npm:^2.6.2"
     "@ethersproject/abstract-signer": "npm:^5.7.0"
     "@ethersproject/contracts": "npm:^5.7.0"
     "@ethersproject/providers": "npm:^5.7.2"
