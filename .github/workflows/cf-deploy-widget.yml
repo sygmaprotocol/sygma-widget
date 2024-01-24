@@ -28,8 +28,7 @@ jobs:
           cache: 'yarn'
           node-version: 18
       - run: yarn install --immutable
-      - run: yarn run lint
-      - run: yarn run build
+      - run: yarn run build:widget
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@1
@@ -37,6 +36,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: sygma-widget
-          directory: ./packages/widget/build
+          directory: ./packages/widget/dist
           branch: main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
