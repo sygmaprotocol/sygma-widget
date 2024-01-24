@@ -20,7 +20,7 @@ describe('address-input component', function () {
     const el = await fixture(html`
       <sygma-address-input
         .address=${'0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'}
-        .onOnHandleAddress=${mockAddressChangeHandler}
+        .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
@@ -43,7 +43,7 @@ describe('address-input component', function () {
     let el = await fixture(html`
       <sygma-address-input
         .address=${'0x123'}
-        .onHandleAddress=${mockAddressChangeHandler}
+        .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
@@ -63,7 +63,7 @@ describe('address-input component', function () {
       <sygma-address-input
         .network=${Network.SUBSTRATE}
         .address=${'42sy'}
-        .onHandleAddress=${mockAddressChangeHandler}
+        .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
@@ -84,7 +84,7 @@ describe('address-input component', function () {
     const el = await fixture(html`
       <sygma-address-input
         .address=${'0x123'}
-        .onHandleAddress=${mockAddressChangeHandler}
+        .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
@@ -107,13 +107,56 @@ describe('address-input component', function () {
     ]);
   });
 
+  it('renders input field with wrong address value, cleans it and error message gets removed', async () => {
+    const mockAddressChangeHandler = vi.fn();
+
+    const el = await fixture(html`
+      <sygma-address-input
+        .onAddressChange=${mockAddressChangeHandler}
+      ></sygma-address-input>
+    `);
+
+    const input = el.shadowRoot!.querySelector(
+      '.inputAddress'
+    ) as HTMLInputElement;
+
+    const listener = oneEvent(input, 'change', false);
+    input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7';
+
+    input.dispatchEvent(new Event('change'));
+
+    await listener;
+
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 0);
+
+    const errorMessage = el.shadowRoot!.querySelector(
+      '.errorMessage'
+    ) as HTMLInputElement;
+
+    assert.equal(errorMessage.textContent, 'Invalid Ethereum Address');
+
+    input.value = '';
+
+    input.dispatchEvent(new Event('change'));
+
+    await listener;
+
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 1);
+
+    const errorMessageAfterClean = el.shadowRoot!.querySelector(
+      '.errorMessage'
+    ) as HTMLInputElement;
+
+    assert.equal(errorMessageAfterClean, null);
+  });
+
   it('triggers callback on address change and validates Substrate address', async () => {
     const mockAddressChangeHandler = vi.fn();
 
     const el = await fixture(html`
       <sygma-address-input
         .network=${Network.SUBSTRATE}
-        .onHandleAddress=${mockAddressChangeHandler}
+        .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
@@ -140,7 +183,7 @@ describe('address-input component', function () {
 
     const el = await fixture(html`
       <sygma-address-input
-        .onHandleAddress=${mockAddressChangeHandler}
+        .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
@@ -168,7 +211,7 @@ describe('address-input component', function () {
     const el = await fixture(html`
       <sygma-address-input
         .network=${Network.SUBSTRATE}
-        .onHandleAddress=${mockAddressChangeHandler}
+        .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 
@@ -198,7 +241,7 @@ describe('address-input component', function () {
 
     const el = await fixture(html`
       <sygma-address-input
-        .onHandleAddress=${mockAddressChangeHandler}
+        .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
 

@@ -17,7 +17,7 @@ export class AddressInput extends LitElement {
   address: string = '';
 
   @property({ attribute: false })
-  onHandleAddress?: (address: string) => void;
+  onAddressChange: (address: string) => void = () => {};
 
   @property({
     type: String
@@ -43,21 +43,24 @@ export class AddressInput extends LitElement {
       this.errorMessage = undefined;
     }
 
-    if (this.network !== Network.EVM) {
-      const validPolkadotAddress = validateSubstrateAddress(value);
+    if (value !== '') {
+      if (this.network === Network.SUBSTRATE) {
+        const validPolkadotAddress = validateSubstrateAddress(value);
 
-      if (!validPolkadotAddress) {
-        this.errorMessage = 'Invalid Substrate address';
-        return;
-      }
-    } else {
-      const isAddress = ethers.utils.isAddress(value);
-      if (!isAddress) {
-        this.errorMessage = 'Invalid Ethereum Address';
-        return;
+        if (!validPolkadotAddress) {
+          this.errorMessage = 'Invalid Substrate address';
+          return;
+        }
+      } else {
+        const isAddress = ethers.utils.isAddress(value);
+        if (!isAddress) {
+          this.errorMessage = 'Invalid Ethereum Address';
+          return;
+        }
       }
     }
-    return void this.onHandleAddress?.(value);
+
+    void this.onAddressChange?.(value);
   };
 
   render(): HTMLTemplateResult {
@@ -66,7 +69,7 @@ export class AddressInput extends LitElement {
         <label>Send to</label>
         ${when(
           this.errorMessage,
-          () => html` <span class="errorMessage">${this.errorMessage}</span> `
+          () => html` <span class="errorMessage">${this.errorMessage}</span>`
         )}
         <input
           class=${this.errorMessage ? 'inputAddress error' : 'inputAddress'}

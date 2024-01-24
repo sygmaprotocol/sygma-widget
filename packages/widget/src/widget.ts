@@ -54,9 +54,8 @@ class SygmaProtocolWidget extends LitElement {
           </section>
           <section>
             <sygma-address-input
-              .network=${this.widgetController.sourceNetwork?.type}
               .address=${this.widgetController.destinatonAddress}
-              .onHandleAddress=${this.widgetController
+              .onAddressChange=${this.widgetController
                 .onDestinationAddressChange}
             >
             </sygma-address-input>
