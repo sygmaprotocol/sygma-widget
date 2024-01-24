@@ -1,6 +1,7 @@
 import { afterEach, assert, describe, it, vi } from 'vitest';
 import { fixture, fixtureCleanup, oneEvent } from '@open-wc/testing-helpers';
 import { html } from 'lit';
+import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { AddressInput } from '../../../../src/components';
 
 describe('address-input component', function () {
@@ -18,7 +19,7 @@ describe('address-input component', function () {
 
     const el = await fixture(html`
       <sygma-address-input
-        .address=${'0x123'}
+        .address=${'0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'}
         .handleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
@@ -27,7 +28,54 @@ describe('address-input component', function () {
       '.input-address'
     ) as HTMLInputElement;
 
+    assert.equal(input.value, '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492');
+
+    const errorMessage = el.shadowRoot!.querySelector(
+      '.error-message'
+    ) as HTMLInputElement;
+
+    assert.equal(errorMessage, null);
+  });
+
+  it('renders input field with incorrect address value and triggers error message', async () => {
+    const mockAddressChangeHandler = vi.fn();
+
+    let el = await fixture(html`
+      <sygma-address-input
+        .address=${'0x123'}
+        .handleAddress=${mockAddressChangeHandler}
+      ></sygma-address-input>
+    `);
+
+    let input = el.shadowRoot!.querySelector(
+      '.input-address'
+    ) as HTMLInputElement;
+
     assert.equal(input.value, '0x123');
+
+    let errorMessage = el.shadowRoot!.querySelector(
+      '.error-message'
+    ) as HTMLInputElement;
+
+    assert.equal(errorMessage.textContent, 'Invalid Ethereum Address');
+
+    el = await fixture(html`
+      <sygma-address-input
+        .network=${Network.SUBSTRATE}
+        .address=${'42sy'}
+        .handleAddress=${mockAddressChangeHandler}
+      ></sygma-address-input>
+    `);
+
+    input = el.shadowRoot!.querySelector('.input-address') as HTMLInputElement;
+
+    assert.equal(input.value, '42sy');
+
+    errorMessage = el.shadowRoot!.querySelector(
+      '.error-message'
+    ) as HTMLInputElement;
+
+    assert.equal(errorMessage.textContent, 'Invalid Substrate address');
   });
 
   it('renders input field with address value and then changes triggering callback', async () => {
@@ -64,7 +112,7 @@ describe('address-input component', function () {
 
     const el = await fixture(html`
       <sygma-address-input
-        .network=${'substrate'}
+        .network=${Network.SUBSTRATE}
         .handleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
@@ -119,7 +167,7 @@ describe('address-input component', function () {
 
     const el = await fixture(html`
       <sygma-address-input
-        .network=${'substrate'}
+        .network=${Network.SUBSTRATE}
         .handleAddress=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);

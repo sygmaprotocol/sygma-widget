@@ -20,12 +20,21 @@ export class AddressInput extends LitElement {
   handleAddress?: (address: string) => void;
 
   @property({
-    type: Object
+    type: String
   })
   network: Network = Network.EVM;
 
   @state()
   errorMessage?: string;
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    if (this.address) {
+      this.handleAddressChange({
+        target: { value: this.address }
+      } as unknown as Event);
+    }
+  }
 
   private handleAddressChange = ({ target }: Event): void => {
     const { value } = target as HTMLInputElement;
