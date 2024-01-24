@@ -49,7 +49,7 @@ export const capitalize = (s: string): string => {
   return `${firstLetter}${rest}`;
 };
 
-export const validatePolkadotAddress = (address: string): boolean => {
+export const validateSubstrateAddress = (address: string): boolean => {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
     return true;

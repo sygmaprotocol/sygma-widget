@@ -1,9 +1,11 @@
 import { LitElement, html } from 'lit';
 import type { HTMLTemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { ethers } from 'ethers';
-import { validatePolkadotAddress } from '../../utils';
+import { Network } from '@buildwithsygma/sygma-sdk-core';
+import { when } from 'lit/directives/when.js';
+import { validateSubstrateAddress } from '../../utils';
 import { styles } from './styles';
 
 @customElement('sygma-address-input')
@@ -14,38 +16,51 @@ export class AddressInput extends LitElement {
   })
   address: string = '';
 
-  @property({attribute: false})
+  @property({ attribute: false })
   handleAddress?: (address: string) => void;
 
   @property({
     type: Object
   })
-  network?: 'substrate' | 'evm';
+  network: Network = Network.EVM;
+
+  @state()
+  errorMessage?: string;
 
   private handleAddressChange = ({ target }: Event): void => {
     const { value } = target as HTMLInputElement;
-    if (this.network !== 'evm') {
-      const validPolkadotAddress = validatePolkadotAddress(value);
 
-      if (validPolkadotAddress) {
-        return void this.handleAddress?.(value);
+    if (this.errorMessage) {
+      this.errorMessage = undefined;
+    }
+
+    if (this.network !== Network.EVM) {
+      const validPolkadotAddress = validateSubstrateAddress(value);
+
+      if (!validPolkadotAddress) {
+        this.errorMessage = 'Invalid Substrate address';
       }
-      // TODO: if not defined or show error
     } else {
       const isAddress = ethers.utils.isAddress(value);
-      if (isAddress) {
-        return void this.handleAddress?.(value);
+      if (!isAddress) {
+        this.errorMessage = 'Invalid Ethereum Address';
       }
-      // TODO: if not defined or show error
     }
+    return void this.handleAddress?.(value);
   };
 
   render(): HTMLTemplateResult {
     return html`<section class="address-input-container">
       <div class="input-address-container">
         <label>Send to</label>
+        ${when(
+          this.errorMessage,
+          () => html`
+            <span class="error-message"> ${this.errorMessage} </span>
+          `
+        )}
         <input
-          class="input-address"
+          class=${this.errorMessage ? 'input-address error' : 'input-address'}
           name="address"
           type="text"
           @change=${(evt: Event) => this.handleAddressChange.bind(this)(evt)}

@@ -18,7 +18,7 @@ export const styles = css`
   .input-address-container {
     display: flex;
     flex-direction: column;
-    width: 309px;
+    width: 100%;
     height: 91px;
     gap: 8px;
   }
@@ -26,9 +26,18 @@ export const styles = css`
   .input-address {
     border-radius: 24px;
     border: 1px solid var(--zinc-200, #e4e4e7);
-    width: 320px;
+    width: 100%;
     height: 35px;
-    font-size: 13px;
+    font-size: 12px;
     text-align: center;
+  }
+
+  .error {
+    border-color: red;
+  }
+
+  .error-message {
+    color: red;
+    font-weight: 500;
   }
 `;
