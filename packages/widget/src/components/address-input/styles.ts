@@ -1,21 +1,14 @@
 import { css } from 'lit';
 
 export const styles = css`
-  .address-input-container {
+  .addressInputContainer {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 8px;
   }
 
-  .switch-toggle-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .input-address-container {
+  .inputAddressContainer {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -23,7 +16,7 @@ export const styles = css`
     gap: 8px;
   }
 
-  .input-address {
+  .inputAddress {
     border-radius: 24px;
     border: 1px solid var(--zinc-200, #e4e4e7);
     width: 100%;
@@ -36,7 +29,7 @@ export const styles = css`
     border-color: red;
   }
 
-  .error-message {
+  .errorMessage {
     color: red;
     font-weight: 500;
   }

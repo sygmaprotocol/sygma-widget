@@ -17,7 +17,7 @@ export class AddressInput extends LitElement {
   address: string = '';
 
   @property({ attribute: false })
-  handleAddress?: (address: string) => void;
+  onHandleAddress?: (address: string) => void;
 
   @property({
     type: String
@@ -57,19 +57,19 @@ export class AddressInput extends LitElement {
         return;
       }
     }
-    return void this.handleAddress?.(value);
+    return void this.onHandleAddress?.(value);
   };
 
   render(): HTMLTemplateResult {
-    return html`<section class="address-input-container">
-      <div class="input-address-container">
+    return html`<section class="addressInputContainer">
+      <div class="inputAddressContainer">
         <label>Send to</label>
         ${when(
           this.errorMessage,
-          () => html` <span class="error-message">${this.errorMessage}</span> `
+          () => html` <span class="errorMessage">${this.errorMessage}</span> `
         )}
         <input
-          class=${this.errorMessage ? 'input-address error' : 'input-address'}
+          class=${this.errorMessage ? 'inputAddress error' : 'inputAddress'}
           name="address"
           type="text"
           @change=${(evt: Event) => this.handleAddressChange.bind(this)(evt)}
