@@ -59,9 +59,7 @@ describe('address-input component', function () {
     ]);
   });
 
-  // NOTE: this is not passing due to decodeAddress call failing in validateSubstrateAddress
-  // it seems checksum fails when running this on jsdom env
-  it.skip('triggers callback on address change and validates Substrate address', async () => {
+  it('triggers callback on address change and validates Substrate address', async () => {
     const mockAddressChangeHandler = vi.fn();
 
     const el = await fixture(html`

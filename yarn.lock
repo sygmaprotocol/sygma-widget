@@ -256,6 +256,7 @@ __metadata:
     eslint-plugin-lit: "npm:^1.9.1"
     ethers: "npm:5.7.2"
     events: "npm:^3.3.0"
+    happy-dom: "npm:^13.3.1"
     jsdom: "npm:^23.2.0"
     lit: "npm:3.0.0"
     lit-analyzer: "npm:^2.0.3"
@@ -7263,6 +7264,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"happy-dom@npm:^13.3.1":
+  version: 13.3.1
+  resolution: "happy-dom@npm:13.3.1"
+  dependencies:
+    entities: "npm:^4.5.0"
+    webidl-conversions: "npm:^7.0.0"
+    whatwg-mimetype: "npm:^3.0.0"
+  checksum: e9605d17f1d5219c4fab325614c65fd8c01f244d1b0ff7714cec679fb1d00e9af74e458871999bd1fb202d84b57d6f90798358c08b2ee48fcf0a7cb406678993
+  languageName: node
+  linkType: hard
+
 "har-schema@npm:^2.0.0":
   version: 2.0.0
   resolution: "har-schema@npm:2.0.0"
@@ -12386,6 +12398,13 @@ __metadata:
   version: 2.0.4
   resolution: "whatwg-fetch@npm:2.0.4"
   checksum: bf2bc1617218c63f2be86edefb95ac5e7f967ae402e468ed550729436369725c3b03a5d1110f62ea789b6f7f399969b1ef720b0bb04e8947fdf94eab7ffac829
+  languageName: node
+  linkType: hard
+
+"whatwg-mimetype@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "whatwg-mimetype@npm:3.0.0"
+  checksum: 323895a1cda29a5fb0b9ca82831d2c316309fede0365047c4c323073e3239067a304a09a1f4b123b9532641ab604203f33a1403b5ca6a62ef405bcd7a204080f
   languageName: node
   linkType: hard
 
