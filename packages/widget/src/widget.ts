@@ -20,7 +20,7 @@ class SygmaProtocolWidget extends LitElement {
   @property({
     type: Object
   })
-  web3Provider?: ethers.providers.Web3Provider;
+  evmProvider?: ethers.providers.Web3Provider;
 
   @property({
     type: Object
