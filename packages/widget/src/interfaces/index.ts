@@ -27,6 +27,15 @@ export interface IWidgetMixin {
   tokenName?: string;
 }
 
+export type ThemeVariables =
+  | 'mainColor'
+  | 'secondaryColor'
+  | 'fontSize'
+  | 'borderRadius'
+  | 'borderRadiusSecondary';
+
+export type Theme = Record<ThemeVariables, string>;
+
 export interface ISygmaProtocolWidget {
   networks?: Network;
   web3Provider?: ethers.providers.Web3Provider;
@@ -34,4 +43,8 @@ export interface ISygmaProtocolWidget {
   signer: Signer;
   disabled?: boolean;
   whitelistedResource: EvmResource | SubstrateResource;
+  expandable: boolean;
+  darkTheme: boolean;
+  customLogo: SVGElement;
+  theme: Theme;
 }
