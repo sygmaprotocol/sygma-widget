@@ -2,23 +2,24 @@ import { css } from 'lit';
 
 export const styles = css`
   .selectorContainer {
-    border-radius: 24px;
-    border: 1px solid #e4e4e7;
+    border-radius: 1.5rem;
+    border: 0.0625rem solid #e4e4e7;
     display: flex;
-    width: 314px;
+    width: 100%;
+    max-width: 19.625rem;
     max-height: 4.625rem;
-    padding: 12px 16px;
+    padding: 0.75rem 1rem;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    gap: 4px;
+    gap: 0.25rem;
   }
 
   .directionLabel {
     color: #a1a1aa;
     font-size: 0.875rem;
     font-weight: 500;
-    line-height: 20px;
+    line-height: 1.25rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -31,16 +32,16 @@ export const styles = css`
   .selector {
     width: 100%;
     color: #525252;
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 500;
-    line-height: 26px;
+    line-height: 1.625rem;
     border: none;
   }
 
   .selectorSection {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
   }
 
   .dropdown {
@@ -59,16 +60,8 @@ export const styles = css`
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    padding: 8px;
+    padding: 0.25rem 0;
     box-sizing: border-box;
-
-    input {
-      color: #525252;
-      font-size: 1.125rem;
-      font-weight: 500;
-      border: none;
-      outline: none;
-    }
   }
 
   .chevron {
@@ -86,11 +79,12 @@ export const styles = css`
     background-color: white;
     width: 100%;
     border-radius: 0.75rem;
-    border: 1px solid #f3f4f6;
+    border: 0.0625rem solid #f3f4f6;
     box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      0 0.25rem 0.375rem -0.0625rem rgba(0, 0, 0, 0.1),
+      0 0.125rem 0.25rem -0.0625rem rgba(0, 0, 0, 0.06);
     z-index: 1;
+    margin-top: 1rem;
   }
 
   .show {
@@ -100,7 +94,7 @@ export const styles = css`
   .dropdownOption {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
+    padding: 0.75rem 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
 
@@ -116,9 +110,10 @@ export const styles = css`
 
   .networkIcon {
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
   }
+
   .networkName {
     margin-left: 0.5rem;
   }

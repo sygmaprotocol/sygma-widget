@@ -18,7 +18,7 @@ export class NetworkSelector extends LitElement {
   static styles = styles;
 
   @state()
-  private _isDropdownOpen = false;
+  _isDropdownOpen = false;
 
   @property({ type: Boolean })
   disabled = false;
@@ -35,22 +35,22 @@ export class NetworkSelector extends LitElement {
   @property({ type: Array })
   networks: Domain[] = [];
 
-  private _toggleDropdown = (): void => {
+  _toggleDropdown = (): void => {
     this._isDropdownOpen = !this._isDropdownOpen;
   };
 
-  private _selectOption(option: Domain, event: Event): void {
+  _selectOption(option: Domain, event: Event): void {
     event.stopPropagation();
     this.selectedNetwork = option;
     this.onNetworkSelected?.(option);
     this._isDropdownOpen = false;
   }
 
-  private _renderNetworkIcon(name: string): HTMLTemplateResult {
+  _renderNetworkIcon(name: string): HTMLTemplateResult {
     return networkIconsMap[name] || networkIconsMap.default;
   }
 
-  private _renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
+  _renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
     return map(
       this.networks,
       (network: Domain) => html`
@@ -66,7 +66,7 @@ export class NetworkSelector extends LitElement {
     );
   }
 
-  private _renderTriggerContent(): HTMLTemplateResult {
+  _renderTriggerContent(): HTMLTemplateResult {
     return this.selectedNetwork
       ? html`${this._renderNetworkIcon(this.selectedNetwork.name)}
           <span class="networkName">
