@@ -1,21 +1,20 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
 import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import type { Ref } from 'lit/directives/ref.js';
-import { createRef, ref } from 'lit/directives/ref.js';
+import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 import { styles } from './styles';
 
-@customElement('amount-selector')
-export default class AmountSelector extends LitElement {
+@customElement('sygma-resource-selector')
+export class AmountSelector extends LitElement {
   static styles = styles;
   @property({
     type: Array,
     hasChanged: (n, o) => n !== o
   })
-  resources?: Resource[];
+  resources: Resource[] = [];
 
   @property({
     type: Boolean
@@ -23,91 +22,103 @@ export default class AmountSelector extends LitElement {
   disabled = false;
 
   @property({
-    type: Boolean,
-    hasChanged: (n, o) => n !== o
+    type: String
   })
-  isNativeToken?: boolean;
-
-  @state({
-    hasChanged: (n, o) => n !== o
-  })
-  selectedNetworkChainId?: number;
+  accountBalance?: string;
 
   @property({
     type: String
   })
-  tokenBalance?: string;
+  preselectedToken?: string;
 
   @property({
-    type: String
+    type: Number
   })
-  tokenName?: string;
+  preselectedAmount?: number;
 
-  @state({
-    hasChanged: (n, o) => n !== o
+  @property({
+    attribute: false
   })
-  selectedAmount?: number;
+  onResourceSelected?: (resource: Resource) => void;
 
-  inputRef: Ref<HTMLInputElement> = createRef();
+  @property({
+    attribute: false
+  })
+  onAmountChange?: (amount: number) => void;
 
-  handleAmountChange = (event: Event): void => {
-    const { value } = event.target as HTMLInputElement;
-
-    this.selectedAmount = Number.parseFloat(value);
-
-    dispatchEvent(
-      new CustomEvent('amount-selector-change', {
-        detail: value,
-        bubbles: true,
-        composed: true
-      })
-    );
-  };
+  @query('.amountSelectorInput', true)
+  _input!: HTMLInputElement;
 
   useMaxBalance = (): void => {
-    this.selectedAmount = Number.parseFloat(this.tokenBalance!);
+    this.preselectedAmount = Number.parseFloat(this.accountBalance!);
+    this._onInputAmountChange();
+  };
 
-    (this.inputRef.value as HTMLInputElement).value = `${this.selectedAmount}`;
-    const event = new Event('input', {
-      bubbles: true
-    });
+  _onInputAmountChange = (): void => {
+    const amount = Number.parseFloat(this._input.value);
+    this.onAmountChange?.(amount);
+  };
 
-    this.inputRef.value?.dispatchEvent(event);
+  _onResourceSelected = (event: Event): void => {
+    const { value } = event.target as HTMLOptionElement;
+    const resource = this.resources.find((n) => String(n.resourceId) == value);
+    if (resource) {
+      this.onResourceSelected?.(resource);
+    }
   };
 
   renderBalance(): HTMLTemplateResult {
     return html`
       <section class="balanceContent">
-        <span>${`${Number.parseFloat(this.tokenBalance!).toFixed(4)}`}</span>
+        <span>${`${Number.parseFloat(this.accountBalance!).toFixed(4)}`}</span>
         <button class="maxButton" @click=${this.useMaxBalance}>Max</button>
       </section>
     `;
   }
 
+  renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
+    if (this.resources) {
+      return map(this.resources, (entry: Resource) => {
+        // TODO: render resource/token icon
+        return html`<option value=${entry.resourceId}>${entry.symbol}</option>`;
+      });
+    }
+    return html`<option selected value="">Token</option>`;
+  }
+
   render(): HTMLTemplateResult {
     return html`
       <div class="amountSelectorContainer">
-      <section class="tokenBalanceSection">
-        <label class="amountSelectorLabel">Amount to transfer</label>
-        ${when(this.tokenBalance, () => this.renderBalance())}
+        <section class="tokenBalanceSection">
+          <label class="amountSelectorLabel">Amount to transfer</label>
+          ${when(this.accountBalance, () => this.renderBalance())}
         </section>
         <section class="amountSelectorSection">
-          <input 
-          type="text" 
-          class="amountSelectorInput" 
-          placeholder="0" 
-          @input=${this.handleAmountChange}
-          value=${ifDefined(this.selectedAmount)}
-          ${ref(this.inputRef)}
-           />
-          <base-selector
-            .entries=${this.resources}
-            .typeSelector=${'token'}
-            .disabled=${this.disabled}
-          ></base-selector>
+          <input
+            type="text"
+            class="amountSelectorInput"
+            placeholder="0.000"
+            @change=${this._onInputAmountChange}
+            value=${ifDefined(this.preselectedAmount)}
+          />
+          <section class="selectorSection">
+            <select
+              @change=${this._onResourceSelected}
+              ?disabled=${this.disabled}
+              class="selector amountSelectorInput"
+            >
+              <option value="-1">-</option>
+              ${this.renderEntries()}
+            </select>
           </section>
-        </div>
+        </section>
       </div>
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'sygma-resource-selector': AmountSelector;
   }
 }

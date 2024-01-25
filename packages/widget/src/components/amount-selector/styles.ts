@@ -6,20 +6,17 @@ export const styles = css`
     padding: 4px 12px;
     align-items: center;
     border-radius: 24px;
-    width: 314px;
-    height: 116px;
+    width: 314px; /* TODO: remove hardcoded values */
+    height: 116px; /* TODO: ↑ */
     flex-direction: column;
   }
 
   .amountSelectorLabel {
     display: flex;
     width: 100%;
-    flex-direction: row;
     justify-content: flex-start;
-    color: var(--neutral-600, #525252);
-    font-family: Inter;
+    color: #525252;
     font-size: 14px;
-    font-style: normal;
     font-weight: 500;
     line-height: 20px; /* 142.857% */
   }
@@ -27,44 +24,35 @@ export const styles = css`
   .amountSelectorSection {
     display: flex;
     width: 100%;
-    flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
   .amountSelectorInput {
     border: none;
-    color: var(--neutral-600, #525252);
-    font-family: Inter;
+    color: #525252;
     font-size: 34px;
-    font-style: normal;
     font-weight: 500;
-    line-height: 40px; /* 117.647% */
+    line-height: 40px;
     letter-spacing: -0.68px;
-    width: 137px;
+    width: 137px; /* TODO: remove hardcoded values */
   }
 
   .tokenBalanceSection {
     display: flex;
-    flex-direction: row;
-    align-self: flex-start;
     margin-top: 8px;
     width: 100%;
   }
 
   .balanceContent {
     display: flex;
-    flex-direction: row;
     width: 100%;
     justify-content: flex-end;
-  }
-
-  .balanceContent > span {
-    margin-right: 6px;
+    gap: 6px;
   }
 
   .maxButton {
-    color: var(--blue-600, #2563eb);
+    color: #2563eb;
     border: none;
     background: none;
     font-weight: 500;

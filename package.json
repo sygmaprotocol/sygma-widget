@@ -16,7 +16,7 @@
     "examples/*"
   ],
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.10.0"
   },
   "devDependencies": {
     "@chainsafe/eslint-config": "^2.1.1",
@@ -31,7 +31,7 @@
     "build": "yarn workspaces foreach --all -pt run build",
     "lint": "yarn workspaces foreach --all -pt run lint",
     "test:unit": "yarn workspaces foreach --all -pt run test:unit",
-    "build:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget build",
+    "build:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget build:preview",
     "build:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget build",
     "lint:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget lint",
     "lint:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget lint"
