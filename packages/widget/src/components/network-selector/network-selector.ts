@@ -42,6 +42,7 @@ export class NetworkSelector extends LitElement {
   private _selectOption(option: Domain, event: Event): void {
     event.stopPropagation();
     this.selectedNetwork = option;
+    this.onNetworkSelected?.(option);
     this._isDropdownOpen = false;
   }
 
