@@ -28,6 +28,10 @@ export const styles = css`
     font-family: Inter, sans-serif;
   }
 
+  .networkSelectionWrapper {
+    margin: 1rem 0 0.5rem 0;
+  }
+
   .connectAccount {
     display: flex;
     justify-content: flex-end;
