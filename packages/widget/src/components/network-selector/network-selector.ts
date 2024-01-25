@@ -23,9 +23,6 @@ export class NetworkSelector extends LitElement {
   @property({ type: Boolean })
   disabled = false;
 
-  @property({ type: Boolean })
-  icons = true;
-
   @property({ type: String })
   direction?: Direction;
 
@@ -49,32 +46,31 @@ export class NetworkSelector extends LitElement {
   }
 
   private _renderNetworkIcon(name: string): HTMLTemplateResult {
-    return name ? networkIconsMap[name] : networkIconsMap.default;
+    return networkIconsMap[name] || networkIconsMap.default;
   }
 
-  renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
-    return map(this.networks, (network: Domain) => {
-      return html`
+  private _renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
+    return map(
+      this.networks,
+      (network: Domain) => html`
         <div
           class="dropdownOption"
           @click="${(e: Event) => this._selectOption(network, e)}"
           role="option"
         >
           ${this._renderNetworkIcon(network.name)}
-          <div class="networkName">${capitalize(network.name)}</div>
+          <span class="networkName">${capitalize(network.name)}</span>
         </div>
-      `;
-    });
+      `
+    );
   }
 
-  renderTriggerContent(): HTMLTemplateResult {
+  private _renderTriggerContent(): HTMLTemplateResult {
     return this.selectedNetwork
-      ? html`
-          ${this._renderNetworkIcon(this.selectedNetwork.name)}
-          <div class="networkName">
+      ? html`${this._renderNetworkIcon(this.selectedNetwork.name)}
+          <span class="networkName">
             ${capitalize(this.selectedNetwork.name)}
-          </div>
-        `
+          </span>`
       : html`Select Network`;
   }
 
@@ -89,7 +85,7 @@ export class NetworkSelector extends LitElement {
         aria-expanded="${this._isDropdownOpen ? 'true' : 'false'}"
       >
         <div class="dropdownTrigger">
-          <div class="selectedNetwork">${this.renderTriggerContent()}</div>
+          <div class="selectedNetwork">${this._renderTriggerContent()}</div>
           <div class="chevron ${this._isDropdownOpen ? 'open' : ''}">
             ${chevronIcon}
           </div>
@@ -98,7 +94,7 @@ export class NetworkSelector extends LitElement {
           class="dropdownContent ${this._isDropdownOpen ? 'show' : ''}"
           role="list"
         >
-          ${this.renderEntries()}
+          ${this._renderEntries()}
         </div>
       </div>
     </div>`;
