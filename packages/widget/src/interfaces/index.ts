@@ -1,31 +1,11 @@
 import type {
-  EthereumConfig,
   EvmResource,
   Network,
-  Resource,
-  SubstrateConfig,
   SubstrateResource
 } from '@buildwithsygma/sygma-sdk-core';
 import type { ethers } from 'ethers';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
-import type { SdkManager, WalletManagerController } from '../controllers';
-
-export interface IWidgetMixin {
-  walletManager?: WalletManagerController;
-  sdkManager?: SdkManager;
-  chainId?: number;
-  domains?: EthereumConfig[] | SubstrateConfig[];
-  homechain?: EthereumConfig | SubstrateConfig;
-  selectedNetworkChainId?: number;
-  destinationDomains?: EthereumConfig[] | SubstrateConfig[];
-  resources?: Resource[];
-  selectedAmount?: number;
-  selectedToken?: string;
-  selectedTokenAddress?: string;
-  tokenBalance?: string;
-  tokenName?: string;
-}
 
 export type ThemeVariables =
   | 'mainColor'
