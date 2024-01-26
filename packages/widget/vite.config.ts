@@ -1,12 +1,10 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
-import dts from "vite-plugin-dts";
+import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    dts({ rollupTypes: true }),
-  ],
+  plugins: [dts({ rollupTypes: true })],
   base: '/',
   build: {
     sourcemap: true,
@@ -14,7 +12,7 @@ export default defineConfig({
     lib: {
       entry: 'src/index.ts',
       formats: ['es']
-    },
+    }
   },
   test: {
     environment: 'jsdom',
