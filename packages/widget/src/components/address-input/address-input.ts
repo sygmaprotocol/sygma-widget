@@ -48,13 +48,13 @@ export class AddressInput extends LitElement {
         const validPolkadotAddress = validateSubstrateAddress(value);
 
         if (!validPolkadotAddress) {
-          this.errorMessage = 'Invalid Substrate address';
+          this.errorMessage = 'invalid Substrate address';
           return;
         }
       } else {
         const isAddress = ethers.utils.isAddress(value);
         if (!isAddress) {
-          this.errorMessage = 'Invalid Ethereum Address';
+          this.errorMessage = 'invalid Ethereum Address';
           return;
         }
       }

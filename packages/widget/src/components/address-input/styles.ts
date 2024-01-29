@@ -5,23 +5,26 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 8px;
+    gap: 0.5rem;
+    min-height: 7.75rem;
+    height: 100%;
   }
 
   .inputAddressContainer {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 91px;
-    gap: 8px;
+    min-height: 7.75rem;
+    height: 100%;
+    gap: 0.5rem;
   }
 
   .inputAddress {
-    border-radius: 24px;
-    border: 1px solid var(--zinc-200);
+    border-radius: 1.5rem;
+    border: 0.063rem solid var(--zinc-200);
     width: 100%;
-    height: 35px;
-    font-size: 12px;
+    height: 4.25rem;
+    font-size: 0.875rem;
     text-align: center;
   }
 
@@ -31,6 +34,7 @@ export const styles = css`
 
   .errorMessage {
     color: red;
-    font-weight: 500;
+    font-weight: 300;
+    font-size: 0.75rem;
   }
 `;

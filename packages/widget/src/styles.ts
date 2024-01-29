@@ -26,8 +26,8 @@ export const styles = css`
     gap: 16px;
 
     padding: 24px;
-    width: 350px; /* TODO: remove these hardcoded values */
-    height: 476px; /* TODO: ↑ */
+    width: 21.875rem; /* TODO: remove these hardcoded values */
+    height: 31.25rem; /* TODO: ↑ */
     border-radius: 12px;
     border: 1px solid var(--gray-100);
     background-color: var(--white);
