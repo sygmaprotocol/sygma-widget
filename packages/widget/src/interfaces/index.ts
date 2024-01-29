@@ -19,7 +19,7 @@ export type Theme = Record<ThemeVariables, string>;
 export interface ISygmaProtocolWidget {
   whitelistedNetworks?: Network[];
   evmProvider?: ethers.providers.Web3Provider;
-  apiPromise?: ApiPromise | string;
+  substrateProvider?: ApiPromise | string;
   signer: Signer;
   disabled?: boolean;
   whitelistedResource: EvmResource | SubstrateResource;
