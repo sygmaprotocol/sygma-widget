@@ -43,7 +43,7 @@ export class AddressInput extends LitElement {
       this.errorMessage = undefined;
     }
 
-    if (value !== '') {
+    if (value) {
       if (this.network === Network.SUBSTRATE) {
         const validPolkadotAddress = validateSubstrateAddress(value);
 
