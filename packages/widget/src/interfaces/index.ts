@@ -21,7 +21,7 @@ export interface ISygmaProtocolWidget {
   evmProvider?: ethers.providers.Web3Provider;
   substrateProvider?: ApiPromise | string;
   substrateSigner?: Signer;
-  disabled?: boolean;
+  show?: boolean;
   whitelistedSourceResources?: Array<EvmResource | SubstrateResource>;
   expandable: boolean;
   darkTheme: boolean;
