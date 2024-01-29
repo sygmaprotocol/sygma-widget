@@ -42,8 +42,8 @@ export class NetworkSelector extends LitElement {
   _selectOption(option: Domain, event: Event): void {
     event.stopPropagation();
     this.selectedNetwork = option;
-    this.onNetworkSelected?.(option);
     this._isDropdownOpen = false;
+    this.onNetworkSelected?.(option);
   }
 
   _renderNetworkIcon(name: string): HTMLTemplateResult {
