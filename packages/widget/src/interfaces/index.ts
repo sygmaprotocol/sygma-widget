@@ -25,6 +25,6 @@ export interface ISygmaProtocolWidget {
   whitelistedSourceResources?: Array<EvmResource | SubstrateResource>;
   expandable?: boolean;
   darkTheme?: boolean;
-  customLogo: SVGElement;
+  customLogo?: SVGElement;
   theme: Theme;
 }
