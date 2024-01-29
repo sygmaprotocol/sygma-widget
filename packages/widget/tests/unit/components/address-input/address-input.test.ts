@@ -57,7 +57,7 @@ describe('address-input component', function () {
       '.errorMessage'
     ) as HTMLInputElement;
 
-    assert.equal(errorMessage.textContent, 'Invalid Ethereum Address');
+    assert.equal(errorMessage.textContent, 'invalid Ethereum Address');
 
     el = await fixture(html`
       <sygma-address-input
@@ -75,7 +75,7 @@ describe('address-input component', function () {
       '.errorMessage'
     ) as HTMLInputElement;
 
-    assert.equal(errorMessage.textContent, 'Invalid Substrate address');
+    assert.equal(errorMessage.textContent, 'invalid Substrate address');
   });
 
   it('renders input field with address value and then changes triggering callback', async () => {
@@ -133,7 +133,7 @@ describe('address-input component', function () {
       '.errorMessage'
     ) as HTMLInputElement;
 
-    assert.equal(errorMessage.textContent, 'Invalid Ethereum Address');
+    assert.equal(errorMessage.textContent, 'invalid Ethereum Address');
 
     input.value = '';
 
@@ -233,7 +233,7 @@ describe('address-input component', function () {
       '.errorMessage'
     ) as HTMLInputElement;
 
-    assert.equal(errorMessage.textContent, 'Invalid Substrate address');
+    assert.equal(errorMessage.textContent, 'invalid Substrate address');
   });
 
   it('displays error message when passing wrong Ethereum address', async () => {
@@ -263,6 +263,6 @@ describe('address-input component', function () {
       '.errorMessage'
     ) as HTMLInputElement;
 
-    assert.equal(errorMessage.textContent, 'Invalid Ethereum Address');
+    assert.equal(errorMessage.textContent, 'invalid Ethereum Address');
   });
 });
