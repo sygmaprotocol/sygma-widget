@@ -18,7 +18,7 @@ export const styles = css`
 
   .inputAddress {
     border-radius: 24px;
-    border: 1px solid var(--zinc-200, #e4e4e7);
+    border: 1px solid var(--zinc-200);
     width: 100%;
     height: 35px;
     font-size: 12px;

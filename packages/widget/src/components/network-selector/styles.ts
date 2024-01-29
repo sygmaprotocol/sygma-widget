@@ -3,7 +3,7 @@ import { css } from 'lit';
 export const styles = css`
   .selectorContainer {
     border-radius: 24px;
-    border: 1px solid #e4e4e7;
+    border: 1px solid var(--zinc-200);
     display: flex;
     width: 314px;
     padding: 12px 16px;
@@ -14,7 +14,7 @@ export const styles = css`
   }
 
   .directionLabel {
-    color: #a1a1aa;
+    color: var(--zinc-400);
     font-size: 14px;
     font-weight: 500;
     line-height: 20px;
@@ -29,7 +29,7 @@ export const styles = css`
 
   .selector {
     width: 100%;
-    color: #525252;
+    color: var(--neutral-600);
     font-size: 18px;
     font-weight: 500;
     line-height: 26px;
