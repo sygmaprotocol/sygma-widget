@@ -26,5 +26,5 @@ export interface ISygmaProtocolWidget {
   expandable?: boolean;
   darkTheme?: boolean;
   customLogo?: SVGElement;
-  theme: Theme;
+  theme?: Theme;
 }
