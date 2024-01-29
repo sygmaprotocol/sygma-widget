@@ -75,7 +75,7 @@ export class AddressInput extends LitElement {
           class=${this.errorMessage ? 'inputAddress error' : 'inputAddress'}
           name="address"
           type="text"
-          @change=${(evt: Event) => this.handleAddressChange.bind(this)(evt)}
+          @change=${this.handleAddressChange}
           value=${ifDefined(this.address)}
         />
       </div>
