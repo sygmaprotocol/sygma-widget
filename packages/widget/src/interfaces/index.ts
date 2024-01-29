@@ -23,7 +23,7 @@ export interface ISygmaProtocolWidget {
   substrateSigner?: Signer;
   show?: boolean;
   whitelistedSourceResources?: Array<EvmResource | SubstrateResource>;
-  expandable: boolean;
+  expandable?: boolean;
   darkTheme?: boolean;
   customLogo: SVGElement;
   theme: Theme;
