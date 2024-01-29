@@ -22,7 +22,7 @@ export interface ISygmaProtocolWidget {
   substrateProvider?: ApiPromise | string;
   substrateSigner?: Signer;
   disabled?: boolean;
-  whitelistedResource: EvmResource | SubstrateResource;
+  whitelistedSourceResources?: Array<EvmResource | SubstrateResource>;
   expandable: boolean;
   darkTheme: boolean;
   customLogo: SVGElement;
