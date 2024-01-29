@@ -28,6 +28,11 @@ export const styles = css`
     text-align: center;
   }
 
+  .inputAddress:focus {
+    outline: none;
+    border: 0.063rem solid var(--zinc-200);
+  }
+
   .error {
     border-color: red;
   }
