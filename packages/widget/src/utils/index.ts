@@ -2,6 +2,8 @@ import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
+import { Network } from '@buildwithsygma/sygma-sdk-core';
+import { ethers } from 'ethers';
 import {
   baseNetworkIcon,
   cronosNetworkIcon,
@@ -56,4 +58,31 @@ export const validateSubstrateAddress = (address: string): boolean => {
   } catch (error) {
     return false;
   }
+};
+
+export const validateAddress = (address: string, network: Network): string => {
+  let errorMessage: string = '';
+
+  switch (network) {
+    case Network.SUBSTRATE: {
+      const validPolkadotAddress = validateSubstrateAddress(address);
+
+      if (!validPolkadotAddress) {
+        errorMessage = 'invalid Substrate address';
+      }
+      break;
+    }
+    case Network.EVM: {
+      const isAddress = ethers.utils.isAddress(address);
+      if (!isAddress) {
+        errorMessage = 'invalid Ethereum Address';
+      }
+      break;
+    }
+    default:
+      errorMessage = 'invalid address';
+      break;
+  }
+
+  return errorMessage;
 };

@@ -2,10 +2,9 @@ import { LitElement, html } from 'lit';
 import type { HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { ethers } from 'ethers';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { when } from 'lit/directives/when.js';
-import { validateSubstrateAddress } from '../../utils';
+import { validateAddress } from '../../utils';
 import { styles } from './styles';
 
 @customElement('sygma-address-input')
@@ -43,28 +42,19 @@ export class AddressInput extends LitElement {
       this.errorMessage = undefined;
     }
 
-    if (value) {
-      if (this.network === Network.SUBSTRATE) {
-        const validPolkadotAddress = validateSubstrateAddress(value);
-
-        if (!validPolkadotAddress) {
-          this.errorMessage = 'invalid Substrate address';
-          return;
-        }
-      } else {
-        const isAddress = ethers.utils.isAddress(value);
-        if (!isAddress) {
-          this.errorMessage = 'invalid Ethereum Address';
-          return;
-        }
-      }
+    if (!value) {
+      return;
     }
 
-    void this.onAddressChange?.(value);
+    this.errorMessage = validateAddress(value, this.network);
+
+    if (!this.errorMessage) {
+      void this.onAddressChange(value);
+    }
   };
 
   render(): HTMLTemplateResult {
-    return html`<section class="addressInputContainer">
+    return html`<section class="inputAddressSection">
       <div class="inputAddressContainer">
         <label>Send to</label>
         ${when(

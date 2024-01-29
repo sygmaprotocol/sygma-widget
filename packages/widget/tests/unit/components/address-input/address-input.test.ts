@@ -141,7 +141,7 @@ describe('address-input component', function () {
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 1);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 0);
 
     const errorMessageAfterClean = el.shadowRoot!.querySelector(
       '.errorMessage'

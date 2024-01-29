@@ -1,13 +1,12 @@
 import { css } from 'lit';
 
 export const styles = css`
-  .addressInputContainer {
+  .inputAddressSection {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 0.5rem;
     min-height: 7.75rem;
-    height: 100%;
   }
 
   .inputAddressContainer {
@@ -15,7 +14,6 @@ export const styles = css`
     flex-direction: column;
     width: 100%;
     min-height: 7.75rem;
-    height: 100%;
     gap: 0.5rem;
   }
 
