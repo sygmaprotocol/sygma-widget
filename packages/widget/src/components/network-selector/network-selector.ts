@@ -1,7 +1,9 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { LitElement, html, type HTMLTemplateResult } from 'lit';
+import { LitElement, html } from 'lit';
+import type { HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
+import { when } from 'lit/directives/when.js';
 import { capitalize } from '../../utils';
 import { networkIconsMap, chevronIcon } from '../../assets';
 import { styles } from './styles';
@@ -30,7 +32,7 @@ export class NetworkSelector extends LitElement {
   selectedNetwork?: Domain;
 
   @property({ attribute: false })
-  onNetworkSelected?: (network?: Domain) => void;
+  onNetworkSelected: (network?: Domain) => void = () => {};
 
   @property({ type: Array })
   networks: Domain[] = [];
@@ -50,7 +52,7 @@ export class NetworkSelector extends LitElement {
     return networkIconsMap[name] || networkIconsMap.default;
   }
 
-  _renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
+  _renderEntries(): Generator<unknown, void> {
     return map(
       this.networks,
       (network: Domain) => html`
@@ -67,12 +69,15 @@ export class NetworkSelector extends LitElement {
   }
 
   _renderTriggerContent(): HTMLTemplateResult {
-    return this.selectedNetwork
-      ? html`${this._renderNetworkIcon(this.selectedNetwork.name)}
+    return when(
+      this.selectedNetwork,
+      () =>
+        html`${this._renderNetworkIcon(this.selectedNetwork!.name)}
           <span class="networkName">
-            ${capitalize(this.selectedNetwork.name)}
-          </span>`
-      : html`Select Network`;
+            ${capitalize(this.selectedNetwork!.name)}
+          </span>`,
+      () => html`Select Network`
+    );
   }
 
   render(): HTMLTemplateResult {
