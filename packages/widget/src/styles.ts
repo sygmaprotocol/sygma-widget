@@ -11,7 +11,7 @@ export const styles = css`
   .widgetContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     gap: 16px;
 
     padding: 24px;
@@ -28,10 +28,43 @@ export const styles = css`
     font-family: Inter, sans-serif;
   }
 
-  .connectAccount {
+  .widgetHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .widgetContainer .brandLogoContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .widgetHeader .brandLogo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .widgetHeader .brandLogo svg {
+    height: 100%;
+    width: 100%;
+  }
+
+  .widgetHeader .title {
+    color: var(--zinc-400, #a1a1aa);
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  .widgetContent {
     display: flex;
     justify-content: flex-end;
-    align-items: center;
+    align-items: stretch;
     gap: 4px;
   }
 

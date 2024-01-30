@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { html } from 'lit';
 
 const sygmaLogo = html`
   <svg
