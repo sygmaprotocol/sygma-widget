@@ -1,9 +1,35 @@
-export { default as switchNetworkIcon } from './icons/switchNetwork';
-export { default as sygmaLogo } from './icons/sygmaLogo';
-export { default as noNetworkIcon } from './icons/noNetworkIcon';
-export { default as ethereumIcon } from './icons/ethereumNetworkIcon';
-export { default as polygonNetworkIcon } from './icons/polygonNetworkIcon';
-export { default as baseNetworkIcon } from './icons/baseNetworkIcon';
-export { default as cronosNetworkIcon } from './icons/cronosNetworkIcon';
-export { default as phalaNetworkIcon } from './icons/phalaNetworkIcon';
-export { default as khalaNetworkIcon } from './icons/khalaNetworkIcon';
+import type { HTMLTemplateResult } from 'lit';
+import baseNetworkIcon from './icons/baseNetworkIcon';
+import cronosNetworkIcon from './icons/cronosNetworkIcon';
+import ethereumIcon from './icons/ethereumNetworkIcon';
+import khalaNetworkIcon from './icons/khalaNetworkIcon';
+import noNetworkIcon from './icons/noNetworkIcon';
+import phalaNetworkIcon from './icons/phalaNetworkIcon';
+import polygonNetworkIcon from './icons/polygonNetworkIcon';
+import switchNetworkIcon from './icons/switchNetwork';
+import sygmaLogo from './icons/sygmaLogo';
+import chevronIcon from './icons/chevron';
+
+export const networkIconsMap = {
+  ethereum: ethereumIcon,
+  khala: khalaNetworkIcon,
+  phala: phalaNetworkIcon,
+  cronos: cronosNetworkIcon,
+  base: baseNetworkIcon,
+  gnosis: noNetworkIcon,
+  polygon: polygonNetworkIcon,
+  default: noNetworkIcon
+} as const as Record<string, HTMLTemplateResult>;
+
+export {
+  ethereumIcon,
+  khalaNetworkIcon,
+  phalaNetworkIcon,
+  cronosNetworkIcon,
+  baseNetworkIcon,
+  polygonNetworkIcon,
+  sygmaLogo,
+  switchNetworkIcon,
+  noNetworkIcon,
+  chevronIcon
+};

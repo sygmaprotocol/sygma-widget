@@ -22,7 +22,7 @@ class SygmaProtocolWidget extends LitElement {
           <section class="connectAccount">
             ${switchNetworkIcon} Connect Wallet
           </section>
-          <section>
+          <section class="networkSelectionWrapper">
             <sygma-network-selector
               .direction=${Directions.FROM}
               .icons=${true}
