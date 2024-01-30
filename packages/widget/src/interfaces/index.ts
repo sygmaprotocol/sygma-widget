@@ -17,7 +17,8 @@ export type ThemeVariables =
 export type Theme = Record<ThemeVariables, string>;
 
 export interface ISygmaProtocolWidget {
-  whitelistedNetworks?: Network[];
+  whitelistedSourceNetworks?: Network[];
+  whitelistedDestinationNetworks?: Network[];
   evmProvider?: ethers.providers.Web3Provider;
   substrateProvider?: ApiPromise | string;
   substrateSigner?: Signer;
