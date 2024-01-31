@@ -41,4 +41,10 @@ export const styles = css`
     font-weight: 300;
     font-size: 0.75rem;
   }
+
+  .labelContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `;
