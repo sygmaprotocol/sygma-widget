@@ -36,7 +36,7 @@ class SygmaProtocolWidget extends LitElement {
         </section>
         <section class="widgetContent">
           <form @submit=${() => {}}>
-            <section>
+            <section class="networkSelectionWrapper">
               <sygma-network-selector
                 .direction=${Directions.FROM}
                 .icons=${true}
@@ -46,7 +46,7 @@ class SygmaProtocolWidget extends LitElement {
               >
               </sygma-network-selector>
             </section>
-            <section>
+            <section class="networkSelectionWrapper">
               <sygma-network-selector
                 .direction=${Directions.TO}
                 .icons=${true}

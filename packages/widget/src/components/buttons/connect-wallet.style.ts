@@ -5,6 +5,17 @@ export const styles = css`
     display: flex;
     justify-content: flex-end;
   }
+  .connectWalletContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .walletAddress {
+    font-family: Inter;
+    font-size: 12px;
+  }
 
   .connectWalletButton {
     padding: 6px 8px;

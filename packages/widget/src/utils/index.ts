@@ -46,3 +46,7 @@ export const capitalize = (s: string): string => {
   const rest = s.slice(1);
   return `${firstLetter}${rest}`;
 };
+
+export const shortAddress = (address: string): string => {
+  return `${address.slice(0, 6)}...${address.slice(-5)}`;
+};

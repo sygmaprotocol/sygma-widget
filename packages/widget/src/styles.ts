@@ -63,9 +63,13 @@ export const styles = css`
 
   .widgetContent {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: stretch;
     gap: 4px;
+  }
+
+  .networkSelectionWrapper {
+    margin: 1rem 0 0.5rem 0;
   }
 
   .actionButton {
