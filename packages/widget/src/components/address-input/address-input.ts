@@ -29,14 +29,12 @@ export class AddressInput extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     if (this.address) {
-      this.handleAddressChange({
-        target: { value: this.address }
-      } as unknown as Event);
+      this.handleAddressChange(this.address);
     }
   }
 
-  private handleAddressChange = ({ target }: Event): void => {
-    const { value } = target as HTMLInputElement;
+  private handleAddressChange = (value: string): void => {
+    console.log('value', value);
 
     if (this.errorMessage) {
       this.errorMessage = undefined;
@@ -54,20 +52,26 @@ export class AddressInput extends LitElement {
   };
 
   render(): HTMLTemplateResult {
-    return html`<section class="inputAddressSection">
+    return html` <section class="inputAddressSection">
       <div class="inputAddressContainer">
-        <label>Send to</label>
-        ${when(
-          this.errorMessage,
-          () => html` <span class="errorMessage">${this.errorMessage}</span>`
-        )}
-        <input
+        <label class="labelContainer">
+          <span>Send to </span>
+          ${when(
+            this.errorMessage,
+            () => html` <span class="errorMessage">${this.errorMessage}</span>`
+          )}</label
+        >
+        <textarea
           class=${this.errorMessage ? 'inputAddress error' : 'inputAddress'}
           name="address"
-          type="text"
-          @change=${this.handleAddressChange}
-          value=${ifDefined(this.address)}
-        />
+          @change=${(evt: Event) =>
+            this.handleAddressChange(
+              (evt.target as HTMLInputElement).value.trim()
+            )}
+          rows="2"
+        >
+${ifDefined(this.address)}</textarea
+        >
       </div>
     </section>`;
   }
