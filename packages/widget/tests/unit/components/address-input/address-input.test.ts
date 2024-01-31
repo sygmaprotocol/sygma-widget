@@ -28,7 +28,10 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    assert.equal(input.value, '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492');
+    assert.equal(
+      input.value.trim(),
+      '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'
+    );
 
     const errorMessage = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -51,7 +54,7 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    assert.equal(input.value, '0x123');
+    assert.equal(input.value.trim(), '0x123');
 
     let errorMessage = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -69,7 +72,7 @@ describe('address-input component', function () {
 
     input = el.shadowRoot!.querySelector('.inputAddress') as HTMLInputElement;
 
-    assert.equal(input.value, '42sy');
+    assert.equal(input.value.trim(), '42sy');
 
     errorMessage = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -92,7 +95,7 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    assert.equal(input.value, '0x123');
+    assert.equal(input.value.trim(), '0x123');
 
     const listener = oneEvent(input, 'change', false);
     input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492';

@@ -20,11 +20,12 @@ export const styles = css`
   .inputAddress {
     border-radius: 1.5rem;
     border: 0.063rem solid var(--zinc-200);
-    height: 3.25rem;
     font-size: 0.875rem;
     text-align: center;
     resize: none;
-    padding-top: 1rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 1rem;
   }
 
   .inputAddress:focus {

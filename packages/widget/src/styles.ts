@@ -27,7 +27,6 @@ export const styles = css`
 
     padding: 24px;
     width: 21.875rem; /* TODO: remove these hardcoded values */
-    height: 31.25rem; /* TODO: ↑ */
     border-radius: 12px;
     border: 1px solid var(--gray-100);
     background-color: var(--white);

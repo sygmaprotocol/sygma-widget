@@ -34,20 +34,20 @@ export class AddressInput extends LitElement {
   }
 
   private handleAddressChange = (value: string): void => {
-    console.log('value', value);
+    const trimedValue = value.trim();
 
     if (this.errorMessage) {
       this.errorMessage = undefined;
     }
 
-    if (!value) {
+    if (!trimedValue) {
       return;
     }
 
-    this.errorMessage = validateAddress(value, this.network);
+    this.errorMessage = validateAddress(trimedValue, this.network);
 
     if (!this.errorMessage) {
-      void this.onAddressChange(value);
+      void this.onAddressChange(trimedValue);
     }
   };
 
@@ -65,12 +65,11 @@ export class AddressInput extends LitElement {
           class=${this.errorMessage ? 'inputAddress error' : 'inputAddress'}
           name="address"
           @change=${(evt: Event) =>
-            this.handleAddressChange(
-              (evt.target as HTMLInputElement).value.trim()
-            )}
+            this.handleAddressChange((evt.target as HTMLInputElement).value)}
           rows="2"
         >
-${ifDefined(this.address)}</textarea
+${ifDefined(this.address)}
+        </textarea
         >
       </div>
     </section>`;
