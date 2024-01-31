@@ -24,20 +24,18 @@ export class AddressInput extends LitElement {
   network: Network = Network.EVM;
 
   @state()
-  errorMessage?: string;
+  errorMessage: string | null = null;
 
   connectedCallback(): void {
     super.connectedCallback();
-    if (this.address) {
-      this.handleAddressChange(this.address);
-    }
+    this.handleAddressChange(this.address);
   }
 
   private handleAddressChange = (value: string): void => {
     const trimedValue = value.trim();
 
     if (this.errorMessage) {
-      this.errorMessage = undefined;
+      this.errorMessage = null;
     }
 
     if (!trimedValue) {
@@ -66,7 +64,6 @@ export class AddressInput extends LitElement {
           name="address"
           @change=${(evt: Event) =>
             this.handleAddressChange((evt.target as HTMLInputElement).value)}
-          rows="2"
         >
 ${ifDefined(this.address)}
         </textarea
