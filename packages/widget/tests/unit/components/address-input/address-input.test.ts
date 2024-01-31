@@ -60,7 +60,7 @@ describe('address-input component', function () {
       '.errorMessage'
     ) as HTMLInputElement;
 
-    assert.equal(errorMessage.textContent, 'invalid Ethereum Address');
+    assert.equal(errorMessage.textContent, 'invalid Ethereum address');
 
     el = await fixture(html`
       <sygma-address-input
@@ -136,7 +136,7 @@ describe('address-input component', function () {
       '.errorMessage'
     ) as HTMLInputElement;
 
-    assert.equal(errorMessage.textContent, 'invalid Ethereum Address');
+    assert.equal(errorMessage.textContent, 'invalid Ethereum address');
 
     input.value = '';
 
@@ -266,6 +266,6 @@ describe('address-input component', function () {
       '.errorMessage'
     ) as HTMLInputElement;
 
-    assert.equal(errorMessage.textContent, 'invalid Ethereum Address');
+    assert.equal(errorMessage.textContent, 'invalid Ethereum address');
   });
 });
