@@ -6,14 +6,14 @@ export const styles = css`
     flex-direction: column;
     justify-content: center;
     gap: 0.5rem;
-    min-height: 7.75rem;
+    min-height: 7.75rem; // TOO: remove this hardcoded value
   }
 
   .inputAddressContainer {
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: 7.75rem;
+    min-height: 7.75rem; // TOO: remove this hardcoded value
     gap: 0.5rem;
   }
 

@@ -60,29 +60,21 @@ export const validateSubstrateAddress = (address: string): boolean => {
   }
 };
 
-export const validateAddress = (address: string, network: Network): string => {
-  let errorMessage: string = '';
-
+export const validateAddress = (
+  address: string,
+  network: Network
+): string | null => {
   switch (network) {
     case Network.SUBSTRATE: {
       const validPolkadotAddress = validateSubstrateAddress(address);
-
-      if (!validPolkadotAddress) {
-        errorMessage = 'invalid Substrate address';
-      }
-      break;
+      return validPolkadotAddress ? null : 'invalid Substrate address';
     }
     case Network.EVM: {
       const isAddress = ethers.utils.isAddress(address);
-      if (!isAddress) {
-        errorMessage = 'invalid Ethereum Address';
-      }
-      break;
+
+      return isAddress ? null : 'invalid Ethereum address';
     }
     default:
-      errorMessage = 'invalid address';
-      break;
+      return 'unsupported network';
   }
-
-  return errorMessage;
 };
