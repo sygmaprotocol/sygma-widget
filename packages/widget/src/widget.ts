@@ -6,6 +6,7 @@ import { switchNetworkIcon, sygmaLogo } from './assets';
 import { WidgetController } from './controllers/widget';
 import './components/network-selector';
 import './components/amount-selector';
+import './components/address-input';
 import { Directions } from './components/network-selector/network-selector';
 
 @customElement('sygmaprotocol-widget')
@@ -50,6 +51,14 @@ class SygmaProtocolWidget extends LitElement {
               accountBalance="0"
             >
             </sygma-resource-selector>
+          </section>
+          <section>
+            <sygma-address-input
+              .address=${this.widgetController.destinatonAddress}
+              .onAddressChange=${this.widgetController
+                .onDestinationAddressChange}
+            >
+            </sygma-address-input>
           </section>
           <section>
             <button
