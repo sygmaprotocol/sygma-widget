@@ -228,14 +228,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-react-widget@workspace:packages/react"
   dependencies:
-    "@lit-labs/react": "npm:2.1.2"
+    "@buildwithsygma/sygmaprotocol-widget": "workspace:*"
+    "@lit/react": "npm:1.0.3"
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
   languageName: unknown
   linkType: soft
 
-"@buildwithsygma/sygmaprotocol-widget@workspace:packages/widget":
+"@buildwithsygma/sygmaprotocol-widget@workspace:*, @buildwithsygma/sygmaprotocol-widget@workspace:packages/widget":
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-widget@workspace:packages/widget"
   dependencies:
@@ -1555,15 +1556,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit-labs/react@npm:2.1.2":
-  version: 2.1.2
-  resolution: "@lit-labs/react@npm:2.1.2"
-  dependencies:
-    "@lit/react": "npm:^1.0.0"
-  checksum: 57862918da988114555c4b736d684200534a0e6e97c97b753db27d7ba3a953b23ba9730132c00e314551ccffb7ed666e5d3351688b2ec0515f59c7f793584f4c
-  languageName: node
-  linkType: hard
-
 "@lit-labs/ssr-dom-shim@npm:^1.1.2, @lit-labs/ssr-dom-shim@npm:^1.1.2-pre.0":
   version: 1.1.2
   resolution: "@lit-labs/ssr-dom-shim@npm:1.1.2"
@@ -1580,12 +1572,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit/react@npm:^1.0.0":
-  version: 1.0.2
-  resolution: "@lit/react@npm:1.0.2"
+"@lit/react@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@lit/react@npm:1.0.3"
   peerDependencies:
     "@types/react": 17 || 18
-  checksum: 5abc4d7df2f9c6fd72ffc4eb7f43e363216a50d7a9adae215e1452615ef2a96e6879650621bf95a1acfd41561cc12ef0114ed21b8de3ca9a377f76fb0fdf4008
+  checksum: b1bd4adf7628fb0abc1c8ab6814d6fcfc5ac144397a3bc7a785e47aea1bee91f44be3695ff9411b8234c3d0a5e5d6e28808cf476b521ef5873503abb7782bb2b
   languageName: node
   linkType: hard
 
