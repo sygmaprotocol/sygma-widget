@@ -6,6 +6,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 import { BaseComponent } from '../base-component/base-component';
+import type { DropdownOption } from '../subcomponents/dropdown/dropdown';
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
@@ -17,24 +18,16 @@ export class AmountSelector extends BaseComponent {
   })
   resources: Resource[] = [];
 
-  @property({
-    type: Boolean
-  })
+  @property({ type: Boolean })
   disabled = false;
 
-  @property({
-    type: String
-  })
+  @property({ type: String })
   accountBalance?: string;
 
-  @property({
-    type: String
-  })
+  @property({ type: String })
   preselectedToken?: string;
 
-  @property({
-    type: Number
-  })
+  @property({ type: Number })
   preselectedAmount?: number;
 
   @property({
@@ -60,9 +53,10 @@ export class AmountSelector extends BaseComponent {
     this.onAmountChange?.(amount);
   };
 
-  _onResourceSelected = (event: Event): void => {
-    const { value } = event.target as HTMLOptionElement;
-    const resource = this.resources.find((n) => String(n.resourceId) == value);
+  _onResourceSelected = (option: DropdownOption): void => {
+    const resource = this.resources.find(
+      (n) => String(n.resourceId) == option.id
+    );
     if (resource) {
       this.onResourceSelected?.(resource);
     }
@@ -87,12 +81,26 @@ export class AmountSelector extends BaseComponent {
     return html`<option selected value="">Token</option>`;
   }
 
+  renderAccountBalance(): HTMLTemplateResult {
+    return when(this.accountBalance, () => this.renderBalance());
+  }
+
+  _normalizeOptions(): DropdownOption[] {
+    return when(this.resources, () =>
+      this.resources.map((entry) => ({
+        id: entry.resourceId,
+        name: entry.symbol!,
+        icon: entry.symbol
+      }))
+    );
+  }
+
   render(): HTMLTemplateResult {
     return html`
       <div class="amountSelectorContainer">
         <section class="tokenBalanceSection">
           <label class="amountSelectorLabel">Amount to transfer</label>
-          ${when(this.accountBalance, () => this.renderBalance())}
+          ${this.renderAccountBalance()}
         </section>
         <section class="amountSelectorSection">
           <input
@@ -103,14 +111,12 @@ export class AmountSelector extends BaseComponent {
             value=${ifDefined(this.preselectedAmount)}
           />
           <section class="selectorSection">
-            <select
-              @change=${this._onResourceSelected}
-              ?disabled=${this.disabled}
-              class="selector amountSelectorInput"
-            >
-              <option value="-1">-</option>
-              ${this.renderEntries()}
-            </select>
+            <dropdown-component 
+              .selectedOption=${this.preselectedToken}
+              ?disabled=${this.disabled} 
+              .onOptionSelected=${this._onResourceSelected}
+              .options=${this._normalizeOptions()}
+              >
           </section>
         </section>
       </div>

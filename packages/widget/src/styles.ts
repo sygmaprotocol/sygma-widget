@@ -26,18 +26,23 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     align-items: stretch;
-
-    padding: 24px;
-    width: 21.875rem; /* TODO: remove these hardcoded values */
-    border-radius: 12px;
-    border: 1px solid var(--gray-100);
+    padding: 1.5rem;
+    max-width: 22.9375rem;
+    min-height: 29.75rem;
+    box-sizing: border-box;
+    border-radius: 0.75rem;
+    border: 0.0625rem solid var(--gray-100);
     background-color: var(--white);
-
     box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
+      0 0.25rem 0.375rem -0.0625rem rgba(0, 0, 0, 0.1),
+      0 0.125rem 0.25rem -0.0625rem rgba(0, 0, 0, 0.06);
     font-family: Inter, sans-serif;
+
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   .noPointerEvents {
@@ -72,7 +77,7 @@ export const styles = css`
     display: flex;
     justify-content: center;
     align-items: stretch;
-    gap: 4px;
+    gap: 0.25rem;
   }
 
   .networkSelectionWrapper {
@@ -83,18 +88,15 @@ export const styles = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
-
-    border-radius: 16px;
+    gap: 0.5rem;
+    border-radius: 1rem;
     border: none;
     background-color: var(--primary-300);
     color: #ffffff;
-
-    width: 314px; /* TODO: remove these hardcoded values */
-    padding: 12px 20px;
-
+    width: 19.625rem;
+    padding: 0.75rem 1.25rem;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .actionButton:hover {
@@ -109,12 +111,10 @@ export const styles = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
-
+    gap: 0.5rem; /* 8px / 16 */
     width: 100%;
-    padding: 12px 20px;
-
-    border-radius: 16px;
+    padding: 0.75rem 1.25rem; /* 12px / 16, 20px / 16 */
+    border-radius: 1rem; /* 16px / 16 */
     background-color: var(--primary-500);
     color: #ffffff;
     border: none;
@@ -131,11 +131,10 @@ export const styles = css`
   .poweredBy {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.375rem;
     align-self: flex-start;
-
     color: var(--neutral-600);
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 150%;
   }
 `;

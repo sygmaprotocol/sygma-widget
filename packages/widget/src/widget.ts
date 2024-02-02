@@ -65,6 +65,8 @@ class SygmaProtocolWidget extends BaseComponent {
               </section>
               <section>
                 <sygma-resource-selector
+                  .disabled=${!this.widgetController.sourceNetwork ||
+                  !this.widgetController.destinationNetwork}
                   .resources=${this.widgetController.supportedResources}
                   .onResourceSelected=${this.widgetController
                     .onResourceSelected}
