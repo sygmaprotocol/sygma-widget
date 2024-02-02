@@ -15,7 +15,7 @@ export default defineConfig({
     }
   },
   test: {
-    environment: 'jsdom',
+    environment: 'happy-dom',
     include: ['**/*.test.ts'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/build/**']
   }
