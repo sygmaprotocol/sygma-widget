@@ -14,14 +14,19 @@
   },
   "devDependencies": {
     "@types/react": ">=17",
+    "eslint": "^8.48.0",
+    "eslint-plugin-lit": "^1.9.1",
+    "lit-analyzer": "^2.0.3",
     "typescript": "5.2.2"
   },
   "scripts": {
     "build": "tsc --build --clean && tsc --build ./tsconfig.json",
     "dev": "tsc --build --clean && tsc --build ./tsconfig.json --watch",
     "clean": "rm -rf ./build",
-    "lint": "eslint 'src/**/*.ts'",
-    "lint:fix": "yarn run lint --fix"
+    "lint": "yarn run lint:types && yarn run lint:code && yarn run lint:lit",
+    "lint:types": "tsc -p ./tsconfig.json --noEmit",
+    "lint:code": "eslint '{src,tests}/**/*.ts'",
+    "lint:lit": "lit-analyzer"
   },
   "author": "Sygmaprotocol Product Team"
 }
