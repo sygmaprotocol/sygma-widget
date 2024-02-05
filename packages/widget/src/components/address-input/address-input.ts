@@ -1,14 +1,15 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import type { HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { when } from 'lit/directives/when.js';
 import { validateAddress } from '../../utils';
+import { Component } from '../base-component/base-component';
 import { styles } from './styles';
 
 @customElement('sygma-address-input')
-export class AddressInput extends LitElement {
+export class AddressInput extends Component {
   static styles = styles;
   @property({
     type: String

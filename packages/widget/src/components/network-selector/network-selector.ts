@@ -1,11 +1,12 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import type { HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 import { capitalize } from '../../utils';
 import { networkIconsMap, chevronIcon } from '../../assets';
+import { Component } from '../base-component/base-component';
 import { styles } from './styles';
 
 export const Directions = {
@@ -16,7 +17,7 @@ export const Directions = {
 type Direction = (typeof Directions)[keyof typeof Directions];
 
 @customElement('sygma-network-selector')
-export class NetworkSelector extends LitElement {
+export class NetworkSelector extends Component {
   static styles = styles;
 
   @state()
