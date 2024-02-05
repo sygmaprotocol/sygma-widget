@@ -135,7 +135,7 @@ export class WalletController implements ReactiveController {
     }
   };
   connectSubstrateWallet = async (
-    network: Domain,
+    _network: Domain, // TODO: remove underscore prefix once arg usage is added
     options?: { dappUrl?: string; dappName?: string }
   ): Promise<void> => {
     const injectedWalletProvider = new InjectedWalletProvider(

@@ -52,9 +52,9 @@ export class ConnectWalletButton extends BaseComponent {
     }
   };
 
-  private onDisconnectClicked(): void {
+  private onDisconnectClicked = (): void => {
     this.walletController.disconnectWallet();
-  }
+  };
 
   private isWalletConnected(): boolean {
     return !!this.wallets.evmWallet || !!this.wallets.substrateWallet;

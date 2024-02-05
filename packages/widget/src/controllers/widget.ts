@@ -18,7 +18,7 @@ export class WidgetController implements ReactiveController {
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
-  public destinatonAddress?: string = '';
+  public destinatonAddress: string = '';
 
   //@ts-expect-error it will be used
   private assetTransfer?: EVMAssetTransfer | SubstrateAssetTransfer;
