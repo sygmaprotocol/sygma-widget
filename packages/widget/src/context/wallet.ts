@@ -3,8 +3,9 @@ import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import { BaseComponent } from '../components/base-component/base-component';
 
 export interface EvmWallet {
   address: string;
@@ -40,7 +41,7 @@ export class WalletUpdateEvent extends CustomEvent<WalletContext> {
 }
 
 @customElement('sygma-wallet-context-provider')
-export class WalletContextProvider extends LitElement {
+export class WalletContextProvider extends BaseComponent {
   //TODO: add properties to allow widget to pass external provider/signers.
 
   @provide({ context: walletContext })

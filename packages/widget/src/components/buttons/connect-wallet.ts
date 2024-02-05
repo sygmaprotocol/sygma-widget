@@ -1,7 +1,7 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { consume } from '@lit/context';
 import type { HTMLTemplateResult, PropertyValues } from 'lit';
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import plusIcon from '../../assets/icons/plusIcon';
@@ -9,10 +9,11 @@ import type { WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { WalletController } from '../../controllers';
 import { shortAddress } from '../../utils';
+import { BaseComponent } from '../base-component/base-component';
 import { styles } from './connect-wallet.style';
 
 @customElement('sygma-connect-wallet-btn')
-export class ConnectWalletButton extends LitElement {
+export class ConnectWalletButton extends BaseComponent {
   static styles = styles;
 
   @property({
