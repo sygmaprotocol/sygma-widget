@@ -15,7 +15,7 @@ export const styles = css`
     display: flex;
     width: 100%;
     justify-content: flex-start;
-    color: #525252;
+    color: var(--neutral-600);
     font-size: 14px;
     font-weight: 500;
     line-height: 20px; /* 142.857% */
@@ -30,7 +30,7 @@ export const styles = css`
 
   .amountSelectorInput {
     border: none;
-    color: #525252;
+    color: var(--neutral-600);
     font-size: 34px;
     font-weight: 500;
     line-height: 40px;
@@ -52,7 +52,7 @@ export const styles = css`
   }
 
   .maxButton {
-    color: #2563eb;
+    color: var(--blue-600);
     border: none;
     background: none;
     font-weight: 500;

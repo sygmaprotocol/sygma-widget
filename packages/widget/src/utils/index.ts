@@ -1,5 +1,9 @@
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import { hexToU8a, isHex } from '@polkadot/util';
+import { Network } from '@buildwithsygma/sygma-sdk-core';
+import { ethers } from 'ethers';
 import {
   baseNetworkIcon,
   cronosNetworkIcon,
@@ -45,4 +49,32 @@ export const capitalize = (s: string): string => {
   const firstLetter = s.charAt(0).toUpperCase();
   const rest = s.slice(1);
   return `${firstLetter}${rest}`;
+};
+
+export const validateSubstrateAddress = (address: string): boolean => {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const validateAddress = (
+  address: string,
+  network: Network
+): string | null => {
+  switch (network) {
+    case Network.SUBSTRATE: {
+      const validPolkadotAddress = validateSubstrateAddress(address);
+      return validPolkadotAddress ? null : 'invalid Substrate address';
+    }
+    case Network.EVM: {
+      const isAddress = ethers.utils.isAddress(address);
+
+      return isAddress ? null : 'invalid Ethereum address';
+    }
+    default:
+      return 'unsupported network';
+  }
 };

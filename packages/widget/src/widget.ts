@@ -1,5 +1,5 @@
 import type { HTMLTemplateResult } from 'lit';
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { styles } from './styles';
 import { switchNetworkIcon, sygmaLogo } from './assets';
@@ -7,10 +7,12 @@ import { WidgetController } from './controllers/widget';
 import './components/network-selector';
 import './components/amount-selector';
 import './components/loader-component';
+import './components/address-input';
 import { Directions } from './components/network-selector/network-selector';
+import { BaseComponent } from './components/base-component/base-component';
 
 @customElement('sygmaprotocol-widget')
-class SygmaProtocolWidget extends LitElement {
+class SygmaProtocolWidget extends BaseComponent {
   static styles = styles;
 
   private widgetController = new WidgetController(this, {});
@@ -23,7 +25,7 @@ class SygmaProtocolWidget extends LitElement {
           <section class="connectAccount">
             ${switchNetworkIcon} Connect Wallet
           </section>
-          <section>
+          <section class="networkSelectionWrapper">
             <sygma-network-selector
               .direction=${Directions.FROM}
               .icons=${true}
@@ -51,6 +53,14 @@ class SygmaProtocolWidget extends LitElement {
               accountBalance="0"
             >
             </sygma-resource-selector>
+          </section>
+          <section>
+            <sygma-address-input
+              .address=${this.widgetController.destinatonAddress}
+              .onAddressChange=${this.widgetController
+                .onDestinationAddressChange}
+            >
+            </sygma-address-input>
           </section>
           <section>
             <button

@@ -1,8 +1,12 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { LitElement, html, type HTMLTemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html } from 'lit';
+import type { HTMLTemplateResult } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
+import { when } from 'lit/directives/when.js';
 import { capitalize } from '../../utils';
+import { networkIconsMap, chevronIcon } from '../../assets';
+import { BaseComponent } from '../base-component/base-component';
 import { styles } from './styles';
 
 export const Directions = {
@@ -13,73 +17,97 @@ export const Directions = {
 type Direction = (typeof Directions)[keyof typeof Directions];
 
 @customElement('sygma-network-selector')
-export class NetworkSelector extends LitElement {
+export class NetworkSelector extends BaseComponent {
   static styles = styles;
 
-  @property({
-    type: Boolean
-  })
+  @state()
+  _isDropdownOpen = false;
+
+  @property({ type: Boolean })
   disabled = false;
 
-  @property({
-    type: Boolean
-  })
-  icons = true;
-
-  @property({
-    type: String
-  })
+  @property({ type: String })
   direction?: Direction;
 
-  @property({
-    type: Object
-  })
-  selected?: Domain;
+  @property({ type: Object })
+  selectedNetwork?: Domain;
 
-  @property({
-    attribute: false
-  })
-  onNetworkSelected?: (network?: Domain) => void;
+  @property({ attribute: false })
+  onNetworkSelected: (network?: Domain) => void = () => {};
 
-  @property({
-    type: Array
-  })
+  @property({ type: Array })
   networks: Domain[] = [];
 
-  onChange({ target }: Event): void {
-    const { value } = target as HTMLOptionElement;
-    const network = this.networks.find((n) => String(n.chainId) == value);
-    this.onNetworkSelected?.(network);
+  _toggleDropdown = (): void => {
+    this._isDropdownOpen = !this._isDropdownOpen;
+  };
+
+  _selectOption(option: Domain, event: Event): void {
+    event.stopPropagation();
+    this.selectedNetwork = option;
+    this._isDropdownOpen = false;
+    this.onNetworkSelected?.(option);
   }
 
-  renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
-    if (this.networks) {
-      return map(this.networks, (entry: Domain) => {
-        // TODO: render network icon
-        return html`<option value=${entry.chainId} class="network-option">
-          ${capitalize(entry.name)}
-        </option>`;
-      });
-    }
-    return html`<option selected value="">Network</option>`;
+  _renderNetworkIcon(name: string): HTMLTemplateResult {
+    return networkIconsMap[name] || networkIconsMap.default;
+  }
+
+  _renderEntries(): Generator<unknown, void> {
+    return map(
+      this.networks,
+      (network: Domain) => html`
+        <div
+          class="dropdownOption"
+          @click="${(e: Event) => this._selectOption(network, e)}"
+          role="option"
+        >
+          ${this._renderNetworkIcon(network.name)}
+          <span class="networkName">${capitalize(network.name)}</span>
+        </div>
+      `
+    );
+  }
+
+  _renderTriggerContent(): HTMLTemplateResult {
+    return when(
+      this.selectedNetwork,
+      () =>
+        html`${this._renderNetworkIcon(this.selectedNetwork!.name)}
+          <span class="networkName">
+            ${capitalize(this.selectedNetwork!.name)}
+          </span>`,
+      () => html`Select Network`
+    );
   }
 
   render(): HTMLTemplateResult {
-    return html` <div class="selectorContainer">
+    return html`<div class="selectorContainer">
       <label for="selector" class="directionLabel">${this.direction}</label>
-      <section class="selectorSection">
-        <select
-          @change=${(event: Event) => this.onChange.bind(this)(event)}
-          ?disabled=${this.disabled}
-          class="selector"
+      <div
+        class="dropdown"
+        @click="${this._toggleDropdown}"
+        role="listbox"
+        tabindex="0"
+        aria-expanded="${this._isDropdownOpen ? 'true' : 'false'}"
+      >
+        <div class="dropdownTrigger">
+          <div class="selectedNetwork">${this._renderTriggerContent()}</div>
+          <div class="chevron ${this._isDropdownOpen ? 'open' : ''}">
+            ${chevronIcon}
+          </div>
+        </div>
+        <div
+          class="dropdownContent ${this._isDropdownOpen ? 'show' : ''}"
+          role="list"
         >
-          <option class="network-option" value="-1">-</option>
-          ${this.renderEntries()}
-        </select>
-      </section>
+          ${this._renderEntries()}
+        </div>
+      </div>
     </div>`;
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     'sygma-network-selector': NetworkSelector;

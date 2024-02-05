@@ -27,17 +27,20 @@ export const styles = css`
     gap: 16px;
 
     padding: 24px;
-    width: 350px; /* TODO: remove these hardcoded values */
-    height: 476px; /* TODO: ↑ */
+    width: 21.875rem; /* TODO: remove these hardcoded values */
     border-radius: 12px;
-    border: 1px solid #f3f4f6;
-    background-color: #fff;
+    border: 1px solid var(--gray-100);
+    background-color: var(--white);
 
     box-shadow:
       0 4px 6px -1px rgba(0, 0, 0, 0.1),
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
     font-family: Inter, sans-serif;
+  }
+
+  .networkSelectionWrapper {
+    margin: 1rem 0 0.5rem 0;
   }
 
   .connectAccount {
@@ -55,7 +58,7 @@ export const styles = css`
 
     border-radius: 16px;
     border: none;
-    background-color: #a5b4fc;
+    background-color: var(--primary-300);
     color: #ffffff;
 
     width: 314px; /* TODO: remove these hardcoded values */
@@ -70,7 +73,7 @@ export const styles = css`
   }
 
   .actionButton:active {
-    background-color: #6366f1;
+    background-color: var(--primary-500);
   }
 
   .actionButtonReady {
@@ -83,13 +86,13 @@ export const styles = css`
     padding: 12px 20px;
 
     border-radius: 16px;
-    background-color: #6366f1;
+    background-color: var(--primary-500);
     color: #ffffff;
     border: none;
   }
 
   .actionButtonReady:active {
-    background-color: #a5b4fc;
+    background-color: var(--primary-300);
   }
 
   .actionButtonReady:hover {
@@ -102,7 +105,7 @@ export const styles = css`
     gap: 6px;
     align-self: flex-start;
 
-    color: #525252;
+    color: var(--neutral-600);
     font-size: 12px;
     line-height: 150%;
   }
