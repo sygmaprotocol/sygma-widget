@@ -4,7 +4,9 @@ export const styles = css`
   :host {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
   }
+
   .connectWalletContainer {
     display: flex;
     flex-direction: row;
@@ -12,28 +14,22 @@ export const styles = css`
     align-items: center;
   }
 
-  .walletAddress {
-    font-family: Inter;
-    font-size: 12px;
+  .walletAddress,
+  .connectWalletButton {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--zinc-700);
+    line-height: 0.9375rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 
   .connectWalletButton {
-    padding: 6px 8px;
-    border-radius: 40px;
-    background: var(--zinc-100, #f4f4f5);
-    color: var(--zinc-700, #3f3f46);
-    border-radius: 12px;
-    border: 1px solid var(--gray-100, #f3f4f6);
-    background: #fff;
-    /* Shadow (SM) */
-    box-shadow:
-      0px 2px 3px -1px rgba(0, 0, 0, 0.1),
-      0px 1px 2px -1px rgba(0, 0, 0, 0.06);
-    font-family: Inter;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
+    padding: 0.375rem 0.5rem;
+    border-radius: 2.5rem;
+    background-color: var(--zinc-100);
+    border: 1px solid var(--gray-100);
     cursor: pointer;
   }
 
