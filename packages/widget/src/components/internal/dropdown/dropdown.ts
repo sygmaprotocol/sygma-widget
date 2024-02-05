@@ -1,9 +1,10 @@
-import { LitElement, html, type HTMLTemplateResult } from 'lit';
+import { html, type HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 import { chevronIcon, networkIconsMap } from '../../../assets';
 import { capitalize } from '../../../utils';
+import { BaseComponent } from '../../base-component/base-component';
 import { styles } from './styles';
 
 export interface DropdownOption {
@@ -13,7 +14,7 @@ export interface DropdownOption {
 }
 
 @customElement('dropdown-component')
-export class CustomDropdown extends LitElement {
+export class Dropdown extends BaseComponent {
   static styles = styles;
 
   @state()
@@ -63,7 +64,10 @@ export class CustomDropdown extends LitElement {
           <span class="optionName">
             ${capitalize(this._selectedOption!.name)}
           </span>`,
-      () => html`${this.placeholder || ''}`
+      () =>
+        this.placeholder
+          ? html`<span class="placeholder">${this.placeholder}</span>`
+          : html``
     );
   }
 
