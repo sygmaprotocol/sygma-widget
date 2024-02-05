@@ -35,10 +35,6 @@ export class ConnectWalletButton extends LitElement {
 
   private walletController = new WalletController(this);
 
-  connectedCallback(): void {
-    super.connectedCallback();
-  }
-
   updated(changedProperties: PropertyValues): void {
     super.updated(changedProperties);
     if (changedProperties.has('sourceNetwork')) {
