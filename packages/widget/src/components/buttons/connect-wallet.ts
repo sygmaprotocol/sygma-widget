@@ -10,6 +10,7 @@ import { walletContext } from '../../context';
 import { WalletController } from '../../controllers';
 import { shortAddress } from '../../utils';
 import { BaseComponent } from '../base-component/base-component';
+import greenCircleIcon from '../../assets/icons/greenCircleIcon';
 import { styles } from './connect-wallet.style';
 
 @customElement('sygma-connect-wallet-btn')
@@ -69,7 +70,7 @@ export class ConnectWalletButton extends BaseComponent {
         evmWallet?.address !== undefined,
         () =>
           html`<span class="walletAddress" title=${evmWallet?.address ?? ''}
-            >${shortAddress(evmWallet?.address ?? '')}</span
+            >${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}</span
           >`
       )}
       ${when(
@@ -78,7 +79,7 @@ export class ConnectWalletButton extends BaseComponent {
           html`<span
             class="walletAddress"
             title=${substrateAccount?.address ?? ''}
-            >${substrateAccount?.name}
+            >${greenCircleIcon} ${substrateAccount?.name}
             ${shortAddress(substrateAccount?.address ?? '')}</span
           >`
       )}
