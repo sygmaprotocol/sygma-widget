@@ -1,6 +1,8 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
+import type { Account } from '@polkadot-onboard/core';
+import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
@@ -29,7 +31,10 @@ export class WalletController implements ReactiveController {
         'accountsChanged',
         this.onEvmAccountChange
       );
-      evmWallet.provider.removeListener('disconnect', this.onEvmDisconnect);
+    }
+    const substrateWallet = this.walletContext.value?.substrateWallet;
+    if (substrateWallet) {
+      substrateWallet.unsubscribeSubstrateAccounts?.();
     }
   }
 
@@ -40,16 +45,47 @@ export class WalletController implements ReactiveController {
           void this.connectEvmWallet(network, options);
         }
         break;
+      case Network.SUBSTRATE:
+        {
+          void this.connectSubstrateWallet(network, options);
+        }
+        break;
       default:
         throw new Error('Unsupported newtork type');
     }
   };
 
+  disconnectWallet = (): void => {
+    this.disconnectEvmWallet();
+    this.disconnectSubstrateWallet();
+  };
+
   disconnectEvmWallet = (): void => {
     const evmWallet = this.walletContext.value?.evmWallet;
     if (evmWallet) {
-      evmWallet?.provider.disconnect?.();
-      this.onEvmDisconnect();
+      evmWallet.provider.removeListener(
+        'accountsChanged',
+        this.onEvmAccountChange
+      );
+      evmWallet.provider.disconnect?.();
+      this.host.dispatchEvent(
+        new WalletUpdateEvent({
+          evmWallet: undefined
+        })
+      );
+    }
+  };
+
+  disconnectSubstrateWallet = (): void => {
+    const substrateWallet = this.walletContext.value?.substrateWallet;
+    if (substrateWallet) {
+      substrateWallet.unsubscribeSubstrateAccounts?.();
+      void substrateWallet.disconnect?.();
+      this.host.dispatchEvent(
+        new WalletUpdateEvent({
+          substrateWallet: undefined
+        })
+      );
     }
   };
 
@@ -92,22 +128,58 @@ export class WalletController implements ReactiveController {
       );
 
       wallets[0].provider.on('accountsChanged', this.onEvmAccountChange);
-      wallets[0].provider.on('disconnect', this.onEvmDisconnect);
       void onboard.setChain({
         //TODO: we need more info in network object in case we are adding new chain to metamask
         chainId: network.chainId
       });
     }
   };
+  connectSubstrateWallet = async (
+    network: Domain,
+    options?: { dappUrl?: string; dappName?: string }
+  ): Promise<void> => {
+    const injectedWalletProvider = new InjectedWalletProvider(
+      { disallowed: [] },
+      options?.dappName ?? 'Sygma Widget'
+    );
+    const wallets = await injectedWalletProvider.getWallets();
+
+    //TODO: UI for selecting substrate wallet
+
+    const wallet = wallets[0];
+    await wallet.connect();
+    if (wallet.signer) {
+      const accounts = await wallet.getAccounts();
+      const unsub = await wallet.subscribeAccounts(
+        this.onSubstrateAccountChange
+      );
+      this.host.dispatchEvent(
+        new WalletUpdateEvent({
+          substrateWallet: {
+            signer: wallet.signer,
+            accounts,
+            unsubscribeSubstrateAccounts: unsub,
+            disconnect: wallet.disconnect
+          }
+        })
+      );
+    }
+  };
 
   sourceNetworkUpdated(sourceNetwork: Domain | undefined): void {
     if (!sourceNetwork) {
       this.disconnectEvmWallet();
+      this.disconnectSubstrateWallet();
     }
     switch (sourceNetwork?.type) {
       case Network.SUBSTRATE:
         {
           this.disconnectEvmWallet();
+        }
+        break;
+      case Network.EVM:
+        {
+          this.disconnectSubstrateWallet();
         }
         break;
       default:
@@ -127,15 +199,28 @@ export class WalletController implements ReactiveController {
       );
     }
     if (accounts.length === 0) {
-      this.onEvmDisconnect();
+      this.disconnectEvmWallet();
     }
   };
 
-  private onEvmDisconnect = (): void => {
-    this.host.dispatchEvent(
-      new WalletUpdateEvent({
-        evmWallet: undefined
-      })
-    );
+  private onSubstrateAccountChange = (accounts: Account[]): void => {
+    if (this.walletContext.value?.substrateWallet && accounts.length !== 0) {
+      this.host.dispatchEvent(
+        new WalletUpdateEvent({
+          substrateWallet: {
+            signer: this.walletContext.value.substrateWallet.signer,
+            disconnect: this.walletContext.value.substrateWallet.disconnect,
+            unsubscribeSubstrateAccounts:
+              this.walletContext.value.substrateWallet
+                .unsubscribeSubstrateAccounts,
+            //TODO: convert address to network format
+            accounts
+          }
+        })
+      );
+    }
+    if (accounts.length === 0) {
+      this.disconnectSubstrateWallet();
+    }
   };
 }

@@ -34,6 +34,8 @@
     "@ethersproject/transactions": "^5.7.0",
     "@lit/context": "^1.1.0",
     "@lit/reactive-element": "^2.0.3",
+    "@polkadot-onboard/core": "^1.1.0",
+    "@polkadot-onboard/injected-wallets": "^1.1.0",
     "@polkadot/api": "^10.11.2",
     "@polkadot/extension-dapp": "^0.46.6",
     "@web3-onboard/core": "^2.21.2",

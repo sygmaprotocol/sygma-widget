@@ -1,4 +1,6 @@
 import { createContext, provide } from '@lit/context';
+import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
+import type { Signer } from '@polkadot/api/types';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
@@ -9,8 +11,16 @@ export interface EvmWallet {
   provider: EIP1193Provider;
 }
 
+export interface SubstrateWallet {
+  signer: Signer;
+  accounts: Account[];
+  unsubscribeSubstrateAccounts?: UnsubscribeFn;
+  disconnect?: () => Promise<void>;
+}
+
 export interface WalletContext {
   evmWallet?: EvmWallet;
+  substrateWallet?: SubstrateWallet;
 }
 
 declare global {

@@ -248,6 +248,8 @@ __metadata:
     "@lit/reactive-element": "npm:^2.0.3"
     "@open-wc/semantic-dom-diff": "npm:^0.20.1"
     "@open-wc/testing-helpers": "npm:^3.0.0"
+    "@polkadot-onboard/core": "npm:^1.1.0"
+    "@polkadot-onboard/injected-wallets": "npm:^1.1.0"
     "@polkadot/api": "npm:^10.11.2"
     "@polkadot/extension-dapp": "npm:^0.46.6"
     "@web3-onboard/core": "npm:^2.21.2"
@@ -2733,6 +2735,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot-onboard/core@npm:1.1.0, @polkadot-onboard/core@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@polkadot-onboard/core@npm:1.1.0"
+  checksum: e51e2c1279296949a29c7b12c6bde43927db0199a356c7897cb9eafa46aa5b14f7ccfa7a823ec5e05fd0449f33994b15028104de92d2fcd7ea7e589010dfa322
+  languageName: node
+  linkType: hard
+
+"@polkadot-onboard/injected-wallets@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@polkadot-onboard/injected-wallets@npm:1.1.0"
+  dependencies:
+    "@polkadot-onboard/core": "npm:1.1.0"
+    "@polkadot/extension-inject": "npm:0.46.5"
+  checksum: fa1ff9a446d4fb7ea0b591f9abec1fd267243e1486c66d775b9bd7a5b7f7bb79c308696599526f74e72662d6dddce13c0f3d3340d94cf8edcf2f11729eb9c654
+  languageName: node
+  linkType: hard
+
 "@polkadot/api-augment@npm:10.7.2":
   version: 10.7.2
   resolution: "@polkadot/api-augment@npm:10.7.2"
@@ -2836,6 +2855,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot/extension-inject@npm:0.46.5":
+  version: 0.46.5
+  resolution: "@polkadot/extension-inject@npm:0.46.5"
+  dependencies:
+    "@polkadot/api": "npm:^10.9.1"
+    "@polkadot/rpc-provider": "npm:^10.9.1"
+    "@polkadot/types": "npm:^10.9.1"
+    "@polkadot/util": "npm:^12.3.2"
+    "@polkadot/util-crypto": "npm:^12.3.2"
+    "@polkadot/x-global": "npm:^12.3.2"
+    tslib: "npm:^2.5.3"
+  peerDependencies:
+    "@polkadot/api": "*"
+    "@polkadot/util": "*"
+  checksum: 1ae3880f66473f6debe8268f5266e6beddb24799596904c523cd17ceee8cff8a02d73c6ac4ae586ff088ee87b9414cf4e616feee13dd47017a2f9aaea25923aa
+  languageName: node
+  linkType: hard
+
 "@polkadot/extension-inject@npm:0.46.6":
   version: 0.46.6
   resolution: "@polkadot/extension-inject@npm:0.46.6"
@@ -2930,7 +2967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/rpc-provider@npm:^10.11.1":
+"@polkadot/rpc-provider@npm:^10.11.1, @polkadot/rpc-provider@npm:^10.9.1":
   version: 10.11.2
   resolution: "@polkadot/rpc-provider@npm:10.11.2"
   dependencies:
@@ -3140,7 +3177,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/types@npm:10.11.2, @polkadot/types@npm:^10.11.1":
+"@polkadot/types@npm:10.11.2, @polkadot/types@npm:^10.11.1, @polkadot/types@npm:^10.9.1":
   version: 10.11.2
   resolution: "@polkadot/types@npm:10.11.2"
   dependencies:
@@ -3374,7 +3411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/x-global@npm:12.6.2, @polkadot/x-global@npm:^12.6.1, @polkadot/x-global@npm:^12.6.2":
+"@polkadot/x-global@npm:12.6.2, @polkadot/x-global@npm:^12.3.2, @polkadot/x-global@npm:^12.6.1, @polkadot/x-global@npm:^12.6.2":
   version: 12.6.2
   resolution: "@polkadot/x-global@npm:12.6.2"
   dependencies:
@@ -13877,7 +13914,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.5.0, tslib@npm:^2.5.2, tslib@npm:^2.6.0, tslib@npm:^2.6.1, tslib@npm:^2.6.2":
+"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.5.0, tslib@npm:^2.5.2, tslib@npm:^2.5.3, tslib@npm:^2.6.0, tslib@npm:^2.6.1, tslib@npm:^2.6.2":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: e03a8a4271152c8b26604ed45535954c0a45296e32445b4b87f8a5abdb2421f40b59b4ca437c4346af0f28179780d604094eb64546bee2019d903d01c6c19bdb

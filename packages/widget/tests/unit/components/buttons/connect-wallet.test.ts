@@ -98,6 +98,51 @@ describe('connect-wallet button', function () {
     assert.equal(disconnectButton.textContent?.trim(), 'Disconnect');
   });
 
+  it('displays connected substrate wallet', async () => {
+    const walletContext = await fixture<WalletContextProvider>(html`
+      <sygma-wallet-context-provider></sygma-wallet-context-provider>
+    `);
+    walletContext.dispatchEvent(
+      new WalletUpdateEvent({
+        substrateWallet: {
+          accounts: [
+            {
+              address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
+            }
+          ],
+          signer: {}
+        }
+      })
+    );
+    const connectComponent = await fixture<ConnectWalletButton>(
+      html` <sygma-connect-wallet-btn></sygma-connect-wallet-btn> `,
+      { parentNode: walletContext }
+    );
+
+    const walletAddressEl =
+      connectComponent.shadowRoot!.querySelector<HTMLSpanElement>(
+        '.walletAddress'
+      );
+
+    assert.isDefined(
+      walletAddressEl,
+      'Connected wallet address is not displayed'
+    );
+
+    assert.equal(
+      walletAddressEl?.title,
+      '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
+    );
+    assert.equal(walletAddressEl?.textContent?.trim(), '155Eek...Xzjqe');
+
+    const disconnectButton = connectComponent.shadowRoot!.querySelector(
+      '.connectWalletButton'
+    ) as HTMLButtonElement;
+
+    assert.isDefined(disconnectButton, 'Button missing');
+    assert.equal(disconnectButton.textContent?.trim(), 'Disconnect');
+  });
+
   it('updates connected evm wallet', async () => {
     const walletContext = await fixture<WalletContextProvider>(html`
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
@@ -155,7 +200,7 @@ describe('connect-wallet button', function () {
     );
   });
 
-  it('disconnects connected wallet', async () => {
+  it('disconnects connected evm wallet', async () => {
     const walletContext = await fixture<WalletContextProvider>(html`
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
@@ -200,6 +245,43 @@ describe('connect-wallet button', function () {
       (walletProvider.disconnect as unknown as MockInstance).mock.calls.length,
       1
     );
+  });
+
+  it('disconnects connected substrate wallet', async () => {
+    const walletContext = await fixture<WalletContextProvider>(html`
+      <sygma-wallet-context-provider></sygma-wallet-context-provider>
+    `);
+    walletContext.dispatchEvent(
+      new WalletUpdateEvent({
+        substrateWallet: {
+          accounts: [
+            {
+              address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
+            }
+          ],
+          signer: {}
+        }
+      })
+    );
+    const connectComponent = await fixture<ConnectWalletButton>(
+      html` <sygma-connect-wallet-btn></sygma-connect-wallet-btn> `,
+      { parentNode: walletContext }
+    );
+
+    const disconnectButton =
+      connectComponent.shadowRoot!.querySelector<HTMLButtonElement>(
+        '.connectWalletButton'
+      );
+
+    assert.isDefined(disconnectButton, 'Button missing');
+    disconnectButton?.click();
+    await connectComponent.updateComplete;
+    const walletAddressEl =
+      connectComponent.shadowRoot!.querySelector<HTMLSpanElement>(
+        '.walletAddress'
+      );
+
+    assert.isNull(walletAddressEl, 'Connected wallet still displayed');
   });
 
   it('disconnects connected evm wallet on network switch to substrate', async () => {
@@ -249,5 +331,48 @@ describe('connect-wallet button', function () {
       (walletProvider.disconnect as unknown as MockInstance).mock.calls.length,
       1
     );
+  });
+
+  it('disconnects connected substrate wallet on network switch to ethereum', async () => {
+    const walletContext = await fixture<WalletContextProvider>(html`
+      <sygma-wallet-context-provider></sygma-wallet-context-provider>
+    `);
+    const disconnectFn = vi.fn();
+    walletContext.dispatchEvent(
+      new WalletUpdateEvent({
+        substrateWallet: {
+          accounts: [
+            {
+              address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
+            }
+          ],
+          signer: {},
+          disconnect: disconnectFn
+        }
+      })
+    );
+    const connectComponent = await fixture<ConnectWalletButton>(
+      html`
+        <sygma-connect-wallet-btn
+          .sourceNetwork=${{ id: 1, type: Network.SUBSTRATE }}
+        ></sygma-connect-wallet-btn>
+      `,
+      { parentNode: walletContext }
+    );
+
+    connectComponent.sourceNetwork = {
+      id: 2,
+      type: Network.EVM
+    } as unknown as Domain;
+
+    await elementUpdated(connectComponent);
+    await connectComponent.updateComplete;
+    const walletAddressEl =
+      connectComponent.shadowRoot!.querySelector<HTMLSpanElement>(
+        '.walletAddress'
+      );
+
+    assert.isNull(walletAddressEl, 'Connected wallet still displayed');
+    assert.equal(disconnectFn.mock.calls.length, 1);
   });
 });

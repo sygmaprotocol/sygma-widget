@@ -55,21 +55,33 @@ export class ConnectWalletButton extends LitElement {
   };
 
   private onDisconnectClicked = (): void => {
-    this.walletController.disconnectEvmWallet();
+    this.walletController.disconnectWallet();
   };
 
   private isWalletConnected(): boolean {
-    return !!this.wallets.evmWallet;
+    return !!this.wallets.evmWallet || !!this.wallets.substrateWallet;
   }
 
   render(): HTMLTemplateResult {
     const evmWallet = this.wallets.evmWallet;
+    const substrateWallet = this.wallets.substrateWallet;
+    const substrateAccount = substrateWallet?.accounts[0];
     return html` <div class="connectWalletContainer">
       ${when(
         evmWallet?.address !== undefined,
         () =>
           html`<span class="walletAddress" title=${evmWallet?.address ?? ''}
             >${shortAddress(evmWallet?.address ?? '')}</span
+          >`
+      )}
+      ${when(
+        substrateAccount !== undefined,
+        () =>
+          html`<span
+            class="walletAddress"
+            title=${substrateAccount?.address ?? ''}
+            >${substrateAccount?.name}
+            ${shortAddress(substrateAccount?.address ?? '')}</span
           >`
       )}
       ${when(
