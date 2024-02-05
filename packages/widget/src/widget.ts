@@ -93,7 +93,7 @@ class SygmaProtocolWidget
           </section>
           <section>
             <sygma-address-input
-              .address=${this.widgetController.destinatonAddress}
+              .address=${this.widgetController.destinatonAddress as string}
               .onAddressChange=${this.widgetController
                 .onDestinationAddressChange}
             >
