@@ -1,32 +1,17 @@
 import { LitElement, html } from 'lit';
 import type { HTMLTemplateResult } from 'lit';
-import { customElement, state, property } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { styles } from './styles';
 
-@customElement('loader-component')
+@customElement('sygma-loader-component')
 export class LoaderComponent extends LitElement {
   static styles = styles;
 
-  @state()
+  @property({ type: Boolean })
   isLoading = false;
 
-  @property({ attribute: false })
-  onOpen: () => void = () => {};
-
-  @property({ attribute: false })
-  onClose: () => void = () => {};
-
-  _open(): void {
-    this.isLoading = true;
-  }
-
-  _close(): void {
-    this.isLoading = false;
-  }
-
   render(): HTMLTemplateResult {
-    console.log('LoaderComponent');
     return when(
       this.isLoading,
       () => html`
@@ -37,5 +22,11 @@ export class LoaderComponent extends LitElement {
         </div>
       </div>`
     );
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'sygma-loader-component': LoaderComponent;
   }
 }

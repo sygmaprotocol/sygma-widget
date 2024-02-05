@@ -1,6 +1,6 @@
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { styles } from './styles';
 import { switchNetworkIcon, sygmaLogo } from './assets';
 import { WidgetController } from './controllers/widget';
@@ -14,6 +14,9 @@ import { BaseComponent } from './components/base-component/base-component';
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget extends BaseComponent {
   static styles = styles;
+
+  @state()
+  private isLoading = false;
 
   private widgetController = new WidgetController(this, {});
 
@@ -74,7 +77,9 @@ class SygmaProtocolWidget extends BaseComponent {
           </section>
         </form>
         <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
-        <loader-component .isLoading=${true}></loader-component>
+        <sygma-loader-component
+          .isLoading=${this.isLoading}
+        ></sygma-loader-component>
       </section>
     `;
   }
