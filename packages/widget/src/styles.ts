@@ -112,10 +112,10 @@ export const styles = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem; /* 8px / 16 */
+    gap: 0.5rem;
     width: 100%;
-    padding: 0.75rem 1.25rem; /* 12px / 16, 20px / 16 */
-    border-radius: 1rem; /* 16px / 16 */
+    padding: 0.75rem 1.25rem;
+    border-radius: 1rem;
     background-color: var(--primary-500);
     color: #ffffff;
     border: none;
