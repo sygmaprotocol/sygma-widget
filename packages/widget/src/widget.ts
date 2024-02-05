@@ -1,5 +1,5 @@
 import type { HTMLTemplateResult } from 'lit';
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { sygmaLogo } from './assets';
 import './components';
@@ -7,9 +7,10 @@ import { Directions } from './components/network-selector/network-selector';
 import './context/wallet';
 import { WidgetController } from './controllers/widget';
 import { styles } from './styles';
+import { BaseComponent } from './components/base-component/base-component';
 
 @customElement('sygmaprotocol-widget')
-class SygmaProtocolWidget extends LitElement {
+class SygmaProtocolWidget extends BaseComponent {
   static styles = styles;
 
   private widgetController = new WidgetController(this, {});
