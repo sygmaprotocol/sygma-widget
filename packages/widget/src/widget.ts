@@ -6,6 +6,7 @@ import { switchNetworkIcon, sygmaLogo } from './assets';
 import { WidgetController } from './controllers/widget';
 import './components/network-selector';
 import './components/amount-selector';
+import './components/loader-component';
 import { Directions } from './components/network-selector/network-selector';
 
 @customElement('sygmaprotocol-widget')
@@ -63,6 +64,7 @@ class SygmaProtocolWidget extends LitElement {
           </section>
         </form>
         <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
+        <loader-component .isLoading=${true}></loader-component>
       </section>
     `;
   }

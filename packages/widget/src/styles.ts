@@ -1,6 +1,17 @@
 import { css } from 'lit';
 
 export const styles = css`
+  :host {
+    --zinc-200: #e4e4e7;
+    --zinc-400: #a1a1aa;
+    --white: #fff;
+    --gray-100: #f3f4f6;
+    --neutral-600: #525252;
+    --primary-300: #a5b4fc;
+    --primary-500: #6366f1;
+    --blue-600: #2563eb;
+  }
+
   @font-face {
     font-family: 'Inter';
     font-style: normal;
@@ -9,6 +20,7 @@ export const styles = css`
   }
 
   .widgetContainer {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
