@@ -1,5 +1,4 @@
 import type { HTMLTemplateResult } from 'lit';
-import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type {
   EvmResource,
@@ -20,9 +19,13 @@ import type {
   ISygmaProtocolWidget,
   Theme
 } from './interfaces';
+import { BaseComponent } from './components/base-component/base-component';
 
 @customElement('sygmaprotocol-widget')
-class SygmaProtocolWidget extends LitElement implements ISygmaProtocolWidget {
+class SygmaProtocolWidget
+  extends BaseComponent
+  implements ISygmaProtocolWidget
+{
   static styles = styles;
 
   @property({ type: Array }) whitelistedSourceNetworks?: Network[];
@@ -52,8 +55,7 @@ class SygmaProtocolWidget extends LitElement implements ISygmaProtocolWidget {
   private widgetController = new WidgetController(this, {});
 
   render(): HTMLTemplateResult {
-    return html`
-      <p>${this.widgetController.isLoading ? 'Loading' : ''}</p>
+    return html`<p>${this.widgetController.isLoading ? 'Loading' : ''}</p>
       <section class="widgetContainer">
         <form @submit=${() => {}}>
           <section class="connectAccount">
@@ -108,8 +110,7 @@ class SygmaProtocolWidget extends LitElement implements ISygmaProtocolWidget {
           </section>
         </form>
         <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
-      </section>
-    `;
+      </section> `;
   }
 }
 
