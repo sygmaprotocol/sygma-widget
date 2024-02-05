@@ -8,10 +8,10 @@ import './components/network-selector';
 import './components/amount-selector';
 import './components/address-input';
 import { Directions } from './components/network-selector/network-selector';
-import { Component } from './components/base-component/base-component';
+import { BaseComponent } from './components/base-component/base-component';
 
 @customElement('sygmaprotocol-widget')
-class SygmaProtocolWidget extends Component {
+class SygmaProtocolWidget extends BaseComponent {
   static styles = styles;
 
   private widgetController = new WidgetController(this, {});

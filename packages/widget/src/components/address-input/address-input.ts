@@ -5,11 +5,11 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { when } from 'lit/directives/when.js';
 import { validateAddress } from '../../utils';
-import { Component } from '../base-component/base-component';
+import { BaseComponent } from '../base-component/base-component';
 import { styles } from './styles';
 
 @customElement('sygma-address-input')
-export class AddressInput extends Component {
+export class AddressInput extends BaseComponent {
   static styles = styles;
   @property({
     type: String

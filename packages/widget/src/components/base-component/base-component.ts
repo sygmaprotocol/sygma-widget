@@ -2,7 +2,7 @@ import type { CSSResultGroup } from 'lit';
 import { LitElement } from 'lit';
 import { resetCSS } from './reset';
 
-export abstract class Component extends LitElement {
+export abstract class BaseComponent extends LitElement {
   private static _styles: CSSResultGroup;
 
   static get styles(): CSSResultGroup {

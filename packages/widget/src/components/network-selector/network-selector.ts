@@ -6,7 +6,7 @@ import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 import { capitalize } from '../../utils';
 import { networkIconsMap, chevronIcon } from '../../assets';
-import { Component } from '../base-component/base-component';
+import { BaseComponent } from '../base-component/base-component';
 import { styles } from './styles';
 
 export const Directions = {
@@ -17,7 +17,7 @@ export const Directions = {
 type Direction = (typeof Directions)[keyof typeof Directions];
 
 @customElement('sygma-network-selector')
-export class NetworkSelector extends Component {
+export class NetworkSelector extends BaseComponent {
   static styles = styles;
 
   @state()

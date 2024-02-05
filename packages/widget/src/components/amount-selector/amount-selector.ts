@@ -5,11 +5,11 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
-import { Component } from '../base-component/base-component';
+import { BaseComponent } from '../base-component/base-component';
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
-export class AmountSelector extends Component {
+export class AmountSelector extends BaseComponent {
   static styles = styles;
   @property({
     type: Array,
