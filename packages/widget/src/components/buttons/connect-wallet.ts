@@ -1,10 +1,9 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { consume } from '@lit/context';
+import type { HTMLTemplateResult, PropertyValues } from 'lit';
 import { LitElement, html } from 'lit';
-import type { PropertyValues, type HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
-import type { EIP1193Provider } from '@web3-onboard/core';
 import plusIcon from '../../assets/icons/plusIcon';
 import type { WalletContext } from '../../context';
 import { walletContext } from '../../context';
@@ -26,11 +25,6 @@ export class ConnectWalletButton extends LitElement {
   sourceNetwork?: Domain;
 
   @property({
-    type: Object
-  })
-  evmProvider?: EIP1193Provider;
-
-  @property({
     type: String
   })
   dappUrl?: string;
@@ -43,9 +37,6 @@ export class ConnectWalletButton extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    if (this.evmProvider) {
-      this.walletController.useEvmProvider(this.evmProvider);
-    }
   }
 
   updated(changedProperties: PropertyValues): void {

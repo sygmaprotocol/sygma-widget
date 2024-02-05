@@ -1,12 +1,10 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
-import type { EIP1193Provider } from '@web3-onboard/core';
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
-import type { WalletContext } from '../../context';
 import { WalletUpdateEvent, walletContext } from '../../context';
 
 export class WalletController implements ReactiveController {
@@ -101,12 +99,6 @@ export class WalletController implements ReactiveController {
       });
     }
   };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  useEvmProvider(_evmProvider: EIP1193Provider): void {
-    throw new Error('Method not implemented.');
-    //TODO: fetch connected address, dispatch WalletUpdateEvent, switchChain, subscribe to accountsChanged and disconnect events
-  }
 
   sourceNetworkUpdated(sourceNetwork: Domain | undefined): void {
     if (!sourceNetwork) {
