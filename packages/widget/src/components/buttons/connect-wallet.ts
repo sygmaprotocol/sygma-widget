@@ -65,6 +65,7 @@ export class ConnectWalletButton extends LitElement {
   render(): HTMLTemplateResult {
     const evmWallet = this.wallets.evmWallet;
     const substrateWallet = this.wallets.substrateWallet;
+    //TODO: this is wrong we need to enable user to select account
     const substrateAccount = substrateWallet?.accounts[0];
     return html` <div class="connectWalletContainer">
       ${when(
