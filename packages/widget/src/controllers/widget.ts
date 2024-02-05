@@ -19,6 +19,7 @@ export class WidgetController implements ReactiveController {
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
+  public destinatonAddress?: string = '';
 
   //@ts-expect-error it will be used
   private assetTransfer?: EVMAssetTransfer | SubstrateAssetTransfer;
@@ -129,5 +130,10 @@ export class WidgetController implements ReactiveController {
   onResourceAmountChange = (amount: number): void => {
     console.log('resource amount', amount);
     this.resourceAmount = amount;
+  };
+
+  onDestinationAddressChange = (address: string): void => {
+    console.log('destination address', address);
+    this.destinatonAddress = address;
   };
 }

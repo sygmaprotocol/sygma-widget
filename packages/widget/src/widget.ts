@@ -3,8 +3,8 @@ import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { sygmaLogo } from './assets';
 import './components';
-import './context/wallet';
 import { Directions } from './components/network-selector/network-selector';
+import './context/wallet';
 import { WidgetController } from './controllers/widget';
 import { styles } from './styles';
 
@@ -69,6 +69,14 @@ class SygmaProtocolWidget extends LitElement {
                   accountBalance="0"
                 >
                 </sygma-resource-selector>
+              </section>
+              <section>
+                <sygma-address-input
+                  .address=${this.widgetController.destinatonAddress}
+                  .onAddressChange=${this.widgetController
+                    .onDestinationAddressChange}
+                >
+                </sygma-address-input>
               </section>
               <section>
                 <button
