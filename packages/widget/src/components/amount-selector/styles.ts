@@ -24,14 +24,30 @@ export const styles = css`
 
   .amountSelectorSection {
     display: flex;
+    flex-direction: column;
     width: 100%;
     justify-content: space-between;
     align-items: center;
     margin: 0.5rem 0;
   }
 
-  .selectorSection {
+  .amountWrapper {
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  dropdown-component::part(dropdownWrapper) {
+    max-width: 8.1875rem;
+    width: 100%;
+  }
+
+  .errorWrapper {
+    width: 100%;
+  }
+
+  .validationMessage {
+    color: var(--red-600);
   }
 
   .amountSelectorInput {

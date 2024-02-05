@@ -1,17 +1,18 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
 import { BaseComponent } from '../base-component/base-component';
-import type { DropdownOption } from '../subcomponents/dropdown/dropdown';
+import type { DropdownOption } from '../internal/dropdown/dropdown';
+import { networkIconsMap } from '../../assets';
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
 export class AmountSelector extends BaseComponent {
   static styles = styles;
+
   @property({
     type: Array,
     hasChanged: (n, o) => n !== o
@@ -30,27 +31,27 @@ export class AmountSelector extends BaseComponent {
   @property({ type: Number })
   preselectedAmount?: number;
 
-  @property({
-    attribute: false
-  })
+  @property({ attribute: false })
   onResourceSelected?: (resource: Resource) => void;
 
-  @property({
-    attribute: false
-  })
+  @property({ attribute: false })
   onAmountChange?: (amount: number) => void;
 
   @query('.amountSelectorInput', true)
   _input!: HTMLInputElement;
 
-  useMaxBalance = (): void => {
+  @state() validationMessage: string = '';
+
+  _useMaxBalance = (): void => {
     this.preselectedAmount = Number.parseFloat(this.accountBalance!);
     this._onInputAmountChange();
   };
 
   _onInputAmountChange = (): void => {
-    const amount = Number.parseFloat(this._input.value);
-    this.onAmountChange?.(amount);
+    const amount = this._input.value;
+    if (this._validateAmount(amount)) {
+      this.onAmountChange?.(Number.parseFloat(amount));
+    }
   };
 
   _onResourceSelected = (option: DropdownOption): void => {
@@ -62,27 +63,34 @@ export class AmountSelector extends BaseComponent {
     }
   };
 
-  renderBalance(): HTMLTemplateResult {
+  _validateAmount(amount: string): boolean {
+    const parsedAmount = Number.parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      this.validationMessage = 'Amount must be greater than 0';
+      return false;
+    } else if (
+      this.accountBalance &&
+      parsedAmount > Number.parseFloat(this.accountBalance)
+    ) {
+      this.validationMessage = 'Amount exceeds account balance';
+      return false;
+    } else {
+      this.validationMessage = '';
+      return true;
+    }
+  }
+
+  _renderBalance(): HTMLTemplateResult {
     return html`
       <section class="balanceContent">
         <span>${`${Number.parseFloat(this.accountBalance!).toFixed(4)}`}</span>
-        <button class="maxButton" @click=${this.useMaxBalance}>Max</button>
+        <button class="maxButton" @click=${this._useMaxBalance}>Max</button>
       </section>
     `;
   }
 
-  renderEntries(): Generator<unknown, void> | HTMLTemplateResult {
-    if (this.resources) {
-      return map(this.resources, (entry: Resource) => {
-        // TODO: render resource/token icon
-        return html`<option value=${entry.resourceId}>${entry.symbol}</option>`;
-      });
-    }
-    return html`<option selected value="">Token</option>`;
-  }
-
-  renderAccountBalance(): HTMLTemplateResult {
-    return when(this.accountBalance, () => this.renderBalance());
+  _renderAccountBalance(): HTMLTemplateResult {
+    return when(this.accountBalance, () => this._renderBalance());
   }
 
   _normalizeOptions(): DropdownOption[] {
@@ -90,7 +98,7 @@ export class AmountSelector extends BaseComponent {
       this.resources.map((entry) => ({
         id: entry.resourceId,
         name: entry.symbol!,
-        icon: entry.symbol
+        icon: networkIconsMap.default
       }))
     );
   }
@@ -100,24 +108,29 @@ export class AmountSelector extends BaseComponent {
       <div class="amountSelectorContainer">
         <section class="tokenBalanceSection">
           <label class="amountSelectorLabel">Amount to transfer</label>
-          ${this.renderAccountBalance()}
+          ${this._renderAccountBalance()}
         </section>
         <section class="amountSelectorSection">
-          <input
-            type="text"
-            class="amountSelectorInput"
-            placeholder="0.000"
-            @change=${this._onInputAmountChange}
-            value=${ifDefined(this.preselectedAmount)}
-          />
-          <section class="selectorSection">
-            <dropdown-component 
-              .selectedOption=${this.preselectedToken}
-              ?disabled=${this.disabled} 
-              .onOptionSelected=${this._onResourceSelected}
-              .options=${this._normalizeOptions()}
-              >
-          </section>
+          <div class="amountWrapper">
+            <input
+              type="text"
+              class="amountSelectorInput"
+              placeholder="0.000"
+              @change=${this._onInputAmountChange}
+              value=${ifDefined(this.preselectedAmount)}
+            />
+            <section class="selectorSection">
+              <dropdown-component 
+                .selectedOption=${this.preselectedToken}
+                ?disabled=${this.disabled} 
+                .onOptionSelected=${this._onResourceSelected}
+                .options=${this._normalizeOptions()}
+                >
+            </section>
+          </div>
+          <div class="errorWrapper">
+            ${this.validationMessage ? html`<div class="validationMessage">${this.validationMessage}</div>` : null}
+          </div>
         </section>
       </div>
     `;

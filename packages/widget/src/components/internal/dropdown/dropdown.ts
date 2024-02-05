@@ -2,7 +2,7 @@ import { LitElement, html, type HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
-import { chevronIcon } from '../../../assets';
+import { chevronIcon, networkIconsMap } from '../../../assets';
 import { capitalize } from '../../../utils';
 import { styles } from './styles';
 
@@ -59,7 +59,7 @@ export class CustomDropdown extends LitElement {
     return when(
       this._selectedOption,
       () =>
-        html`${this._selectedOption!.icon}
+        html`${this._selectedOption!.icon || networkIconsMap.default}
           <span class="optionName">
             ${capitalize(this._selectedOption!.name)}
           </span>`,
@@ -86,6 +86,7 @@ export class CustomDropdown extends LitElement {
   render(): HTMLTemplateResult {
     return html`
       <div
+        part="dropdownWrapper"
         class="${this.disabled
           ? 'dropdownWrapper disabled'
           : 'dropdownWrapper'}"

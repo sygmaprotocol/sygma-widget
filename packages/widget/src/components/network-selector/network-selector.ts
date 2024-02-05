@@ -4,10 +4,10 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { networkIconsMap } from '../../assets';
-import type { DropdownOption } from '../subcomponents/dropdown/dropdown';
+import type { DropdownOption } from '../internal/dropdown/dropdown';
 import { BaseComponent } from '../base-component/base-component';
 import { styles } from './styles';
-import '../subcomponents/dropdown/dropdown';
+import '../internal/dropdown/dropdown';
 
 export const Directions = {
   FROM: 'From',

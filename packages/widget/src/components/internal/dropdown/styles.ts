@@ -16,6 +16,10 @@ export const styles = css`
     padding: 0.25rem 0;
     box-sizing: border-box;
 
+    .optionName {
+      max-width: 4rem;
+    }
+
     &.disabled {
       cursor: not-allowed;
       opacity: 0.5;
