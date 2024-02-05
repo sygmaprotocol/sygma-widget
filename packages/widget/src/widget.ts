@@ -1,3 +1,4 @@
+import { html } from 'lit';
 import type { HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type {
