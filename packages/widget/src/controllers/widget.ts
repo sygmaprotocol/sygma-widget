@@ -6,7 +6,6 @@ import {
   Network
 } from '@buildwithsygma/sygma-sdk-core';
 import { SubstrateAssetTransfer } from '@buildwithsygma/sygma-sdk-core/substrate';
-import type { ContextProvider } from '@lit/context';
 import type { ReactiveController, ReactiveElement } from 'lit';
 
 export class WidgetController implements ReactiveController {
