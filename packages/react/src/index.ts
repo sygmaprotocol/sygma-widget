@@ -1,0 +1,1 @@
+export { SygmaProtocolReactWidget } from './WidgetReact';

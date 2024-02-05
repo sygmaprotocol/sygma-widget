@@ -8,11 +8,13 @@
   "type": "module",
   "dependencies": {
     "@buildwithsygma/sygmaprotocol-widget": "workspace:*",
-    "@lit/react": "1.0.3"
-  },
-  "peerDependencies": {
+    "@lit/react": "1.0.3",
     "react": ">=17",
     "react-dom": ">=17"
+  },
+  "devDependencies": {
+    "@types/react": ">=17",
+    "typescript": "5.2.2"
   },
   "scripts": {
     "build": "tsc --build --clean && tsc --build ./tsconfig.json",

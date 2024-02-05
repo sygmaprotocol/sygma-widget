@@ -1,6 +1,13 @@
 import type { HTMLTemplateResult } from 'lit';
 import { LitElement, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
+import type {
+  EvmResource,
+  Network,
+  SubstrateResource
+} from '@buildwithsygma/sygma-sdk-core';
+import type { ApiPromise } from '@polkadot/api';
+import type { Signer } from '@polkadot/api/types';
 import { styles } from './styles';
 import { switchNetworkIcon, sygmaLogo } from './assets';
 import { WidgetController } from './controllers/widget';
@@ -8,10 +15,39 @@ import './components/network-selector';
 import './components/amount-selector';
 import './components/address-input';
 import { Directions } from './components/network-selector/network-selector';
+import type {
+  Eip1193Provider,
+  ISygmaProtocolWidget,
+  Theme
+} from './interfaces';
 
 @customElement('sygmaprotocol-widget')
-class SygmaProtocolWidget extends LitElement {
+class SygmaProtocolWidget extends LitElement implements ISygmaProtocolWidget {
   static styles = styles;
+
+  @property({ type: Array }) whitelistedSourceNetworks?: Network[];
+
+  @property({ type: Array }) whitelistedDestinationNetworks?: Network[];
+
+  @property({ type: Object }) evmProvider?: Eip1193Provider;
+
+  @property() substrateProvider?: ApiPromise | string;
+
+  @property({ type: Object }) substrateSigner?: Signer;
+
+  @property({ type: Boolean }) show?: boolean;
+
+  @property({ type: Array }) whitelistedSourceResources?: Array<
+    EvmResource | SubstrateResource
+  >;
+
+  @property({ type: Boolean }) expandable?: boolean;
+
+  @property({ type: Boolean }) darkTheme?: boolean;
+
+  @property({ type: Object }) customLogo?: SVGElement;
+
+  @property({ type: Object }) theme?: Theme;
 
   private widgetController = new WidgetController(this, {});
 
@@ -81,6 +117,6 @@ export { SygmaProtocolWidget };
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sygmaprotocol-widget': SygmaProtocolWidget;
+    'sygmaprotocol-widget': ISygmaProtocolWidget;
   }
 }
