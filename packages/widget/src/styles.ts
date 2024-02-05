@@ -2,8 +2,10 @@ import { css } from 'lit';
 
 export const styles = css`
   :host {
+    --zinc-100: #f4f4f5;
     --zinc-200: #e4e4e7;
     --zinc-400: #a1a1aa;
+    --zinc-700: #3f3f46;
     --white: #fff;
     --gray-100: #f3f4f6;
     --neutral-600: #525252;
@@ -51,22 +53,9 @@ export const styles = css`
     align-items: center;
   }
 
-  .widgetHeader .brandLogo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .widgetHeader .brandLogo svg {
-    height: 100%;
-    width: 100%;
-  }
-
   .widgetHeader .title {
-    color: var(--zinc-400, #a1a1aa);
-    font-family: Inter;
+    color: var(--zinc-400);
     font-size: 14px;
-    font-style: normal;
     font-weight: 500;
     line-height: 20px;
   }
