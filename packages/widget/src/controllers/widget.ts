@@ -6,7 +6,8 @@ import {
   Network
 } from '@buildwithsygma/sygma-sdk-core';
 import { SubstrateAssetTransfer } from '@buildwithsygma/sygma-sdk-core/substrate';
-import type { ReactiveController, ReactiveControllerHost } from 'lit';
+import type { ContextProvider } from '@lit/context';
+import type { ReactiveController, ReactiveElement } from 'lit';
 
 export class WidgetController implements ReactiveController {
   public isLoading: boolean = false;
@@ -25,9 +26,14 @@ export class WidgetController implements ReactiveController {
   private env: Environment;
   private config: Config;
 
-  host: ReactiveControllerHost;
+  host: ReactiveElement;
 
-  constructor(host: ReactiveControllerHost, options: { env?: Environment }) {
+  constructor(
+    host: ReactiveElement,
+    options: {
+      env?: Environment;
+    }
+  ) {
     (this.host = host).addController(this);
     this.env = options.env ?? Environment.MAINNET;
     this.config = new Config();
@@ -79,7 +85,6 @@ export class WidgetController implements ReactiveController {
   };
 
   onSourceNetworkSelected = (network: Domain | undefined): void => {
-    console.log('source', network);
     //TODO: filter out supported destination networks
     this.sourceNetwork = network;
     if (!network) {
@@ -109,7 +114,6 @@ export class WidgetController implements ReactiveController {
   };
 
   onDestinationNetworkSelected = (network: Domain | undefined): void => {
-    console.log('destination', network);
     if (!this.sourceNetwork) {
       //TODO: filter out supported source networks
     }

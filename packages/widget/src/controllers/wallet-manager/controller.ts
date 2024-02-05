@@ -1,45 +1,45 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
-import type { ContextProvider } from '@lit/context';
+import { ContextConsumer } from '@lit/context';
+import type { EIP1193Provider } from '@web3-onboard/core';
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
-import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import type { evmWalletContext } from './context';
+import type { ReactiveController, ReactiveElement } from 'lit';
+import type { WalletContext } from '../../context';
+import { WalletUpdateEvent, walletContext } from '../../context';
 
 export class WalletController implements ReactiveController {
-  host: ReactiveControllerHost;
+  host: ReactiveElement;
 
-  private evmWallet: ContextProvider<typeof evmWalletContext>;
+  walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
 
-  constructor(
-    host: ReactiveControllerHost,
-    evmWallet: ContextProvider<typeof evmWalletContext>
-  ) {
+  constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
-    this.evmWallet = evmWallet;
+    this.walletContext = new ContextConsumer(host, {
+      context: walletContext,
+      subscribe: true
+    });
   }
 
   hostConnected(): void {}
 
   hostDisconnected(): void {
-    if (this.evmWallet) {
-      this.evmWallet.value.provider.removeListener(
+    const evmWallet = this.walletContext.value?.evmWallet;
+    if (evmWallet) {
+      evmWallet.provider.removeListener(
         'accountsChanged',
         this.onEvmAccountChange
       );
-      this.evmWallet.value.provider.removeListener(
-        'disconnect',
-        this.onEvmDisconnect
-      );
+      evmWallet.provider.removeListener('disconnect', this.onEvmDisconnect);
     }
   }
 
-  connectWallet = (network: Domain): void => {
+  connectWallet = (network: Domain, options?: { dappUrl?: string }): void => {
     switch (network.type) {
       case Network.EVM:
         {
-          void this.connectEvmWallet(network);
+          void this.connectEvmWallet(network, options);
         }
         break;
       default:
@@ -47,20 +47,27 @@ export class WalletController implements ReactiveController {
     }
   };
 
-  disconnectWallet = (): void => {
-    if (this.evmWallet) {
-      this.evmWallet.value.provider.disconnect?.();
+  disconnectEvmWallet = (): void => {
+    const evmWallet = this.walletContext.value?.evmWallet;
+    if (evmWallet) {
+      evmWallet?.provider.disconnect?.();
       this.onEvmDisconnect();
     }
   };
 
-  connectEvmWallet = async (network: Domain): Promise<void> => {
+  connectEvmWallet = async (
+    network: Domain,
+    options?: { dappUrl?: string }
+  ): Promise<void> => {
     const injected = injectedModule();
 
     const onboard = Onboard({
       wallets: [
         injected,
-        walletConnectModule({ projectId: '2f5a3439ef861e2a3959d85afcd32d06' })
+        walletConnectModule({
+          projectId: '2f5a3439ef861e2a3959d85afcd32d06',
+          dappUrl: options?.dappUrl
+        })
       ],
       chains: [
         {
@@ -75,16 +82,19 @@ export class WalletController implements ReactiveController {
 
     const wallets = await onboard.connectWallet();
     if (wallets[0]) {
-      this.evmWallet.setValue({
-        address:
-          wallets[0].accounts[0].ens?.name ?? wallets[0].accounts[0].address,
-        provider: wallets[0].provider
-      });
-      this.evmWallet.value.provider.on(
-        'accountsChanged',
-        this.onEvmAccountChange
+      this.host.dispatchEvent(
+        new WalletUpdateEvent({
+          evmWallet: {
+            address:
+              wallets[0].accounts[0].ens?.name ??
+              wallets[0].accounts[0].address,
+            provider: wallets[0].provider
+          }
+        })
       );
-      this.evmWallet.value.provider.on('disconnect', this.onEvmDisconnect);
+
+      wallets[0].provider.on('accountsChanged', this.onEvmAccountChange);
+      wallets[0].provider.on('disconnect', this.onEvmDisconnect);
       void onboard.setChain({
         //TODO: we need more info in network object in case we are adding new chain to metamask
         chainId: network.chainId
@@ -92,12 +102,37 @@ export class WalletController implements ReactiveController {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  useEvmProvider(_evmProvider: EIP1193Provider): void {
+    throw new Error('Method not implemented.');
+    //TODO: fetch connected address, dispatch WalletUpdateEvent, switchChain, subscribe to accountsChanged and disconnect events
+  }
+
+  sourceNetworkUpdated(sourceNetwork: Domain | undefined): void {
+    if (!sourceNetwork) {
+      this.disconnectEvmWallet();
+    }
+    switch (sourceNetwork?.type) {
+      case Network.SUBSTRATE:
+        {
+          this.disconnectEvmWallet();
+        }
+        break;
+      default:
+        return;
+    }
+  }
+
   private onEvmAccountChange = (accounts: string[]): void => {
-    if (this.evmWallet && accounts.length !== 0) {
-      this.evmWallet.setValue({
-        address: accounts[0],
-        provider: this.evmWallet.value.provider
-      });
+    if (this.walletContext.value?.evmWallet && accounts.length !== 0) {
+      this.host.dispatchEvent(
+        new WalletUpdateEvent({
+          evmWallet: {
+            address: accounts[0],
+            provider: this.walletContext.value.evmWallet.provider
+          }
+        })
+      );
     }
     if (accounts.length === 0) {
       this.onEvmDisconnect();
@@ -105,7 +140,10 @@ export class WalletController implements ReactiveController {
   };
 
   private onEvmDisconnect = (): void => {
-    this.evmWallet.setValue(undefined);
-    this.host.requestUpdate();
+    this.host.dispatchEvent(
+      new WalletUpdateEvent({
+        evmWallet: undefined
+      })
+    );
   };
 }

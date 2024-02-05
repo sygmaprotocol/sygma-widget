@@ -1,10 +1,14 @@
-import { LitElement, html, type HTMLTemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { ifDefined } from 'lit/directives/if-defined.js';
+import { consume } from '@lit/context';
+import { LitElement, html } from 'lit';
+import type { PropertyValues, type HTMLTemplateResult } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
+import type { EIP1193Provider } from '@web3-onboard/core';
 import plusIcon from '../../assets/icons/plusIcon';
-import { WalletController } from '../../controllers/wallet-manager/controller';
+import type { WalletContext } from '../../context';
+import { walletContext } from '../../context';
+import { WalletController } from '../../controllers';
 import { shortAddress } from '../../utils';
 import { styles } from './connect-wallet.style';
 
@@ -12,38 +16,69 @@ import { styles } from './connect-wallet.style';
 export class ConnectWalletButton extends LitElement {
   static styles = styles;
 
-  private walletController = new WalletController(this);
+  @property({
+    type: Object,
+    attribute: true,
+    hasChanged: (value: Domain, old: Domain) => {
+      return value?.id !== old?.id;
+    }
+  })
+  sourceNetwork?: Domain;
 
   @property({
     type: Object
   })
-  sourceNetwork?: Domain;
+  evmProvider?: EIP1193Provider;
+
+  @property({
+    type: String
+  })
+  dappUrl?: string;
+
+  @consume({ context: walletContext, subscribe: true })
+  @state()
+  private wallets!: WalletContext;
+
+  private walletController = new WalletController(this);
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    if (this.evmProvider) {
+      this.walletController.useEvmProvider(this.evmProvider);
+    }
+  }
+
+  updated(changedProperties: PropertyValues): void {
+    super.updated(changedProperties);
+    if (changedProperties.has('sourceNetwork')) {
+      this.walletController.sourceNetworkUpdated(this.sourceNetwork);
+    }
+  }
 
   private onConnectClicked = (): void => {
     if (this.sourceNetwork) {
-      this.walletController.connectWallet(this.sourceNetwork);
+      this.walletController.connectWallet(this.sourceNetwork, {
+        dappUrl: this.dappUrl
+      });
     }
   };
 
   private onDisconnectClicked = (): void => {
-    this.walletController.disconnectWallet();
+    this.walletController.disconnectEvmWallet();
   };
 
   private isWalletConnected(): boolean {
-    return !!this.walletController.evmWallet;
+    return !!this.wallets.evmWallet;
   }
 
   render(): HTMLTemplateResult {
+    const evmWallet = this.wallets.evmWallet;
     return html` <div class="connectWalletContainer">
       ${when(
-        this.walletController.evmWallet?.address !== undefined,
+        evmWallet?.address !== undefined,
         () =>
-          html`<span
-            class="walletAddress"
-            title=${this.walletController.evmWallet?.address ?? ''}
-            >${shortAddress(
-              this.walletController.evmWallet?.address ?? ''
-            )}</span
+          html`<span class="walletAddress" title=${evmWallet?.address ?? ''}
+            >${shortAddress(evmWallet?.address ?? '')}</span
           >`
       )}
       ${when(
