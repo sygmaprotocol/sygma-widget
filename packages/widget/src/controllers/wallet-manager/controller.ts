@@ -51,7 +51,7 @@ export class WalletController implements ReactiveController {
         }
         break;
       default:
-        throw new Error('Unsupported newtork type');
+        throw new Error('Unsupported network type');
     }
   };
 
