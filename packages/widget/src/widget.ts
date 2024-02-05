@@ -31,10 +31,7 @@ class SygmaProtocolWidget extends BaseComponent {
       <sygma-wallet-context-provider>
         <section class="widgetContainer">
           <section class="widgetHeader">
-            <div class="brandLogoContainer">
-              <span class="brandLogo">${sygmaLogo}</span>
-              <span class="title">&lt;Brand Name&gt; Transfer</span>
-            </div>
+            <div class="brandLogoContainer title">[Brand] Transfer</div>
             ${this.renderConnect()}
           </section>
           <section class="widgetContent">
