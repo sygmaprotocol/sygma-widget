@@ -88,7 +88,7 @@ describe('connect-wallet button', function () {
       walletAddressEl?.title,
       '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5'
     );
-    assert.equal(walletAddressEl?.textContent, '0x9522...BAfe5');
+    assert.equal(walletAddressEl?.textContent?.trim(), '0x9522...BAfe5');
 
     const disconnectButton = connectComponent.shadowRoot!.querySelector(
       '.connectWalletButton'
