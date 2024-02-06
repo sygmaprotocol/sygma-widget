@@ -13,7 +13,7 @@ describe('loader-component', function () {
     assert.instanceOf(el, OverlayComponent);
   });
 
-  it('renders loader when isLoading is true', async () => {
+  it('renders loader', async () => {
     const el = await fixture(html`
       <sygma-overlay-component></sygma-overlay-component>
     `);
