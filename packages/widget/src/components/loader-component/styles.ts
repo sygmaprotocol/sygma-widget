@@ -16,11 +16,11 @@ export const styles = css`
   }
 
   .loading-spinner {
-    border: 4px solid var(--blue-600);
+    border: 0.25rem solid var(--blue-600);
     border-top: 4px solid var(--white);
     border-radius: 50%;
-    width: 64px;
-    height: 64px;
+    width: 4rem;
+    height: 4rem;
     animation: spin 1s linear infinite;
   }
 
