@@ -1,6 +1,7 @@
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 import { styles } from './styles';
 import { switchNetworkIcon, sygmaLogo } from './assets';
 import { WidgetController } from './controllers/widget';
@@ -85,9 +86,13 @@ class SygmaProtocolWidget extends BaseComponent {
           </section>
         </form>
         <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
-        <sygma-overlay-component
-          .isLoading=${this.isLoading}
-        ></sygma-overlay-component>
+        ${when(
+          this.isLoading,
+          () =>
+            html`<sygma-overlay-component
+              .isLoading=${this.isLoading}
+            ></sygma-overlay-component>`
+        )}
       </section>
     `;
   }
