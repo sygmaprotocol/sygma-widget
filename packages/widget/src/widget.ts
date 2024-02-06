@@ -109,8 +109,6 @@ class SygmaProtocolWidget extends BaseComponent {
           )}
         </section>
       </sygma-wallet-context-provider>
-      <button @click=${this.openOverlay}>Open</button>
-      <button @click=${this.closeOverlay}>Close</button>
     `;
   }
 }
