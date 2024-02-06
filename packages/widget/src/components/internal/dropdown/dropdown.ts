@@ -56,7 +56,7 @@ export class Dropdown extends BaseComponent {
     }
   }
 
-  _renderTriggerContent(): HTMLTemplateResult {
+  _renderTriggerContent(): HTMLTemplateResult | null {
     return when(
       this._selectedOption,
       () =>
@@ -65,9 +65,11 @@ export class Dropdown extends BaseComponent {
             ${capitalize(this._selectedOption!.name)}
           </span>`,
       () =>
-        this.placeholder
-          ? html`<span class="placeholder">${this.placeholder}</span>`
-          : html``
+        when(
+          this.placeholder,
+          () => html`<span class="placeholder">${this.placeholder}</span>`,
+          () => null
+        )
     );
   }
 

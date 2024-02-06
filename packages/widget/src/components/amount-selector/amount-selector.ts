@@ -40,7 +40,7 @@ export class AmountSelector extends BaseComponent {
   @query('.amountSelectorInput', true)
   _input!: HTMLInputElement;
 
-  @state() validationMessage: string = '';
+  @state() validationMessage: string | null = null;
 
   _useMaxBalance = (): void => {
     this.preselectedAmount = Number.parseFloat(this.accountBalance!);
@@ -56,11 +56,9 @@ export class AmountSelector extends BaseComponent {
 
   _onResourceSelected = (option: DropdownOption): void => {
     const resource = this.resources.find(
-      (n) => String(n.resourceId) == option.id
+      (resource) => String(resource.resourceId) == option.id
     );
-    if (resource) {
-      this.onResourceSelected?.(resource);
-    }
+    if (resource) this.onResourceSelected?.(resource);
   };
 
   _validateAmount(amount: string): boolean {
@@ -75,7 +73,7 @@ export class AmountSelector extends BaseComponent {
       this.validationMessage = 'Amount exceeds account balance';
       return false;
     } else {
-      this.validationMessage = '';
+      this.validationMessage = null;
       return true;
     }
   }
@@ -91,6 +89,13 @@ export class AmountSelector extends BaseComponent {
 
   _renderAccountBalance(): HTMLTemplateResult {
     return when(this.accountBalance, () => this._renderBalance());
+  }
+
+  _renderErrorMessages(): HTMLTemplateResult {
+    return when(
+      this.validationMessage,
+      () => html`<div class="validationMessage">${this.validationMessage}</div>`
+    );
   }
 
   _normalizeOptions(): DropdownOption[] {
@@ -129,7 +134,7 @@ export class AmountSelector extends BaseComponent {
             </section>
           </div>
           <div class="errorWrapper">
-            ${this.validationMessage ? html`<div class="validationMessage">${this.validationMessage}</div>` : null}
+            ${this._renderErrorMessages()}
           </div>
         </section>
       </div>
