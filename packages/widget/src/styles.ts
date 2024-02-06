@@ -2,8 +2,10 @@ import { css } from 'lit';
 
 export const styles = css`
   :host {
+    --zinc-100: #f4f4f5;
     --zinc-200: #e4e4e7;
     --zinc-400: #a1a1aa;
+    --zinc-700: #3f3f46;
     --white: #fff;
     --gray-100: #f3f4f6;
     --neutral-600: #525252;
@@ -22,7 +24,7 @@ export const styles = css`
   .widgetContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     gap: 16px;
 
     padding: 24px;
@@ -38,15 +40,35 @@ export const styles = css`
     font-family: Inter, sans-serif;
   }
 
-  .networkSelectionWrapper {
-    margin: 1rem 0 0.5rem 0;
-  }
-
-  .connectAccount {
+  .widgetHeader {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     gap: 4px;
+  }
+
+  .widgetContainer .brandLogoContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .widgetHeader .title {
+    color: var(--zinc-400);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  .widgetContent {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .networkSelectionWrapper {
+    margin: 1rem 0 0.5rem 0;
   }
 
   .actionButton {
