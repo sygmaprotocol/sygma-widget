@@ -15,7 +15,7 @@ export const styles = css`
     background-color: rgba(255, 255, 255, 0.7);
   }
 
-  .loading-spinner {
+  .loadingSpinner {
     border: 0.25rem solid var(--blue-600);
     border-top: 4px solid var(--white);
     border-radius: 50%;

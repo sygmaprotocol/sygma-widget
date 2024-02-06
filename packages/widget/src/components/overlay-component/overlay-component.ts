@@ -17,7 +17,7 @@ export class OverlayComponent extends LitElement {
       () => html`
       <div class="loader">
         <div class="overlay">
-          <div class="loading-spinner"></div>
+          <div class="loadingSpinner"></div>
           </div>
         </div>
       </div>`
