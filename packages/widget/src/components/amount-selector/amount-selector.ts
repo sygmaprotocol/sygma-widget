@@ -110,13 +110,13 @@ export class AmountSelector extends BaseComponent {
   }
 
   render(): HTMLTemplateResult {
-    const amountSelectorContainerClasses = {
+    const amountSelectorContainerClasses = classMap({
       amountSelectorContainer: true,
       hasError: !!this.validationMessage
-    };
+    });
 
     return html`
-      <div class=${classMap(amountSelectorContainerClasses)}>
+      <div class=${amountSelectorContainerClasses}>
         <section class="tokenBalanceSection">
           <label class="amountSelectorLabel">Amount to transfer</label>
           ${this._renderAccountBalance()}
