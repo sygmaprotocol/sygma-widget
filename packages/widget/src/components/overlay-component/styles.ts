@@ -17,7 +17,7 @@ export const styles = css`
 
   .loadingSpinner {
     border: 0.25rem solid var(--blue-600);
-    border-top: 4px solid var(--white);
+    border-top: 0.25 solid var(--white);
     border-radius: 50%;
     width: 4rem;
     height: 4rem;

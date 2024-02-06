@@ -105,13 +105,12 @@ class SygmaProtocolWidget extends BaseComponent {
           <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
           ${when(
             this.isLoading,
-            () =>
-              html`<sygma-overlay-component
-                .isLoading=${this.isLoading}
-              ></sygma-overlay-component>`
+            () => html`<sygma-overlay-component></sygma-overlay-component>`
           )}
         </section>
       </sygma-wallet-context-provider>
+      <button @click=${this.openOverlay}>Open</button>
+      <button @click=${this.closeOverlay}>Close</button>
     `;
   }
 }
