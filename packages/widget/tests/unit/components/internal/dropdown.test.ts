@@ -74,26 +74,27 @@ describe('Dropdown component', function () {
   });
 
   it('triggers callback on option selected', async () => {
-    const mockNetworkSelectHandler = vi.fn();
+    const mockOptionSelectHandler = vi.fn();
     const network = { id: 0, chainId: 1, name: 'Test', type: 'evm' };
     const el = await fixture<Dropdown>(html`
       <dropdown-component
         .options=${[network]}
-        .onOptionSelected=${mockNetworkSelectHandler}
+        .onOptionSelected=${mockOptionSelectHandler}
       ></dropdown-component>
     `);
 
     await el.updateComplete;
 
-    // Simulate selecting a network
+    // Simulate selecting an option
     const firstOption = el.shadowRoot!.querySelector(
       '.dropdownOption'
     ) as HTMLDivElement;
+
     assert.ok(firstOption, 'First option should be present in the component');
     firstOption.click();
     await el.updateComplete;
 
-    assert.equal(mockNetworkSelectHandler.mock.calls.length, 1);
-    assert.deepEqual(mockNetworkSelectHandler.mock.lastCall, [network]);
+    assert.equal(mockOptionSelectHandler.mock.calls.length, 1);
+    assert.deepEqual(mockOptionSelectHandler.mock.lastCall, [network]);
   });
 });
