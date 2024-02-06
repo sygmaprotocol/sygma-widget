@@ -19,13 +19,13 @@ class SygmaProtocolWidget extends BaseComponent {
 
   private widgetController = new WidgetController(this, {});
 
-  openOverlay(): void {
+  openOverlay = (): void => {
     this.isLoading = true;
-  }
+  };
 
-  closeOverlay(): void {
+  closeOverlay = (): void => {
     this.isLoading = false;
-  }
+  };
 
   private renderConnect(): HTMLTemplateResult {
     if (this.widgetController.sourceNetwork) {
@@ -41,7 +41,9 @@ class SygmaProtocolWidget extends BaseComponent {
   render(): HTMLTemplateResult {
     return html`
       <sygma-wallet-context-provider>
-        <section class="widgetContainer ${this.isLoading && 'noPointerEvents'}">
+        <section
+          class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
+        >
           <section class="widgetHeader">
             <div class="brandLogoContainer title">[Brand] Transfer</div>
             ${this.renderConnect()}
