@@ -7,12 +7,12 @@ export const styles = css`
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 9999;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 0.75rem;
   }
 
   .loadingSpinner {

@@ -26,7 +26,6 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
 
     padding: 24px;
     width: 21.875rem; /* TODO: remove these hardcoded values */
