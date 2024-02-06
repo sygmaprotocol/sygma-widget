@@ -6,7 +6,7 @@ import { switchNetworkIcon, sygmaLogo } from './assets';
 import { WidgetController } from './controllers/widget';
 import './components/network-selector';
 import './components/amount-selector';
-import './components/loader-component';
+import './components/overlay-component';
 import './components/address-input';
 import { Directions } from './components/network-selector/network-selector';
 import { BaseComponent } from './components/base-component/base-component';
@@ -85,9 +85,9 @@ class SygmaProtocolWidget extends BaseComponent {
           </section>
         </form>
         <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
-        <sygma-loader-component
+        <sygma-overlay-component
           .isLoading=${this.isLoading}
-        ></sygma-loader-component>
+        ></sygma-overlay-component>
       </section>
     `;
   }

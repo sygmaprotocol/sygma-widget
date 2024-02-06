@@ -4,8 +4,8 @@ import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { styles } from './styles';
 
-@customElement('sygma-loader-component')
-export class LoaderComponent extends LitElement {
+@customElement('sygma-overlay-component')
+export class OverlayComponent extends LitElement {
   static styles = styles;
 
   @property({ type: Boolean })
@@ -27,6 +27,6 @@ export class LoaderComponent extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sygma-loader-component': LoaderComponent;
+    'sygma-overlay-component': OverlayComponent;
   }
 }
