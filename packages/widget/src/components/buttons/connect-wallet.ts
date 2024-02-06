@@ -11,7 +11,7 @@ import { WalletController } from '../../controllers';
 import { shortAddress } from '../../utils';
 import { BaseComponent } from '../base-component/base-component';
 import greenCircleIcon from '../../assets/icons/greenCircleIcon';
-import { styles } from './connect-wallet.style';
+import { styles } from './styles';
 
 @customElement('sygma-connect-wallet-btn')
 export class ConnectWalletButton extends BaseComponent {
