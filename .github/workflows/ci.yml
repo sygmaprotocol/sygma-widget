@@ -22,6 +22,6 @@ jobs:
           node-version: 18
           cache: yarn
       - run: yarn install --immutable
-      - run: yarn run lint
       - run: yarn run build
+      - run: yarn run lint
       - run: yarn run test:unit
