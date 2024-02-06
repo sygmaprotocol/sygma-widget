@@ -43,8 +43,8 @@ export class AmountSelector extends BaseComponent {
   @state() validationMessage: string | null = null;
 
   _useMaxBalance = (): void => {
-    this.preselectedAmount = Number.parseFloat(this.accountBalance!);
-    this._onInputAmountChange();
+    this._input.value = this.accountBalance!;
+    this._validateAmount(this._input.value);
   };
 
   _onInputAmountChange = (): void => {
@@ -118,7 +118,7 @@ export class AmountSelector extends BaseComponent {
         <section class="amountSelectorSection">
           <div class="amountWrapper">
             <input
-              type="text"
+              type="number"
               class="amountSelectorInput"
               placeholder="0.000"
               @change=${this._onInputAmountChange}
