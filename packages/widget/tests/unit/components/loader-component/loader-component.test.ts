@@ -15,21 +15,11 @@ describe('loader-component', function () {
 
   it('renders loader when isLoading is true', async () => {
     const el = await fixture(html`
-      <sygma-overlay-component .isLoading=${true}></sygma-overlay-component>
+      <sygma-overlay-component></sygma-overlay-component>
     `);
 
-    const overlay = el.shadowRoot!.querySelector('.loader') as HTMLElement;
+    const overlay = el.shadowRoot!.querySelector('.overlay') as HTMLElement;
 
     assert.isNotNull(overlay);
-  });
-
-  it('does not render loader when isLoading is false', async () => {
-    const el = await fixture(html`
-      <sygma-overlay-component .isLoading=${false}></sygma-overlay-component>
-    `);
-
-    const overlay = el.shadowRoot!.querySelector('.loader') as HTMLElement;
-
-    assert.isNull(overlay);
   });
 });

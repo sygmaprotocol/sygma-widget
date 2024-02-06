@@ -32,7 +32,7 @@ class SygmaProtocolWidget extends BaseComponent {
   render(): HTMLTemplateResult {
     return html`
       <p>${this.widgetController.isLoading ? 'Loading' : ''}</p>
-      <section class="widgetContainer">
+      <section class="widgetContainer ${this.isLoading && 'noPointerEvents'}">
         <form @submit=${() => {}}>
           <section class="connectAccount">
             ${switchNetworkIcon} Connect Wallet

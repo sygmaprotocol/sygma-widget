@@ -39,6 +39,10 @@ export const styles = css`
     font-family: Inter, sans-serif;
   }
 
+  .noPointerEvents {
+    pointer-events: none;
+  }
+
   .networkSelectionWrapper {
     margin: 1rem 0 0.5rem 0;
   }
