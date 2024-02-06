@@ -5,9 +5,15 @@ export const styles = css`
     min-width: 7.5rem;
     position: relative;
     width: 100%;
+    height: 100%;
+  }
+
+  .dropdown {
+    height: 100%;
   }
 
   .dropdownTrigger {
+    height: 100%;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -27,6 +33,8 @@ export const styles = css`
   }
 
   .chevron {
+    display: flex;
+    align-items: center;
     transform: rotate(0deg);
     transition: transform 0.3s ease;
 
@@ -46,7 +54,6 @@ export const styles = css`
       0 0.25rem 0.375rem -0.0625rem rgba(0, 0, 0, 0.1),
       0 0.125rem 0.25rem -0.0625rem rgba(0, 0, 0, 0.06);
     z-index: 1;
-    margin-top: 1rem;
   }
 
   .show {

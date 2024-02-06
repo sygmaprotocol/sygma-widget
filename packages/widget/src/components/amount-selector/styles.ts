@@ -10,6 +10,10 @@ export const styles = css`
     flex-direction: column;
     border: 0.0625rem solid rgb(228, 228, 231);
     justify-content: center;
+
+    &.hasError {
+      border-color: var(--red-600);
+    }
   }
 
   .amountSelectorLabel {
@@ -40,6 +44,11 @@ export const styles = css`
   dropdown-component::part(dropdownWrapper) {
     max-width: 8.1875rem;
     width: 100%;
+    border-radius: 2.5rem;
+    background: var(--zinc-100, #f4f4f5);
+    min-height: 2.375rem;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
   }
 
   .errorWrapper {
@@ -47,13 +56,15 @@ export const styles = css`
   }
 
   .validationMessage {
+    margin-top: 0.5rem;
     color: var(--red-600);
   }
 
   .amountSelectorInput {
     border: none;
+    outline: none;
     color: var(--neutral-600);
-    font-size: 2.125rem;
+    font-size: 2rem;
     font-weight: 500;
     line-height: 2.5rem;
     letter-spacing: -0.0425rem;

@@ -110,7 +110,11 @@ export class AmountSelector extends BaseComponent {
 
   render(): HTMLTemplateResult {
     return html`
-      <div class="amountSelectorContainer">
+      <div class=${when(
+        this.validationMessage,
+        () => 'amountSelectorContainer hasError',
+        () => 'amountSelectorContainer'
+      )}>
         <section class="tokenBalanceSection">
           <label class="amountSelectorLabel">Amount to transfer</label>
           ${this._renderAccountBalance()}
