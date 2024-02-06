@@ -51,6 +51,10 @@ export const capitalize = (s: string): string => {
   return `${firstLetter}${rest}`;
 };
 
+export const shortAddress = (address: string): string => {
+  return `${address.slice(0, 6)}...${address.slice(-5)}`;
+};
+
 export const validateSubstrateAddress = (address: string): boolean => {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));

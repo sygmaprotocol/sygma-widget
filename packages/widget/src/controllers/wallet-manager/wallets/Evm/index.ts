@@ -1,1 +1,0 @@
-export { EvmWallet } from './Evm';
