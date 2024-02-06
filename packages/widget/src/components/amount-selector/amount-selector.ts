@@ -4,6 +4,7 @@ import { html } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { BaseComponent } from '../base-component/base-component';
 import type { DropdownOption } from '../internal/dropdown/dropdown';
 import { networkIconsMap } from '../../assets';
@@ -109,12 +110,13 @@ export class AmountSelector extends BaseComponent {
   }
 
   render(): HTMLTemplateResult {
+    const amountSelectorContainerClasses = {
+      amountSelectorContainer: true,
+      hasError: !!this.validationMessage
+    };
+
     return html`
-      <div class=${when(
-        this.validationMessage,
-        () => 'amountSelectorContainer hasError',
-        () => 'amountSelectorContainer'
-      )}>
+      <div class=${classMap(amountSelectorContainerClasses)}>
         <section class="tokenBalanceSection">
           <label class="amountSelectorLabel">Amount to transfer</label>
           ${this._renderAccountBalance()}
