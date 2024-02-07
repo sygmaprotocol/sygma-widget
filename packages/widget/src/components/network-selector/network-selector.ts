@@ -33,7 +33,7 @@ export class NetworkSelector extends BaseComponent {
   networks: Domain[] = [];
 
   _onOptionSelected = ({ value }: DropdownOption<Domain>): void => {
-    this.onNetworkSelected?.(value);
+    this.onNetworkSelected(value);
   };
 
   _renderNetworkIcon(name: string): HTMLTemplateResult {
