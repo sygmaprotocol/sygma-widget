@@ -7,11 +7,11 @@ import { capitalize } from '../../../utils';
 import { BaseComponent } from '../../base-component/base-component';
 import { styles } from './styles';
 
-export interface DropdownOption {
+export interface DropdownOption<T extends string | object = string> {
   id?: string;
   name: string;
   icon?: HTMLTemplateResult | string;
-  value?: string | object;
+  value: T;
 }
 
 @customElement('dropdown-component')
