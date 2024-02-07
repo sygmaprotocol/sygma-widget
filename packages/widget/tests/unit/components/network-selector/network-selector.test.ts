@@ -1,9 +1,10 @@
 import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
+import { Network } from '@buildwithsygma/sygma-sdk-core';
+import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { afterEach, assert, describe, expect, it, vi } from 'vitest';
 import { html } from 'lit';
 import { NetworkSelector } from '../../../../src/components';
 import type { Dropdown } from '../../../../src/components/common/dropdown/dropdown';
-import { Domain, Network } from '@buildwithsygma/sygma-sdk-core';
 
 describe('network-selector component', function () {
   afterEach(() => {
