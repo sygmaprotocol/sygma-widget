@@ -19,14 +19,6 @@ class SygmaProtocolWidget extends BaseComponent {
 
   private widgetController = new WidgetController(this, {});
 
-  openOverlay = (): void => {
-    this.isLoading = true;
-  };
-
-  closeOverlay = (): void => {
-    this.isLoading = false;
-  };
-
   private renderConnect(): HTMLTemplateResult {
     if (this.widgetController.sourceNetwork) {
       return html`
