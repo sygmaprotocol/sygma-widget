@@ -69,9 +69,9 @@ export class Dropdown extends BaseComponent {
     this.selectedOption = option;
     this._toggleDropdown();
     this.dispatchEvent(
-      new CustomEvent('option-selected', { detail: { option } })
+      new CustomEvent('option-selected', { detail: { value: option.value } })
     );
-    this.onOptionSelected?.(option);
+    this.onOptionSelected(option);
   }
 
   _renderTriggerContent(): HTMLTemplateResult | undefined {

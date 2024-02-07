@@ -54,10 +54,7 @@ export class AmountSelector extends BaseComponent {
 
     this.amount = value;
     if (this.selectedResource) {
-      this.onResourceSelected?.(
-        this.selectedResource,
-        Number.parseFloat(value)
-      );
+      this.onResourceSelected(this.selectedResource, Number.parseFloat(value));
     }
   };
 
@@ -65,7 +62,7 @@ export class AmountSelector extends BaseComponent {
     this.selectedResource = value as Resource;
     const amount = Number.parseFloat(this.amount!);
 
-    if (value) this.onResourceSelected?.(value as Resource, amount);
+    if (value) this.onResourceSelected(value as Resource, amount);
   };
 
   _validateAmount(amount: string): boolean {
