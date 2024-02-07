@@ -21,7 +21,7 @@ export const styles = css`
     border-radius: 1.5rem;
     border: 0.063rem solid var(--zinc-200);
     font-size: 0.875rem;
-    text-align: center;
+    text-align: left;
     resize: none;
     box-sizing: border-box;
     overflow: hidden;
