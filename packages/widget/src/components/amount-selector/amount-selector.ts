@@ -1,12 +1,12 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { BaseComponent } from '../base-component/base-component';
-import type { DropdownOption } from '../internal/dropdown/dropdown';
+import type { DropdownOption } from '../common/dropdown/dropdown';
 import { networkIconsMap } from '../../assets';
 import { styles } from './styles';
 
@@ -33,33 +33,35 @@ export class AmountSelector extends BaseComponent {
   preselectedAmount?: number;
 
   @property({ attribute: false })
-  onResourceSelected?: (resource: Resource) => void;
-
-  @property({ attribute: false })
-  onAmountChange?: (amount: number) => void;
-
-  @query('.amountSelectorInput', true)
-  _input!: HTMLInputElement;
+  onResourceSelected: (resource: Resource, amount: number) => void = () => {};
 
   @state() validationMessage: string | null = null;
+  @state() selectedResource: Resource | null = null;
+  @state() amount: string | null = null;
 
   _useMaxBalance = (): void => {
-    this._input.value = this.accountBalance!;
-    this._validateAmount(this._input.value);
+    this.amount = this.accountBalance!;
+    this._validateAmount(this.amount);
   };
 
-  _onInputAmountChange = (): void => {
-    const amount = this._input.value;
-    if (this._validateAmount(amount)) {
-      this.onAmountChange?.(Number.parseFloat(amount));
+  _onInputAmountChangeHandler = (event: Event): void => {
+    const { value } = event.target as HTMLInputElement;
+    if (!this._validateAmount(value)) return;
+
+    this.amount = value;
+    if (this.selectedResource) {
+      this.onResourceSelected?.(
+        this.selectedResource,
+        Number.parseFloat(value)
+      );
     }
   };
 
-  _onResourceSelected = (option: DropdownOption): void => {
-    const resource = this.resources.find(
-      (resource) => String(resource.resourceId) == option.id
-    );
-    if (resource) this.onResourceSelected?.(resource);
+  _onResourceSelectedHandler = ({ value }: DropdownOption): void => {
+    this.selectedResource = value as Resource;
+    const amount = Number.parseFloat(this.amount!);
+
+    if (value) this.onResourceSelected?.(value as Resource, amount);
   };
 
   _validateAmount(amount: string): boolean {
@@ -104,7 +106,8 @@ export class AmountSelector extends BaseComponent {
       this.resources.map((entry) => ({
         id: entry.resourceId,
         name: entry.symbol!,
-        icon: networkIconsMap.default
+        icon: networkIconsMap.default,
+        value: entry
       }))
     );
   }
@@ -127,14 +130,14 @@ export class AmountSelector extends BaseComponent {
               type="number"
               class="amountSelectorInput"
               placeholder="0.000"
-              @change=${this._onInputAmountChange}
+              @change=${this._onInputAmountChangeHandler}
               value=${ifDefined(this.preselectedAmount)}
             />
             <section class="selectorSection">
               <dropdown-component 
                 .selectedOption=${this.preselectedToken}
                 ?disabled=${this.disabled} 
-                .onOptionSelected=${this._onResourceSelected}
+                .onOptionSelected=${this._onResourceSelectedHandler}
                 .options=${this._normalizeOptions()}
                 >
             </section>

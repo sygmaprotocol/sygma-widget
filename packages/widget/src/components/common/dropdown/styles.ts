@@ -22,10 +22,6 @@ export const styles = css`
     padding: 0.25rem 0;
     box-sizing: border-box;
 
-    .optionName {
-      max-width: 4rem;
-    }
-
     &.disabled {
       cursor: not-allowed;
       opacity: 0.5;
@@ -46,10 +42,10 @@ export const styles = css`
   .dropdownContent {
     display: none;
     position: absolute;
-    background-color: white;
+    background-color: var(--white);
     width: 100%;
     border-radius: 0.75rem;
-    border: 0.0625rem solid #f3f4f6;
+    border: 0.0625rem solid var(--gray-100);
     box-shadow:
       0 0.25rem 0.375rem -0.0625rem rgba(0, 0, 0, 0.1),
       0 0.125rem 0.25rem -0.0625rem rgba(0, 0, 0, 0.06);
@@ -73,7 +69,7 @@ export const styles = css`
     }
 
     &:hover {
-      background-color: #e9e4dd;
+      background-color: var(--neutral-100);
     }
   }
 
@@ -96,7 +92,7 @@ export const styles = css`
   }
 
   .dropdownLabel {
-    color: #a1a1aa;
+    color: var(--zinc-400);
     font-size: 0.875rem;
     font-weight: 500;
     line-height: 1.25rem;

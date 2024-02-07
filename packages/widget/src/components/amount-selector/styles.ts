@@ -23,7 +23,7 @@ export const styles = css`
     color: var(--neutral-600);
     font-size: 0.875rem;
     font-weight: 500;
-    line-height: 1.25rem;
+    line-height: 1.25em;
   }
 
   .amountSelectorSection {
@@ -41,16 +41,6 @@ export const styles = css`
     justify-content: space-between;
   }
 
-  dropdown-component::part(dropdownWrapper) {
-    max-width: 8.1875rem;
-    width: 100%;
-    border-radius: 2.5rem;
-    background: var(--zinc-100, #f4f4f5);
-    min-height: 2.375rem;
-    padding: 0 0.5rem;
-    box-sizing: border-box;
-  }
-
   .errorWrapper {
     width: 100%;
   }
@@ -66,7 +56,7 @@ export const styles = css`
     color: var(--neutral-600);
     font-size: 2rem;
     font-weight: 500;
-    line-height: 2.5rem;
+    line-height: 1.25em;
     letter-spacing: -0.0425rem;
     width: 8.5625rem;
   }
@@ -89,5 +79,19 @@ export const styles = css`
     border: none;
     background: none;
     font-weight: 500;
+  }
+
+  dropdown-component::part(dropdownWrapper) {
+    max-width: 8.1875rem;
+    width: 100%;
+    border-radius: 2.5rem;
+    background: var(--zinc-100);
+    min-height: 2.375rem;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+  }
+
+  dropdown-component::part(optionName) {
+    max-width: 4rem;
   }
 `;

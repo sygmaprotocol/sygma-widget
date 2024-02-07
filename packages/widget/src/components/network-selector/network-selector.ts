@@ -4,10 +4,10 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { networkIconsMap } from '../../assets';
-import type { DropdownOption } from '../internal/dropdown/dropdown';
+import type { DropdownOption } from '../common/dropdown/dropdown';
 import { BaseComponent } from '../base-component/base-component';
 import { styles } from './styles';
-import '../internal/dropdown/dropdown';
+import '../common/dropdown/dropdown';
 
 export const Directions = {
   FROM: 'From',
@@ -33,9 +33,7 @@ export class NetworkSelector extends BaseComponent {
   networks: Domain[] = [];
 
   _onOptionSelected = (option: DropdownOption): void => {
-    this.onNetworkSelected?.(
-      this.networks.find((network: Domain) => network.name === option.name)
-    );
+    this.onNetworkSelected?.(option.value as Domain);
   };
 
   _renderNetworkIcon(name: string): HTMLTemplateResult {
@@ -46,6 +44,7 @@ export class NetworkSelector extends BaseComponent {
     return when(this.networks, () =>
       this.networks.map((network) => ({
         name: network.name,
+        value: network,
         icon: this._renderNetworkIcon(network.name)
       }))
     );

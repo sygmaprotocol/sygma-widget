@@ -123,9 +123,11 @@ export class WidgetController implements ReactiveController {
     this.host.requestUpdate();
   };
 
-  onResourceSelected = (resource: Resource): void => {
+  onResourceSelected = (resource: Resource, amount: number): void => {
     console.log('resource', resource);
+    console.log('amount', amount);
     this.selectedResource = resource;
+    this.resourceAmount = amount;
   };
 
   onResourceAmountChange = (amount: number): void => {

@@ -11,6 +11,7 @@ export interface DropdownOption {
   id?: string;
   name: string;
   icon?: HTMLTemplateResult | string;
+  value?: string | object;
 }
 
 @customElement('dropdown-component')
@@ -18,7 +19,7 @@ export class Dropdown extends BaseComponent {
   static styles = styles;
 
   @state()
-  _isDropdownOpen = false;
+  isDropdownOpen = false;
 
   @property({ type: Boolean })
   disabled = false;
@@ -33,42 +34,41 @@ export class Dropdown extends BaseComponent {
   options: DropdownOption[] = [];
 
   @property({ type: Object })
-  _selectedOption: DropdownOption | null = null;
+  selectedOption: DropdownOption | null = null;
 
   @property({ attribute: false })
   onOptionSelected: (option?: DropdownOption) => void = () => {};
 
   _toggleDropdown = (): void => {
     if (!this.disabled) {
-      this._isDropdownOpen = !this._isDropdownOpen;
+      this.isDropdownOpen = !this.isDropdownOpen;
     }
   };
 
   _selectOption(option: DropdownOption, event: Event): void {
-    if (!this.disabled) {
-      event.stopPropagation();
-      this._selectedOption = option;
-      this._toggleDropdown();
-      this.dispatchEvent(
-        new CustomEvent('option-selected', { detail: { option } })
-      );
-      this.onOptionSelected?.(option);
-    }
+    if (this.disabled) return;
+
+    event.stopPropagation();
+    this.selectedOption = option;
+    this._toggleDropdown();
+    this.dispatchEvent(
+      new CustomEvent('option-selected', { detail: { option } })
+    );
+    this.onOptionSelected?.(option);
   }
 
-  _renderTriggerContent(): HTMLTemplateResult | null {
+  _renderTriggerContent(): HTMLTemplateResult | undefined {
     return when(
-      this._selectedOption,
+      this.selectedOption,
       () =>
-        html`${this._selectedOption!.icon || networkIconsMap.default}
-          <span class="optionName">
-            ${capitalize(this._selectedOption!.name)}
+        html`${this.selectedOption!.icon || networkIconsMap.default}
+          <span part="optionName" class="optionName">
+            ${capitalize(this.selectedOption!.name)}
           </span>`,
       () =>
         when(
           this.placeholder,
-          () => html`<span class="placeholder">${this.placeholder}</span>`,
-          () => null
+          () => html`<span class="placeholder">${this.placeholder}</span>`
         )
     );
   }
@@ -103,7 +103,7 @@ export class Dropdown extends BaseComponent {
           @click="${this._toggleDropdown}"
           role="listbox"
           tabindex="0"
-          aria-expanded="${this._isDropdownOpen ? 'true' : 'false'}"
+          aria-expanded="${this.isDropdownOpen ? 'true' : 'false'}"
         >
           <div
             class="${this.disabled
@@ -111,12 +111,12 @@ export class Dropdown extends BaseComponent {
               : 'dropdownTrigger'}"
           >
             <div class="selectedOption">${this._renderTriggerContent()}</div>
-            <div class="chevron ${this._isDropdownOpen ? 'open' : ''}">
+            <div class="chevron ${this.isDropdownOpen ? 'open' : ''}">
               ${chevronIcon}
             </div>
           </div>
           <div
-            class="dropdownContent ${this._isDropdownOpen ? 'show' : ''}"
+            class="dropdownContent ${this.isDropdownOpen ? 'show' : ''}"
             role="list"
           >
             ${this._renderOptions()}

@@ -70,8 +70,6 @@ class SygmaProtocolWidget extends BaseComponent {
                   .resources=${this.widgetController.supportedResources}
                   .onResourceSelected=${this.widgetController
                     .onResourceSelected}
-                  .onAmountChange=${this.widgetController
-                    .onResourceAmountChange}
                   accountBalance="0"
                 >
                 </sygma-resource-selector>

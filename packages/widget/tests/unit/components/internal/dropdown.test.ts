@@ -2,7 +2,7 @@ import { afterEach, assert, describe, it, vi } from 'vitest';
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { html } from 'lit';
 import { getDiffableHTML } from '@open-wc/semantic-dom-diff';
-import { Dropdown } from '../../../../src/components/internal/dropdown/dropdown';
+import { Dropdown } from '../../../../src/components/common/dropdown/dropdown';
 
 describe('Dropdown component', function () {
   afterEach(() => {
@@ -33,17 +33,17 @@ describe('Dropdown component', function () {
     );
 
     // Initial state should be closed
-    assert.isFalse(el._isDropdownOpen);
+    assert.isFalse(el.isDropdownOpen);
 
     // Simulate click to open dropdown
     dropdownTrigger?.click();
     await el.updateComplete;
-    assert.isTrue(el._isDropdownOpen);
+    assert.isTrue(el.isDropdownOpen);
 
     // Simulate another click to close dropdown
     dropdownTrigger?.click();
     await el.updateComplete;
-    assert.isFalse(el._isDropdownOpen);
+    assert.isFalse(el.isDropdownOpen);
   });
 
   it('renders text when no option selected', async () => {

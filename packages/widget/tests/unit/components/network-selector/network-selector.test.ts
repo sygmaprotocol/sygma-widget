@@ -2,7 +2,7 @@ import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
 import { afterEach, assert, describe, it, expect, vi } from 'vitest';
 import { html } from 'lit';
 import { NetworkSelector } from '../../../../src/components';
-import type { Dropdown } from '../../../../src/components/internal/dropdown/dropdown';
+import type { Dropdown } from '../../../../src/components/common/dropdown/dropdown';
 
 describe('network-selector component', function () {
   afterEach(() => {
