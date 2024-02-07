@@ -40,8 +40,12 @@ export class AmountSelector extends BaseComponent {
   @state() amount: string | null = null;
 
   _useMaxBalance = (): void => {
+    if (Number.parseFloat(this.accountBalance!) === 0) {
+      this.validationMessage = 'Insufficient balance';
+      return;
+    }
+
     this.amount = this.accountBalance!;
-    this._validateAmount(this.amount);
   };
 
   _onInputAmountChangeHandler = (event: Event): void => {
@@ -131,7 +135,7 @@ export class AmountSelector extends BaseComponent {
               class="amountSelectorInput"
               placeholder="0.000"
               @change=${this._onInputAmountChangeHandler}
-              value=${ifDefined(this.preselectedAmount)}
+              value=${this.amount || ifDefined(this.preselectedAmount)}
             />
             <section class="selectorSection">
               <dropdown-component 
