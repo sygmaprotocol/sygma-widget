@@ -12,7 +12,8 @@ import { styles } from './styles';
 export class AddressInput extends BaseComponent {
   static styles = styles;
   @property({
-    type: String
+    type: String,
+    attribute: true
   })
   address: string = '';
 
@@ -33,8 +34,8 @@ export class AddressInput extends BaseComponent {
   }
 
   private handleAddressChange = (value: string): void => {
-    const trimedValue = value.trim();
-
+    const trimedValue = value.replace(/\s+/g, '').trim();
+    this.address = trimedValue;
     if (this.errorMessage) {
       this.errorMessage = null;
     }
@@ -63,11 +64,15 @@ export class AddressInput extends BaseComponent {
         <textarea
           class=${this.errorMessage ? 'inputAddress error' : 'inputAddress'}
           name="address"
+          @keypress=${(e: KeyboardEvent) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              e.preventDefault();
+            }
+          }}
           @change=${(evt: Event) =>
             this.handleAddressChange((evt.target as HTMLInputElement).value)}
         >
-${ifDefined(this.address)}
-        </textarea
+${ifDefined(this.address)}</textarea
         >
       </div>
     </section>`;
