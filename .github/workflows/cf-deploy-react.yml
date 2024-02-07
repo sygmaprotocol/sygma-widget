@@ -29,6 +29,7 @@ jobs:
           cache: yarn
           node-version: 18
       - run: yarn install --immutable
+      - run: yarn build
       - run: yarn run lint:react-widget
       - run: yarn run build:react-widget
 
