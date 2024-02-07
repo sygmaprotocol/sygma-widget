@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@buildwithsygma/sygmaprotocol-react-widget": "workspace:*",
+    "@buildwithsygma/sygmaprotocol-react-widget": "workspace:^",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

@@ -340,7 +340,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildwithsygma/sygmaprotocol-react-widget@workspace:*, @buildwithsygma/sygmaprotocol-react-widget@workspace:packages/react":
+"@buildwithsygma/sygmaprotocol-react-widget@workspace:^, @buildwithsygma/sygmaprotocol-react-widget@workspace:packages/react":
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-react-widget@workspace:packages/react"
   dependencies:
@@ -10615,7 +10615,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-widget-app@workspace:examples/react-widget-app"
   dependencies:
-    "@buildwithsygma/sygmaprotocol-react-widget": "workspace:*"
+    "@buildwithsygma/sygmaprotocol-react-widget": "workspace:^"
     "@types/react": "npm:^18.2.43"
     "@types/react-dom": "npm:^18.2.17"
     "@typescript-eslint/eslint-plugin": "npm:^6.14.0"
