@@ -130,11 +130,6 @@ export class WidgetController implements ReactiveController {
     this.resourceAmount = amount;
   };
 
-  onResourceAmountChange = (amount: number): void => {
-    console.log('resource amount', amount);
-    this.resourceAmount = amount;
-  };
-
   onDestinationAddressChange = (address: string): void => {
     console.log('destination address', address);
     this.destinatonAddress = address;
