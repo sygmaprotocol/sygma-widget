@@ -25,6 +25,7 @@ jobs:
           node-version: 18
       - run: corepack enable
       - run: yarn set version stable
+      - run: yarn cache clean
       - run: yarn install --immutable
       - run: yarn run lint:react-widget
       - run: yarn run build:react-widget
