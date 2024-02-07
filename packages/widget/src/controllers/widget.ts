@@ -9,7 +9,7 @@ import { SubstrateAssetTransfer } from '@buildwithsygma/sygma-sdk-core/substrate
 import type { ReactiveController, ReactiveElement } from 'lit';
 
 export class WidgetController implements ReactiveController {
-  public isLoading: boolean = false;
+  public isLoading: boolean;
   public isReadyForTransfer: boolean = false;
   public sourceNetwork?: Domain;
   public destinationNetwork?: Domain;
@@ -32,11 +32,13 @@ export class WidgetController implements ReactiveController {
     host: ReactiveElement,
     options: {
       env?: Environment;
+      isLoading?: boolean;
     }
   ) {
     (this.host = host).addController(this);
     this.env = options.env ?? Environment.MAINNET;
     this.config = new Config();
+    this.isLoading = options.isLoading ?? false;
   }
 
   hostConnected(): void {

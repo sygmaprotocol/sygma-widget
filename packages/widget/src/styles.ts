@@ -22,10 +22,10 @@ export const styles = css`
   }
 
   .widgetContainer {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
 
     padding: 24px;
     width: 21.875rem; /* TODO: remove these hardcoded values */
@@ -38,6 +38,14 @@ export const styles = css`
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
     font-family: Inter, sans-serif;
+  }
+
+  .noPointerEvents {
+    pointer-events: none;
+  }
+
+  .networkSelectionWrapper {
+    margin: 1rem 0 0.5rem 0;
   }
 
   .widgetHeader {

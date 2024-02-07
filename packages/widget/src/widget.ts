@@ -1,6 +1,7 @@
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 import { sygmaLogo } from './assets';
 import './components';
 import { Directions } from './components/network-selector/network-selector';
@@ -12,6 +13,9 @@ import { BaseComponent } from './components/base-component/base-component';
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget extends BaseComponent {
   static styles = styles;
+
+  @state()
+  private isLoading = false;
 
   private widgetController = new WidgetController(this, {});
 
@@ -29,7 +33,9 @@ class SygmaProtocolWidget extends BaseComponent {
   render(): HTMLTemplateResult {
     return html`
       <sygma-wallet-context-provider>
-        <section class="widgetContainer">
+        <section
+          class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
+        >
           <section class="widgetHeader">
             <div class="brandLogoContainer title">[Brand] Transfer</div>
             ${this.renderConnect()}
@@ -89,6 +95,10 @@ class SygmaProtocolWidget extends BaseComponent {
             </form>
           </section>
           <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
+          ${when(
+            this.isLoading,
+            () => html`<sygma-overlay-component></sygma-overlay-component>`
+          )}
         </section>
       </sygma-wallet-context-provider>
     `;
