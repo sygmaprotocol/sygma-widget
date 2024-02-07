@@ -10,6 +10,7 @@ on:
       - main
     paths:
       - 'packages/react/**'
+      - 'examples/react-widget-app/**'
 
 jobs:
   deploy:
@@ -26,7 +27,7 @@ jobs:
       - run: corepack enable
       - run: yarn set version stable
       - run: yarn cache clean
-      - run: yarn install --immutable
+      - run: yarn install
       - run: yarn run lint:react-widget
       - run: yarn run build:react-widget
 
