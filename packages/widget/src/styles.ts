@@ -131,6 +131,7 @@ export const styles = css`
   }
 
   .poweredBy {
+    margin-top: 0.75rem;
     display: flex;
     align-items: center;
     gap: 0.375rem;

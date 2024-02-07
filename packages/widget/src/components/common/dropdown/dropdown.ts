@@ -39,6 +39,23 @@ export class Dropdown extends BaseComponent {
   @property({ attribute: false })
   onOptionSelected: (option?: DropdownOption) => void = () => {};
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    addEventListener('click', this._handleOutsideClick);
+  }
+
+  disconnectedCallback(): void {
+    super.connectedCallback();
+    removeEventListener('click', this._handleOutsideClick);
+  }
+
+  _handleOutsideClick = (event: MouseEvent): void => {
+    if (this.isDropdownOpen && !event.composedPath().includes(this)) {
+      document.removeEventListener('click', this._handleOutsideClick);
+      this.isDropdownOpen = false;
+    }
+  };
+
   _toggleDropdown = (): void => {
     if (!this.disabled) {
       this.isDropdownOpen = !this.isDropdownOpen;
