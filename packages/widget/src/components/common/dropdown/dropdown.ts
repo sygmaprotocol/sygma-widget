@@ -7,7 +7,7 @@ import { capitalize } from '../../../utils';
 import { BaseComponent } from '../../base-component/base-component';
 import { styles } from './styles';
 
-export interface DropdownOption<T extends string | object = string> {
+export interface DropdownOption<T = Record<string, unknown>> {
   id?: string;
   name: string;
   icon?: HTMLTemplateResult | string;
