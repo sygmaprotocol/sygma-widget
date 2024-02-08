@@ -32,15 +32,15 @@ export class NetworkSelector extends BaseComponent {
   @property({ type: Array })
   networks: Domain[] = [];
 
-  _onOptionSelected = (option: DropdownOption): void => {
-    this.onNetworkSelected(option.value as Domain);
+  _onOptionSelected = ({ value }: DropdownOption<Domain>): void => {
+    this.onNetworkSelected(value);
   };
 
   _renderNetworkIcon(name: string): HTMLTemplateResult {
     return networkIconsMap[name] || networkIconsMap.default;
   }
 
-  _normalizeOptions(): DropdownOption[] {
+  _normalizeOptions(): DropdownOption<Domain>[] {
     return when(this.networks, () =>
       this.networks.map((network) => ({
         name: network.name,

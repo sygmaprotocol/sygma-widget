@@ -58,11 +58,11 @@ export class AmountSelector extends BaseComponent {
     }
   };
 
-  _onResourceSelectedHandler = ({ value }: DropdownOption): void => {
-    this.selectedResource = value as Resource;
+  _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
+    this.selectedResource = value;
     const amount = Number.parseFloat(this.amount!);
 
-    if (value) this.onResourceSelected(value as Resource, amount);
+    if (value) this.onResourceSelected(value, amount);
   };
 
   _validateAmount(amount: string): boolean {
@@ -102,7 +102,7 @@ export class AmountSelector extends BaseComponent {
     );
   }
 
-  _normalizeOptions(): DropdownOption[] {
+  _normalizeOptions(): DropdownOption<Resource>[] {
     return when(this.resources, () =>
       this.resources.map((entry) => ({
         id: entry.resourceId,
