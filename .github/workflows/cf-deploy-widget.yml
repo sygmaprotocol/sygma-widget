@@ -28,7 +28,7 @@ jobs:
           cache: 'yarn'
           node-version: 18
       - run: yarn install --immutable
-      - run: yarn run build:widget:preview
+      - run: yarn run build:widget
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@1
