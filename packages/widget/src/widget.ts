@@ -1,18 +1,60 @@
-import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import type { HTMLTemplateResult } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import type {
+  EvmResource,
+  Network,
+  SubstrateResource
+} from '@buildwithsygma/sygma-sdk-core';
+import type { ApiPromise } from '@polkadot/api';
+import type { Signer } from '@polkadot/api/types';
 import { when } from 'lit/directives/when.js';
-import { sygmaLogo } from './assets';
-import './components';
-import { Directions } from './components/network-selector/network-selector';
-import './context/wallet';
-import { WidgetController } from './controllers/widget';
 import { styles } from './styles';
+import { sygmaLogo } from './assets';
+import { WidgetController } from './controllers/widget';
+import './components/network-selector';
+import './components/amount-selector';
+import './components/address-input';
+import { Directions } from './components/network-selector/network-selector';
+import type {
+  Eip1193Provider,
+  ISygmaProtocolWidget,
+  Theme
+} from './interfaces';
+import './components';
+import './context/wallet';
 import { BaseComponent } from './components/base-component/base-component';
 
 @customElement('sygmaprotocol-widget')
-class SygmaProtocolWidget extends BaseComponent {
+class SygmaProtocolWidget
+  extends BaseComponent
+  implements ISygmaProtocolWidget
+{
   static styles = styles;
+
+  @property({ type: Array }) whitelistedSourceNetworks?: Network[];
+
+  @property({ type: Array }) whitelistedDestinationNetworks?: Network[];
+
+  @property({ type: Object }) evmProvider?: Eip1193Provider;
+
+  @property() substrateProvider?: ApiPromise | string;
+
+  @property({ type: Object }) substrateSigner?: Signer;
+
+  @property({ type: Boolean }) show?: boolean;
+
+  @property({ type: Array }) whitelistedSourceResources?: Array<
+    EvmResource | SubstrateResource
+  >;
+
+  @property({ type: Boolean }) expandable?: boolean;
+
+  @property({ type: Boolean }) darkTheme?: boolean;
+
+  @property({ type: Object }) customLogo?: SVGElement;
+
+  @property({ type: Object }) theme?: Theme;
 
   @state()
   private isLoading = false;
@@ -109,6 +151,6 @@ export { SygmaProtocolWidget };
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sygmaprotocol-widget': SygmaProtocolWidget;
+    'sygmaprotocol-widget': ISygmaProtocolWidget;
   }
 }

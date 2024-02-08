@@ -33,6 +33,7 @@
     "test:unit": "yarn workspaces foreach --all -pt run test:unit",
     "build:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget build:preview",
     "build:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget build",
+    "build:react-widget-app": "yarn workspace @buildwithsygma/react-widget-app build",
     "lint:widget": "yarn workspace @buildwithsygma/sygmaprotocol-widget lint",
     "lint:react-widget": "yarn workspace @buildwithsygma/sygmaprotocol-react-widget lint"
   },
