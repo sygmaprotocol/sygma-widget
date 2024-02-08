@@ -9,6 +9,7 @@ export const SygmaProtocolReactWidget = createComponent<SygmaProtocolWidget>({
 });
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
       'sygmaprotocol-widget': SygmaProtocolWidget;
