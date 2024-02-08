@@ -31,17 +31,19 @@ describe('Amount selector component - sygma-resource-selector', () => {
   it('calls onResourceSelected callback correctly', async () => {
     const mockOptionSelectHandler = vi.fn();
     const amount = '50';
-    const resources: DropdownOption<Resource>[] = [
+    const resources: Resource[] = [
       {
-        name: 'Resource1',
-        value: {
-          resourceId: 'resourceId1',
-          address: 'address1',
-          symbol: 'PHA',
-          type: ResourceType.FUNGIBLE
-        }
+        resourceId: 'resourceId1',
+        address: 'address1',
+        symbol: 'PHA',
+        type: ResourceType.FUNGIBLE
       }
     ];
+
+    const dropdownOption: DropdownOption<Resource> = {
+      name: 'Resource1',
+      value: { ...resources[0] }
+    };
 
     const el = await fixture<AmountSelector>(
       html`<sygma-resource-selector
@@ -61,7 +63,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
 
     // Set resource
     await el.updateComplete;
-    el._onResourceSelectedHandler(resources[0]);
+    el._onResourceSelectedHandler(dropdownOption);
 
     expect(mockOptionSelectHandler).toHaveBeenCalledOnce();
     expect(mockOptionSelectHandler).toHaveBeenCalledWith(
