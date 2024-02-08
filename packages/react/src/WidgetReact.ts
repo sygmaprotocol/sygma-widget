@@ -7,3 +7,11 @@ export const SygmaProtocolReactWidget = createComponent<SygmaProtocolWidget>({
   elementClass: SygmaProtocolWidget,
   react: React
 });
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'sygmaprotocol-widget': SygmaProtocolWidget;
+    }
+  }
+}

@@ -1,8 +1,6 @@
 {
     "extends": "../../.eslintrc.json",
     "parserOptions": {
-        "project": "./tsconfig.json",
-        
-    },
-    "ignorePatterns": ["./src/**/*.d.ts"],
+        "project": "./tsconfig.json"
+    }
 }
