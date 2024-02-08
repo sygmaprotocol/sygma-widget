@@ -9,6 +9,7 @@ export const styles = css`
   }
 
   .dropdown {
+    outline: none;
     height: 100%;
   }
 
