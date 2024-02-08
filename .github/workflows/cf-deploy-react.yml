@@ -10,7 +10,6 @@ on:
       - main
     paths:
       - 'packages/react/**'
-      - 'examples/react-widget-app/**'
 
 jobs:
   deploy:
@@ -29,10 +28,7 @@ jobs:
           cache: yarn
           node-version: 18
       - run: yarn install --immutable
-      - run: yarn build:widget
-      - run: yarn run lint:react-widget
-      - run: yarn run build:react-widget
-      - run: yarn build:react-widget-app
+      - run: yarn build
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@1
