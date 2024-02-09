@@ -107,11 +107,11 @@ class SygmaProtocolWidget
               </section>
               <section>
                 <sygma-resource-selector
+                  .disabled=${!this.widgetController.sourceNetwork ||
+                  !this.widgetController.destinationNetwork}
                   .resources=${this.widgetController.supportedResources}
                   .onResourceSelected=${this.widgetController
                     .onResourceSelected}
-                  .onAmountChange=${this.widgetController
-                    .onResourceAmountChange}
                   accountBalance="0"
                 >
                 </sygma-resource-selector>
