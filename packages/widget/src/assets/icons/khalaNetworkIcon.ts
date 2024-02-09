@@ -1,58 +1,29 @@
 import { html } from 'lit';
 
 const khalaNetworkIcon = html`<svg
+  version="1.0"
+  xmlns="http://www.w3.org/2000/svg"
   width="25"
   height="25"
-  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 204.000000 204.000000"
+  preserveAspectRatio="xMidYMid meet"
 >
-  <rect width="100%" height="100%" fill="black" />
-  <g id="Layer_1">
-    <title>Layer 1</title>
-    <g transform="matrix(5.21101 0 0 5.21101 -10580.6 -11719.7)" id="svg_100">
-      <g id="svg_6">
-        <rect
-          id="svg_1"
-          fill="#03FFFF"
-          height="49.504"
-          width="12.925"
-          y="2273.4014"
-          x="2055.64633"
-        />
-        <rect
-          id="svg_2"
-          fill="#03FFFF"
-          height="13.024"
-          width="12.939"
-          y="2286.9984"
-          x="2068.47333"
-        />
-        <rect
-          id="svg_3"
-          fill="#03FFFF"
-          height="13.024"
-          width="12.939"
-          y="2300.0514"
-          x="2081.24033"
-        />
-        <rect
-          id="svg_4"
-          fill="#03FFFF"
-          height="13.024"
-          width="12.939"
-          y="2309.6614"
-          x="2090.53133"
-        />
-        <rect
-          id="svg_5"
-          fill="#03FFFF"
-          height="13.024"
-          width="21.863"
-          y="2273.9354"
-          x="2081.09433"
-        />
-      </g>
-    </g>
+  <g
+    transform="translate(0.000000,204.000000) scale(0.100000,-0.100000)"
+    fill="#000000"
+    stroke="none"
+  >
+    <path
+      d="M858 2030 c-139 -25 -270 -79 -399 -165 -376 -250 -541 -734 -396
+-1160 110 -323 357 -558 692 -661 84 -26 102 -28 270 -28 154 0 191 3 259 22
+172 48 383 174 491 294 108 120 199 287 241 443 27 101 27 399 0 499 -80 296
+-269 527 -541 661 -157 78 -237 97 -420 101 -82 1 -171 -1 -197 -6z m-88 -555
+l0 -176 148 3 147 3 3 168 2 167 275 0 275 0 0 -170 0 -170 -260 0 -260 0 0
+-150 0 -149 148 -3 147 -3 3 -127 3 -128 109 0 110 0 0 -170 0 -170 -165 0
+-164 0 -3 128 -3 127 -107 3 -107 3 -3 152 -3 152 -145 0 -145 0 -3 -282 -2
+-283 -165 0 -165 0 0 625 0 625 165 0 165 0 0 -175z"
+    />
   </g>
-</svg>`;
+</svg> `;
 
 export default khalaNetworkIcon;
