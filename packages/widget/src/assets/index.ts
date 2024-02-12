@@ -1,15 +1,17 @@
 import type { HTMLTemplateResult } from 'lit';
+
 import baseNetworkIcon from './icons/baseNetworkIcon';
+import chevronIcon from './icons/chevron';
 import cronosNetworkIcon from './icons/cronosNetworkIcon';
 import ethereumIcon from './icons/ethereumNetworkIcon';
+import gnosisNetworkIcon from './icons/gnosisNetworkIcon';
+import greenMark from './icons/greenMark';
 import khalaNetworkIcon from './icons/khalaNetworkIcon';
 import noNetworkIcon from './icons/noNetworkIcon';
 import phalaNetworkIcon from './icons/phalaNetworkIcon';
 import polygonNetworkIcon from './icons/polygonNetworkIcon';
 import switchNetworkIcon from './icons/switchNetwork';
 import sygmaLogo from './icons/sygmaLogo';
-import chevronIcon from './icons/chevron';
-import gnosisNetworkIcon from './icons/gnosisNetworkIcon';
 
 export const networkIconsMap = {
   ethereum: ethereumIcon,
@@ -32,5 +34,6 @@ export {
   sygmaLogo,
   switchNetworkIcon,
   noNetworkIcon,
-  chevronIcon
+  chevronIcon,
+  greenMark
 };
