@@ -9,6 +9,7 @@ import polygonNetworkIcon from './icons/polygonNetworkIcon';
 import switchNetworkIcon from './icons/switchNetwork';
 import sygmaLogo from './icons/sygmaLogo';
 import chevronIcon from './icons/chevron';
+import greenMark from './icons/greenMark';
 
 export const networkIconsMap = {
   ethereum: ethereumIcon,
@@ -31,5 +32,6 @@ export {
   sygmaLogo,
   switchNetworkIcon,
   noNetworkIcon,
-  chevronIcon
+  chevronIcon,
+  greenMark
 };
