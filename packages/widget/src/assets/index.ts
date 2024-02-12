@@ -10,6 +10,7 @@ import switchNetworkIcon from './icons/switchNetwork';
 import sygmaLogo from './icons/sygmaLogo';
 import chevronIcon from './icons/chevron';
 import greenMark from './icons/greenMark';
+import gnosisNetworkIcon from './icons/gnosisNetworkIcon';
 
 export const networkIconsMap = {
   ethereum: ethereumIcon,
@@ -17,7 +18,7 @@ export const networkIconsMap = {
   phala: phalaNetworkIcon,
   cronos: cronosNetworkIcon,
   base: baseNetworkIcon,
-  gnosis: noNetworkIcon,
+  gnosis: gnosisNetworkIcon,
   polygon: polygonNetworkIcon,
   default: noNetworkIcon
 } as const as Record<string, HTMLTemplateResult>;
