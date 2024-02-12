@@ -15,7 +15,7 @@ export class TransferStatus extends BaseComponent {
 
   @property({ type: String }) amount: string = '';
 
-  @property({ type: String }) tokenSymbol: string = '';
+  @property({ type: String }) resourceSymbol: string = '';
 
   @property({ type: String }) explorerLinkTo: string = '';
 
