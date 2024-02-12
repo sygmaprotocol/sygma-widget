@@ -16,10 +16,10 @@ describe('transfer-status-component', function () {
   it('renders transfer-status', async () => {
     const el = await fixture(html`
       <sygma-transfer-status
-        .from=${'khala'}
-        .to=${'cronos'}
+        .sourceNetworkName=${'khala'}
+        .destinationNetworkName=${'cronos'}
         .amount=${'100'}
-        .tokenSymbol=${'sygUSDC'}
+        .resourceSymbol=${'sygUSDC'}
         .explorerLinkTo=${'some-url'}
       ></sygma-transfer-status>
     `);

@@ -29,11 +29,13 @@ export class TransferStatus extends BaseComponent {
       <h3 class="transferStatusMainMessage">Started a transfer</h3>
       <div class="destinationMessage">
         <span class="networkIcon">
-          From ${this.renderNetworkIcon(this.from)} ${this.from} to
-          ${this.renderNetworkIcon(this.to)} ${this.to}
+          From ${this.renderNetworkIcon(this.sourceNetworkName)}
+          ${this.sourceNetworkName} to
+          ${this.renderNetworkIcon(this.destinationNetworkName)}
+          ${this.destinationNetworkName}
         </span>
       </div>
-      <div class="tokenInfo">${this.amount} ${this.tokenSymbol}</div>
+      <div class="tokenInfo">${this.amount} ${this.resourceSymbol}</div>
       <div class="transferStatusDescription">
         <span>
           Transfer is pending. You can check on the status of your transfer on
