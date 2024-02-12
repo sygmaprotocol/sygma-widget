@@ -14,6 +14,7 @@ import {
   WalletUpdateEvent,
   type WalletContextProvider
 } from '../../../../src/context';
+import { getMockedEvmWallet } from '../../../utils';
 
 describe('connect-wallet button', function () {
   afterEach(() => {
@@ -54,13 +55,7 @@ describe('connect-wallet button', function () {
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
 
-    const walletProvider: Mocked<EIP1193Provider> = {
-      //@ts-expect-error stubbed type
-      on: vi.fn(),
-      removeListener: vi.fn(),
-      //@ts-expect-error stubbed type
-      request: vi.fn()
-    };
+    const walletProvider = getMockedEvmWallet().provider;
     walletContext.dispatchEvent(
       new WalletUpdateEvent({
         evmWallet: {

@@ -1,1 +1,1 @@
-export { WalletController } from './controller';
+export { WalletController } from './manager';

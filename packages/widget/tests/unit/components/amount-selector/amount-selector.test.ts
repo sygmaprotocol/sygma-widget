@@ -1,10 +1,11 @@
-import { afterEach, assert, describe, expect, it, vi } from 'vitest';
-import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
-import { html } from 'lit';
-import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
-import type { DropdownOption } from '../../../../src/components/common/dropdown/dropdown';
+import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
+import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
+import { utils } from 'ethers';
+import { html } from 'lit';
+import { afterEach, assert, describe, expect, it, vi } from 'vitest';
 import { AmountSelector } from '../../../../src/components';
+import type { DropdownOption } from '../../../../src/components/common/dropdown/dropdown';
 
 describe('Amount selector component - sygma-resource-selector', () => {
   afterEach(() => {
@@ -18,14 +19,74 @@ describe('Amount selector component - sygma-resource-selector', () => {
 
   it('displays account balance correctly', async () => {
     const el = await fixture<AmountSelector>(
-      html` <sygma-resource-selector
-        accountBalance="100"
-      ></sygma-resource-selector>`
+      html` <sygma-resource-selector></sygma-resource-selector>`
     );
+    el.tokenBalanceController.balance = utils.parseEther('100');
+    el.requestUpdate();
     await el.updateComplete;
 
     const balanceDisplay = el.shadowRoot!.querySelector('.balanceContent span');
     assert.strictEqual(balanceDisplay!.textContent, '100.0000');
+  });
+
+  it('useMax button works', async () => {
+    const el = await fixture<AmountSelector>(
+      html` <sygma-resource-selector></sygma-resource-selector>`
+    );
+    el.tokenBalanceController.balance = utils.parseEther('100');
+    el.requestUpdate();
+    await el.updateComplete;
+
+    const useMaxButton =
+      el.shadowRoot!.querySelector<HTMLButtonElement>('.maxButton');
+    useMaxButton?.click();
+    await el.updateComplete;
+    assert.equal(el.amount, 100);
+  });
+
+  it('resets input and acc balance on resource change', async () => {
+    const mockOptionSelectHandler = vi.fn();
+    const amount = '50';
+    const resources: Resource[] = [
+      {
+        resourceId: 'resourceId1',
+        address: 'address1',
+        symbol: 'PHA',
+        type: ResourceType.FUNGIBLE
+      }
+    ];
+
+    const dropdownOption: DropdownOption<Resource> = {
+      name: 'Resource1',
+      value: { ...resources[0] }
+    };
+
+    const el = await fixture<AmountSelector>(
+      html`<sygma-resource-selector
+        .resources=${resources}
+        .onResourceSelected=${mockOptionSelectHandler}
+      ></sygma-resource-selector>`
+    );
+
+    // Set amount
+    const input = el.shadowRoot!.querySelector(
+      '.amountSelectorInput'
+    ) as HTMLInputElement;
+    input.value = amount;
+    input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    await el.updateComplete;
+
+    //set acc balance
+    el.tokenBalanceController.balance = utils.parseEther('100');
+    el.requestUpdate();
+    await el.updateComplete;
+
+    el._onResourceSelectedHandler(dropdownOption);
+    await el.updateComplete;
+
+    expect(el.amount).toEqual(0);
+    expect(el.tokenBalanceController.balance.toNumber()).toEqual(0);
+    expect(el.tokenBalanceController.decimals).toEqual(18);
   });
 
   it('calls onResourceSelected callback correctly', async () => {
@@ -47,12 +108,18 @@ describe('Amount selector component - sygma-resource-selector', () => {
 
     const el = await fixture<AmountSelector>(
       html`<sygma-resource-selector
-        resources=${resources}
-        accountBalance="100"
+        .resources=${resources}
         .onResourceSelected=${mockOptionSelectHandler}
       ></sygma-resource-selector>`
     );
+    el._onResourceSelectedHandler(dropdownOption);
+    await el.updateComplete;
 
+    el.tokenBalanceController.balance = utils.parseEther('100');
+    el.requestUpdate();
+
+    // Set resource
+    await el.updateComplete;
     // Set amount
     const input = el.shadowRoot!.querySelector(
       '.amountSelectorInput'
@@ -60,10 +127,6 @@ describe('Amount selector component - sygma-resource-selector', () => {
     input.value = amount;
     input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
     await el.updateComplete;
-
-    // Set resource
-    await el.updateComplete;
-    el._onResourceSelectedHandler(dropdownOption);
 
     expect(mockOptionSelectHandler).toHaveBeenCalledOnce();
     expect(mockOptionSelectHandler).toHaveBeenCalledWith(
@@ -75,9 +138,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
   describe('Validation', () => {
     it('validates input amount when balance is low', async () => {
       const el = await fixture(
-        html` <sygma-resource-selector
-          accountBalance="100"
-        ></sygma-resource-selector>`
+        html` <sygma-resource-selector></sygma-resource-selector>`
       );
 
       // input amount greater than balance
@@ -99,9 +160,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
 
     it('validates input when amount is less than zero', async () => {
       const el = await fixture<AmountSelector>(
-        html` <sygma-resource-selector
-          accountBalance="100"
-        ></sygma-resource-selector>`
+        html` <sygma-resource-selector></sygma-resource-selector>`
       );
 
       // input amount less than zero
@@ -119,27 +178,6 @@ describe('Amount selector component - sygma-resource-selector', () => {
         validationMessage.textContent,
         'Amount must be greater than 0'
       );
-    });
-
-    it('validates input when account balance is zero on max button click', async () => {
-      const el = await fixture<AmountSelector>(
-        html` <sygma-resource-selector
-          accountBalance="0"
-        ></sygma-resource-selector>`
-      );
-
-      // click max button
-      const maxButton = el.shadowRoot!.querySelector(
-        '.maxButton'
-      ) as HTMLButtonElement;
-
-      maxButton.dispatchEvent(new Event('click'));
-      await el.updateComplete;
-
-      const validationMessage = el.shadowRoot!.querySelector(
-        '.validationMessage'
-      ) as HTMLDivElement;
-      assert.strictEqual(validationMessage.textContent, 'Insufficient balance');
     });
   });
 });

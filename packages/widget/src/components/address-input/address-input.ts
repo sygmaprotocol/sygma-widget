@@ -64,6 +64,7 @@ export class AddressInput extends BaseComponent {
         <textarea
           class=${this.errorMessage ? 'inputAddress error' : 'inputAddress'}
           name="address"
+          .value=${this.address}
           @keypress=${(e: KeyboardEvent) => {
             if (e.key === ' ' || e.key === 'Enter') {
               e.preventDefault();
@@ -71,9 +72,7 @@ export class AddressInput extends BaseComponent {
           }}
           @change=${(evt: Event) =>
             this.handleAddressChange((evt.target as HTMLInputElement).value)}
-        >
-${ifDefined(this.address)}</textarea
-        >
+        ></textarea>
       </div>
     </section>`;
   }

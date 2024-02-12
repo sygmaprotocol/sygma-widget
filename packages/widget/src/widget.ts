@@ -112,7 +112,6 @@ class SygmaProtocolWidget
                   .resources=${this.widgetController.supportedResources}
                   .onResourceSelected=${this.widgetController
                     .onResourceSelected}
-                  accountBalance="0"
                 >
                 </sygma-resource-selector>
               </section>
