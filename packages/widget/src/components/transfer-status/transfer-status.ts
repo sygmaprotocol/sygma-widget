@@ -9,7 +9,7 @@ import { styles } from './styles';
 export class TransferStatus extends BaseComponent {
   static styles = styles;
 
-  @property({ type: String }) from: string = '';
+  @property({ type: String }) sourceNetworkName: string = '';
 
   @property({ type: String }) to: string = '';
 
