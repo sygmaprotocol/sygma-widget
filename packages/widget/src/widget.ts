@@ -1,4 +1,5 @@
 import './components';
+import './components/common';
 import { html } from 'lit';
 import type { HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -13,7 +14,6 @@ import { when } from 'lit/directives/when.js';
 import { styles } from './styles';
 import { sygmaLogo } from './assets';
 import { WidgetController } from './controllers/widget';
-import { BaseComponent } from './components/common';
 import { Directions } from './components/network-selector/network-selector';
 import type {
   Eip1193Provider,
@@ -21,6 +21,7 @@ import type {
   Theme
 } from './interfaces';
 import './context/wallet';
+import { BaseComponent } from './components/common/base-component/base-component';
 
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget

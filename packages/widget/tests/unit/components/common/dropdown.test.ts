@@ -2,7 +2,7 @@ import { afterEach, assert, describe, it, vi } from 'vitest';
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { html } from 'lit';
 import { getDiffableHTML } from '@open-wc/semantic-dom-diff';
-import { Dropdown } from '../../../../src/components/common/dropdown/dropdown';
+import { Dropdown } from '../../../../src/components/common';
 
 describe('Dropdown component', function () {
   afterEach(() => {

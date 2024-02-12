@@ -9,11 +9,11 @@ import type { EIP1193Provider } from '@web3-onboard/core';
 import { html } from 'lit';
 import type { MockInstance, Mocked } from 'vitest';
 import { afterEach, assert, describe, it, vi } from 'vitest';
-import { ConnectWalletButton } from '../../../../src/components';
 import {
   WalletUpdateEvent,
   type WalletContextProvider
-} from '../../../../src/context';
+} from '../../../../../src/context';
+import { ConnectWalletButton } from '../../../../../src/components/common';
 
 describe('connect-wallet button', function () {
   afterEach(() => {

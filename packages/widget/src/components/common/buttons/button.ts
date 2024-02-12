@@ -53,5 +53,3 @@ declare global {
     'sygma-button': Button;
   }
 }
-
-export default Button;

@@ -1,6 +1,7 @@
 import { html } from 'lit';
 
 const loaderIcon = html`<svg
+  class="loaderIcon"
   xmlns="http://www.w3.org/2000/svg"
   width="21"
   height="22"

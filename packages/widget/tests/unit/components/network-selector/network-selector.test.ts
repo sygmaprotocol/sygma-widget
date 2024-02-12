@@ -4,7 +4,7 @@ import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { afterEach, assert, describe, expect, it, vi } from 'vitest';
 import { html } from 'lit';
 import { NetworkSelector } from '../../../../src/components';
-import type { Dropdown } from '../../../../src/components/common/dropdown/dropdown';
+import type { Dropdown } from '../../../../src/components/common';
 
 describe('network-selector component', function () {
   afterEach(() => {
