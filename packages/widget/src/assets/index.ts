@@ -10,6 +10,7 @@ import switchNetworkIcon from './icons/switchNetwork';
 import sygmaLogo from './icons/sygmaLogo';
 import chevronIcon from './icons/chevron';
 import gnosisNetworkIcon from './icons/gnosisNetworkIcon';
+import loaderIcon from './icons/loaderIcon';
 
 export const networkIconsMap = {
   ethereum: ethereumIcon,
@@ -32,5 +33,6 @@ export {
   sygmaLogo,
   switchNetworkIcon,
   noNetworkIcon,
-  chevronIcon
+  chevronIcon,
+  loaderIcon
 };

@@ -5,7 +5,7 @@ import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { BaseComponent } from '../components/base-component/base-component';
+import { BaseComponent } from '../components/common';
 
 export interface EvmWallet {
   address: string;

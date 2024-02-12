@@ -5,7 +5,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { networkIconsMap } from '../../assets';
 import type { DropdownOption } from '../common/dropdown/dropdown';
-import { BaseComponent } from '../base-component/base-component';
+import { BaseComponent } from '../common';
 import { styles } from './styles';
 import '../common/dropdown/dropdown';
 

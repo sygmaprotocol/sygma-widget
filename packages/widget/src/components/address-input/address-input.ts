@@ -5,7 +5,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { when } from 'lit/directives/when.js';
 import { validateAddress } from '../../utils';
-import { BaseComponent } from '../base-component/base-component';
+import { BaseComponent } from '../common';
 import { styles } from './styles';
 
 @customElement('sygma-address-input')

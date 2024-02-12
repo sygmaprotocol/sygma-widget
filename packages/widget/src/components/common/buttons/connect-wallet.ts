@@ -4,18 +4,18 @@ import type { HTMLTemplateResult, PropertyValues } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
-import plusIcon from '../../assets/icons/plusIcon';
-import type { WalletContext } from '../../context';
-import { walletContext } from '../../context';
-import { WalletController } from '../../controllers';
-import { shortAddress } from '../../utils';
+import plusIcon from '../../../assets/icons/plusIcon';
+import type { WalletContext } from '../../../context';
+import { walletContext } from '../../../context';
+import { WalletController } from '../../../controllers';
+import { shortAddress } from '../../../utils';
 import { BaseComponent } from '../base-component/base-component';
-import greenCircleIcon from '../../assets/icons/greenCircleIcon';
-import { styles } from './styles';
+import greenCircleIcon from '../../../assets/icons/greenCircleIcon';
+import { connectWalletStyles } from './connect-wallet.styles';
 
 @customElement('sygma-connect-wallet-btn')
 export class ConnectWalletButton extends BaseComponent {
-  static styles = styles;
+  static styles = connectWalletStyles;
 
   @property({
     type: Object,
