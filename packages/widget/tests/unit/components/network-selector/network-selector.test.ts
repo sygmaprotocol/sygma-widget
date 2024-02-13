@@ -1,8 +1,9 @@
-import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { afterEach, assert, describe, expect, it, vi } from 'vitest';
+import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
 import { html } from 'lit';
+import { afterEach, assert, describe, expect, it, vi } from 'vitest';
+
 import { NetworkSelector } from '../../../../src/components';
 import type { Dropdown } from '../../../../src/components/common';
 

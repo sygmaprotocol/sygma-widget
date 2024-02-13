@@ -1,7 +1,9 @@
 import { html } from 'lit';
 import type { HTMLTemplateResult } from 'lit';
 import { customElement } from 'lit/decorators.js';
+
 import { BaseComponent } from '../base-component/base-component';
+
 import { styles } from './styles';
 
 @customElement('sygma-overlay-component')

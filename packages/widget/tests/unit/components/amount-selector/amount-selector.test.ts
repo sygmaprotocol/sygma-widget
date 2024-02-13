@@ -1,10 +1,11 @@
-import { afterEach, assert, describe, expect, it, vi } from 'vitest';
-import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
-import { html } from 'lit';
 import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
-import type { DropdownOption } from '../../../../src/components/common/dropdown/dropdown';
+import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
+import { html } from 'lit';
+import { afterEach, assert, describe, expect, it, vi } from 'vitest';
+
 import { AmountSelector } from '../../../../src/components';
+import type { DropdownOption } from '../../../../src/components/common/dropdown/dropdown';
 
 describe('Amount selector component - sygma-resource-selector', () => {
   afterEach(() => {

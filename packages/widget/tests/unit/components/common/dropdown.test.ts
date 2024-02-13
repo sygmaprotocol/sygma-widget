@@ -1,7 +1,8 @@
-import { afterEach, assert, describe, it, vi } from 'vitest';
+import { getDiffableHTML } from '@open-wc/semantic-dom-diff';
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { html } from 'lit';
-import { getDiffableHTML } from '@open-wc/semantic-dom-diff';
+import { afterEach, assert, describe, it, vi } from 'vitest';
+
 import { Dropdown } from '../../../../src/components/common';
 
 describe('Dropdown component', function () {

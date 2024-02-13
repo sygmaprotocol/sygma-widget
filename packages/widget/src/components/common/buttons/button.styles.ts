@@ -8,8 +8,8 @@ export const buttonStyles = css`
     justify-content: center;
     padding: 0.75rem 1.25rem;
     border-radius: 1rem;
-    background: var(--zinc-900, #18181b);
-    color: var(--zinc-200, #e4e4e7);
+    background: var(--zinc-900);
+    color: var(--zinc-200);
     text-align: center;
     font-size: 1rem;
     font-style: normal;
@@ -38,8 +38,8 @@ export const buttonStyles = css`
     }
 
     &.disabled {
-      color: var(--zinc-400, #a1a1aa);
-      background: var(--zinc-200, #e4e4e7);
+      color: var(--zinc-400);
+      background: var(--zinc-200);
 
       &:hover {
         filter: brightness(80%);
@@ -47,8 +47,8 @@ export const buttonStyles = css`
     }
 
     &.loading {
-      color: var(--zinc-200, #e4e4e7);
-      background: var(--zinc-500, #71717a);
+      color: var(--zinc-200);
+      background: var(--zinc-500);
     }
   }
 

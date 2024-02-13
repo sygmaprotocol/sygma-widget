@@ -1,6 +1,6 @@
-import React from 'react';
-import { createComponent } from '@lit/react';
 import { SygmaProtocolWidget } from '@buildwithsygma/sygmaprotocol-widget';
+import { createComponent } from '@lit/react';
+import React from 'react';
 
 export const SygmaProtocolReactWidget = createComponent<SygmaProtocolWidget>({
   tagName: 'sygmaprotocol-widget',

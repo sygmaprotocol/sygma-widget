@@ -1,7 +1,8 @@
-import { afterEach, assert, describe, it, vi } from 'vitest';
+import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { fixture, fixtureCleanup, oneEvent } from '@open-wc/testing-helpers';
 import { html } from 'lit';
-import { Network } from '@buildwithsygma/sygma-sdk-core';
+import { afterEach, assert, describe, it, vi } from 'vitest';
+
 import { AddressInput } from '../../../../src/components';
 
 describe('address-input component', function () {

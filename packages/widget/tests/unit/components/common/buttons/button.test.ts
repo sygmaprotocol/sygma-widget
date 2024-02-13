@@ -1,6 +1,7 @@
 import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
-import { afterEach, assert, describe, it, vi } from 'vitest';
 import { html } from 'lit';
+import { afterEach, assert, describe, it, vi } from 'vitest';
+
 import { Button } from '../../../../../src/components/common';
 
 describe('sygma button component', function () {

@@ -1,8 +1,5 @@
 import './components';
 import './components/common';
-import { html } from 'lit';
-import type { HTMLTemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
 import type {
   EvmResource,
   Network,
@@ -10,18 +7,22 @@ import type {
 } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
+import type { HTMLTemplateResult } from 'lit';
+import { html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
-import { styles } from './styles';
+
 import { sygmaLogo } from './assets';
-import { WidgetController } from './controllers/widget';
+import { BaseComponent } from './components/common/base-component/base-component';
 import { Directions } from './components/network-selector/network-selector';
+import { WidgetController } from './controllers/widget';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
   Theme
 } from './interfaces';
 import './context/wallet';
-import { BaseComponent } from './components/common/base-component/base-component';
+import { styles } from './styles';
 
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget

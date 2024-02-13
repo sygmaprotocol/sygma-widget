@@ -2,9 +2,11 @@ import { html, type HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
+
 import { chevronIcon, networkIconsMap } from '../../../assets';
 import { capitalize } from '../../../utils';
 import { BaseComponent } from '../base-component/base-component';
+
 import { styles } from './styles';
 
 export interface DropdownOption<T = Record<string, unknown>> {
@@ -28,16 +30,16 @@ export class Dropdown extends BaseComponent {
   placeholder = '';
 
   @property({ type: String })
-  label = '';
+  label? = '';
 
   @property({ type: Array })
   options: DropdownOption[] = [];
 
   @property({ type: Object })
-  selectedOption: DropdownOption | null = null;
+  selectedOption?: DropdownOption | null = null;
 
   @property({ attribute: false })
-  onOptionSelected: (option?: DropdownOption) => void = () => {};
+  onOptionSelected: (option: DropdownOption) => void = () => {};
 
   connectedCallback(): void {
     super.connectedCallback();

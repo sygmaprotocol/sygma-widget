@@ -1,6 +1,7 @@
-import { afterEach, assert, describe, it } from 'vitest';
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { html } from 'lit';
+import { afterEach, assert, describe, it } from 'vitest';
+
 import { OverlayComponent } from '../../../../src/components';
 
 describe('loader-component', function () {

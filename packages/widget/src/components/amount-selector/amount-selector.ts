@@ -2,22 +2,21 @@ import type { Resource } from '@buildwithsygma/sygma-sdk-core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
-import { classMap } from 'lit/directives/class-map.js';
-import type { DropdownOption } from '../common/dropdown/dropdown';
+
 import { networkIconsMap } from '../../assets';
 import { BaseComponent } from '../common/base-component/base-component';
+import type { DropdownOption } from '../common/dropdown/dropdown';
+
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
 export class AmountSelector extends BaseComponent {
   static styles = styles;
 
-  @property({
-    type: Array,
-    hasChanged: (n, o) => n !== o
-  })
+  @property({ type: Array, hasChanged: (n, o) => n !== o })
   resources: Resource[] = [];
 
   @property({ type: Boolean })
@@ -26,8 +25,8 @@ export class AmountSelector extends BaseComponent {
   @property({ type: String })
   accountBalance?: string;
 
-  @property({ type: String })
-  preselectedToken?: string;
+  @property({ type: Object })
+  preselectedToken?: DropdownOption<Resource> | null = null;
 
   @property({ type: Number })
   preselectedAmount?: number;
@@ -58,11 +57,11 @@ export class AmountSelector extends BaseComponent {
     }
   };
 
-  _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
-    this.selectedResource = value;
+  _onResourceSelectedHandler = (option: DropdownOption<Resource>): void => {
+    this.selectedResource = option.value;
     const amount = Number.parseFloat(this.amount!);
 
-    if (value) this.onResourceSelected(value, amount);
+    if (option.value) this.onResourceSelected(option.value, amount);
   };
 
   _validateAmount(amount: string): boolean {
@@ -132,20 +131,20 @@ export class AmountSelector extends BaseComponent {
               class="amountSelectorInput"
               placeholder="0.000"
               @change=${this._onInputAmountChangeHandler}
-              value=${this.amount || ifDefined(this.preselectedAmount)}
+              value=${this.amount ||
+              ifDefined(this.preselectedAmount).toString()}
             />
             <section class="selectorSection">
-              <dropdown-component 
+              <dropdown-component
                 .selectedOption=${this.preselectedToken}
-                ?disabled=${this.disabled} 
+                ?disabled=${this.disabled}
                 .onOptionSelected=${this._onResourceSelectedHandler}
                 .options=${this._normalizeOptions()}
-                >
+              >
+              </dropdown-component>
             </section>
           </div>
-          <div class="errorWrapper">
-            ${this._renderErrorMessages()}
-          </div>
+          <div class="errorWrapper">${this._renderErrorMessages()}</div>
         </section>
       </div>
     `;

@@ -3,9 +3,11 @@ import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
+
 import { networkIconsMap } from '../../assets';
 import { BaseComponent } from '../common/base-component/base-component';
 import type { DropdownOption } from '../common/dropdown/dropdown';
+
 import { styles } from './styles';
 import '../common/dropdown/dropdown';
 
@@ -24,7 +26,7 @@ export class NetworkSelector extends BaseComponent {
   disabled = false;
 
   @property({ type: String })
-  direction?: Direction;
+  direction?: Direction = Directions.FROM;
 
   @property({ attribute: false })
   onNetworkSelected: (option?: Domain) => void = () => {};
@@ -56,9 +58,10 @@ export class NetworkSelector extends BaseComponent {
         .disabled=${this.disabled}
         .placeholder=${'Select the network'}
         .label=${this.direction}
-        .options=${this._normalizeOptions()} 
+        .options=${this._normalizeOptions()}
         .onOptionSelected=${this._onOptionSelected}
-        >
+      >
+      </dropdown-component>
     </div>`;
   }
 }

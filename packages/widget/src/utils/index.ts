@@ -1,9 +1,10 @@
-import type { HTMLTemplateResult } from 'lit';
-import { html } from 'lit';
+import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
-import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { ethers } from 'ethers';
+import type { HTMLTemplateResult } from 'lit';
+import { html } from 'lit';
+
 import {
   baseNetworkIcon,
   cronosNetworkIcon,

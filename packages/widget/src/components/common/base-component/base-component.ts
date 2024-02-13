@@ -1,5 +1,6 @@
 import type { CSSResultGroup } from 'lit';
 import { LitElement } from 'lit';
+
 import { resetCSS } from './reset';
 
 export abstract class BaseComponent extends LitElement {
