@@ -18,7 +18,7 @@ describe('transfer-status-component', function () {
       <sygma-transfer-status
         .sourceNetworkName=${'khala'}
         .destinationNetworkName=${'cronos'}
-        .amount=${'100'}
+        .amount=${100}
         .resourceSymbol=${'sygUSDC'}
         .explorerLinkTo=${'some-url'}
       ></sygma-transfer-status>
