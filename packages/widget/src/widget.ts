@@ -124,11 +124,11 @@ class SygmaProtocolWidget
                 </sygma-address-input>
               </section>
               <section>
-                <sygma-button
+                <sygma-action-button
                   text="Transfer or Approve"
                   @onClick="${() => this.widgetController.makeTransaction()}"
                   .disabled=${!this.widgetController.isReadyForTransfer}
-                ></sygma-button>
+                ></sygma-action-button>
               </section>
             </form>
           </section>

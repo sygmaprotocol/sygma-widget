@@ -9,7 +9,7 @@ import { BaseComponent } from '../base-component/base-component';
 
 import { buttonStyles } from './button.styles';
 
-@customElement('sygma-button')
+@customElement('sygma-action-button')
 export class Button extends BaseComponent {
   static styles = buttonStyles;
 
@@ -49,6 +49,6 @@ export class Button extends BaseComponent {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sygma-button': Button;
+    'sygma-action-button': Button;
   }
 }

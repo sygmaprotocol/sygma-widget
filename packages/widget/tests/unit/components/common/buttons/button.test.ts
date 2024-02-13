@@ -10,25 +10,25 @@ describe('sygma button component', function () {
   });
 
   it('is defined', () => {
-    const el = document.createElement('sygma-button');
+    const el = document.createElement('sygma-action-button');
     assert.instanceOf(el, Button);
   });
 
   it('displays the button text', async () => {
     const el = await fixture<Button>(
-      html`<sygma-button text="Click me"></sygma-button>`
+      html`<sygma-action-button text="Click me"></sygma-action-button>`
     );
     assert.equal(el.text, 'Click me');
-    assert.include(el.shadowRoot?.textContent || '', 'Click me');
+    assert.include(el.shadowRoot?.textContent, 'Click me');
   });
 
   it('does not handle the click event when disabled', async () => {
     const onClickMock = vi.fn();
     const el = await fixture(
-      html`<sygma-button
+      html`<sygma-action-button
         @onClick=${onClickMock}
         .disabled=${true}
-      ></sygma-button>`
+      ></sygma-action-button>`
     );
 
     el.shadowRoot?.querySelector('button')?.click();
@@ -39,7 +39,7 @@ describe('sygma button component', function () {
 
   it('shows loader icon when loading', async () => {
     const el = await fixture(
-      html`<sygma-button .isLoading=${true}></sygma-button>`
+      html`<sygma-action-button .isLoading=${true}></sygma-action-button>`
     );
     await nextFrame();
 
@@ -52,7 +52,10 @@ describe('sygma button component', function () {
 
   it('applies correct classes based on properties', async () => {
     const el = await fixture(
-      html`<sygma-button .disabled=${true} .isLoading=${true}></sygma-button>`
+      html`<sygma-action-button
+        .disabled=${true}
+        .isLoading=${true}
+      ></sygma-action-button>`
     );
     await nextFrame();
     const buttonElement = el.shadowRoot?.querySelector(
