@@ -39,11 +39,7 @@ export class TransferStatus extends BaseComponent {
       <div class="transferStatusDescription">
         <span>
           Transfer is pending. You can check on the status of your transfer on
-          <a
-            href=${ifDefined(this.explorerLinkTo)}
-            target="_blank"
-            class="sygmaScanLink"
-          >
+          <a href=${this.explorerLinkTo} target="_blank" class="sygmaScanLink">
             Sygma Scan
           </a>
         </span>
