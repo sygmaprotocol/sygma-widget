@@ -4,10 +4,10 @@ import { Web3Provider } from '@ethersproject/providers';
 import { ContextConsumer } from '@lit/context';
 import { BigNumber, Contract } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
+import type { ERC20 } from '@buildwithsygma/sygma-contracts';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
 import { ierc20Abi } from './abi/IERC20';
-import type { Erc20 } from './abi/erc20';
 
 const BALANCE_REFRESH_MS = 5_000;
 
@@ -78,7 +78,7 @@ export class TokenBalanceController implements ReactiveController {
       resource.address,
       ierc20Abi,
       web3Provider
-    ) as Erc20;
+    ) as unknown as ERC20;
     void async function (this: TokenBalanceController) {
       this.loadingBalance = true;
       this.host.requestUpdate();
