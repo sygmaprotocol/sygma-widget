@@ -1,6 +1,5 @@
 import { html, type HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { BaseComponent } from '../base-component/base-component';
 import { greenMark, networkIconsMap } from '../../assets';
 import { styles } from './styles';
