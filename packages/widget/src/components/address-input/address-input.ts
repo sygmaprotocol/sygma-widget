@@ -1,8 +1,7 @@
-import { html } from 'lit';
-import type { HTMLTemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
+import type { HTMLTemplateResult } from 'lit';
+import { html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { validateAddress } from '../../utils';
 import { BaseComponent } from '../base-component/base-component';
