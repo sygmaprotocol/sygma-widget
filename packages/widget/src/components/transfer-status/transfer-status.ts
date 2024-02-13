@@ -12,7 +12,7 @@ export class TransferStatus extends BaseComponent {
 
   @property({ type: String }) destinationNetworkName: string = '';
 
-  @property({ type: Number }) amount: number = '';
+  @property({ type: Number }) amount: number = 0;
 
   @property({ type: String }) resourceSymbol: string = '';
 
