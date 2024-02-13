@@ -1,5 +1,6 @@
 import { html, type HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { utils } from 'ethers';
 import { BaseComponent } from '../base-component/base-component';
 import { greenMark, networkIconsMap } from '../../assets';
 import { styles } from './styles';
@@ -18,8 +19,18 @@ export class TransferStatus extends BaseComponent {
 
   @property({ type: String }) explorerLinkTo: string = '';
 
+  @property({ type: Number }) tokenDecimals: number = 18;
+
   renderNetworkIcon(name: string): HTMLTemplateResult {
     return networkIconsMap[name] || networkIconsMap.default;
+  }
+
+  formatAmount(amount: number): string {
+    const formatedAmount = utils.formatUnits(
+      BigInt(amount),
+      this.tokenDecimals
+    );
+    return `${Number.parseFloat(formatedAmount).toFixed(1)}`;
   }
 
   render(): HTMLTemplateResult {
@@ -34,7 +45,9 @@ export class TransferStatus extends BaseComponent {
           ${this.destinationNetworkName}
         </span>
       </div>
-      <div class="tokenInfo">${this.amount} ${this.resourceSymbol}</div>
+      <div class="tokenInfo">
+        ${this.formatAmount(this.amount)} ${this.resourceSymbol}
+      </div>
       <div class="transferStatusDescription">
         <span>
           Transfer is pending. You can check on the status of your transfer on
