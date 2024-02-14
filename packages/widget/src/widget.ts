@@ -19,7 +19,8 @@ import { WidgetController } from './controllers/widget';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
-  Theme
+  Theme,
+  WalletConnectOptions
 } from './interfaces';
 import './context/wallet';
 import { styles } from './styles';
@@ -55,6 +56,8 @@ class SygmaProtocolWidget
 
   @property({ type: Object }) theme?: Theme;
 
+  @property({ type: Object }) walletConnectOptions?: WalletConnectOptions;
+
   @state()
   private isLoading = false;
 
@@ -65,6 +68,7 @@ class SygmaProtocolWidget
       return html`
         <sygma-connect-wallet-btn
           .sourceNetwork=${this.widgetController.sourceNetwork}
+          .walletConnectOptions=${this.walletConnectOptions}
         ></sygma-connect-wallet-btn>
       `;
     }

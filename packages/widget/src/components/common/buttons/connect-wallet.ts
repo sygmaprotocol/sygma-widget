@@ -5,6 +5,7 @@ import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
+import type { WalletConnectOptions } from 'packages/widget/src/interfaces';
 import greenCircleIcon from '../../../assets/icons/greenCircleIcon';
 import plusIcon from '../../../assets/icons/plusIcon';
 import type { WalletContext } from '../../../context';
@@ -28,10 +29,7 @@ export class ConnectWalletButton extends BaseComponent {
   })
   sourceNetwork?: Domain;
 
-  @property({
-    type: String
-  })
-  dappUrl?: string;
+  @property({ type: Object }) walletConnectOptions?: WalletConnectOptions;
 
   @consume({ context: walletContext, subscribe: true })
   @state()
@@ -49,7 +47,8 @@ export class ConnectWalletButton extends BaseComponent {
   private onConnectClicked = (): void => {
     if (this.sourceNetwork) {
       this.walletController.connectWallet(this.sourceNetwork, {
-        dappUrl: this.dappUrl
+        dappUrl: this.walletConnectOptions?.dappUrl,
+        projectId: this.walletConnectOptions?.projectId
       });
     }
   };

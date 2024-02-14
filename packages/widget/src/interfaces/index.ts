@@ -22,6 +22,11 @@ export interface Eip1193Provider {
   }): Promise<unknown>;
 }
 
+export type WalletConnectOptions = {
+  dappUrl?: string;
+  projectId?: string;
+};
+
 export interface ISygmaProtocolWidget {
   whitelistedSourceNetworks?: Network[];
   whitelistedDestinationNetworks?: Network[];
@@ -34,4 +39,5 @@ export interface ISygmaProtocolWidget {
   darkTheme?: boolean;
   customLogo?: SVGElement;
   theme?: Theme;
+  walletConnectOptions?: WalletConnectOptions;
 }

@@ -9,6 +9,7 @@ import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
 
 import { WalletUpdateEvent, walletContext } from '../../context';
+import type { WalletConnectOptions } from '../../interfaces';
 
 export class WalletController implements ReactiveController {
   host: ReactiveElement;
@@ -39,7 +40,7 @@ export class WalletController implements ReactiveController {
     }
   }
 
-  connectWallet = (network: Domain, options?: { dappUrl?: string }): void => {
+  connectWallet = (network: Domain, options?: WalletConnectOptions): void => {
     switch (network.type) {
       case Network.EVM:
         {
@@ -92,18 +93,23 @@ export class WalletController implements ReactiveController {
 
   connectEvmWallet = async (
     network: Domain,
-    options?: { dappUrl?: string }
+    options?: WalletConnectOptions
   ): Promise<void> => {
     const injected = injectedModule();
 
-    const onboard = Onboard({
-      wallets: [
-        injected,
+    const walletSetup = [injected];
+
+    if (options?.projectId) {
+      walletSetup.push(
         walletConnectModule({
-          projectId: '2f5a3439ef861e2a3959d85afcd32d06',
+          projectId: options?.projectId,
           dappUrl: options?.dappUrl
         })
-      ],
+      );
+    }
+
+    const onboard = Onboard({
+      wallets: walletSetup,
       chains: [
         {
           id: network.chainId
