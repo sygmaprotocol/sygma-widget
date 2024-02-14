@@ -36,7 +36,7 @@ export class WidgetController implements ReactiveController {
     }
   ) {
     (this.host = host).addController(this);
-    this.env = options.env ?? Environment.MAINNET;
+    this.env = options.env ?? Environment.TESTNET;
     this.config = new Config();
     this.isLoading = options.isLoading ?? false;
   }
@@ -94,6 +94,7 @@ export class WidgetController implements ReactiveController {
       //disconnect wallet
       return;
     }
+    void this.config.init(network.chainId, this.env);
     switch (network.type) {
       case Network.EVM:
         {
@@ -124,14 +125,11 @@ export class WidgetController implements ReactiveController {
   };
 
   onResourceSelected = (resource: Resource, amount: number): void => {
-    console.log('resource', resource);
-    console.log('amount', amount);
     this.selectedResource = resource;
     this.resourceAmount = amount;
   };
 
   onDestinationAddressChange = (address: string): void => {
-    console.log('destination address', address);
     this.destinatonAddress = address;
   };
 }
