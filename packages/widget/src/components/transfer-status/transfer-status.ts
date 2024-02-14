@@ -1,8 +1,8 @@
 import { html, type HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { utils } from 'ethers';
-import { BaseComponent } from '../base-component/base-component';
 import { greenMark, networkIconsMap } from '../../assets';
+import { BaseComponent } from '../common';
 import { styles } from './styles';
 
 @customElement('sygma-transfer-status')
