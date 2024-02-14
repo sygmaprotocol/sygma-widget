@@ -1,10 +1,9 @@
-import {
-  Environment,
-  Network,
-  type EvmResource,
-  type SubstrateResource,
-  Domain
+import type {
+  Domain,
+  EvmResource,
+  SubstrateResource
 } from '@buildwithsygma/sygma-sdk-core';
+import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
 import type { HTMLTemplateResult } from 'lit';
@@ -14,12 +13,11 @@ import { when } from 'lit/directives/when.js';
 import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
-import './components/fungibleTokenTransfer';
 import './components/amount-selector';
-import { BaseComponent } from './components/base-component/base-component';
+import { BaseComponent } from './components/common/base-component/base-component';
+import './components/fungibleTokenTransfer';
 import './components/network-selector';
 import './context/wallet';
-import { WidgetController } from './controllers/widget';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
@@ -64,8 +62,6 @@ class SygmaProtocolWidget
   @state()
   private sourceNetwork?: Domain;
 
-  private widgetController = new WidgetController(this);
-
   private renderConnect(): HTMLTemplateResult {
     if (this.sourceNetwork) {
       return html`
@@ -88,10 +84,13 @@ class SygmaProtocolWidget
             ${this.renderConnect()}
           </section>
           <section class="widgetContent">
-           <sygma-fungible-transfer 
-           .onSourceNetworkSelected=${(domain: Domain) => this.sourceNetwork = domain} 
-           .whitelistedSourceResources=${this.whitelistedSourceNetworks} evironment=${Environment.TESTNET}>
-          </sygma-fungible-transfer>
+            <sygma-fungible-transfer
+              .onSourceNetworkSelected=${(domain: Domain) =>
+                (this.sourceNetwork = domain)}
+              .whitelistedSourceResources=${this.whitelistedSourceNetworks}
+              evironment=${Environment.TESTNET}
+            >
+            </sygma-fungible-transfer>
           </section>
           <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
           ${when(

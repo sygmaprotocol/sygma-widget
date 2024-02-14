@@ -11,9 +11,9 @@ import {
 } from '../controllers/transfers/fungibleTokenTransfer';
 import './address-input';
 import './amount-selector';
-import { BaseComponent } from './base-component/base-component';
 import './network-selector';
 import { Directions } from './network-selector/network-selector';
+import { BaseComponent } from './common/base-component/base-component';
 
 @customElement('sygma-fungible-transfer')
 export class FungibleTokenTransfer extends BaseComponent {

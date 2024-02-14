@@ -13,6 +13,7 @@ export const styles = css`
     --primary-300: #a5b4fc;
     --primary-500: #6366f1;
     --blue-600: #2563eb;
+    --orange-600: #ea580c;
     --red-600: #dc2626;
   }
 

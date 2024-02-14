@@ -8,6 +8,7 @@ import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
+
 import { WalletUpdateEvent, walletContext } from '../../context';
 
 export class WalletController implements ReactiveController {

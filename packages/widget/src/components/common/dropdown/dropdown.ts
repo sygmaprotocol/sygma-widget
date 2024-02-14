@@ -1,11 +1,13 @@
-import type { PropertyValues, type HTMLTemplateResult } from 'lit';
+import type { PropertyValues, HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
+
 import { chevronIcon, networkIconsMap } from '../../../assets';
 import { capitalize } from '../../../utils';
-import { BaseComponent } from '../../base-component/base-component';
+import { BaseComponent } from '../base-component/base-component';
+
 import { styles } from './styles';
 
 export interface DropdownOption<T = Record<string, unknown>> {

@@ -1,14 +1,16 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
+import { utils, type BigNumber } from 'ethers';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
-import { classMap } from 'lit/directives/class-map.js';
-import { utils, type BigNumber } from 'ethers';
-import { BaseComponent } from '../base-component/base-component';
 import type { DropdownOption } from '../common/dropdown/dropdown';
+
 import { networkIconsMap } from '../../assets';
+
+import { BaseComponent } from '../common';
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
