@@ -13,6 +13,7 @@ export const styles = css`
     --primary-300: #a5b4fc;
     --primary-500: #6366f1;
     --blue-600: #2563eb;
+    --orange-600: #ea580c;
     --red-600: #dc2626;
   }
 
@@ -107,27 +108,6 @@ export const styles = css`
 
   .actionButton:active {
     background-color: var(--primary-500);
-  }
-
-  .actionButtonReady {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.75rem 1.25rem;
-    border-radius: 1rem;
-    background-color: var(--primary-500);
-    color: #ffffff;
-    border: none;
-  }
-
-  .actionButtonReady:active {
-    background-color: var(--primary-300);
-  }
-
-  .actionButtonReady:hover {
-    cursor: pointer;
   }
 
   .poweredBy {

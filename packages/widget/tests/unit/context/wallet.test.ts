@@ -1,8 +1,8 @@
 import { ContextConsumer } from '@lit/context';
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { LitElement, html } from 'lit';
-import { afterEach, assert, describe, it } from 'vitest';
 import { customElement } from 'lit/decorators.js';
+import { afterEach, assert, describe, it } from 'vitest';
 import {
   WalletContextProvider,
   WalletUpdateEvent,

@@ -3,9 +3,11 @@ import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
+
 import { networkIconsMap } from '../../assets';
+import { BaseComponent } from '../common/base-component/base-component';
 import type { DropdownOption } from '../common/dropdown/dropdown';
-import { BaseComponent } from '../base-component/base-component';
+
 import { styles } from './styles';
 import '../common/dropdown/dropdown';
 

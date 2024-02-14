@@ -7,7 +7,7 @@ import { when } from 'lit/directives/when.js';
 import { networkIconsMap } from '../../assets';
 import { TokenBalanceController } from '../../controllers/wallet-manager/token-balance';
 import { tokenBalanceToNumber } from '../../utils/token';
-import { BaseComponent } from '../base-component/base-component';
+import { BaseComponent } from '../common';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { styles } from './styles';
 
