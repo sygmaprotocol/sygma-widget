@@ -1,11 +1,12 @@
 import { createContext, provide } from '@lit/context';
-import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
+import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { BaseComponent } from '../components/base-component/base-component';
+
+import { BaseComponent } from '../components/common/base-component/base-component';
 
 export interface EvmWallet {
   address: string;
