@@ -1,6 +1,5 @@
-import { html } from 'lit';
-import type { HTMLTemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import './components';
+import './components/common';
 import type {
   EvmResource,
   Network,
@@ -8,22 +7,22 @@ import type {
 } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
+import type { HTMLTemplateResult } from 'lit';
+import { html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
-import { styles } from './styles';
+
 import { sygmaLogo } from './assets';
-import { WidgetController } from './controllers/widget';
-import './components/network-selector';
-import './components/amount-selector';
-import './components/address-input';
+import { BaseComponent } from './components/common/base-component/base-component';
 import { Directions } from './components/network-selector/network-selector';
+import { WidgetController } from './controllers/widget';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
   Theme
 } from './interfaces';
-import './components';
 import './context/wallet';
-import { BaseComponent } from './components/base-component/base-component';
+import { styles } from './styles';
 
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget
@@ -125,14 +124,11 @@ class SygmaProtocolWidget
                 </sygma-address-input>
               </section>
               <section>
-                <button
+                <sygma-action-button
+                  text="Transfer or Approve"
+                  @onClick="${() => this.widgetController.makeTransaction()}"
                   .disabled=${!this.widgetController.isReadyForTransfer}
-                  type="button"
-                  @click="${() => this.widgetController.makeTransaction()}"
-                  class="actionButtonReady"
-                >
-                  Transfer or Approve
-                </button>
+                ></sygma-action-button>
               </section>
             </form>
           </section>
