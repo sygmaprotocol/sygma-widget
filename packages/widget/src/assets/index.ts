@@ -1,8 +1,13 @@
 import type { HTMLTemplateResult } from 'lit';
+
 import baseNetworkIcon from './icons/baseNetworkIcon';
+import chevronIcon from './icons/chevron';
 import cronosNetworkIcon from './icons/cronosNetworkIcon';
 import ethereumIcon from './icons/ethereumNetworkIcon';
+import gnosisNetworkIcon from './icons/gnosisNetworkIcon';
+import greenMark from './icons/greenMark';
 import khalaNetworkIcon from './icons/khalaNetworkIcon';
+import loaderIcon from './icons/loaderIcon';
 import noNetworkIcon from './icons/noNetworkIcon';
 import phalaNetworkIcon from './icons/phalaNetworkIcon';
 import polygonNetworkIcon from './icons/polygonNetworkIcon';
@@ -34,5 +39,6 @@ export {
   switchNetworkIcon,
   noNetworkIcon,
   chevronIcon,
-  greenMark
+  greenMark,
+  loaderIcon
 };
