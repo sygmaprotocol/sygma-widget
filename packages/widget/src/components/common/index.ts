@@ -1,6 +1,5 @@
-import { Button } from './buttons/button';
-import { ConnectWalletButton } from './buttons/connect-wallet';
-import { Dropdown } from './dropdown/dropdown';
-import { OverlayComponent } from './overlay-component';
-
-export { Button, ConnectWalletButton, Dropdown, OverlayComponent };
+export { Button } from './buttons/button';
+export { ConnectWalletButton } from './buttons/connect-wallet';
+export { Dropdown } from './dropdown/dropdown';
+export { OverlayComponent } from './overlay-component';
+export { BaseComponent } from './base-component';
