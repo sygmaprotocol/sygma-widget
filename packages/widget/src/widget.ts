@@ -1,29 +1,31 @@
-import { html } from 'lit';
-import type { HTMLTemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import type {
-  EvmResource,
+import {
+  Environment,
   Network,
-  SubstrateResource
+  type EvmResource,
+  type SubstrateResource,
+  Domain
 } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
+import type { HTMLTemplateResult } from 'lit';
+import { html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
-import { styles } from './styles';
 import { sygmaLogo } from './assets';
-import { WidgetController } from './controllers/widget';
-import './components/network-selector';
-import './components/amount-selector';
+import './components';
 import './components/address-input';
-import { Directions } from './components/network-selector/network-selector';
+import './components/fungibleTokenTransfer';
+import './components/amount-selector';
+import { BaseComponent } from './components/base-component/base-component';
+import './components/network-selector';
+import './context/wallet';
+import { WidgetController } from './controllers/widget';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
   Theme
 } from './interfaces';
-import './components';
-import './context/wallet';
-import { BaseComponent } from './components/base-component/base-component';
+import { styles } from './styles';
 
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget
@@ -32,9 +34,9 @@ class SygmaProtocolWidget
 {
   static styles = styles;
 
-  @property({ type: Array }) whitelistedSourceNetworks?: Network[];
+  @property({ type: Array }) whitelistedSourceNetworks?: string[];
 
-  @property({ type: Array }) whitelistedDestinationNetworks?: Network[];
+  @property({ type: Array }) whitelistedDestinationNetworks?: string[];
 
   @property({ type: Object }) evmProvider?: Eip1193Provider;
 
@@ -59,13 +61,16 @@ class SygmaProtocolWidget
   @state()
   private isLoading = false;
 
-  private widgetController = new WidgetController(this, {});
+  @state()
+  private sourceNetwork?: Domain;
+
+  private widgetController = new WidgetController(this);
 
   private renderConnect(): HTMLTemplateResult {
-    if (this.widgetController.sourceNetwork) {
+    if (this.sourceNetwork) {
       return html`
         <sygma-connect-wallet-btn
-          .sourceNetwork=${this.widgetController.sourceNetwork}
+          .sourceNetwork=${this.sourceNetwork}
         ></sygma-connect-wallet-btn>
       `;
     }
@@ -83,58 +88,10 @@ class SygmaProtocolWidget
             ${this.renderConnect()}
           </section>
           <section class="widgetContent">
-            <form @submit=${() => {}}>
-              <section class="networkSelectionWrapper">
-                <sygma-network-selector
-                  .direction=${Directions.FROM}
-                  .icons=${true}
-                  .onNetworkSelected=${this.widgetController
-                    .onSourceNetworkSelected}
-                  .networks=${this.widgetController.supportedSourceNetworks}
-                >
-                </sygma-network-selector>
-              </section>
-              <section class="networkSelectionWrapper">
-                <sygma-network-selector
-                  .direction=${Directions.TO}
-                  .icons=${true}
-                  .onNetworkSelected=${this.widgetController
-                    .onDestinationNetworkSelected}
-                  .networks=${this.widgetController
-                    .supportedDestinationNetworks}
-                >
-                </sygma-network-selector>
-              </section>
-              <section>
-                <sygma-resource-selector
-                  .disabled=${!this.widgetController.sourceNetwork ||
-                  !this.widgetController.destinationNetwork}
-                  .resources=${this.widgetController.supportedResources}
-                  .onResourceSelected=${this.widgetController
-                    .onResourceSelected}
-                  accountBalance="0"
-                >
-                </sygma-resource-selector>
-              </section>
-              <section>
-                <sygma-address-input
-                  .address=${this.widgetController.destinatonAddress}
-                  .onAddressChange=${this.widgetController
-                    .onDestinationAddressChange}
-                >
-                </sygma-address-input>
-              </section>
-              <section>
-                <button
-                  .disabled=${!this.widgetController.isReadyForTransfer}
-                  type="button"
-                  @click="${() => this.widgetController.makeTransaction()}"
-                  class="actionButtonReady"
-                >
-                  Transfer or Approve
-                </button>
-              </section>
-            </form>
+           <sygma-fungible-transfer 
+           .onSourceNetworkSelected=${(domain: Domain) => this.sourceNetwork = domain} 
+           .whitelistedSourceResources=${this.whitelistedSourceNetworks} evironment=${Environment.TESTNET}>
+          </sygma-fungible-transfer>
           </section>
           <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
           ${when(

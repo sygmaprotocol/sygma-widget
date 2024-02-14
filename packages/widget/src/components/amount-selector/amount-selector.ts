@@ -5,6 +5,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { utils, type BigNumber } from 'ethers';
 import { BaseComponent } from '../base-component/base-component';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { networkIconsMap } from '../../assets';
@@ -33,7 +34,8 @@ export class AmountSelector extends BaseComponent {
   preselectedAmount?: number;
 
   @property({ attribute: false })
-  onResourceSelected: (resource: Resource, amount: number) => void = () => {};
+  onResourceSelected: (resource: Resource, amount: BigNumber) => void =
+    () => {};
 
   @state() validationMessage: string | null = null;
   @state() selectedResource: Resource | null = null;
@@ -50,19 +52,19 @@ export class AmountSelector extends BaseComponent {
 
   _onInputAmountChangeHandler = (event: Event): void => {
     const { value } = event.target as HTMLInputElement;
-    if (!this._validateAmount(value)) return;
+    // if (!this._validateAmount(value)) return;
 
     this.amount = value;
     if (this.selectedResource) {
-      this.onResourceSelected(this.selectedResource, Number.parseFloat(value));
+      this.onResourceSelected(this.selectedResource, utils.parseEther(value));
     }
   };
 
   _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
     this.selectedResource = value;
-    const amount = Number.parseFloat(this.amount!);
 
-    if (value) this.onResourceSelected(value, amount);
+    if (value)
+      this.onResourceSelected(value, utils.parseEther(this.amount ?? '0'));
   };
 
   _validateAmount(amount: string): boolean {

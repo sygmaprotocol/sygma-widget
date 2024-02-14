@@ -1,5 +1,6 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
+import { Web3Provider } from '@ethersproject/providers';
 import { ContextConsumer } from '@lit/context';
 import type { Account } from '@polkadot-onboard/core';
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
@@ -67,7 +68,6 @@ export class WalletController implements ReactiveController {
         'accountsChanged',
         this.onEvmAccountChange
       );
-      evmWallet.provider.disconnect?.();
       this.host.dispatchEvent(
         new WalletUpdateEvent({
           evmWallet: undefined
@@ -122,7 +122,7 @@ export class WalletController implements ReactiveController {
             address:
               wallets[0].accounts[0].ens?.name ??
               wallets[0].accounts[0].address,
-            provider: wallets[0].provider
+            provider: new Web3Provider(wallets[0].provider)
           }
         })
       );

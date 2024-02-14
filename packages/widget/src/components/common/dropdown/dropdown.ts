@@ -1,4 +1,5 @@
-import { html, type HTMLTemplateResult } from 'lit';
+import type { PropertyValues, type HTMLTemplateResult } from 'lit';
+import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { when } from 'lit/directives/when.js';
@@ -47,6 +48,18 @@ export class Dropdown extends BaseComponent {
   disconnectedCallback(): void {
     super.connectedCallback();
     removeEventListener('click', this._handleOutsideClick);
+  }
+
+  updated(changedProperties: PropertyValues<typeof this>): void {
+    super.updated(changedProperties);
+    //if options changed, check if we have selected option that doesn't exist
+    if (changedProperties.has('options') && this.selectedOption) {
+      if (
+        !this.options.map((o) => o.value).includes(this.selectedOption.value)
+      ) {
+        this.selectedOption = null;
+      }
+    }
   }
 
   _handleOutsideClick = (event: MouseEvent): void => {
