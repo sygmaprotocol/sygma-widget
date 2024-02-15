@@ -7,29 +7,37 @@ import {
 } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction } from 'ethers';
+import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import { walletContext } from '../../context/wallet';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
-export enum TransferState {
-  PREPARING,
+export enum FungibleTransferState {
+  MISSING_SOURCE_NETWORK,
+  MISSING_DESTINATION_NETWORK,
+  MISSING_RESOURCE,
+  MISSING_RESOURCE_AMOUNT,
+  MISSING_DESTINATION_ADDRESS,
+  WALLET_NOT_CONNECTED,
+  WRONG_CHAIN,
   PENDING_APPROVALS,
   PENDING_TRANSFER,
-  WAITING,
-  COMPLETE,
-  ERROR
+  WAITING_USER_CONFIRMATION,
+  WAITING_TX_EXECUTION,
+  COMPLETED,
+  UNKNOWN
 }
 
 export class FungibleTokenTransferController implements ReactiveController {
-  public isLoading: boolean = false;
-
-  public transferState: TransferState = TransferState.PREPARING;
+  public waitingUserConfirmation: boolean = false;
+  public waitingTxExecution: boolean = false;
+  public transferTransactionId?: string;
   public errorMessage: string | null = null;
 
   public sourceNetwork?: Domain;
   public destinationNetwork?: Domain;
   public selectedResource?: Resource;
-  public resourceAmount = 0;
+  public resourceAmount: BigNumber = BigNumber.from(0);
   public destinatonAddress: string = '';
 
   public supportedSourceNetworks: Domain[] = [];
@@ -53,28 +61,46 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.config = new Config();
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
-      subscribe: true
+      subscribe: true,
+      callback: () => {
+        try {
+          this.buildTransactions();
+        } catch (e) {
+          console.error(e);
+        }
+        this.host.requestUpdate();
+      }
     });
   }
 
   hostConnected(): void {}
 
   hostDisconnected(): void {
-    this.sourceNetwork = undefined;
-    this.destinationNetwork = undefined;
-    this.supportedSourceNetworks = [];
-    this.supportedDestinationNetworks = [];
+    this.reset();
   }
 
   async init(env: Environment): Promise<void> {
-    this.isLoading = true;
     this.host.requestUpdate();
     this.env = env;
     await this.config.init(1, env);
-    this.supportedSourceNetworks = this.config.getDomains();
+    this.supportedSourceNetworks = this.config
+      .getDomains()
+      //remove once we have proper substrate transfer support
+      .filter((n) => n.type === Network.EVM);
     this.supportedDestinationNetworks = this.config.getDomains();
-    this.isLoading = false;
     this.host.requestUpdate();
+  }
+
+  reset(): void {
+    this.sourceNetwork = undefined;
+    this.destinationNetwork = undefined;
+    this.pendingEvmApprovalTransactions = [];
+    this.pendingEvmTransferTransaction = undefined;
+    this.destinatonAddress = '';
+    this.waitingTxExecution = false;
+    this.waitingUserConfirmation = false;
+    this.transferTransactionId = undefined;
+    void this.init(this.env);
   }
 
   onSourceNetworkSelected = (network: Domain | undefined): void => {
@@ -93,7 +119,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
   };
 
-  onResourceSelected = (resource: Resource, amount: number): void => {
+  onResourceSelected = (resource: Resource, amount: BigNumber): void => {
     this.selectedResource = resource;
     this.resourceAmount = amount;
     void this.buildTransactions();
@@ -102,9 +128,60 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   onDestinationAddressChange = (address: string): void => {
     this.destinatonAddress = address;
+    if (this.destinatonAddress.length === 0) {
+      this.pendingEvmApprovalTransactions = [];
+      this.pendingEvmTransferTransaction = undefined;
+    }
     void this.buildTransactions();
     this.host.requestUpdate();
   };
+
+  getTransferState(): FungibleTransferState {
+    if (!this.sourceNetwork) {
+      return FungibleTransferState.MISSING_SOURCE_NETWORK;
+    }
+    if (!this.destinationNetwork) {
+      return FungibleTransferState.MISSING_DESTINATION_NETWORK;
+    }
+    if (!this.selectedResource) {
+      return FungibleTransferState.MISSING_RESOURCE;
+    }
+    if (this.resourceAmount.eq(0)) {
+      return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
+    }
+    if (this.destinatonAddress === '') {
+      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
+    }
+    if (
+      !this.walletContext.value?.evmWallet &&
+      !this.walletContext.value?.substrateWallet
+    ) {
+      return FungibleTransferState.WALLET_NOT_CONNECTED;
+    }
+    if (
+      this.sourceNetwork.type === Network.EVM &&
+      this.walletContext.value?.evmWallet?.providerChainId !==
+        this.sourceNetwork.chainId
+    ) {
+      return FungibleTransferState.WRONG_CHAIN;
+    }
+    if (this.waitingUserConfirmation) {
+      return FungibleTransferState.WAITING_USER_CONFIRMATION;
+    }
+    if (this.waitingTxExecution) {
+      return FungibleTransferState.WAITING_TX_EXECUTION;
+    }
+    if (this.transferTransactionId) {
+      return FungibleTransferState.COMPLETED;
+    }
+    if (this.pendingEvmApprovalTransactions.length > 0) {
+      return FungibleTransferState.PENDING_APPROVALS;
+    }
+    if (this.pendingEvmTransferTransaction) {
+      return FungibleTransferState.PENDING_TRANSFER;
+    }
+    return FungibleTransferState.UNKNOWN;
+  }
 
   executeTransaction(): void {
     if (!this.sourceNetwork) {
@@ -126,6 +203,13 @@ export class FungibleTokenTransferController implements ReactiveController {
     }
   }
 
+  getExplorerLink(): string {
+    if (this.env === Environment.MAINNET) {
+      return `https://scan.buildwithsygma.com/transfer/${this.transferTransactionId}`;
+    }
+    return `https://scan.test.buildwithsygma.com/transfer/${this.transferTransactionId}`;
+  }
+
   private filterDestinationNetworks = async (
     sourceNetwork: Domain
   ): Promise<void> => {
@@ -133,8 +217,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.supportedResources = this.config
       .getDomainResources()
       .filter((r) => r.type === ResourceType.FUNGIBLE);
-
-    console.log(this.supportedResources);
     //remove selected source network from destination
     this.supportedDestinationNetworks = this.config
       .getDomains()

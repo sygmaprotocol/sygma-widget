@@ -1,8 +1,8 @@
+import { BigNumber, utils } from 'ethers';
 import { html, type HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { utils } from 'ethers';
-import { greenMark, networkIconsMap } from '../../assets';
-import { BaseComponent } from '../common';
+import { BaseComponent } from '../../../common';
+import { greenMark, networkIconsMap } from '../../../../assets';
 import { styles } from './styles';
 
 @customElement('sygma-transfer-status')
@@ -13,24 +13,21 @@ export class TransferStatus extends BaseComponent {
 
   @property({ type: String }) destinationNetworkName: string = '';
 
-  @property({ type: Number }) amount: number = 0;
+  @property({ type: Object }) amount: BigNumber = BigNumber.from(0);
+
+  @property({ type: Number }) tokenDecimals: number = 18;
 
   @property({ type: String }) resourceSymbol: string = '';
 
   @property({ type: String }) explorerLinkTo: string = '';
 
-  @property({ type: Number }) tokenDecimals: number = 18;
-
   renderNetworkIcon(name: string): HTMLTemplateResult {
     return networkIconsMap[name] || networkIconsMap.default;
   }
 
-  formatAmount(amount: number): string {
-    const formatedAmount = utils.formatUnits(
-      BigInt(amount),
-      this.tokenDecimals
-    );
-    return `${Number.parseFloat(formatedAmount).toFixed(1)}`;
+  formatAmount(amount: BigNumber): string {
+    const formatedAmount = utils.formatUnits(amount, this.tokenDecimals);
+    return `${Number.parseFloat(formatedAmount).toFixed(4)}`;
   }
 
   render(): HTMLTemplateResult {

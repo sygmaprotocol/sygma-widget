@@ -1,6 +1,5 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
-import { Web3Provider } from '@ethersproject/providers';
 import { ContextConsumer } from '@lit/context';
 import type { Account } from '@polkadot-onboard/core';
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
@@ -9,6 +8,7 @@ import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
 
+import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
 
 export class WalletController implements ReactiveController {
@@ -27,13 +27,6 @@ export class WalletController implements ReactiveController {
   hostConnected(): void {}
 
   hostDisconnected(): void {
-    const evmWallet = this.walletContext.value?.evmWallet;
-    if (evmWallet) {
-      evmWallet.provider.removeListener(
-        'accountsChanged',
-        this.onEvmAccountChange
-      );
-    }
     const substrateWallet = this.walletContext.value?.substrateWallet;
     if (substrateWallet) {
       substrateWallet.unsubscribeSubstrateAccounts?.();
@@ -65,10 +58,6 @@ export class WalletController implements ReactiveController {
   disconnectEvmWallet = (): void => {
     const evmWallet = this.walletContext.value?.evmWallet;
     if (evmWallet) {
-      evmWallet.provider.removeListener(
-        'accountsChanged',
-        this.onEvmAccountChange
-      );
       this.host.dispatchEvent(
         new WalletUpdateEvent({
           evmWallet: undefined
@@ -89,6 +78,15 @@ export class WalletController implements ReactiveController {
       );
     }
   };
+
+  switchChain(chainId: number): void {
+    if (this.walletContext.value?.evmWallet) {
+      void this.walletContext.value.evmWallet.provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: utils.hexValue(chainId) }]
+      });
+    }
+  }
 
   connectEvmWallet = async (
     network: Domain,
@@ -117,22 +115,28 @@ export class WalletController implements ReactiveController {
 
     const wallets = await onboard.connectWallet();
     if (wallets[0]) {
+      const provider = wallets[0].provider;
+      const providerChainId = parseInt(
+        await provider.request({ method: 'eth_chainId' })
+      );
       this.host.dispatchEvent(
         new WalletUpdateEvent({
           evmWallet: {
             address:
               wallets[0].accounts[0].ens?.name ??
               wallets[0].accounts[0].address,
-            provider: new Web3Provider(wallets[0].provider)
+            providerChainId,
+            provider
           }
         })
       );
-
-      wallets[0].provider.on('accountsChanged', this.onEvmAccountChange);
-      void onboard.setChain({
-        //TODO: we need more info in network object in case we are adding new chain to metamask
-        chainId: network.chainId
-      });
+      if (network.chainId !== providerChainId) {
+        void provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: utils.hexValue(network.chainId) }]
+        });
+      }
+      this.host.requestUpdate();
     }
   };
   connectSubstrateWallet = async (
@@ -187,22 +191,6 @@ export class WalletController implements ReactiveController {
         return;
     }
   }
-
-  private onEvmAccountChange = (accounts: string[]): void => {
-    if (this.walletContext.value?.evmWallet && accounts.length !== 0) {
-      this.host.dispatchEvent(
-        new WalletUpdateEvent({
-          evmWallet: {
-            address: accounts[0],
-            provider: this.walletContext.value.evmWallet.provider
-          }
-        })
-      );
-    }
-    if (accounts.length === 0) {
-      this.disconnectEvmWallet();
-    }
-  };
 
   private onSubstrateAccountChange = (accounts: Account[]): void => {
     if (this.walletContext.value?.substrateWallet && accounts.length !== 0) {

@@ -6,6 +6,7 @@ export const styles = css`
     --zinc-200: #e4e4e7;
     --zinc-400: #a1a1aa;
     --zinc-700: #3f3f46;
+    --zinc-900: #18181b;
     --white: #fff;
     --gray-100: #f3f4f6;
     --neutral-100: #f5f5f5;
@@ -71,7 +72,7 @@ export const styles = css`
   }
 
   .widgetContent {
-    margin-top: 1rem
+    margin-top: 1rem;
   }
 
   .networkSelectionWrapper {

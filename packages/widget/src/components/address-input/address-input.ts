@@ -43,6 +43,7 @@ export class AddressInput extends BaseComponent {
     }
 
     if (!trimedValue) {
+      void this.onAddressChange('');
       return;
     }
 
@@ -50,6 +51,8 @@ export class AddressInput extends BaseComponent {
 
     if (!this.errorMessage) {
       void this.onAddressChange(trimedValue);
+    } else {
+      void this.onAddressChange('');
     }
   };
 

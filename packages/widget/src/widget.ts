@@ -15,7 +15,7 @@ import './components';
 import './components/address-input';
 import './components/amount-selector';
 import { BaseComponent } from './components/common/base-component/base-component';
-import './components/fungibleTokenTransfer';
+import './components/transfer/fungible/fungibleTokenTransfer';
 import './components/network-selector';
 import './context/wallet';
 import type {
