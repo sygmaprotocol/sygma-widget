@@ -1,6 +1,5 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
-import { Web3Provider } from '@ethersproject/providers';
 import {
   elementUpdated,
   fixture,
@@ -13,6 +12,7 @@ import {
   WalletUpdateEvent,
   type WalletContextProvider
 } from '../../../../src/context';
+import { getMockedEvmWallet } from '../../../utils';
 
 describe('connect-wallet button', function () {
   afterEach(() => {
@@ -53,13 +53,13 @@ describe('connect-wallet button', function () {
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
 
-    const walletProvider = vi.mocked(Web3Provider, true);
+    const walletProvider = getMockedEvmWallet().provider;
     walletContext.dispatchEvent(
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
-          provider:
-            walletProvider.getMockImplementation() as unknown as Web3Provider
+          providerChainId: 1,
+          provider: walletProvider
         }
       })
     );
@@ -141,14 +141,13 @@ describe('connect-wallet button', function () {
     const walletContext = await fixture<WalletContextProvider>(html`
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
-
-    const walletProvider = vi.mocked(Web3Provider, true);
+    const walletProvider = getMockedEvmWallet().provider;
     walletContext.dispatchEvent(
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
-          provider:
-            walletProvider.getMockImplementation() as unknown as Web3Provider
+          providerChainId: 1,
+          provider: walletProvider
         }
       })
     );
@@ -176,8 +175,8 @@ describe('connect-wallet button', function () {
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x758b8178A9A4B7206D1f648c4a77C515CbaC7000',
-          provider:
-            walletProvider.getMockImplementation() as unknown as Web3Provider
+          providerChainId: 1,
+          provider: walletProvider
         }
       })
     );
@@ -195,13 +194,13 @@ describe('connect-wallet button', function () {
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
 
-    const walletProvider = vi.mocked(Web3Provider, true);
+    const walletProvider = getMockedEvmWallet().provider;
     walletContext.dispatchEvent(
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
-          provider:
-            walletProvider.getMockImplementation() as unknown as Web3Provider
+          providerChainId: 1,
+          provider: walletProvider
         }
       })
     );
@@ -268,13 +267,13 @@ describe('connect-wallet button', function () {
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
 
-    const walletProvider = vi.mocked(Web3Provider, true);
+    const walletProvider = getMockedEvmWallet().provider;
     walletContext.dispatchEvent(
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
-          provider:
-            walletProvider.getMockImplementation() as unknown as Web3Provider
+          providerChainId: 1,
+          provider: walletProvider
         }
       })
     );

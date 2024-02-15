@@ -139,6 +139,7 @@ export class WalletController implements ReactiveController {
       this.host.requestUpdate();
     }
   };
+
   connectSubstrateWallet = async (
     _network: Domain, // TODO: remove underscore prefix once arg usage is added
     options?: { dappUrl?: string; dappName?: string }

@@ -4,7 +4,7 @@ import type { Signer } from '@polkadot/api/types';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { BaseComponent } from '../components/common/base-component/base-component';
 
 export interface EvmWallet {
@@ -48,8 +48,14 @@ export class WalletContextProvider extends BaseComponent {
   @provide({ context: walletContext })
   private walletContext: WalletContext = {};
 
+  @property({ attribute: false, type: Object })
+  evmWalllet?: EvmWallet;
+
   connectedCallback(): void {
     super.connectedCallback();
+    if (this.evmWalllet) {
+      this.walletContext.evmWallet = this.evmWalllet;
+    }
     this.addEventListener('walletUpdate', (event: WalletUpdateEvent) => {
       this.walletContext = {
         ...this.walletContext,

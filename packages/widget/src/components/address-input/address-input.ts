@@ -2,7 +2,6 @@ import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { html } from 'lit';
 import type { HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
 
 import { validateAddress } from '../../utils';
@@ -69,6 +68,7 @@ export class AddressInput extends BaseComponent {
         <textarea
           class=${this.errorMessage ? 'inputAddress error' : 'inputAddress'}
           name="address"
+          .value=${this.address}
           @keypress=${(e: KeyboardEvent) => {
             if (e.key === ' ' || e.key === 'Enter') {
               e.preventDefault();
@@ -76,9 +76,7 @@ export class AddressInput extends BaseComponent {
           }}
           @change=${(evt: Event) =>
             this.handleAddressChange((evt.target as HTMLInputElement).value)}
-        >
-${ifDefined(this.address)}</textarea
-        >
+        ></textarea>
       </div>
     </section>`;
   }

@@ -58,9 +58,9 @@ export class NetworkSelector extends BaseComponent {
         .disabled=${this.disabled}
         .placeholder=${'Select the network'}
         .label=${this.direction}
-        .options=${this._normalizeOptions()} 
+        .options=${this._normalizeOptions()}
         .onOptionSelected=${this._onOptionSelected}
-        >
+      ></dropdown-component>
     </div>`;
   }
 }

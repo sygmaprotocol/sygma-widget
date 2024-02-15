@@ -32,6 +32,7 @@ export async function executeNextEvmTransaction(
       console.log(e);
       this.errorMessage = 'Approval transaction reverted or rejected';
     } finally {
+      this.waitingUserConfirmation = false;
       this.waitingTxExecution = false;
       this.host.requestUpdate();
     }
@@ -54,6 +55,7 @@ export async function executeNextEvmTransaction(
       console.log(e);
       this.errorMessage = 'Transfer transaction reverted or rejected';
     } finally {
+      this.waitingUserConfirmation = false;
       this.waitingTxExecution = false;
       this.host.requestUpdate();
     }
