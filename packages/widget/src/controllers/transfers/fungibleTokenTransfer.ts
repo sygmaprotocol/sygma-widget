@@ -1,9 +1,9 @@
-import type { Domain, Resource } from '@buildwithsygma/sygma-sdk-core';
+import type { Domain, Resource, Route } from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
   Environment,
   Network,
-  ResourceType
+  getRoutes
 } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction } from 'ethers';
@@ -52,6 +52,8 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   protected config: Config;
   protected env: Environment = Environment.TESTNET;
+  //source network chain id -> Route[]
+  protected routesCache: Map<number, Route[]> = new Map();
 
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
@@ -110,11 +112,16 @@ export class FungibleTokenTransferController implements ReactiveController {
       return;
     }
     this.sourceNetwork = network;
-    void this.filterDestinationNetworks(network);
+    void this.filterDestinationNetworksAndResources(network);
   };
 
   onDestinationNetworkSelected = (network: Domain | undefined): void => {
     this.destinationNetwork = network;
+    if (this.sourceNetwork && !this.selectedResource) {
+      //filter resources
+      void this.filterDestinationNetworksAndResources(this.sourceNetwork);
+      return;
+    }
     void this.buildTransactions();
     this.host.requestUpdate();
   };
@@ -210,17 +217,37 @@ export class FungibleTokenTransferController implements ReactiveController {
     return `https://scan.test.buildwithsygma.com/transfer/${this.transferTransactionId}`;
   }
 
-  private filterDestinationNetworks = async (
+  private filterDestinationNetworksAndResources = async (
     sourceNetwork: Domain
   ): Promise<void> => {
-    await this.config.init(sourceNetwork.chainId, this.env);
-    this.supportedResources = this.config
-      .getDomainResources()
-      .filter((r) => r.type === ResourceType.FUNGIBLE);
-    //remove selected source network from destination
-    this.supportedDestinationNetworks = this.config
-      .getDomains()
-      .filter((n) => this.sourceNetwork?.id !== n.id);
+    if (!this.routesCache.has(sourceNetwork.chainId)) {
+      this.routesCache.set(
+        sourceNetwork.chainId,
+        await getRoutes(this.env, sourceNetwork.chainId, 'fungible')
+      );
+    }
+    if (!this.destinationNetwork) {
+      this.supportedDestinationNetworks = [];
+    }
+    this.supportedResources = [];
+    this.routesCache.get(sourceNetwork.chainId)!.forEach((route: Route) => {
+      //change/add dst routes if dst not yet selected, not a src domain and isn't already present
+      if (
+        !this.destinationNetwork &&
+        this.sourceNetwork?.chainId !== route.toDomain.chainId &&
+        !this.supportedDestinationNetworks.includes(route.toDomain)
+      ) {
+        this.supportedDestinationNetworks.push(route.toDomain);
+      }
+      if (
+        !this.destinationNetwork ||
+        this.destinationNetwork.chainId === route.toDomain.chainId
+      ) {
+        if (!this.supportedResources.includes(route.resource)) {
+          this.supportedResources.push(route.resource);
+        }
+      }
+    });
     //unselect destination if equal to source network
     if (this.destinationNetwork?.id === sourceNetwork.id) {
       this.destinationNetwork = undefined;

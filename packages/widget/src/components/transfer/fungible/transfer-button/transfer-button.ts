@@ -16,7 +16,8 @@ const enabledStates: FungibleTransferState[] = [
 
 const loadingStates: FungibleTransferState[] = [
   FungibleTransferState.WAITING_TX_EXECUTION,
-  FungibleTransferState.WAITING_USER_CONFIRMATION
+  FungibleTransferState.WAITING_USER_CONFIRMATION,
+  FungibleTransferState.UNKNOWN
 ];
 
 @customElement('sygma-fungible-transfer-button')
@@ -65,7 +66,7 @@ export class FungibleTransferButton extends BaseComponent {
           ],
           [FungibleTransferState.COMPLETED, () => 'Start new transfer']
         ],
-        () => 'Unknown state'
+        () => 'Loading'
       )!}
       @click=${this.onClick}
     ></sygma-action-button>`;
