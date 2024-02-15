@@ -45,11 +45,13 @@ export class ConnectWalletButton extends BaseComponent {
   }
 
   private onConnectClicked = (): void => {
+    const walletConnectOptions = this.walletConnectOptions ?? undefined;
+
     if (this.sourceNetwork) {
-      this.walletController.connectWallet(this.sourceNetwork, {
-        dappUrl: this.walletConnectOptions?.dappUrl,
-        projectId: this.walletConnectOptions?.projectId
-      });
+      this.walletController.connectWallet(
+        this.sourceNetwork,
+        walletConnectOptions
+      );
     }
   };
 
