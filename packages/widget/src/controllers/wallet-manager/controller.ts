@@ -103,7 +103,7 @@ export class WalletController implements ReactiveController {
       walletSetup.push(
         walletConnectModule({
           projectId: options?.projectId,
-          dappUrl: options?.dappUrl
+          dappUrl: options.dappUrl
         })
       );
     }

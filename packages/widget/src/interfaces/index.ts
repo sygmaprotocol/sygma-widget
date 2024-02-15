@@ -24,7 +24,7 @@ export interface Eip1193Provider {
 
 export type WalletConnectOptions = {
   dappUrl?: string;
-  projectId?: string;
+  projectId: string;
 };
 
 export interface ISygmaProtocolWidget {
