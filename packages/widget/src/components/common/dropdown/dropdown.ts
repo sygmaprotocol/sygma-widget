@@ -30,12 +30,12 @@ export class Dropdown extends BaseComponent {
   placeholder = '';
 
   @property({ type: String })
-  label = '';
+  label? = '';
 
   @property({ type: Array })
   options: DropdownOption[] = [];
 
-  @property({ type: Object })
+  @state()
   selectedOption: DropdownOption | null = null;
 
   @property({ attribute: false })

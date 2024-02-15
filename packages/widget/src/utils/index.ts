@@ -14,6 +14,8 @@ import {
   polygonNetworkIcon
 } from '../assets';
 
+export * from './resource';
+
 export const renderNetworkIcon = (
   networkChainId?: number
 ): HTMLTemplateResult | undefined => {

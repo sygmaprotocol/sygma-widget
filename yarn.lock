@@ -302,7 +302,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@buildwithsygma/sygma-contracts@npm:2.5.1":
+"@buildwithsygma/sygma-contracts@npm:2.5.1, @buildwithsygma/sygma-contracts@npm:^2.5.1":
   version: 2.5.1
   resolution: "@buildwithsygma/sygma-contracts@npm:2.5.1"
   dependencies:
@@ -358,6 +358,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@buildwithsygma/sygmaprotocol-widget@workspace:packages/widget"
   dependencies:
+    "@buildwithsygma/sygma-contracts": "npm:^2.5.1"
     "@buildwithsygma/sygma-sdk-core": "npm:^2.6.3"
     "@ethersproject/abstract-signer": "npm:^5.7.0"
     "@ethersproject/contracts": "npm:^5.7.0"

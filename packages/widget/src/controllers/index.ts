@@ -1,1 +1,1 @@
-export * from './wallet-manager';
+export { WalletController } from './wallet-manager';

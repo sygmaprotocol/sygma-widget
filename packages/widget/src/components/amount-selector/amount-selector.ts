@@ -3,13 +3,12 @@ import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
-
 import { networkIconsMap } from '../../assets';
-import { BaseComponent } from '../common/base-component/base-component';
+import { TokenBalanceController } from '../../controllers/wallet-manager/token-balance';
+import { tokenBalanceToNumber } from '../../utils/token';
+import { BaseComponent } from '../common';
 import type { DropdownOption } from '../common/dropdown/dropdown';
-
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
@@ -26,55 +25,58 @@ export class AmountSelector extends BaseComponent {
   disabled = false;
 
   @property({ type: String })
-  accountBalance?: string;
-
-  @property({ type: String })
   preselectedToken?: string;
 
-  @property({ type: Number })
-  preselectedAmount?: number;
-
   @property({ attribute: false })
+  /**
+   * amount is in "ether" (it's up to parent component to get resource decimals)
+   */
   onResourceSelected: (resource: Resource, amount: number) => void = () => {};
 
   @state() validationMessage: string | null = null;
   @state() selectedResource: Resource | null = null;
-  @state() amount: string | null = null;
+  @state() amount: number = 0;
+
+  tokenBalanceController = new TokenBalanceController(this);
 
   _useMaxBalance = (): void => {
-    if (Number.parseFloat(this.accountBalance!) === 0) {
-      this.validationMessage = 'Insufficient balance';
-      return;
-    }
-
-    this.amount = this.accountBalance!;
+    this.amount = tokenBalanceToNumber(
+      this.tokenBalanceController.balance,
+      this.tokenBalanceController.decimals
+    );
   };
 
   _onInputAmountChangeHandler = (event: Event): void => {
     const { value } = event.target as HTMLInputElement;
     if (!this._validateAmount(value)) return;
 
-    this.amount = value;
+    this.amount = Number.parseFloat(value);
     if (this.selectedResource) {
-      this.onResourceSelected(this.selectedResource, Number.parseFloat(value));
+      this.onResourceSelected(this.selectedResource, this.amount);
     }
   };
 
   _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
     this.selectedResource = value;
-    const amount = Number.parseFloat(this.amount!);
-
-    if (value) this.onResourceSelected(value, amount);
+    this.amount = 0;
+    this.tokenBalanceController.startBalanceUpdates(value);
   };
 
   _validateAmount(amount: string): boolean {
     const parsedAmount = Number.parseFloat(amount);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+    if (isNaN(parsedAmount)) {
+      this.validationMessage = 'Invalid amount value';
+      return false;
+    }
+    if (parsedAmount < 0) {
       this.validationMessage = 'Amount must be greater than 0';
       return false;
     } else if (
-      this.accountBalance &&
-      parsedAmount > Number.parseFloat(this.accountBalance)
+      parsedAmount >
+      tokenBalanceToNumber(
+        this.tokenBalanceController.balance,
+        this.tokenBalanceController.decimals
+      )
     ) {
       this.validationMessage = 'Amount exceeds account balance';
       return false;
@@ -84,17 +86,15 @@ export class AmountSelector extends BaseComponent {
     }
   }
 
-  _renderBalance(): HTMLTemplateResult {
+  _renderAccountBalance(): HTMLTemplateResult {
     return html`
       <section class="balanceContent">
-        <span>${`${Number.parseFloat(this.accountBalance!).toFixed(4)}`}</span>
+        <span
+          >${`${tokenBalanceToNumber(this.tokenBalanceController.balance, this.tokenBalanceController.decimals).toFixed(4)}`}</span
+        >
         <button class="maxButton" @click=${this._useMaxBalance}>Max</button>
       </section>
     `;
-  }
-
-  _renderAccountBalance(): HTMLTemplateResult {
-    return when(this.accountBalance, () => this._renderBalance());
   }
 
   _renderErrorMessages(): HTMLTemplateResult {
@@ -134,20 +134,22 @@ export class AmountSelector extends BaseComponent {
               class="amountSelectorInput"
               placeholder="0.000"
               @change=${this._onInputAmountChangeHandler}
-              value=${this.amount || ifDefined(this.preselectedAmount)}
+              value=${this.amount.toString()}
             />
             <section class="selectorSection">
-              <dropdown-component 
-                .selectedOption=${this.preselectedToken}
-                ?disabled=${this.disabled} 
+              <dropdown-component
+                .preselectedOption=${this._normalizeOptions().filter(
+                  (o) =>
+                    o.id === this.preselectedToken ||
+                    o.name === this.preselectedToken
+                )}
+                ?disabled=${this.disabled}
                 .onOptionSelected=${this._onResourceSelectedHandler}
                 .options=${this._normalizeOptions()}
-                >
+              ></dropdown-component>
             </section>
           </div>
-          <div class="errorWrapper">
-            ${this._renderErrorMessages()}
-          </div>
+          <div class="errorWrapper">${this._renderErrorMessages()}</div>
         </section>
       </div>
     `;
