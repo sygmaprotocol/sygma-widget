@@ -6,13 +6,14 @@ import { when } from 'lit/directives/when.js';
 
 import { chevronIcon, networkIconsMap } from '../../../assets';
 import { capitalize } from '../../../utils';
-import { BaseComponent } from '../base-component/base-component';
 
+import { BaseComponent } from '../base-component';
 import { styles } from './styles';
 
 export interface DropdownOption<T = Record<string, unknown>> {
   id?: string;
   name: string;
+  customOptionHtml?: HTMLTemplateResult;
   icon?: HTMLTemplateResult | string;
   value: T;
 }
@@ -34,7 +35,7 @@ export class Dropdown extends BaseComponent {
   label? = '';
 
   @property({ type: Array })
-  options: DropdownOption[] = [];
+  options: DropdownOption[] | HTMLTemplateResult = [];
 
   @state()
   selectedOption: DropdownOption | null = null;
@@ -105,17 +106,31 @@ export class Dropdown extends BaseComponent {
     );
   }
 
-  _renderOptions(): Generator<unknown, void> {
+  _renderOptions(): Generator<unknown, void> | HTMLTemplateResult {
+    function renderOptionContent({
+      customOptionHtml,
+      name,
+      icon
+    }: DropdownOption): HTMLTemplateResult {
+      return when(
+        customOptionHtml,
+        () => customOptionHtml,
+        () => html`
+          ${icon || ''}
+          <span class="optionName">${capitalize(name)}</span>
+        `
+      ) as HTMLTemplateResult;
+    }
+
     return map(
-      this.options,
+      this.options as DropdownOption[],
       (option) => html`
         <div
           class="dropdownOption"
           @click="${(e: Event) => this._selectOption(option, e)}"
           role="option"
         >
-          ${option.icon || ''}
-          <span class="optionName">${capitalize(option.name)}</span>
+          ${renderOptionContent(option)}
         </div>
       `
     );
@@ -131,6 +146,8 @@ export class Dropdown extends BaseComponent {
       >
         <label for="selector" class="dropdownLabel">${this.label}</label>
         <div
+          slot="dropdown"
+          part="dropdown"
           class="dropdown"
           @click="${this._toggleDropdown}"
           role="listbox"
@@ -138,6 +155,7 @@ export class Dropdown extends BaseComponent {
           aria-expanded="${this.isDropdownOpen ? 'true' : 'false'}"
         >
           <div
+            part="dropdownTriggers"
             class="${this.disabled
               ? 'dropdownTrigger disabled'
               : 'dropdownTrigger'}"
@@ -148,6 +166,7 @@ export class Dropdown extends BaseComponent {
             </div>
           </div>
           <div
+            part="dropdownContent"
             class="dropdownContent ${this.isDropdownOpen ? 'show' : ''}"
             role="list"
           >
