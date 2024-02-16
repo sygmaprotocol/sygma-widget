@@ -10,6 +10,7 @@ import type { UnsignedTransaction } from 'ethers';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import { walletContext } from '../../context/wallet';
+import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
 export enum FungibleTransferState {
@@ -51,7 +52,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected pendingEvmTransferTransaction?: UnsignedTransaction;
 
   protected config: Config;
-  protected env: Environment = Environment.TESTNET;
+  protected env: Environment = Environment.MAINNET;
   //source network chain id -> Route[]
   protected routesCache: Map<number, Route[]> = new Map();
 
@@ -74,8 +75,6 @@ export class FungibleTokenTransferController implements ReactiveController {
       }
     });
   }
-
-  hostConnected(): void {}
 
   hostDisconnected(): void {
     this.reset();
@@ -212,9 +211,9 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   getExplorerLink(): string {
     if (this.env === Environment.MAINNET) {
-      return `https://scan.buildwithsygma.com/transfer/${this.transferTransactionId}`;
+      return `${MAINNET_EXPLORER_URL}${this.transferTransactionId}`;
     }
-    return `https://scan.test.buildwithsygma.com/transfer/${this.transferTransactionId}`;
+    return `${TESTNET_EXPLORER_URL}${this.transferTransactionId}`;
   }
 
   private filterDestinationNetworksAndResources = async (
@@ -226,30 +225,31 @@ export class FungibleTokenTransferController implements ReactiveController {
         await getRoutes(this.env, sourceNetwork.chainId, 'fungible')
       );
     }
-    if (!this.destinationNetwork) {
-      this.supportedDestinationNetworks = [];
-    }
     this.supportedResources = [];
-    this.routesCache.get(sourceNetwork.chainId)!.forEach((route: Route) => {
-      //change/add dst routes if dst not yet selected, not a src domain and isn't already present
-      if (
-        !this.destinationNetwork &&
-        this.sourceNetwork?.chainId !== route.toDomain.chainId &&
-        !this.supportedDestinationNetworks.includes(route.toDomain)
-      ) {
-        this.supportedDestinationNetworks.push(route.toDomain);
-      }
-      if (
-        !this.destinationNetwork ||
-        this.destinationNetwork.chainId === route.toDomain.chainId
-      ) {
-        if (!this.supportedResources.includes(route.resource)) {
-          this.supportedResources.push(route.resource);
-        }
-      }
-    });
-    //unselect destination if equal to source network
-    if (this.destinationNetwork?.id === sourceNetwork.id) {
+    if (!this.destinationNetwork) {
+      this.supportedDestinationNetworks = this.routesCache
+        .get(sourceNetwork.chainId)!
+        .filter(
+          (route) =>
+            route.toDomain.chainId !== sourceNetwork.chainId &&
+            !this.supportedDestinationNetworks.includes(route.toDomain)
+        )
+        .map((route) => route.toDomain);
+    }
+    this.supportedResources = this.routesCache
+      .get(sourceNetwork.chainId)!
+      .filter(
+        (route) =>
+          !this.destinationNetwork ||
+          (route.toDomain.chainId === this.destinationNetwork?.chainId &&
+            !this.supportedResources.includes(route.resource))
+      )
+      .map((route) => route.resource);
+    //unselect destination if equal to source network or isn't in list of available destination networks
+    if (
+      this.destinationNetwork?.id === sourceNetwork.id ||
+      !this.supportedDestinationNetworks.includes(this.destinationNetwork!)
+    ) {
       this.destinationNetwork = undefined;
     }
     void this.buildTransactions();

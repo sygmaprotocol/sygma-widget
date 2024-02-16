@@ -1,10 +1,10 @@
 import { EVMAssetTransfer } from '@buildwithsygma/sygma-sdk-core';
 import { Web3Provider } from '@ethersproject/providers';
-import { type FungibleTokenTransferController } from '../fungibleTokenTransfer';
+import { type FungibleTokenTransferController } from '../fungible-token-transfer';
 
 /**
  * @dev If we did proper validation this shouldn't throw.
- * NBot sure how to handle if it throws :shrug:
+ * Not sure how to handle if it throws :shrug:
  */
 export async function buildEvmFungibleTransactions(
   this: FungibleTokenTransferController

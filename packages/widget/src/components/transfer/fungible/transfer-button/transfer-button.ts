@@ -2,11 +2,11 @@ import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
-import { FungibleTransferState } from '../../../../controllers/transfers/fungibleTokenTransfer';
+import { FungibleTransferState } from '../../../../controllers/transfers/fungible-token-transfer';
 import type { Button } from '../../../common';
 import { BaseComponent } from '../../../common';
 
-const enabledStates: FungibleTransferState[] = [
+const enabledStates = [
   FungibleTransferState.WRONG_CHAIN,
   FungibleTransferState.WALLET_NOT_CONNECTED,
   FungibleTransferState.PENDING_APPROVALS,
@@ -14,7 +14,7 @@ const enabledStates: FungibleTransferState[] = [
   FungibleTransferState.COMPLETED
 ];
 
-const loadingStates: FungibleTransferState[] = [
+const loadingStates = [
   FungibleTransferState.WAITING_TX_EXECUTION,
   FungibleTransferState.WAITING_USER_CONFIRMATION,
   FungibleTransferState.UNKNOWN
@@ -22,7 +22,7 @@ const loadingStates: FungibleTransferState[] = [
 
 @customElement('sygma-fungible-transfer-button')
 export class FungibleTransferButton extends BaseComponent {
-  @property({ attribute: true, type: Number })
+  @property({ type: Number })
   state: FungibleTransferState = FungibleTransferState.MISSING_SOURCE_NETWORK;
 
   @property({ type: Object })
@@ -46,7 +46,7 @@ export class FungibleTransferButton extends BaseComponent {
           [FungibleTransferState.MISSING_RESOURCE, () => 'Select token'],
           [
             FungibleTransferState.MISSING_RESOURCE_AMOUNT,
-            () => 'Input token amount'
+            () => 'Set token amount'
           ],
           [
             FungibleTransferState.MISSING_DESTINATION_ADDRESS,

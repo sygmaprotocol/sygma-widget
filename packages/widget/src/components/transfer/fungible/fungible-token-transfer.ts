@@ -8,7 +8,7 @@ import { choose } from 'lit/directives/choose.js';
 import {
   FungibleTokenTransferController,
   FungibleTransferState
-} from '../../../controllers/transfers/fungibleTokenTransfer';
+} from '../../../controllers/transfers/fungible-token-transfer';
 import '../../address-input';
 import '../../amount-selector';
 import './transfer-button';
@@ -26,9 +26,9 @@ export class FungibleTokenTransfer extends BaseComponent {
   @property({ type: Array }) whitelistedSourceResources?: Array<string>;
 
   @property({ type: String })
-  evironment: Environment = Environment.TESTNET;
+  evironment: Environment = Environment.MAINNET;
 
-  @property({ type: String })
+  @property({ type: Object })
   onSourceNetworkSelected?: (domain: Domain) => void;
 
   transferController = new FungibleTokenTransferController(this);
@@ -41,27 +41,37 @@ export class FungibleTokenTransfer extends BaseComponent {
 
   private onClick = (): void => {
     const state = this.transferController.getTransferState();
-    if (
-      state === FungibleTransferState.PENDING_APPROVALS ||
-      state === FungibleTransferState.PENDING_TRANSFER
-    ) {
-      this.transferController.executeTransaction();
-      return;
+    switch (state) {
+      case FungibleTransferState.PENDING_APPROVALS:
+      case FungibleTransferState.PENDING_TRANSFER:
+        {
+          this.transferController.executeTransaction();
+        }
+        break;
+      case FungibleTransferState.WALLET_NOT_CONNECTED:
+        {
+          this.walletController.connectWallet(
+            this.transferController.sourceNetwork!
+          );
+        }
+        break;
+      case FungibleTransferState.WRONG_CHAIN:
+        {
+          this.walletController.switchChain(
+            this.transferController.sourceNetwork!.chainId
+          );
+        }
+        break;
+      case FungibleTransferState.COMPLETED:
+        {
+          this.walletController.switchChain(
+            this.transferController.sourceNetwork!.chainId
+          );
+        }
+        break;
     }
-    if (state === FungibleTransferState.WALLET_NOT_CONNECTED) {
-      this.walletController.connectWallet(
-        this.transferController.sourceNetwork!
-      );
-      return;
-    }
-    if (state === FungibleTransferState.WRONG_CHAIN) {
-      this.walletController.switchChain(
-        this.transferController.sourceNetwork!.chainId
-      );
-      return;
-    }
+
     if (state === FungibleTransferState.COMPLETED) {
-      this.transferController.reset();
       return;
     }
   };
@@ -79,13 +89,11 @@ export class FungibleTokenTransfer extends BaseComponent {
     return html`<section>
       <sygma-transfer-status
         .amount=${this.transferController.resourceAmount}
-        .tokenDecimals=${this.transferController.selectedResource?.decimals ??
-        18}
+        .tokenDecimals=${this.transferController.selectedResource?.decimals}
         .destinationNetworkName=${this.transferController.destinationNetwork
-          ?.name ?? ''}
-        .sourceNetworkName=${this.transferController.sourceNetwork?.name ?? ''}
-        .resourceSymbol=${this.transferController.selectedResource?.symbol ??
-        ''}
+          ?.name}
+        .sourceNetworkName=${this.transferController.sourceNetwork?.name}
+        .resourceSymbol=${this.transferController.selectedResource?.symbol}
         .explorerLinkTo=${this.transferController.getExplorerLink()}
       >
       </sygma-transfer-status>

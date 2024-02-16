@@ -10,6 +10,7 @@ import { TokenBalanceController } from '../../controllers/wallet-manager/token-b
 import { tokenBalanceToNumber } from '../../utils/token';
 import { BaseComponent } from '../common';
 import type { DropdownOption } from '../common/dropdown/dropdown';
+import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
@@ -58,7 +59,7 @@ export class AmountSelector extends BaseComponent {
         this.selectedResource,
         utils.parseUnits(
           this.amount.toString(),
-          this.selectedResource.decimals ?? 18
+          this.selectedResource.decimals ?? DEFAULT_ETH_DECIMALS
         )
       );
     }

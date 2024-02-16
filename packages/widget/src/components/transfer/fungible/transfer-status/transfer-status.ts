@@ -3,6 +3,7 @@ import { html, type HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { BaseComponent } from '../../../common';
 import { greenMark, networkIconsMap } from '../../../../assets';
+import { DEFAULT_ETH_DECIMALS } from '../../../../constants';
 import { styles } from './styles';
 
 @customElement('sygma-transfer-status')
@@ -15,7 +16,7 @@ export class TransferStatus extends BaseComponent {
 
   @property({ type: Object }) amount: BigNumber = BigNumber.from(0);
 
-  @property({ type: Number }) tokenDecimals: number = 18;
+  @property({ type: Number }) tokenDecimals: number = DEFAULT_ETH_DECIMALS;
 
   @property({ type: String }) resourceSymbol: string = '';
 
@@ -36,14 +37,15 @@ export class TransferStatus extends BaseComponent {
       <h3 class="transferStatusMainMessage">Started a transfer</h3>
       <div class="destinationMessage">
         <span class="networkIcon">
-          From ${this.renderNetworkIcon(this.sourceNetworkName)}
-          ${this.sourceNetworkName} to
-          ${this.renderNetworkIcon(this.destinationNetworkName)}
-          ${this.destinationNetworkName}
+          From ${this.renderNetworkIcon(this.sourceNetworkName ?? '')}
+          ${this.sourceNetworkName ?? 'Unknown'} to
+          ${this.renderNetworkIcon(this.destinationNetworkName ?? '')}
+          ${this.destinationNetworkName ?? 'Unknown'}
         </span>
       </div>
       <div class="tokenInfo">
-        ${this.formatAmount(this.amount)} ${this.resourceSymbol}
+        ${this.formatAmount(this.amount ?? BigNumber.from(0))}
+        ${this.resourceSymbol}
       </div>
       <div class="transferStatusDescription">
         <span>

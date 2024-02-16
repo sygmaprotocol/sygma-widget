@@ -5,7 +5,7 @@ import {
 import {
   FungibleTransferState,
   type FungibleTokenTransferController
-} from '../fungibleTokenTransfer';
+} from '../fungible-token-transfer';
 
 export async function executeNextEvmTransaction(
   this: FungibleTokenTransferController
