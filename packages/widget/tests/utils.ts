@@ -15,6 +15,7 @@ export function getMockedEvmWallet(): MockedObject<EvmWallet> {
 
   return {
     address: '0x123',
+    providerChainId: 1,
     provider: mockedProvider
   };
 }

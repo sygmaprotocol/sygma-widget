@@ -1,4 +1,5 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
+import { utils, type BigNumber } from 'ethers';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -9,6 +10,7 @@ import { TokenBalanceController } from '../../controllers/wallet-manager/token-b
 import { tokenBalanceToNumber } from '../../utils/token';
 import { BaseComponent } from '../common';
 import type { DropdownOption } from '../common/dropdown/dropdown';
+import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
@@ -29,9 +31,10 @@ export class AmountSelector extends BaseComponent {
 
   @property({ attribute: false })
   /**
-   * amount is in "ether" (it's up to parent component to get resource decimals)
+   * amount is in lowest denomination (it's up to parent component to get resource decimals)
    */
-  onResourceSelected: (resource: Resource, amount: number) => void = () => {};
+  onResourceSelected: (resource: Resource, amount: BigNumber) => void =
+    () => {};
 
   @state() validationMessage: string | null = null;
   @state() selectedResource: Resource | null = null;
@@ -52,7 +55,13 @@ export class AmountSelector extends BaseComponent {
 
     this.amount = Number.parseFloat(value);
     if (this.selectedResource) {
-      this.onResourceSelected(this.selectedResource, this.amount);
+      this.onResourceSelected(
+        this.selectedResource,
+        utils.parseUnits(
+          this.amount.toString(),
+          this.selectedResource.decimals ?? DEFAULT_ETH_DECIMALS
+        )
+      );
     }
   };
 

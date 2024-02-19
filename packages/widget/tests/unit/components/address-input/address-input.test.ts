@@ -104,7 +104,8 @@ describe('address-input component', function () {
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 1);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
       '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'
     ]);
@@ -130,7 +131,9 @@ describe('address-input component', function () {
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 0);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
 
     const errorMessage = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -144,7 +147,8 @@ describe('address-input component', function () {
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 0);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[2], ['']);
 
     const errorMessageAfterClean = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -175,7 +179,8 @@ describe('address-input component', function () {
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 1);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
       '42sydUvocBuEorweEPqxY5vZae1VaTtWoJFiKMrPbRamy2BL'
     ]);
@@ -202,7 +207,8 @@ describe('address-input component', function () {
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 1);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
       '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'
     ]);
@@ -230,7 +236,9 @@ describe('address-input component', function () {
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 0);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
 
     const errorMessage = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -260,7 +268,9 @@ describe('address-input component', function () {
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 0);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
 
     const errorMessage = el.shadowRoot!.querySelector(
       '.errorMessage'
