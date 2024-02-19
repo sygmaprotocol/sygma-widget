@@ -22,6 +22,7 @@ export interface Eip1193Provider {
 }
 
 export interface ISygmaProtocolWidget {
+  environment?: string;
   whitelistedSourceNetworks?: string[];
   whitelistedDestinationNetworks?: string[];
   evmProvider?: Eip1193Provider;
