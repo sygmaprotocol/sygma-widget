@@ -88,7 +88,7 @@ class SygmaProtocolWidget
               .onSourceNetworkSelected=${(domain: Domain) =>
                 (this.sourceNetwork = domain)}
               .whitelistedSourceResources=${this.whitelistedSourceNetworks}
-              evironment=${Environment.TESTNET}
+              environment=${Environment.TESTNET}
             >
             </sygma-fungible-transfer>
           </section>
