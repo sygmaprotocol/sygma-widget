@@ -13,6 +13,7 @@ import {
   type WalletContextProvider
 } from '../../../../src/context';
 import { getMockedEvmWallet } from '../../../utils';
+import type { Dropdown } from '../../../../src/components/common';
 
 describe('connect-wallet button', function () {
   afterEach(() => {
@@ -113,28 +114,17 @@ describe('connect-wallet button', function () {
       { parentNode: walletContext }
     );
 
-    const walletAddressEl =
-      connectComponent.shadowRoot!.querySelector<HTMLSpanElement>(
-        '.walletAddress'
-      );
+    const dropdown = connectComponent.shadowRoot!.querySelector<Dropdown>(
+      'dropdown-component'
+    ) as Dropdown;
 
-    assert.isDefined(
-      walletAddressEl,
-      'Connected wallet address is not displayed'
-    );
+    assert.equal(dropdown.selectedOption!.name, '155Eek...Xzjqe');
 
-    assert.equal(
-      walletAddressEl?.title,
-      '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
-    );
-    assert.equal(walletAddressEl?.textContent?.trim(), '155Eek...Xzjqe');
-
-    const disconnectButton = connectComponent.shadowRoot!.querySelector(
-      '.connectWalletButton'
+    const disconnectButton = dropdown.shadowRoot!.querySelector(
+      '.substrateDisconnectButton'
     ) as HTMLButtonElement;
 
-    assert.isDefined(disconnectButton, 'Button missing');
-    assert.equal(disconnectButton.textContent?.trim(), 'Disconnect');
+    assert.equal(disconnectButton.textContent!.trim(), 'Disconnect');
   });
 
   it('updates connected evm wallet', async () => {

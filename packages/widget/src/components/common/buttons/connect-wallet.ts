@@ -1,6 +1,6 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { consume } from '@lit/context';
-import type { HTMLTemplateResult, PropertyValues } from 'lit';
+import type { HTMLTemplateResult, PropertyValues, TemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
@@ -63,7 +63,7 @@ export class ConnectWalletButton extends BaseComponent {
 
   private renderDisconnectSubstrateButton(): HTMLTemplateResult | undefined {
     return html` <div
-      class="dropdownOption"
+      class="dropdownOption substrateDisconnectButton"
       part="substrateDisconnectButton"
       @click=${this.onDisconnectClicked}
     >
@@ -127,6 +127,7 @@ export class ConnectWalletButton extends BaseComponent {
       this.isWalletConnected(),
       () =>
         html` <button
+          role="button"
           @click=${this.onDisconnectClicked}
           class="connectWalletButton"
         >
@@ -135,6 +136,7 @@ export class ConnectWalletButton extends BaseComponent {
       () =>
         html` <button
           @click=${this.onConnectClicked}
+          role="button"
           class="connectWalletButton"
         >
           ${plusIcon} Connect Wallet
@@ -142,17 +144,22 @@ export class ConnectWalletButton extends BaseComponent {
     );
   }
 
-  render(): HTMLTemplateResult {
+  private renderWalletAddress(): TemplateResult {
     const evmWallet = this.wallets.evmWallet;
+
+    return when(
+      !!evmWallet?.address,
+      () =>
+        html`<span class="walletAddress" title=${evmWallet?.address ?? ''}
+          >${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}</span
+        >`
+    );
+  }
+
+  render(): HTMLTemplateResult {
     return html` <div class="connectWalletContainer">
-      ${when(
-        !!evmWallet?.address,
-        () =>
-          html`<span class="walletAddress" title=${evmWallet?.address ?? ''}
-            >${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}</span
-          >`
-      )}
-      ${this.renderSubstrateAccount()} ${this.renderConnectWalletButton()}
+      ${this.renderWalletAddress()} ${this.renderSubstrateAccount()}
+      ${this.renderConnectWalletButton()}
     </div>`;
   }
 }

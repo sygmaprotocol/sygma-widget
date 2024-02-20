@@ -34,6 +34,7 @@ export const connectWalletStyles = css`
     font-size: 0.875rem;
     font-weight: 500;
     outline: none;
+    border: none;
     cursor: pointer;
     transition: filter 0.3s ease;
 
