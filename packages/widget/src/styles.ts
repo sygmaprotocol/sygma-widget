@@ -7,6 +7,7 @@ export const styles = css`
     --zinc-400: #a1a1aa;
     --zinc-500: #71717a;
     --zinc-700: #3f3f46;
+    --zinc-800: #27272a;
     --zinc-900: #18181b;
     --white: #fff;
     --gray-100: #f3f4f6;

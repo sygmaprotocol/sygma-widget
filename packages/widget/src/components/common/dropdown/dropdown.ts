@@ -37,6 +37,9 @@ export class Dropdown extends BaseComponent {
   @property({ type: Array })
   options: DropdownOption[] | HTMLTemplateResult = [];
 
+  @property({ type: Object })
+  actionOption?: HTMLTemplateResult | string | null = null;
+
   @state()
   selectedOption: DropdownOption | null = null;
 
@@ -155,7 +158,7 @@ export class Dropdown extends BaseComponent {
           aria-expanded="${this.isDropdownOpen ? 'true' : 'false'}"
         >
           <div
-            part="dropdownTriggers"
+            part="dropdownTrigger"
             class="${this.disabled
               ? 'dropdownTrigger disabled'
               : 'dropdownTrigger'}"
@@ -170,7 +173,7 @@ export class Dropdown extends BaseComponent {
             class="dropdownContent ${this.isDropdownOpen ? 'show' : ''}"
             role="list"
           >
-            ${this._renderOptions()}
+            ${this._renderOptions()} ${this.actionOption}
           </div>
         </div>
       </div>

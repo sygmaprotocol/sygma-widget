@@ -3,8 +3,8 @@ import { css } from 'lit';
 export const styles = css`
   .dropdownWrapper {
     min-width: 7.5rem;
+    padding: 0.75rem 1rem;
     position: relative;
-    width: 100%;
     height: 100%;
   }
 
@@ -46,6 +46,7 @@ export const styles = css`
     position: absolute;
     background-color: var(--white);
     width: 100%;
+    left: 0;
     min-width: fit-content;
     border-radius: 0.75rem;
     border: 0.0625rem solid var(--gray-100);

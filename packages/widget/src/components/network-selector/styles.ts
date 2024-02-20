@@ -7,7 +7,6 @@ export const styles = css`
     display: flex;
     max-width: 19.625rem;
     max-height: 4.625rem;
-    padding: 0.75rem 1rem;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;

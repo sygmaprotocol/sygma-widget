@@ -13,6 +13,7 @@ import { shortAddress } from '../../../utils';
 import { BaseComponent } from '../base-component';
 
 import { greenCircleIcon, identicon, plusIcon } from '../../../assets';
+import type { DropdownOption } from '../dropdown/dropdown';
 import { connectWalletStyles } from './connect-wallet.styles';
 
 @customElement('sygma-connect-wallet-btn')
@@ -60,14 +61,23 @@ export class ConnectWalletButton extends BaseComponent {
     return !!this.wallets.evmWallet || !!this.wallets.substrateWallet;
   }
 
+  private renderDisconnectSubstrateButton(): HTMLTemplateResult | undefined {
+    return html` <div
+      class="dropdownOption"
+      part="substrateDisconnectButton"
+      @click=${this.onDisconnectClicked}
+    >
+      Disconnect
+    </div>`;
+  }
+
   private renderSubstrateAccount(): HTMLTemplateResult {
     const substrateWallet = this.wallets.substrateWallet;
     if (!substrateWallet) return html``;
 
     function renderCustomOptionContent({
       name,
-      address,
-      type
+      address
     }: Account): HTMLTemplateResult {
       return html`
         <div part="customOptionContent">
@@ -77,7 +87,6 @@ export class ConnectWalletButton extends BaseComponent {
           <div part="customOptionContentMain">
             ${identicon}
             <div part="customOptionContentAccountData">
-              <span part="customOptionContentType">${type}</span>
               <span part="customOptionContentAddress">${address}</span>
             </div>
           </div>
@@ -85,21 +94,14 @@ export class ConnectWalletButton extends BaseComponent {
       `;
     }
 
-    function normalizeOptionsData(): {
-      name: string | undefined;
-      id: string;
-      value: Account;
-    }[] {
-      return substrateWallet!.accounts.map((account: Account) => {
-        console.log(account);
-        return {
-          id: account.address,
-          name: shortAddress(account?.address ?? ''),
-          value: account,
-          icon: greenCircleIcon,
-          customOptionHtml: renderCustomOptionContent(account)
-        };
-      });
+    function normalizeOptionsData(): DropdownOption<Account>[] {
+      return substrateWallet!.accounts.map((account: Account) => ({
+        id: account.address,
+        name: shortAddress(account?.address ?? ''),
+        value: account,
+        icon: greenCircleIcon,
+        customOptionHtml: renderCustomOptionContent(account)
+      }));
     }
 
     const substrateAccount = substrateWallet?.accounts[0];
@@ -109,6 +111,7 @@ export class ConnectWalletButton extends BaseComponent {
       !!substrateAccount,
       () =>
         html`<dropdown-component
+          .actionOption=${this.renderDisconnectSubstrateButton()}
           .options=${options}
           .selectedOption=${options[0]}
         >
@@ -116,7 +119,7 @@ export class ConnectWalletButton extends BaseComponent {
     );
   }
 
-  renderConnectWalletButton(): HTMLTemplateResult | undefined {
+  private renderConnectWalletButton(): HTMLTemplateResult | undefined {
     if (this.isWalletConnected() && this.wallets.substrateWallet)
       return undefined;
 

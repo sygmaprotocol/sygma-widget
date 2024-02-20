@@ -6,6 +6,7 @@ const chevronIcon = html`<svg
   height="24"
   viewBox="0 0 24 24"
   fill="none"
+  part="chevronIcon"
 >
   <path
     d="M18 9.59998L12 15.6L6 9.59998"
