@@ -1,6 +1,5 @@
 import type {
   EvmResource,
-  Network,
   SubstrateResource
 } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
@@ -24,8 +23,8 @@ export interface Eip1193Provider {
 }
 
 export interface ISygmaProtocolWidget {
-  whitelistedSourceNetworks?: Network[];
-  whitelistedDestinationNetworks?: Network[];
+  whitelistedSourceNetworks?: string[];
+  whitelistedDestinationNetworks?: string[];
   evmProvider?: Eip1193Provider;
   substrateProvider?: ApiPromise | string;
   substrateSigner?: Signer;

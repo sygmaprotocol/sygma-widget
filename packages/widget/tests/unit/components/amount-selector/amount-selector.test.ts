@@ -131,7 +131,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
     expect(mockOptionSelectHandler).toHaveBeenCalledOnce();
     expect(mockOptionSelectHandler).toHaveBeenCalledWith(
       el.selectedResource,
-      Number.parseFloat(amount)
+      utils.parseEther(amount)
     );
   });
 

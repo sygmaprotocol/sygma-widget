@@ -9,6 +9,7 @@ import {
   walletContext
 } from '../../../src/context';
 import type { EvmWallet } from '../../../src/context';
+import { getMockedEvmWallet } from '../../utils';
 
 @customElement('my-element')
 export class MyElement extends LitElement {}
@@ -44,8 +45,8 @@ describe('wallet context provider', function () {
 
     const fakeEvmWallet: EvmWallet = {
       address: '0x1123123123123',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-      provider: {} as any
+      providerChainId: 1,
+      provider: getMockedEvmWallet().provider
     };
     contextProvider.dispatchEvent(
       new WalletUpdateEvent({ evmWallet: fakeEvmWallet })

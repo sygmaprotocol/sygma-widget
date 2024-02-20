@@ -1,6 +1,6 @@
 import { createContext, provide } from '@lit/context';
-import type { Signer } from '@polkadot/api/types';
 import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
+import type { Signer } from '@polkadot/api/types';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
@@ -9,6 +9,7 @@ import { BaseComponent } from '../components/common/base-component/base-componen
 
 export interface EvmWallet {
   address: string;
+  providerChainId: number;
   provider: EIP1193Provider;
 }
 
@@ -60,8 +61,61 @@ export class WalletContextProvider extends BaseComponent {
         ...this.walletContext,
         ...event.detail
       };
+      if (this.walletContext.evmWallet?.provider) {
+        this.walletContext.evmWallet?.provider.on(
+          'chainChanged',
+          this.onEvmChainChanged
+        );
+        this.walletContext.evmWallet?.provider.on(
+          'accountsChanged',
+          this.onEvmAccountChanged
+        );
+      }
     });
   }
+
+  disconnectedCallback(): void {
+    if (this.walletContext.evmWallet?.provider) {
+      this.walletContext.evmWallet?.provider.removeListener(
+        'chainChanged',
+        this.onEvmChainChanged
+      );
+      this.walletContext.evmWallet?.provider.removeListener(
+        'accountsChanged',
+        this.onEvmChainChanged
+      );
+    }
+  }
+
+  private onEvmChainChanged = (chainId: string): void => {
+    if (this.walletContext.evmWallet) {
+      this.walletContext = {
+        ...this.walletContext,
+        evmWallet: {
+          ...this.walletContext.evmWallet,
+          providerChainId: parseInt(chainId)
+        }
+      };
+    }
+  };
+
+  private onEvmAccountChanged = (accounts: string[]): void => {
+    if (accounts.length === 0) {
+      this.walletContext = {
+        ...this.walletContext,
+        evmWallet: undefined
+      };
+    }
+    if (this.walletContext.evmWallet) {
+      this.walletContext = {
+        ...this.walletContext,
+        evmWallet: {
+          ...this.walletContext.evmWallet,
+          address: accounts[0]
+        }
+      };
+    }
+  };
 
   protected render(): HTMLTemplateResult {
     return html`<slot></slot>`;

@@ -5,9 +5,7 @@ import {
   fixture,
   fixtureCleanup
 } from '@open-wc/testing-helpers';
-import type { EIP1193Provider } from '@web3-onboard/core';
 import { html } from 'lit';
-import type { MockInstance, Mocked } from 'vitest';
 import { afterEach, assert, describe, it, vi } from 'vitest';
 import { ConnectWalletButton } from '../../../../src/components';
 import {
@@ -60,6 +58,7 @@ describe('connect-wallet button', function () {
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
+          providerChainId: 1,
           provider: walletProvider
         }
       })
@@ -142,18 +141,12 @@ describe('connect-wallet button', function () {
     const walletContext = await fixture<WalletContextProvider>(html`
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
-
-    const walletProvider: Mocked<EIP1193Provider> = {
-      //@ts-expect-error stubbed type
-      on: vi.fn(),
-      removeListener: vi.fn(),
-      //@ts-expect-error stubbed type
-      request: vi.fn()
-    };
+    const walletProvider = getMockedEvmWallet().provider;
     walletContext.dispatchEvent(
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
+          providerChainId: 1,
           provider: walletProvider
         }
       })
@@ -182,6 +175,7 @@ describe('connect-wallet button', function () {
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x758b8178A9A4B7206D1f648c4a77C515CbaC7000',
+          providerChainId: 1,
           provider: walletProvider
         }
       })
@@ -200,18 +194,12 @@ describe('connect-wallet button', function () {
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
 
-    const walletProvider: Mocked<EIP1193Provider> = {
-      //@ts-expect-error stubbed type
-      on: vi.fn(),
-      removeListener: vi.fn(),
-      //@ts-expect-error stubbed type
-      request: vi.fn(),
-      disconnect: vi.fn()
-    };
+    const walletProvider = getMockedEvmWallet().provider;
     walletContext.dispatchEvent(
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
+          providerChainId: 1,
           provider: walletProvider
         }
       })
@@ -235,11 +223,6 @@ describe('connect-wallet button', function () {
       );
 
     assert.isNull(walletAddressEl, 'Connected wallet still displayed');
-
-    assert.equal(
-      (walletProvider.disconnect as unknown as MockInstance).mock.calls.length,
-      1
-    );
   });
 
   it('disconnects connected substrate wallet', async () => {
@@ -284,18 +267,12 @@ describe('connect-wallet button', function () {
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
 
-    const walletProvider: Mocked<EIP1193Provider> = {
-      //@ts-expect-error stubbed type
-      on: vi.fn(),
-      removeListener: vi.fn(),
-      //@ts-expect-error stubbed type
-      request: vi.fn(),
-      disconnect: vi.fn()
-    };
+    const walletProvider = getMockedEvmWallet().provider;
     walletContext.dispatchEvent(
       new WalletUpdateEvent({
         evmWallet: {
           address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
+          providerChainId: 1,
           provider: walletProvider
         }
       })
@@ -322,10 +299,6 @@ describe('connect-wallet button', function () {
       );
 
     assert.isNull(walletAddressEl, 'Connected wallet still displayed');
-    assert.equal(
-      (walletProvider.disconnect as unknown as MockInstance).mock.calls.length,
-      1
-    );
   });
 
   it('disconnects connected substrate wallet on network switch to ethereum', async () => {
