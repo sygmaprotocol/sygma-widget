@@ -163,6 +163,7 @@ export class WalletController implements ReactiveController {
         new WalletUpdateEvent({
           substrateWallet: {
             signer: wallet.signer,
+            signerAddress: accounts[0].address,
             accounts,
             unsubscribeSubstrateAccounts: unsub,
             disconnect: wallet.disconnect
@@ -194,11 +195,15 @@ export class WalletController implements ReactiveController {
   }
 
   private onSubstrateAccountChange = (accounts: Account[]): void => {
+    console.log('Substrate accounts:', accounts);
+
     if (this.walletContext.value?.substrateWallet && accounts.length !== 0) {
       this.host.dispatchEvent(
         new WalletUpdateEvent({
           substrateWallet: {
             signer: this.walletContext.value.substrateWallet.signer,
+            signerAddress:
+              this.walletContext.value.substrateWallet.signerAddress,
             disconnect: this.walletContext.value.substrateWallet.disconnect,
             unsubscribeSubstrateAccounts:
               this.walletContext.value.substrateWallet

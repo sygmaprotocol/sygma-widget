@@ -105,6 +105,7 @@ describe('connect-wallet button', function () {
               address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
             }
           ],
+          signerAddress: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe',
           signer: {}
         }
       })
@@ -227,6 +228,7 @@ describe('connect-wallet button', function () {
               address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
             }
           ],
+          signerAddress: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe',
           signer: {}
         }
       })
@@ -304,6 +306,7 @@ describe('connect-wallet button', function () {
               address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
             }
           ],
+          signerAddress: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe',
           signer: {},
           disconnect: disconnectFn
         }

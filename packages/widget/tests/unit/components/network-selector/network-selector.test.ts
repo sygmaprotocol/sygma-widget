@@ -4,7 +4,10 @@ import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { afterEach, assert, describe, expect, it, vi } from 'vitest';
 import { html } from 'lit';
 import { NetworkSelector } from '../../../../src/components';
-import type { Dropdown } from '../../../../src/components/common/dropdown/dropdown';
+import type {
+  Dropdown,
+  DropdownOption
+} from '../../../../src/components/common/dropdown/dropdown';
 
 describe('network-selector component', function () {
   afterEach(() => {
@@ -28,7 +31,9 @@ describe('network-selector component', function () {
     const dropdown = el.shadowRoot?.querySelector(
       'dropdown-component'
     ) as Dropdown;
-    expect(dropdown?.options.length).toBe(testNetworks.length);
+
+    const dropdownOptions = dropdown?.options as DropdownOption[];
+    expect(dropdownOptions?.length).toBe(testNetworks.length);
   });
 
   it('calls "onNetworkSelected" with the correct Domain object when an option is selected', async () => {

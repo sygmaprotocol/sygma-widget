@@ -7,7 +7,7 @@ import { when } from 'lit/directives/when.js';
 import type { Account } from '@polkadot-onboard/core';
 
 import type { WalletContext } from '../../../context';
-import { walletContext } from '../../../context';
+import { WalletUpdateEvent, walletContext } from '../../../context';
 import { WalletController } from '../../../controllers';
 import { shortAddress } from '../../../utils';
 import { BaseComponent } from '../base-component';
@@ -60,6 +60,20 @@ export class ConnectWalletButton extends BaseComponent {
   private isWalletConnected(): boolean {
     return !!this.wallets.evmWallet || !!this.wallets.substrateWallet;
   }
+
+  private handleSubstrateAccountSelected = (
+    option: DropdownOption<Account>
+  ): void => {
+    this.dispatchEvent(
+      new WalletUpdateEvent({
+        substrateWallet: {
+          signer: this.wallets.substrateWallet!.signer,
+          signerAddress: option.value.address,
+          accounts: this.wallets.substrateWallet?.accounts ?? []
+        }
+      })
+    );
+  };
 
   private renderDisconnectSubstrateButton(): HTMLTemplateResult | undefined {
     return html` <div
@@ -114,6 +128,7 @@ export class ConnectWalletButton extends BaseComponent {
           .actionOption=${this.renderDisconnectSubstrateButton()}
           .options=${options}
           .selectedOption=${options[0]}
+          .onOptionSelected=${this.handleSubstrateAccountSelected}
         >
         </dropdown-component>`
     );

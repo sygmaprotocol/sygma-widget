@@ -5,7 +5,7 @@ import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { BaseComponent } from '../components/common/base-component/base-component';
+import { BaseComponent } from '../components/common/base-component';
 
 export interface EvmWallet {
   address: string;
@@ -15,6 +15,7 @@ export interface EvmWallet {
 
 export interface SubstrateWallet {
   signer: Signer;
+  signerAddress: string;
   accounts: Account[];
   unsubscribeSubstrateAccounts?: UnsubscribeFn;
   disconnect?: () => Promise<void>;
