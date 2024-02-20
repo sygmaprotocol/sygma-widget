@@ -61,6 +61,7 @@ export class Dropdown extends BaseComponent {
     //if options changed, check if we have selected option that doesn't exist
     if (changedProperties.has('options') && this.selectedOption) {
       if (
+        Array.isArray(this.options) &&
         !this.options.map((o) => o.value).includes(this.selectedOption.value)
       ) {
         this.selectedOption = null;
