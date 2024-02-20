@@ -35,13 +35,23 @@ export class ConfigContextProvider extends BaseComponent {
   private configContext: ConfigContext = {};
 
   @property({ attribute: false, type: Object })
-  config?: ConfigContext;
+  walletConnectOptions?: WalletConnectOptions;
+
+  @property({ attribute: false, type: Object })
+  appMetadata?: AppMetadata;
+
+  @property({ attribute: false, type: Object })
+  theme?: Theme;
 
   connectedCallback(): void {
     super.connectedCallback();
-    if (this.config) {
-      this.configContext = this.config;
-    }
+
+    this.configContext = {
+      theme: this.theme,
+      walletConnectOptions: this.walletConnectOptions,
+      appMetaData: this.appMetadata
+    };
+
     this.addEventListener('configUpdate', (event: ConfigUpdateEvent) => {
       this.configContext = {
         ...this.configContext,

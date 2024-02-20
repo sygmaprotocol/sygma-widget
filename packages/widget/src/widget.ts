@@ -80,10 +80,9 @@ class SygmaProtocolWidget
   render(): HTMLTemplateResult {
     return html`
       <sygma-config-context-provider
-        .config=${{
-          walletConnectOptions: this.walletConnectOptions,
-          appMetaData: this.appMetadata
-        }}
+        .appMetadata=${this.appMetadata}
+        .theme=${this.theme}
+        .walletConnectOptions=${this.walletConnectOptions}
       >
         <sygma-wallet-context-provider>
           <section
