@@ -67,6 +67,6 @@ export class ConfigContextProvider extends BaseComponent {
 
 declare global {
   interface HTMLElementEventMap {
-    'sygma-config-context-provider': ConfigUpdateEvent;
+    'sygma-config-context-provider': ConfigContextProvider;
   }
 }
