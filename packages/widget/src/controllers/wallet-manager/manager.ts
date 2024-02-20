@@ -195,8 +195,6 @@ export class WalletController implements ReactiveController {
   }
 
   private onSubstrateAccountChange = (accounts: Account[]): void => {
-    console.log('Substrate accounts:', accounts);
-
     if (this.walletContext.value?.substrateWallet && accounts.length !== 0) {
       this.host.dispatchEvent(
         new WalletUpdateEvent({
