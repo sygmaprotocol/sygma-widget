@@ -32,8 +32,7 @@ class SygmaProtocolWidget
 {
   static styles = styles;
 
-  @property({ type: String }) environment?: string =
-    import.meta.env.VITE_BRIDGE_ENV ?? Environment.MAINNET;
+  @property({ type: String }) environment?: Environment;
 
   @property({ type: Array }) whitelistedSourceNetworks?: string[];
 
@@ -78,9 +77,10 @@ class SygmaProtocolWidget
 
   connectedCallback(): void {
     super.connectedCallback();
-    if (
-      !Object.values(Environment).includes(this.environment! as Environment)
-    ) {
+    const env = import.meta.env.VITE_BRIDGE_ENV ?? Environment.MAINNET;
+    if (Object.values(Environment).includes(env as Environment)) {
+      this.environment = env as Environment;
+    } else {
       throw new Error(
         `Invalid environment value, please choose following: ${Object.values(Environment).join(', ')}`
       );
