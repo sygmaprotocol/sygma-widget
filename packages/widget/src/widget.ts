@@ -12,6 +12,8 @@ import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
+import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
+import type { AppMetadata } from '@web3-onboard/common';
 import { sygmaLogo } from './assets';
 import { BaseComponent } from './components/common/base-component/base-component';
 import { Directions } from './components/network-selector/network-selector';
@@ -19,8 +21,7 @@ import { WidgetController } from './controllers/widget';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
-  Theme,
-  WalletConnectOptions
+  Theme
 } from './interfaces';
 import './context/wallet';
 import { styles } from './styles';
@@ -58,6 +59,8 @@ class SygmaProtocolWidget
 
   @property({ type: Object }) walletConnectOptions?: WalletConnectOptions;
 
+  @property({ type: Object }) appMetadata?: AppMetadata;
+
   @state()
   private isLoading = false;
 
@@ -68,7 +71,6 @@ class SygmaProtocolWidget
       return html`
         <sygma-connect-wallet-btn
           .sourceNetwork=${this.widgetController.sourceNetwork}
-          .walletConnectOptions=${this.walletConnectOptions}
         ></sygma-connect-wallet-btn>
       `;
     }
@@ -77,71 +79,78 @@ class SygmaProtocolWidget
 
   render(): HTMLTemplateResult {
     return html`
-      <sygma-wallet-context-provider>
-        <section
-          class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
-        >
-          <section class="widgetHeader">
-            <div class="brandLogoContainer title">[Brand] Transfer</div>
-            ${this.renderConnect()}
+      <sygma-config-context-provider
+        .config=${{
+          walletConnectOptions: this.walletConnectOptions,
+          appMetaData: this.appMetadata
+        }}
+      >
+        <sygma-wallet-context-provider>
+          <section
+            class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
+          >
+            <section class="widgetHeader">
+              <div class="brandLogoContainer title">[Brand] Transfer</div>
+              ${this.renderConnect()}
+            </section>
+            <section class="widgetContent">
+              <form @submit=${() => {}}>
+                <section class="networkSelectionWrapper">
+                  <sygma-network-selector
+                    .direction=${Directions.FROM}
+                    .icons=${true}
+                    .onNetworkSelected=${this.widgetController
+                      .onSourceNetworkSelected}
+                    .networks=${this.widgetController.supportedSourceNetworks}
+                  >
+                  </sygma-network-selector>
+                </section>
+                <section class="networkSelectionWrapper">
+                  <sygma-network-selector
+                    .direction=${Directions.TO}
+                    .icons=${true}
+                    .onNetworkSelected=${this.widgetController
+                      .onDestinationNetworkSelected}
+                    .networks=${this.widgetController
+                      .supportedDestinationNetworks}
+                  >
+                  </sygma-network-selector>
+                </section>
+                <section>
+                  <sygma-resource-selector
+                    .disabled=${!this.widgetController.sourceNetwork ||
+                    !this.widgetController.destinationNetwork}
+                    .resources=${this.widgetController.supportedResources}
+                    .onResourceSelected=${this.widgetController
+                      .onResourceSelected}
+                  >
+                  </sygma-resource-selector>
+                </section>
+                <section>
+                  <sygma-address-input
+                    .address=${this.widgetController.destinatonAddress}
+                    .onAddressChange=${this.widgetController
+                      .onDestinationAddressChange}
+                  >
+                  </sygma-address-input>
+                </section>
+                <section>
+                  <sygma-action-button
+                    text="Transfer or Approve"
+                    @onClick="${() => this.widgetController.makeTransaction()}"
+                    .disabled=${!this.widgetController.isReadyForTransfer}
+                  ></sygma-action-button>
+                </section>
+              </form>
+            </section>
+            <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
+            ${when(
+              this.isLoading,
+              () => html`<sygma-overlay-component></sygma-overlay-component>`
+            )}
           </section>
-          <section class="widgetContent">
-            <form @submit=${() => {}}>
-              <section class="networkSelectionWrapper">
-                <sygma-network-selector
-                  .direction=${Directions.FROM}
-                  .icons=${true}
-                  .onNetworkSelected=${this.widgetController
-                    .onSourceNetworkSelected}
-                  .networks=${this.widgetController.supportedSourceNetworks}
-                >
-                </sygma-network-selector>
-              </section>
-              <section class="networkSelectionWrapper">
-                <sygma-network-selector
-                  .direction=${Directions.TO}
-                  .icons=${true}
-                  .onNetworkSelected=${this.widgetController
-                    .onDestinationNetworkSelected}
-                  .networks=${this.widgetController
-                    .supportedDestinationNetworks}
-                >
-                </sygma-network-selector>
-              </section>
-              <section>
-                <sygma-resource-selector
-                  .disabled=${!this.widgetController.sourceNetwork ||
-                  !this.widgetController.destinationNetwork}
-                  .resources=${this.widgetController.supportedResources}
-                  .onResourceSelected=${this.widgetController
-                    .onResourceSelected}
-                >
-                </sygma-resource-selector>
-              </section>
-              <section>
-                <sygma-address-input
-                  .address=${this.widgetController.destinatonAddress}
-                  .onAddressChange=${this.widgetController
-                    .onDestinationAddressChange}
-                >
-                </sygma-address-input>
-              </section>
-              <section>
-                <sygma-action-button
-                  text="Transfer or Approve"
-                  @onClick="${() => this.widgetController.makeTransaction()}"
-                  .disabled=${!this.widgetController.isReadyForTransfer}
-                ></sygma-action-button>
-              </section>
-            </form>
-          </section>
-          <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
-          ${when(
-            this.isLoading,
-            () => html`<sygma-overlay-component></sygma-overlay-component>`
-          )}
-        </section>
-      </sygma-wallet-context-provider>
+        </sygma-wallet-context-provider>
+      </sygma-config-context-provider>
     `;
   }
 }

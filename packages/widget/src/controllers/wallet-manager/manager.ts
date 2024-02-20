@@ -8,8 +8,9 @@ import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
 
+import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
+import type { AppMetadata } from '@web3-onboard/common';
 import { WalletUpdateEvent, walletContext } from '../../context';
-import type { WalletConnectOptions } from '../../interfaces';
 
 export class WalletController implements ReactiveController {
   host: ReactiveElement;
@@ -40,7 +41,13 @@ export class WalletController implements ReactiveController {
     }
   }
 
-  connectWallet = (network: Domain, options?: WalletConnectOptions): void => {
+  connectWallet = (
+    network: Domain,
+    options?: {
+      walletConnectOptions?: WalletConnectOptions;
+      appMetaData?: AppMetadata;
+    }
+  ): void => {
     switch (network.type) {
       case Network.EVM:
         {
@@ -93,22 +100,26 @@ export class WalletController implements ReactiveController {
 
   connectEvmWallet = async (
     network: Domain,
-    options?: WalletConnectOptions
+    options?: {
+      walletConnectOptions?: WalletConnectOptions;
+      appMetaData?: AppMetadata;
+    }
   ): Promise<void> => {
     const injected = injectedModule();
 
     const walletSetup = [injected];
 
-    if (options?.projectId) {
+    if (options?.walletConnectOptions?.projectId) {
       walletSetup.push(
         walletConnectModule({
-          projectId: options?.projectId,
-          dappUrl: options.dappUrl
+          projectId: options.walletConnectOptions?.projectId,
+          dappUrl: options.walletConnectOptions?.dappUrl
         })
       );
     }
 
     const onboard = Onboard({
+      appMetadata: options?.appMetaData,
       wallets: walletSetup,
       chains: [
         {
@@ -144,11 +155,14 @@ export class WalletController implements ReactiveController {
 
   connectSubstrateWallet = async (
     _network: Domain, // TODO: remove underscore prefix once arg usage is added
-    options?: { dappUrl?: string; dappName?: string }
+    options?: {
+      walletConnectOptions?: WalletConnectOptions;
+      appMetaData?: AppMetadata;
+    }
   ): Promise<void> => {
     const injectedWalletProvider = new InjectedWalletProvider(
       { disallowed: [] },
-      options?.dappName ?? 'Sygma Widget'
+      options?.appMetaData?.name ?? 'Sygma Widget'
     );
     const wallets = await injectedWalletProvider.getWallets();
 
