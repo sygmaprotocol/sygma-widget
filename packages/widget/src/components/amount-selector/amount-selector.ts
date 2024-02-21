@@ -143,7 +143,7 @@ export class AmountSelector extends BaseComponent {
               class="amountSelectorInput"
               placeholder="0.000"
               @change=${this._onInputAmountChangeHandler}
-              value=${this.amount.toString()}
+              value=${this.amount === 0 ? '' : this.amount.toString()}
             />
             <section class="selectorSection">
               <dropdown-component
