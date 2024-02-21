@@ -43,6 +43,16 @@ export class ConfigContextProvider extends BaseComponent {
     });
   }
 
+  protected updated(changedProperties: PropertyValues): void {
+    super.updated(changedProperties);
+    if (changedProperties.has('theme')) {
+      this.configContextProvider.setValue({
+        theme: this.theme,
+        ...this.configContextProvider.value
+      });
+    }
+  }
+
   protected render(): HTMLTemplateResult {
     return html`<slot></slot>`;
   }
