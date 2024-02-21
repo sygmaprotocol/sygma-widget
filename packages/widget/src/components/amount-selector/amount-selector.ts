@@ -68,9 +68,9 @@ export class AmountSelector extends BaseComponent {
   };
 
   requestUpdate(
-    name?: PropertyKey | undefined,
+    name?: PropertyKey,
     oldValue?: unknown,
-    options?: PropertyDeclaration<unknown, unknown> | undefined
+    options?: PropertyDeclaration<unknown, unknown>
   ): void {
     super.requestUpdate(name, oldValue, options);
     if (name === BALANCE_UPDATE_KEY) {
