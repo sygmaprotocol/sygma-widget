@@ -216,4 +216,18 @@ export class WalletController implements ReactiveController {
       this.disconnectSubstrateWallet();
     }
   };
+
+  onSubstrateAccountSelected = (account: Account): void => {
+    if (this.walletContext.value?.substrateWallet) {
+      this.host.dispatchEvent(
+        new WalletUpdateEvent({
+          substrateWallet: {
+            signer: this.walletContext.value.substrateWallet.signer,
+            signerAddress: account.address,
+            accounts: this.walletContext.value.substrateWallet.accounts
+          }
+        })
+      );
+    }
+  };
 }

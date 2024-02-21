@@ -35,10 +35,10 @@ export class Dropdown extends BaseComponent {
   label? = '';
 
   @property({ type: Array })
-  options: DropdownOption[] | HTMLTemplateResult = [];
+  options: DropdownOption[] = [];
 
   @property({ type: Object })
-  actionOption?: HTMLTemplateResult | string | null = null;
+  actionOption?: HTMLTemplateResult | null = null;
 
   @state()
   selectedOption: DropdownOption | null = null;
@@ -110,31 +110,31 @@ export class Dropdown extends BaseComponent {
     );
   }
 
-  _renderOptions(): Generator<unknown, void> | HTMLTemplateResult {
-    function renderOptionContent({
+  private renderOptionContent({
+    customOptionHtml,
+    name,
+    icon
+  }: DropdownOption): HTMLTemplateResult {
+    return when(
       customOptionHtml,
-      name,
-      icon
-    }: DropdownOption): HTMLTemplateResult {
-      return when(
-        customOptionHtml,
-        () => customOptionHtml,
-        () => html`
-          ${icon || ''}
-          <span class="optionName">${capitalize(name)}</span>
-        `
-      ) as HTMLTemplateResult;
-    }
+      () => customOptionHtml,
+      () => html`
+        ${icon || ''}
+        <span class="optionName">${capitalize(name)}</span>
+      `
+    ) as HTMLTemplateResult;
+  }
 
+  _renderOptions(): Generator<unknown, void> | HTMLTemplateResult {
     return map(
-      this.options as DropdownOption[],
+      this.options,
       (option) => html`
         <div
           class="dropdownOption"
           @click="${(e: Event) => this._selectOption(option, e)}"
           role="option"
         >
-          ${renderOptionContent(option)}
+          ${this.renderOptionContent(option)}
         </div>
       `
     );

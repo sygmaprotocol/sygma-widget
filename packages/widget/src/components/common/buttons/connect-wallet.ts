@@ -7,7 +7,7 @@ import { when } from 'lit/directives/when.js';
 import type { Account } from '@polkadot-onboard/core';
 
 import type { WalletContext } from '../../../context';
-import { WalletUpdateEvent, walletContext } from '../../../context';
+import { walletContext } from '../../../context';
 import { WalletController } from '../../../controllers';
 import { shortAddress } from '../../../utils';
 import { BaseComponent } from '../base-component';
@@ -63,17 +63,7 @@ export class ConnectWalletButton extends BaseComponent {
 
   private handleSubstrateAccountSelected = (
     option: DropdownOption<Account>
-  ): void => {
-    this.dispatchEvent(
-      new WalletUpdateEvent({
-        substrateWallet: {
-          signer: this.wallets.substrateWallet!.signer,
-          signerAddress: option.value.address,
-          accounts: this.wallets.substrateWallet?.accounts ?? []
-        }
-      })
-    );
-  };
+  ): void => this.walletController.onSubstrateAccountSelected(option.value);
 
   private renderDisconnectSubstrateButton(): HTMLTemplateResult | undefined {
     return html` <div
@@ -117,10 +107,8 @@ export class ConnectWalletButton extends BaseComponent {
     }));
   }
 
-  private renderSubstrateAccount(): HTMLTemplateResult | undefined {
+  private renderSubstrateAccount(): HTMLTemplateResult {
     const substrateWallet = this.wallets.substrateWallet;
-    if (!substrateWallet) return undefined;
-
     const substrateAccount = substrateWallet?.accounts[0];
     const options = this.normalizeOptionsData();
 
@@ -138,8 +126,7 @@ export class ConnectWalletButton extends BaseComponent {
   }
 
   private renderConnectWalletButton(): HTMLTemplateResult | undefined {
-    if (this.isWalletConnected() && this.wallets.substrateWallet)
-      return undefined;
+    if (this.wallets.substrateWallet) return;
 
     return when(
       this.isWalletConnected(),
@@ -170,14 +157,14 @@ export class ConnectWalletButton extends BaseComponent {
       () =>
         html`<span class="walletAddress" title=${evmWallet?.address}>
           ${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}
-        </span>`
+        </span>`,
+      () => this.renderSubstrateAccount()
     );
   }
 
   render(): HTMLTemplateResult {
     return html` <div class="connectWalletContainer">
-      ${this.renderWalletAddress()} ${this.renderSubstrateAccount()}
-      ${this.renderConnectWalletButton()}
+      ${this.renderWalletAddress()} ${this.renderConnectWalletButton()}
     </div>`;
   }
 }

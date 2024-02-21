@@ -10,6 +10,5 @@ export const styles = css`
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    gap: 0.25rem;
   }
 `;

@@ -331,7 +331,7 @@ __metadata:
     "@polkadot/util": "npm:12.2.1"
     "@polkadot/util-crypto": "npm:12.2.1"
     ethers: "npm:5.6.2"
-  checksum: fbfdffd22eee5fad947e453b31d7d2263127f653c6bf8d7ccaaaff19ef5aa0f892e0c509a35b1a0f09910bb5d7a0e7584dd19d6aa30c3d30d55187b02d681e12
+  checksum: 782f28977d50a59db75f7ee67521037b7e6302770191c852be8778fd018e3d35b7dfa7c38b2009ec97952e7d4fd776fd3f87119b9ff98cbb7124411ac2e9ad2d
   languageName: node
   linkType: hard
 
