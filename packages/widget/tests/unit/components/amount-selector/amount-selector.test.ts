@@ -6,6 +6,7 @@ import { html } from 'lit';
 import { afterEach, assert, describe, expect, it, vi } from 'vitest';
 import { AmountSelector } from '../../../../src/components';
 import type { DropdownOption } from '../../../../src/components/common/dropdown/dropdown';
+import { BALANCE_UPDATE_KEY } from '../../../../src/controllers/wallet-manager/token-balance';
 
 describe('Amount selector component - sygma-resource-selector', () => {
   afterEach(() => {
@@ -156,6 +157,32 @@ describe('Amount selector component - sygma-resource-selector', () => {
         validationMessage.textContent,
         'Amount exceeds account balance'
       );
+    });
+    it('revalidates on account balance change', async () => {
+      const el = await fixture<AmountSelector>(
+        html` <sygma-resource-selector></sygma-resource-selector>`
+      );
+
+      // input amount greater than balance
+      const input = el.shadowRoot!.querySelector(
+        '.amountSelectorInput'
+      ) as HTMLInputElement;
+      input.value = '150';
+      input.dispatchEvent(new Event('change'));
+      await nextFrame();
+
+      const validationMessage = el.shadowRoot!.querySelector(
+        '.validationMessage'
+      ) as HTMLDivElement;
+      assert.strictEqual(
+        validationMessage.textContent,
+        'Amount exceeds account balance'
+      );
+
+      el.tokenBalanceController.balance = utils.parseUnits('400', 'ether');
+      el.requestUpdate(BALANCE_UPDATE_KEY);
+      await el.updateComplete;
+      assert.isNull(el.shadowRoot!.querySelector('.validationMessage'));
     });
 
     it('validates input when amount is less than zero', async () => {
