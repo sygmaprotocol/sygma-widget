@@ -1,13 +1,11 @@
-import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { afterEach, assert, describe, expect, it, vi } from 'vitest';
+import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
 import { html } from 'lit';
+import { afterEach, assert, describe, expect, it, vi } from 'vitest';
+
 import { NetworkSelector } from '../../../../src/components';
-import type {
-  Dropdown,
-  DropdownOption
-} from '../../../../src/components/common/dropdown/dropdown';
+import type { Dropdown } from '../../../../src/components/common';
 
 describe('network-selector component', function () {
   afterEach(() => {
@@ -32,7 +30,7 @@ describe('network-selector component', function () {
       'dropdown-component'
     ) as Dropdown;
 
-    const dropdownOptions = dropdown?.options as DropdownOption[];
+    const dropdownOptions = dropdown.options;
     expect(dropdownOptions?.length).toBe(testNetworks.length);
   });
 
