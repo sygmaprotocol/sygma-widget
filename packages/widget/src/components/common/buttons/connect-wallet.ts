@@ -3,6 +3,7 @@ import { consume } from '@lit/context';
 import type { HTMLTemplateResult, PropertyValues, TemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
 
 import { greenCircleIcon, plusIcon } from '../../../assets';
@@ -89,7 +90,7 @@ export class ConnectWalletButton extends BaseComponent {
     return when(
       !!evmWallet?.address,
       () =>
-        html`<span class="walletAddress" title=${evmWallet?.address}>
+        html`<span class="walletAddress" title=${ifDefined(evmWallet?.address)}>
           ${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}
         </span>`,
       () => html`
