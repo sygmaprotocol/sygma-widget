@@ -1,4 +1,5 @@
 import type {
+  Environment,
   EvmResource,
   SubstrateResource
 } from '@buildwithsygma/sygma-sdk-core';
@@ -22,6 +23,7 @@ export interface Eip1193Provider {
 }
 
 export interface ISygmaProtocolWidget {
+  environment?: Environment;
   whitelistedSourceNetworks?: string[];
   whitelistedDestinationNetworks?: string[];
   evmProvider?: Eip1193Provider;

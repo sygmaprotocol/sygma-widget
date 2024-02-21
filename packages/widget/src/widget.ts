@@ -33,6 +33,8 @@ class SygmaProtocolWidget
 {
   static styles = styles;
 
+  @property({ type: String }) environment?: Environment;
+
   @property({ type: Array }) whitelistedSourceNetworks?: string[];
 
   @property({ type: Array }) whitelistedDestinationNetworks?: string[];
@@ -77,6 +79,18 @@ class SygmaProtocolWidget
     return html``;
   }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    const env = import.meta.env.VITE_BRIDGE_ENV ?? Environment.MAINNET;
+    if (Object.values(Environment).includes(env as Environment)) {
+      this.environment = env as Environment;
+    } else {
+      throw new Error(
+        `Invalid environment value, please choose following: ${Object.values(Environment).join(', ')}`
+      );
+    }
+  }
+
   render(): HTMLTemplateResult {
     return html`
       <sygma-wallet-context-provider>
@@ -89,8 +103,7 @@ class SygmaProtocolWidget
           </section>
           <section class="widgetContent">
             <sygma-fungible-transfer
-              @sdk-initialized=${(event: SdkInitializedEvent) =>
-                (this.sdkInitialized = event.detail.hasInitialized)}
+              .environment=${this.environment as Environment}
               .onSourceNetworkSelected=${(domain: Domain) =>
                 (this.sourceNetwork = domain)}
               .whitelistedSourceResources=${this.whitelistedSourceNetworks}
