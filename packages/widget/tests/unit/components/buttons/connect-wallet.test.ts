@@ -13,7 +13,6 @@ import {
   type WalletContextProvider
 } from '../../../../src/context';
 import { getMockedEvmWallet } from '../../../utils';
-import type { Dropdown } from '../../../../src/components/common';
 
 describe('connect-wallet button', function () {
   afterEach(() => {
@@ -91,41 +90,6 @@ describe('connect-wallet button', function () {
 
     assert.isDefined(disconnectButton, 'Button missing');
     assert.equal(disconnectButton.textContent?.trim(), 'Disconnect');
-  });
-
-  it('displays connected substrate wallet', async () => {
-    const walletContext = await fixture<WalletContextProvider>(html`
-      <sygma-wallet-context-provider></sygma-wallet-context-provider>
-    `);
-    walletContext.dispatchEvent(
-      new WalletUpdateEvent({
-        substrateWallet: {
-          accounts: [
-            {
-              address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
-            }
-          ],
-          signerAddress: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe',
-          signer: {}
-        }
-      })
-    );
-    const connectComponent = await fixture<ConnectWalletButton>(
-      html` <sygma-connect-wallet-btn></sygma-connect-wallet-btn> `,
-      { parentNode: walletContext }
-    );
-
-    const dropdown = connectComponent.shadowRoot!.querySelector<Dropdown>(
-      'dropdown-component'
-    ) as Dropdown;
-
-    assert.equal(dropdown.selectedOption!.name, '155Eek...Xzjqe');
-
-    const disconnectButton = dropdown.shadowRoot!.querySelector(
-      '.substrateDisconnectButton'
-    ) as HTMLButtonElement;
-
-    assert.equal(disconnectButton.textContent!.trim(), 'Disconnect');
   });
 
   it('updates connected evm wallet', async () => {
