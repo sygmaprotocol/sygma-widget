@@ -85,41 +85,44 @@ export class ConnectWalletButton extends BaseComponent {
     </div>`;
   }
 
-  private renderSubstrateAccount(): HTMLTemplateResult {
-    const substrateWallet = this.wallets.substrateWallet;
-    if (!substrateWallet) return html``;
-
-    function renderCustomOptionContent({
-      name,
-      address
-    }: Account): HTMLTemplateResult {
-      return html`
-        <div part="customOptionContent">
-          <div part="customOptionContentHeader">
-            <span part="customOptionContentName">${name}</span>
-          </div>
-          <div part="customOptionContentMain">
-            ${identicon}
-            <div part="customOptionContentAccountData">
-              <span part="customOptionContentAddress">${address}</span>
-            </div>
+  private renderCustomOptionContent({
+    name,
+    address
+  }: Account): HTMLTemplateResult {
+    return html`
+      <div part="customOptionContent">
+        <div part="customOptionContentHeader">
+          <span part="customOptionContentName">${name}</span>
+        </div>
+        <div part="customOptionContentMain">
+          ${identicon}
+          <div part="customOptionContentAccountData">
+            <span part="customOptionContentAddress">${address}</span>
           </div>
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    function normalizeOptionsData(): DropdownOption<Account>[] {
-      return substrateWallet!.accounts.map((account: Account) => ({
-        id: account.address,
-        name: shortAddress(account?.address ?? ''),
-        value: account,
-        icon: greenCircleIcon,
-        customOptionHtml: renderCustomOptionContent(account)
-      }));
-    }
+  private normalizeOptionsData(): DropdownOption<Account>[] {
+    const substrateWallet = this.wallets.substrateWallet;
+    if (!substrateWallet) return [];
+
+    return substrateWallet.accounts.map((account: Account) => ({
+      id: account.address,
+      name: shortAddress(account?.address ?? ''),
+      value: account,
+      icon: greenCircleIcon,
+      customOptionHtml: this.renderCustomOptionContent(account)
+    }));
+  }
+
+  private renderSubstrateAccount(): HTMLTemplateResult | undefined {
+    const substrateWallet = this.wallets.substrateWallet;
+    if (!substrateWallet) return undefined;
 
     const substrateAccount = substrateWallet?.accounts[0];
-    const options = normalizeOptionsData();
+    const options = this.normalizeOptionsData();
 
     return when(
       !!substrateAccount,
@@ -165,9 +168,9 @@ export class ConnectWalletButton extends BaseComponent {
     return when(
       !!evmWallet?.address,
       () =>
-        html`<span class="walletAddress" title=${evmWallet?.address ?? ''}
-          >${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}</span
-        >`
+        html`<span class="walletAddress" title=${evmWallet?.address}>
+          ${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}
+        </span>`
     );
   }
 
