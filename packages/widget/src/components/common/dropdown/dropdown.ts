@@ -6,8 +6,8 @@ import { when } from 'lit/directives/when.js';
 
 import { chevronIcon, networkIconsMap } from '../../../assets';
 import { capitalize } from '../../../utils';
-
 import { BaseComponent } from '../base-component';
+
 import { styles } from './styles';
 
 export interface DropdownOption<T = Record<string, unknown>> {
