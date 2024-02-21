@@ -46,13 +46,11 @@ export class ConnectWalletButton extends BaseComponent {
   }
 
   private onConnectClicked = (): void => {
-    const walletOptions = {
-      walletConnectOptions: this.configContext?.walletConnectOptions,
-      appMetaData: this.configContext?.appMetaData
-    };
-
     if (this.sourceNetwork) {
-      this.walletController.connectWallet(this.sourceNetwork, walletOptions);
+      this.walletController.connectWallet(
+        this.sourceNetwork,
+        this.configContext
+      );
     }
   };
 

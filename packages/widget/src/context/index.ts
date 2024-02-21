@@ -5,9 +5,5 @@ export {
 } from './wallet';
 export type { EvmWallet, WalletContext } from './wallet';
 
-export {
-  configContext,
-  ConfigContextProvider,
-  ConfigUpdateEvent
-} from './config';
+export { configContext, ConfigContextProvider } from './config';
 export type { ConfigContext } from './config';

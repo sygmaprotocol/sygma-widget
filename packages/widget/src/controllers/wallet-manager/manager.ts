@@ -108,12 +108,7 @@ export class WalletController implements ReactiveController {
     const walletSetup = [injected];
 
     if (options?.walletConnectOptions?.projectId) {
-      walletSetup.push(
-        walletConnectModule({
-          projectId: options.walletConnectOptions?.projectId,
-          dappUrl: options.walletConnectOptions?.dappUrl
-        })
-      );
+      walletSetup.push(walletConnectModule(options.walletConnectOptions));
     }
 
     const onboard = Onboard({

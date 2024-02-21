@@ -3,11 +3,7 @@ import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { afterEach, assert, describe, it } from 'vitest';
-import {
-  configContext,
-  ConfigContextProvider,
-  ConfigUpdateEvent
-} from '../../../src/context';
+import { configContext, ConfigContextProvider } from '../../../src/context';
 
 @customElement('my-element')
 export class MyElement extends LitElement {}
@@ -30,7 +26,9 @@ describe('config context provider', function () {
 
   it('handles and provides config updates', async () => {
     const contextProvider = await fixture<ConfigContextProvider>(html`
-      <sygma-config-context-provider></sygma-config-context-provider>
+      <sygma-config-context-provider
+        .appMetadata=${{ name: 'My Dapp' }}
+      ></sygma-config-context-provider>
     `);
     const child = await fixture<MyElement>(html` <my-element></my-element> `, {
       parentNode: contextProvider
@@ -39,16 +37,6 @@ describe('config context provider', function () {
       context: configContext,
       subscribe: true
     });
-
-    assert.deepEqual(context.value, {
-      theme: undefined,
-      walletConnectOptions: undefined,
-      appMetaData: undefined
-    });
-
-    contextProvider.dispatchEvent(
-      new ConfigUpdateEvent({ appMetaData: { name: 'My Dapp' } })
-    );
 
     assert.deepEqual(context.value, {
       theme: undefined,
