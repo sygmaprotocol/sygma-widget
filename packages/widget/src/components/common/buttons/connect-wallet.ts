@@ -4,16 +4,14 @@ import type { HTMLTemplateResult, PropertyValues, TemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
-import type { Account } from '@polkadot-onboard/core';
 
+import { greenCircleIcon, plusIcon } from '../../../assets';
 import type { WalletContext } from '../../../context';
 import { walletContext } from '../../../context';
 import { WalletController } from '../../../controllers';
 import { shortAddress } from '../../../utils';
 import { BaseComponent } from '../base-component';
 
-import { greenCircleIcon, identicon, plusIcon } from '../../../assets';
-import type { DropdownOption } from '../dropdown/dropdown';
 import { connectWalletStyles } from './connect-wallet.styles';
 
 @customElement('sygma-connect-wallet-btn')
@@ -61,70 +59,6 @@ export class ConnectWalletButton extends BaseComponent {
     return !!this.wallets.evmWallet || !!this.wallets.substrateWallet;
   }
 
-  private handleSubstrateAccountSelected = (
-    option: DropdownOption<Account>
-  ): void => this.walletController.onSubstrateAccountSelected(option.value);
-
-  private renderDisconnectSubstrateButton(): HTMLTemplateResult | undefined {
-    return html` <div
-      class="dropdownOption substrateDisconnectButton"
-      part="substrateDisconnectButton"
-      @click=${this.onDisconnectClicked}
-    >
-      Disconnect
-    </div>`;
-  }
-
-  private renderCustomOptionContent({
-    name,
-    address
-  }: Account): HTMLTemplateResult {
-    return html`
-      <div part="customOptionContent">
-        <div part="customOptionContentHeader">
-          <span part="customOptionContentName">${name}</span>
-        </div>
-        <div part="customOptionContentMain">
-          ${identicon}
-          <div part="customOptionContentAccountData">
-            <span part="customOptionContentAddress">${address}</span>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  private normalizeOptionsData(): DropdownOption<Account>[] {
-    const substrateWallet = this.wallets.substrateWallet;
-    if (!substrateWallet) return [];
-
-    return substrateWallet.accounts.map((account: Account) => ({
-      id: account.address,
-      name: shortAddress(account?.address ?? ''),
-      value: account,
-      icon: greenCircleIcon,
-      customOptionHtml: this.renderCustomOptionContent(account)
-    }));
-  }
-
-  private renderSubstrateAccount(): HTMLTemplateResult {
-    const substrateWallet = this.wallets.substrateWallet;
-    const substrateAccount = substrateWallet?.accounts[0];
-    const options = this.normalizeOptionsData();
-
-    return when(
-      !!substrateAccount,
-      () =>
-        html`<dropdown-component
-          .actionOption=${this.renderDisconnectSubstrateButton()}
-          .options=${options}
-          .selectedOption=${options[0]}
-          .onOptionSelected=${this.handleSubstrateAccountSelected}
-        >
-        </dropdown-component>`
-    );
-  }
-
   private renderConnectWalletButton(): HTMLTemplateResult | undefined {
     if (this.wallets.substrateWallet) return;
 
@@ -158,7 +92,9 @@ export class ConnectWalletButton extends BaseComponent {
         html`<span class="walletAddress" title=${evmWallet?.address}>
           ${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}
         </span>`,
-      () => this.renderSubstrateAccount()
+      () => html`
+        <sygma-substrate-account-selector></sygma-substrate-account-selector>
+      `
     );
   }
 

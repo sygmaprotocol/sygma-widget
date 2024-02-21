@@ -86,9 +86,8 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
     this.env = env;
     await this.config.init(1, env);
-    this.supportedSourceNetworks = this.config
-      .getDomains()
-      .filter((n) => n.type === Network.EVM);
+    this.supportedSourceNetworks = this.config.getDomains();
+    // .filter((n) => n.type === Network.EVM);
     //remove once we have proper substrate transfer support
     this.supportedDestinationNetworks = this.config.getDomains();
     this.host.requestUpdate();
