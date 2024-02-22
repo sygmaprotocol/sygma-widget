@@ -97,10 +97,10 @@ describe('address-input component', function () {
 
     assert.equal(input.value.trim(), '0x123');
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
     input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
@@ -124,10 +124,10 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
     input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
@@ -143,7 +143,7 @@ describe('address-input component', function () {
 
     input.value = '';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
@@ -171,11 +171,11 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
 
     input.value = '42sydUvocBuEorweEPqxY5vZae1VaTtWoJFiKMrPbRamy2BL';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
@@ -199,11 +199,11 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
 
     input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
@@ -228,11 +228,11 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
 
     input.value = '42sydUvocBuEorweEPqxY5vZae1VaTtWoJFiKMrPbRamy'; // invalid substrate address
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
@@ -260,11 +260,11 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
 
     input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7585'; // invalid eth address
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
