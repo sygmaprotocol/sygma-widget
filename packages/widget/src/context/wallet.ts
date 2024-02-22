@@ -26,6 +26,11 @@ export interface WalletContext {
   substrateWallet?: SubstrateWallet;
 }
 
+export enum WalletContextKeys {
+  EVM_WALLET = 'evmWallet',
+  SUBSTRATE_WALLET = 'substrateWallet'
+}
+
 declare global {
   interface HTMLElementEventMap {
     walletUpdate: WalletUpdateEvent;

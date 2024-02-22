@@ -6,6 +6,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
 
+import { choose } from 'lit/directives/choose.js';
 import { greenCircleIcon, plusIcon } from '../../../assets';
 import type { WalletContext } from '../../../context';
 import { walletContext } from '../../../context';
@@ -13,6 +14,7 @@ import { WalletController } from '../../../controllers';
 import { shortAddress } from '../../../utils';
 import { BaseComponent } from '../base-component';
 
+import { WalletContextKeys } from '../../../context/wallet';
 import { connectWalletStyles } from './connect-wallet.styles';
 
 @customElement('sygma-connect-wallet-btn')
@@ -84,19 +86,30 @@ export class ConnectWalletButton extends BaseComponent {
     );
   }
 
-  private renderWalletAddress(): TemplateResult {
+  private renderWalletAddress(): TemplateResult | undefined {
     const evmWallet = this.wallets.evmWallet;
+    const activeWalletKey = Object.keys(this.wallets).find(
+      (key) => this.wallets[key as WalletContextKeys] !== undefined
+    ) as WalletContextKeys | undefined;
 
-    return when(
-      !!evmWallet?.address,
-      () =>
-        html`<span class="walletAddress" title=${ifDefined(evmWallet?.address)}>
-          ${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}
-        </span>`,
-      () => html`
-        <sygma-substrate-account-selector></sygma-substrate-account-selector>
-      `
-    );
+    return choose(activeWalletKey, [
+      [
+        WalletContextKeys.EVM_WALLET,
+        () =>
+          html`<span
+            class="walletAddress"
+            title=${ifDefined(evmWallet?.address)}
+          >
+            ${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}
+          </span>`
+      ],
+      [
+        WalletContextKeys.SUBSTRATE_WALLET,
+        () => html`
+          <sygma-substrate-account-selector></sygma-substrate-account-selector>
+        `
+      ]
+    ]);
   }
 
   render(): HTMLTemplateResult {
