@@ -74,7 +74,7 @@ export class AddressInput extends BaseComponent {
               e.preventDefault();
             }
           }}
-          @change=${(evt: Event) =>
+          @input=${(evt: Event) =>
             this.handleAddressChange((evt.target as HTMLInputElement).value)}
         ></textarea>
       </div>
