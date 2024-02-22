@@ -10,6 +10,8 @@ import { isEvmResource } from '../../utils';
 
 const BALANCE_REFRESH_MS = 5_000;
 
+export const BALANCE_UPDATE_KEY = 'accountBalance';
+
 export class TokenBalanceController implements ReactiveController {
   host: ReactiveElement;
 
@@ -80,7 +82,7 @@ export class TokenBalanceController implements ReactiveController {
       this.decimals = await ierc20.decimals();
       this.balance = await ierc20.balanceOf(address);
       this.loadingBalance = false;
-      this.host.requestUpdate();
+      this.host.requestUpdate(BALANCE_UPDATE_KEY);
     }.bind(this)();
   };
 
