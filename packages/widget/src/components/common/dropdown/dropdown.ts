@@ -95,6 +95,11 @@ export class Dropdown extends BaseComponent {
   }
 
   _renderTriggerContent(): HTMLTemplateResult | undefined {
+    // set first option as selected if no option is selected and there is no placeholder
+    if (!this.placeholder && !this.selectedOption) {
+      this.selectedOption = this.options[0];
+    }
+
     return when(
       this.selectedOption,
       () =>

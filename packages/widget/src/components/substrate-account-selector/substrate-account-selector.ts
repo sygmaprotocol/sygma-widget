@@ -85,7 +85,6 @@ export class SubstrateAccountSelector extends BaseComponent {
         html`<dropdown-component
           .actionOption=${this.renderDisconnectSubstrateButton()}
           .options=${options}
-          .selectedOption=${options[0]}
           .onOptionSelected=${this.handleSubstrateAccountSelected}
         >
         </dropdown-component>`
