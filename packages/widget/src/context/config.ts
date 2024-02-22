@@ -1,7 +1,7 @@
 import { customElement, property } from 'lit/decorators.js';
 import { createContext, ContextProvider } from '@lit/context';
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
-import type { HTMLTemplateResult } from 'lit';
+import type { HTMLTemplateResult, PropertyValues } from 'lit';
 import { html } from 'lit';
 import type { AppMetadata } from '@web3-onboard/common';
 import { BaseComponent } from '../components/common/base-component';
@@ -47,8 +47,8 @@ export class ConfigContextProvider extends BaseComponent {
     super.updated(changedProperties);
     if (changedProperties.has('theme')) {
       this.configContextProvider.setValue({
-        theme: this.theme,
-        ...this.configContextProvider.value
+        ...this.configContextProvider.value,
+        theme: this.theme
       });
     }
   }
