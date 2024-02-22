@@ -10,6 +10,9 @@ import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
+
+import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
+import type { AppMetadata } from '@web3-onboard/common';
 import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
@@ -21,7 +24,6 @@ import './context/wallet';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
-  SdkInitializedEvent,
   Theme
 } from './interfaces';
 import { styles } from './styles';
@@ -59,6 +61,10 @@ class SygmaProtocolWidget
 
   @property({ type: Object }) theme?: Theme;
 
+  @property({ type: Object }) walletConnectOptions?: WalletConnectOptions;
+
+  @property({ type: Object }) appMetadata?: AppMetadata;
+
   @state()
   private isLoading = false;
 
@@ -93,31 +99,37 @@ class SygmaProtocolWidget
 
   render(): HTMLTemplateResult {
     return html`
-      <sygma-wallet-context-provider>
-        <section
-          class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
-        >
-          <section class="widgetHeader">
-            <div class="brandLogoContainer title">[Brand] Transfer</div>
-            ${this.renderConnect()}
+      <sygma-config-context-provider
+        .appMetadata=${this.appMetadata}
+        .theme=${this.theme}
+        .walletConnectOptions=${this.walletConnectOptions}
+      >
+        <sygma-wallet-context-provider>
+          <section
+            class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
+          >
+            <section class="widgetHeader">
+              <div class="brandLogoContainer title">[Brand] Transfer</div>
+              ${this.renderConnect()}
+            </section>
+            <section class="widgetContent">
+              <sygma-fungible-transfer
+                .environment=${this.environment as Environment}
+                .onSourceNetworkSelected=${(domain: Domain) =>
+                  (this.sourceNetwork = domain)}
+                .whitelistedSourceResources=${this.whitelistedSourceNetworks}
+                environment=${Environment.TESTNET}
+              >
+              </sygma-fungible-transfer>
+            </section>
+            <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
+            ${when(
+              this.isLoading || !this.sdkInitialized,
+              () => html`<sygma-overlay-component></sygma-overlay-component>`
+            )}
           </section>
-          <section class="widgetContent">
-            <sygma-fungible-transfer
-              .environment=${this.environment as Environment}
-              .onSourceNetworkSelected=${(domain: Domain) =>
-                (this.sourceNetwork = domain)}
-              .whitelistedSourceResources=${this.whitelistedSourceNetworks}
-              environment=${Environment.TESTNET}
-            >
-            </sygma-fungible-transfer>
-          </section>
-          <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
-          ${when(
-            this.isLoading || !this.sdkInitialized,
-            () => html`<sygma-overlay-component></sygma-overlay-component>`
-          )}
-        </section>
-      </sygma-wallet-context-provider>
+        </sygma-wallet-context-provider>
+      </sygma-config-context-provider>
     `;
   }
 }
