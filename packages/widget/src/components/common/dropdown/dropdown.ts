@@ -38,7 +38,7 @@ export class Dropdown extends BaseComponent {
   options: DropdownOption[] = [];
 
   @property({ type: Object })
-  actionOption?: HTMLTemplateResult | null = null;
+  actionOption: HTMLTemplateResult | null = null;
 
   @state()
   selectedOption: DropdownOption | null = null;
@@ -119,7 +119,7 @@ export class Dropdown extends BaseComponent {
     customOptionHtml,
     name,
     icon
-  }: DropdownOption): HTMLTemplateResult {
+  }: DropdownOption): HTMLTemplateResult | undefined {
     return when(
       customOptionHtml,
       () => customOptionHtml,
@@ -127,7 +127,7 @@ export class Dropdown extends BaseComponent {
         ${icon || ''}
         <span class="optionName">${capitalize(name)}</span>
       `
-    ) as HTMLTemplateResult;
+    );
   }
 
   _renderOptions(): Generator<unknown, void> | HTMLTemplateResult {
