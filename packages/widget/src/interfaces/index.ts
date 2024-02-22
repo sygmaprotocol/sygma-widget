@@ -5,6 +5,7 @@ import type {
 } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
+import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
 
 export type ThemeVariables =
   | 'mainColor'
@@ -35,4 +36,5 @@ export interface ISygmaProtocolWidget {
   darkTheme?: boolean;
   customLogo?: SVGElement;
   theme?: Theme;
+  walletConnectOptions?: WalletConnectOptions;
 }

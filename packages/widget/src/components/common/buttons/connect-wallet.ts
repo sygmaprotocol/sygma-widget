@@ -5,10 +5,10 @@ import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
+import { configContext, walletContext } from '../../../context';
+import type { ConfigContext, WalletContext } from '../../../context';
 import greenCircleIcon from '../../../assets/icons/greenCircleIcon';
 import plusIcon from '../../../assets/icons/plusIcon';
-import type { WalletContext } from '../../../context';
-import { walletContext } from '../../../context';
 import { WalletController } from '../../../controllers';
 import { shortAddress } from '../../../utils';
 import { BaseComponent } from '../base-component/base-component';
@@ -28,14 +28,13 @@ export class ConnectWalletButton extends BaseComponent {
   })
   sourceNetwork?: Domain;
 
-  @property({
-    type: String
-  })
-  dappUrl?: string;
-
   @consume({ context: walletContext, subscribe: true })
   @state()
   private wallets!: WalletContext;
+
+  @consume({ context: configContext, subscribe: true })
+  @state()
+  private configContext!: ConfigContext;
 
   private walletController = new WalletController(this);
 
@@ -48,9 +47,10 @@ export class ConnectWalletButton extends BaseComponent {
 
   private onConnectClicked = (): void => {
     if (this.sourceNetwork) {
-      this.walletController.connectWallet(this.sourceNetwork, {
-        dappUrl: this.dappUrl
-      });
+      this.walletController.connectWallet(
+        this.sourceNetwork,
+        this.configContext
+      );
     }
   };
 
