@@ -88,9 +88,9 @@ export class ConnectWalletButton extends BaseComponent {
 
   private renderWalletAddress(): TemplateResult | undefined {
     const evmWallet = this.wallets.evmWallet;
-    const activeWalletKey = Object.keys(this.wallets).find(
-      (key) => this.wallets[key as WalletContextKeys] !== undefined
-    ) as WalletContextKeys | undefined;
+    const activeWalletKey = (
+      Object.keys(this.wallets) as (keyof typeof this.wallets)[]
+    ).find((key) => !!this.wallets[key]);
 
     return choose(activeWalletKey, [
       [

@@ -45,7 +45,7 @@ export const substrateAccountSelectorStyles = css`
   }
 
   dropdown-component::part(customOptionContentAddress) {
-    color: #334155;
+    color: var(--neutral-500);
     font-size: 0.75rem;
     font-weight: 400;
   }
@@ -69,7 +69,7 @@ export const substrateAccountSelectorStyles = css`
     font-size: 0.875rem;
     font-weight: 500;
     text-align: left;
-    background: transparent;
+    background: rgba(0, 0, 0, 0);
     outline: none;
     border: none;
     box-sizing: border-box;

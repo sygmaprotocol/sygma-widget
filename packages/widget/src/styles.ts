@@ -12,6 +12,7 @@ export const styles = css`
     --white: #fff;
     --gray-100: #f3f4f6;
     --neutral-100: #f5f5f5;
+    --neutral-500: #334155;
     --neutral-600: #525252;
     --primary-300: #a5b4fc;
     --primary-500: #6366f1;
@@ -50,7 +51,7 @@ export const styles = css`
   }
 
   .networkSelectionWrapper {
-    margin: 1rem 0 1rem 0;
+    margin: 1rem 0;
   }
 
   .widgetHeader {
