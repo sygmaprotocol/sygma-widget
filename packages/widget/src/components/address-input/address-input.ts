@@ -21,9 +21,7 @@ export class AddressInput extends BaseComponent {
   @property({ attribute: false })
   onAddressChange: (address: string) => void = () => {};
 
-  @property({
-    type: String
-  })
+  @property({ type: String })
   network: Network = Network.EVM;
 
   @state()

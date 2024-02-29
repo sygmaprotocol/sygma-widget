@@ -1,7 +1,7 @@
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { html } from 'lit';
 import { afterEach, assert, describe, it } from 'vitest';
-import { TransferStatus } from '../../../../src/components/transfer/fungible/transfer-status';
+import { TransferStatus } from '../../../../../../src/components/transfer/fungible/transfer-status';
 
 describe('transfer-status-component', function () {
   afterEach(() => {
