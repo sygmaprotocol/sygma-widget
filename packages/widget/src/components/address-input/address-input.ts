@@ -4,6 +4,7 @@ import type { HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
+import type { PropertyValues } from '@lit/reactive-element';
 import { validateAddress } from '../../utils';
 import { BaseComponent } from '../common/base-component/base-component';
 
@@ -48,12 +49,14 @@ export class AddressInput extends BaseComponent {
 
     this.errorMessage = validateAddress(trimedValue, this.network);
 
-    if (!this.errorMessage) {
-      void this.onAddressChange(trimedValue);
-    } else {
-      void this.onAddressChange('');
-    }
+    this.onAddressChange(trimedValue);
   };
+
+  protected updated(changedProperties: PropertyValues): void {
+    if (changedProperties.has('network')) {
+      this.handleAddressChange(this.address);
+    }
+  }
 
   render(): HTMLTemplateResult {
     return html` <section class="inputAddressSection">
