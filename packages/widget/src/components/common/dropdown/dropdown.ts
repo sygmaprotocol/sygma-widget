@@ -6,13 +6,14 @@ import { when } from 'lit/directives/when.js';
 
 import { chevronIcon, networkIconsMap } from '../../../assets';
 import { capitalize } from '../../../utils';
-import { BaseComponent } from '../base-component/base-component';
+import { BaseComponent } from '../base-component';
 
 import { styles } from './styles';
 
 export interface DropdownOption<T = Record<string, unknown>> {
   id?: string;
   name: string;
+  customOptionHtml?: HTMLTemplateResult;
   icon?: HTMLTemplateResult | string;
   value: T;
 }
@@ -36,6 +37,9 @@ export class Dropdown extends BaseComponent {
   @property({ type: Array })
   options: DropdownOption[] = [];
 
+  @property({ type: Object })
+  actionOption: HTMLTemplateResult | null = null;
+
   @state()
   selectedOption: DropdownOption | null = null;
 
@@ -57,6 +61,7 @@ export class Dropdown extends BaseComponent {
     //if options changed, check if we have selected option that doesn't exist
     if (changedProperties.has('options') && this.selectedOption) {
       if (
+        Array.isArray(this.options) &&
         !this.options.map((o) => o.value).includes(this.selectedOption.value)
       ) {
         this.selectedOption = null;
@@ -90,6 +95,11 @@ export class Dropdown extends BaseComponent {
   }
 
   _renderTriggerContent(): HTMLTemplateResult | undefined {
+    // set first option as selected if no option is selected and there is no placeholder
+    if (!this.placeholder && !this.selectedOption) {
+      this.selectedOption = this.options[0];
+    }
+
     return when(
       this.selectedOption,
       () =>
@@ -105,7 +115,22 @@ export class Dropdown extends BaseComponent {
     );
   }
 
-  _renderOptions(): Generator<unknown, void> {
+  private renderOptionContent({
+    customOptionHtml,
+    name,
+    icon
+  }: DropdownOption): HTMLTemplateResult | undefined {
+    return when(
+      customOptionHtml,
+      () => customOptionHtml,
+      () => html`
+        ${icon || ''}
+        <span class="optionName">${capitalize(name)}</span>
+      `
+    );
+  }
+
+  _renderOptions(): Generator<unknown, void> | HTMLTemplateResult {
     return map(
       this.options,
       (option) => html`
@@ -114,8 +139,7 @@ export class Dropdown extends BaseComponent {
           @click="${(e: Event) => this._selectOption(option, e)}"
           role="option"
         >
-          ${option.icon || ''}
-          <span class="optionName">${capitalize(option.name)}</span>
+          ${this.renderOptionContent(option)}
         </div>
       `
     );
@@ -131,6 +155,8 @@ export class Dropdown extends BaseComponent {
       >
         <label for="selector" class="dropdownLabel">${this.label}</label>
         <div
+          slot="dropdown"
+          part="dropdown"
           class="dropdown"
           @click="${this._toggleDropdown}"
           role="listbox"
@@ -138,6 +164,7 @@ export class Dropdown extends BaseComponent {
           aria-expanded="${this.isDropdownOpen ? 'true' : 'false'}"
         >
           <div
+            part="dropdownTrigger"
             class="${this.disabled
               ? 'dropdownTrigger disabled'
               : 'dropdownTrigger'}"
@@ -148,10 +175,11 @@ export class Dropdown extends BaseComponent {
             </div>
           </div>
           <div
+            part="dropdownContent"
             class="dropdownContent ${this.isDropdownOpen ? 'show' : ''}"
             role="list"
           >
-            ${this._renderOptions()}
+            ${this._renderOptions()} ${this.actionOption}
           </div>
         </div>
       </div>

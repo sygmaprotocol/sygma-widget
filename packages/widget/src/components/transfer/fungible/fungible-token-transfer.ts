@@ -13,7 +13,7 @@ import '../../address-input';
 import '../../amount-selector';
 import './transfer-button';
 import './transfer-status';
-import { BaseComponent } from '../../common/base-component/base-component';
+import { BaseComponent } from '../../common/base-component';
 import '../../network-selector';
 import { Directions } from '../../network-selector/network-selector';
 import { WalletController } from '../../../controllers';

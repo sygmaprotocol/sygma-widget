@@ -3,7 +3,8 @@ name: "ci / test"
 on:
   push:
     branches:
-      - main # runs on push to master, add more branches if you use them
+      - main
+      - dev
   pull_request:
     branches:
       - '**' # runs on update to pull request on any branch

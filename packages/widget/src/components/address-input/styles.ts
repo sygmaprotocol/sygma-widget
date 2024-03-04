@@ -6,6 +6,7 @@ export const styles = css`
     flex-direction: column;
     justify-content: center;
     gap: 0.5rem;
+    margin-top: 1rem;
     min-height: 7.75rem; // TOO: remove this hardcoded value
   }
 
@@ -47,5 +48,6 @@ export const styles = css`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-bottom: 0.25rem;
   }
 `;

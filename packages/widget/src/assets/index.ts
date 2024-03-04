@@ -13,6 +13,9 @@ import phalaNetworkIcon from './icons/phalaNetworkIcon';
 import polygonNetworkIcon from './icons/polygonNetworkIcon';
 import switchNetworkIcon from './icons/switchNetwork';
 import sygmaLogo from './icons/sygmaLogo';
+import identicon from './icons/identicon';
+import plusIcon from './icons/plusIcon';
+import greenCircleIcon from './icons/greenCircleIcon';
 
 export const networkIconsMap = {
   ethereum: ethereumIcon,
@@ -37,5 +40,8 @@ export {
   noNetworkIcon,
   chevronIcon,
   greenMark,
-  loaderIcon
+  loaderIcon,
+  identicon,
+  plusIcon,
+  greenCircleIcon
 };

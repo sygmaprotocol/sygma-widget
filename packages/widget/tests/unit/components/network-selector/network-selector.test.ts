@@ -1,10 +1,11 @@
-import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { afterEach, assert, describe, expect, it, vi } from 'vitest';
+import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
 import { html } from 'lit';
+import { afterEach, assert, describe, expect, it, vi } from 'vitest';
+
 import { NetworkSelector } from '../../../../src/components';
-import type { Dropdown } from '../../../../src/components/common/dropdown/dropdown';
+import type { Dropdown } from '../../../../src/components/common';
 
 describe('network-selector component', function () {
   afterEach(() => {
@@ -28,7 +29,9 @@ describe('network-selector component', function () {
     const dropdown = el.shadowRoot?.querySelector(
       'dropdown-component'
     ) as Dropdown;
-    expect(dropdown?.options.length).toBe(testNetworks.length);
+
+    const dropdownOptions = dropdown.options;
+    expect(dropdownOptions?.length).toBe(testNetworks.length);
   });
 
   it('calls "onNetworkSelected" with the correct Domain object when an option is selected', async () => {

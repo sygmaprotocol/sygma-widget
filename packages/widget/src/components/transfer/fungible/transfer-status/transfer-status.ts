@@ -1,9 +1,9 @@
 import { BigNumber, utils } from 'ethers';
 import { html, type HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { BaseComponent } from '../../../common';
-import { greenMark, networkIconsMap } from '../../../../assets';
 import { DEFAULT_ETH_DECIMALS } from '../../../../constants';
+import { greenMark, networkIconsMap } from '../../../../assets';
+import { BaseComponent } from '../../../common/base-component';
 import { styles } from './styles';
 
 @customElement('sygma-transfer-status')

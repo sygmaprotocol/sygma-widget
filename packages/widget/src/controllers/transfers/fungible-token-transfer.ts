@@ -13,6 +13,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { SubmittableResult } from '@polkadot/api';
 import { walletContext, configContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
+
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import { buildSubstrateFungibleTransactions } from './substrate';
 
@@ -98,11 +99,10 @@ export class FungibleTokenTransferController implements ReactiveController {
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
-    await this.config.init(1, this.env);
-    this.supportedSourceNetworks = this.config
-      .getDomains()
-      //remove once we have proper substrate transfer support
-      .filter((n) => n.type === Network.EVM);
+    await this.config.init(1, env);
+    this.supportedSourceNetworks = this.config.getDomains();
+    //remove once we have proper substrate transfer support
+    // .filter((n) => n.type === Network.EVM);
     this.supportedDestinationNetworks = this.config.getDomains();
     this.host.requestUpdate();
   }

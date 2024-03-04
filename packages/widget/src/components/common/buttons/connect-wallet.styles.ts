@@ -14,8 +14,7 @@ export const connectWalletStyles = css`
     align-items: center;
   }
 
-  .walletAddress,
-  .connectWalletButton {
+  .walletAddress {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--zinc-700);
@@ -26,14 +25,25 @@ export const connectWalletStyles = css`
   }
 
   .connectWalletButton {
-    padding: 0.375rem 0.5rem;
+    display: flex;
+    align-items: center;
+    padding: 0.38rem 0.75rem;
     border-radius: 2.5rem;
-    background-color: var(--zinc-100);
-    border: 1px solid var(--gray-100);
+    background: var(--zinc-800);
+    color: var(--zinc-200);
+    font-size: 0.875rem;
+    font-weight: 500;
+    outline: none;
+    border: none;
     cursor: pointer;
-  }
+    transition: filter 0.3s ease;
 
-  .connectWalletButton:hover {
-    background-image: linear-gradient(rgb(0 0 0/3%) 0 0);
+    &:hover {
+      filter: brightness(120%);
+    }
+
+    svg {
+      margin-right: 0.5rem;
+    }
   }
 `;
