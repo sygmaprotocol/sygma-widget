@@ -53,6 +53,7 @@ export class AddressInput extends BaseComponent {
   };
 
   protected updated(changedProperties: PropertyValues): void {
+    //revalidating address on network change
     if (changedProperties.has('network')) {
       this.handleAddressChange(this.address);
     }
