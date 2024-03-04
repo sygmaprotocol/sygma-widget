@@ -15,9 +15,9 @@ import '../../resource-amount-selector';
 import './transfer-button';
 import './transfer-status';
 import '../../network-selector';
-import { BaseComponent } from '../../common';
 import { Directions } from '../../network-selector/network-selector';
 import { WalletController } from '../../../controllers';
+import { BaseComponent } from '../../common/base-component';
 import { styles } from './styles';
 
 @customElement('sygma-fungible-transfer')

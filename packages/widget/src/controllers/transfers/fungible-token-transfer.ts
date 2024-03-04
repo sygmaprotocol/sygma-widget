@@ -9,9 +9,11 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction, BigNumber } from 'ethers';
 import { ethers } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
+
 import type { WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
+
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
 export enum FungibleTransferState {
@@ -97,10 +99,9 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
     this.env = env;
     await this.config.init(1, this.env);
-    this.supportedSourceNetworks = this.config
-      .getDomains()
-      //remove once we have proper substrate transfer support
-      .filter((n) => n.type === Network.EVM);
+    this.supportedSourceNetworks = this.config.getDomains();
+    //remove once we have proper substrate transfer support
+    // .filter((n) => n.type === Network.EVM);
     this.supportedDestinationNetworks = this.config.getDomains();
     this.host.requestUpdate();
   }

@@ -13,8 +13,8 @@ import {
   TokenBalanceController
 } from '../../controllers/wallet-manager/token-balance';
 import { tokenBalanceToNumber } from '../../utils/token';
-import { BaseComponent } from '../common';
 import type { DropdownOption } from '../common/dropdown/dropdown';
+import { BaseComponent } from '../common/base-component';
 import { styles } from './styles';
 
 @customElement('sygma-resource-amount-selector')
