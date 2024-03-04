@@ -8,9 +8,9 @@ import { when } from 'lit/directives/when.js';
 import { networkIconsMap } from '../../assets';
 import { TokenBalanceController } from '../../controllers/wallet-manager/token-balance';
 import { tokenBalanceToNumber } from '../../utils/token';
-import { BaseComponent } from '../common';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { DEFAULT_ETH_DECIMALS } from '../../constants';
+import { BaseComponent } from '../common/base-component';
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')

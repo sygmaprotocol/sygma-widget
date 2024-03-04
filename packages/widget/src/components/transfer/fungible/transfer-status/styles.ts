@@ -16,7 +16,7 @@ export const styles = css`
     flex-direction: column;
     align-items: center;
     border-radius: 1.5rem;
-    border: 1px solid var(--zinc-200);
+    border: 0.0625rem solid var(--zinc-200);
   }
 
   .destinationMessage {
