@@ -9,9 +9,12 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction } from 'ethers';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
-import { walletContext } from '../../context/wallet';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { SubmittableResult } from '@polkadot/api';
+import { walletContext, configContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
+import { buildSubstrateFungibleTransactions } from './substrate';
 
 export enum FungibleTransferState {
   MISSING_SOURCE_NETWORK,
@@ -51,6 +54,11 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected pendingEvmApprovalTransactions: UnsignedTransaction[] = [];
   protected pendingEvmTransferTransaction?: UnsignedTransaction;
 
+  // Substrate transfer
+  protected buildSubstrateFungibleTransactions =
+    buildSubstrateFungibleTransactions;
+  protected transferTx?: SubmittableExtrinsic<'promise', SubmittableResult>;
+
   protected config: Config;
   protected env: Environment = Environment.MAINNET;
   //source network chain id -> Route[]
@@ -58,6 +66,7 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
+  configContext: ContextConsumer<typeof configContext, ReactiveElement>;
 
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
@@ -74,6 +83,12 @@ export class FungibleTokenTransferController implements ReactiveController {
         this.host.requestUpdate();
       }
     });
+
+    this.configContext = new ContextConsumer(host, {
+      context: configContext,
+      subscribe: true,
+      callback: () => {}
+    }); // NOT SURE IF WE NEED THIS HERE
   }
 
   hostDisconnected(): void {
@@ -275,6 +290,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       case Network.SUBSTRATE:
         {
           //TODO: add substrate logic
+          void this.buildSubstrateFungibleTransactions();
         }
         break;
       default:
