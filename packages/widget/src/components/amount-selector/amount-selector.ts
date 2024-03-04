@@ -5,6 +5,7 @@ import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
+import type { PropertyValues } from '@lit/reactive-element';
 import { networkIconsMap } from '../../assets';
 import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import {
@@ -21,8 +22,7 @@ export class AmountSelector extends BaseComponent {
   static styles = styles;
 
   @property({
-    type: Array,
-    hasChanged: (n, o) => n !== o
+    type: Array
   })
   resources: Resource[] = [];
 
@@ -135,6 +135,12 @@ export class AmountSelector extends BaseComponent {
         value: entry
       }))
     );
+  }
+
+  updated(changedProperties: PropertyValues): void {
+    if (changedProperties.has('resources')) {
+      this.tokenBalanceController.resetBalance();
+    }
   }
 
   render(): HTMLTemplateResult {

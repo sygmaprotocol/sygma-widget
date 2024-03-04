@@ -1,8 +1,8 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
-import type { HTMLTemplateResult } from 'lit';
+import type { HTMLTemplateResult, PropertyValues } from 'lit';
 import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
 import {
@@ -30,6 +30,9 @@ export class FungibleTokenTransfer extends BaseComponent {
 
   @property({ type: Object })
   onSourceNetworkSelected?: (domain: Domain) => void;
+
+  @state()
+  network: Domain | undefined;
 
   transferController = new FungibleTokenTransferController(this);
   walletController = new WalletController(this);
@@ -85,6 +88,14 @@ export class FungibleTokenTransfer extends BaseComponent {
     )!;
   }
 
+  protected updated(changedProperties: PropertyValues): void {
+    if (changedProperties.has('network')) {
+      void this.walletController.switchChain(this.network?.chainId as number);
+      // reset the selector upon changing the network
+      this.transferController.onDestinationNetworkSelected(undefined);
+    }
+  }
+
   renderTransferStatus(): HTMLTemplateResult {
     return html`<section>
       <sygma-transfer-status
@@ -114,8 +125,7 @@ export class FungibleTokenTransfer extends BaseComponent {
             if (network) {
               this.onSourceNetworkSelected?.(network);
               this.transferController.onSourceNetworkSelected(network);
-
-              this.walletController.switchChain(network.chainId);
+              this.network = network;
             }
           }}
           .networks=${this.transferController.supportedSourceNetworks}
