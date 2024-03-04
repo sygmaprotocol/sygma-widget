@@ -75,7 +75,7 @@ export class FungibleTokenTransfer extends BaseComponent {
     }
 
     if (state === FungibleTransferState.COMPLETED) {
-      return;
+      this.transferController.reset();
     }
   };
 
