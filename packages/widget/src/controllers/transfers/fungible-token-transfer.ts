@@ -277,7 +277,6 @@ export class FungibleTokenTransferController implements ReactiveController {
             !this.supportedDestinationNetworks.includes(route.toDomain)
         )
         .map((route) => route.toDomain);
-      // console.log('2 ====>', this.supportedDestinationNetworks);
     }
 
     void this.buildTransactions();
