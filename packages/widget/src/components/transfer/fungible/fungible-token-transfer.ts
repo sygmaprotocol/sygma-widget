@@ -76,7 +76,7 @@ export class FungibleTokenTransfer extends BaseComponent {
     }
   };
 
-  private isSourceAndDestinationNetworkHasEqualType(): boolean {
+  private sourceAndDestinationNetworkHasEqualType(): boolean {
     return (
       this.transferController.sourceNetwork?.type ===
       this.transferController.destinationNetwork?.type
@@ -84,7 +84,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   }
 
   private getSenderDefaultDestinationAddress(): string {
-    return this.isSourceAndDestinationNetworkHasEqualType()
+    return this.sourceAndDestinationNetworkHasEqualType()
       ? this.walletController.walletContext.value?.evmWallet?.address || ''
       : this.transferController.destinatonAddress || '';
   }
