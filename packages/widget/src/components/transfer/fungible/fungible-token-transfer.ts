@@ -13,7 +13,7 @@ import '../../address-input';
 import '../../amount-selector';
 import './transfer-button';
 import './transfer-status';
-import { BaseComponent } from '../../common/base-component/base-component';
+import { BaseComponent } from '../../common';
 import '../../network-selector';
 import { Directions } from '../../network-selector/network-selector';
 import { WalletController } from '../../../controllers';
@@ -75,6 +75,19 @@ export class FungibleTokenTransfer extends BaseComponent {
       this.transferController.reset();
     }
   };
+
+  private sourceAndDestinationNetworkHasEqualType(): boolean {
+    return (
+      this.transferController.sourceNetwork?.type ===
+      this.transferController.destinationNetwork?.type
+    );
+  }
+
+  private getSenderDefaultDestinationAddress(): string {
+    return this.sourceAndDestinationNetworkHasEqualType()
+      ? this.walletController.walletContext.value?.evmWallet?.address || ''
+      : this.transferController.destinatonAddress || '';
+  }
 
   render(): HTMLTemplateResult {
     const state = this.transferController.getTransferState();
@@ -142,7 +155,7 @@ export class FungibleTokenTransfer extends BaseComponent {
       </section>
       <section>
         <sygma-address-input
-          .address=${this.transferController.destinatonAddress}
+          .address=${this.getSenderDefaultDestinationAddress()}
           .onAddressChange=${this.transferController.onDestinationAddressChange}
           .networkType=${this.transferController.destinationNetwork?.type}
         >
