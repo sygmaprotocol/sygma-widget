@@ -1,8 +1,8 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
-import type { HTMLTemplateResult, PropertyValues } from 'lit';
+import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
 import {
