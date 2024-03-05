@@ -226,6 +226,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       );
     }
     this.supportedResources = [];
+
     if (!this.destinationNetwork) {
       this.supportedDestinationNetworks = this.routesCache
         .get(sourceNetwork.chainId)!
@@ -245,13 +246,40 @@ export class FungibleTokenTransferController implements ReactiveController {
             !this.supportedResources.includes(route.resource))
       )
       .map((route) => route.resource);
+
+    const isDestinationNetworkRouteSupported =
+      this.supportedDestinationNetworks.some(
+        (destinationDomain) =>
+          destinationDomain.id === this.destinationNetwork?.id
+      );
+
     //unselect destination if equal to source network or isn't in list of available destination networks
     if (
       this.destinationNetwork?.id === sourceNetwork.id ||
-      !this.supportedDestinationNetworks.includes(this.destinationNetwork!)
+      !isDestinationNetworkRouteSupported
     ) {
       this.destinationNetwork = undefined;
     }
+
+    // imposible route source -> source
+    const isSourceOnSuportedDestinations =
+      this.supportedDestinationNetworks.some(
+        (destinationDomain) =>
+          destinationDomain.chainId === this.sourceNetwork?.chainId
+      );
+
+    if (isSourceOnSuportedDestinations) {
+      this.supportedDestinationNetworks = this.routesCache
+        .get(sourceNetwork.chainId)!
+        .filter(
+          (route) =>
+            route.toDomain.chainId !== sourceNetwork.chainId &&
+            !this.supportedDestinationNetworks.includes(route.toDomain)
+        )
+        .map((route) => route.toDomain);
+      // console.log('2 ====>', this.supportedDestinationNetworks);
+    }
+
     void this.buildTransactions();
     this.host.requestUpdate();
   };
