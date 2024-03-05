@@ -145,6 +145,7 @@ export class FungibleTokenTransfer extends BaseComponent {
         <sygma-address-input
           .address=${this.transferController.destinatonAddress}
           .onAddressChange=${this.transferController.onDestinationAddressChange}
+          .networkType=${this.transferController.destinationNetwork?.type}
         >
         </sygma-address-input>
       </section>
