@@ -1,4 +1,4 @@
-import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
+import { fixtureCleanup } from '@open-wc/testing-helpers';
 import { afterEach, assert, describe, it, vi } from 'vitest';
 import { LitElement } from 'lit';
 import {
