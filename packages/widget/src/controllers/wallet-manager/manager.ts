@@ -8,6 +8,8 @@ import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
 
+import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
+import type { AppMetadata } from '@web3-onboard/common';
 import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
 
@@ -33,7 +35,13 @@ export class WalletController implements ReactiveController {
     }
   }
 
-  connectWallet = (network: Domain, options?: { dappUrl?: string }): void => {
+  connectWallet = (
+    network: Domain,
+    options?: {
+      walletConnectOptions?: WalletConnectOptions;
+      appMetaData?: AppMetadata;
+    }
+  ): void => {
     switch (network.type) {
       case Network.EVM:
         {
@@ -90,18 +98,22 @@ export class WalletController implements ReactiveController {
 
   connectEvmWallet = async (
     network: Domain,
-    options?: { dappUrl?: string }
+    options?: {
+      walletConnectOptions?: WalletConnectOptions;
+      appMetaData?: AppMetadata;
+    }
   ): Promise<void> => {
     const injected = injectedModule();
 
+    const walletSetup = [injected];
+
+    if (options?.walletConnectOptions?.projectId) {
+      walletSetup.push(walletConnectModule(options.walletConnectOptions));
+    }
+
     const onboard = Onboard({
-      wallets: [
-        injected,
-        walletConnectModule({
-          projectId: '2f5a3439ef861e2a3959d85afcd32d06',
-          dappUrl: options?.dappUrl
-        })
-      ],
+      appMetadata: options?.appMetaData,
+      wallets: walletSetup,
       chains: [
         {
           id: network.chainId
@@ -142,11 +154,14 @@ export class WalletController implements ReactiveController {
 
   connectSubstrateWallet = async (
     _network: Domain, // TODO: remove underscore prefix once arg usage is added
-    options?: { dappUrl?: string; dappName?: string }
+    options?: {
+      walletConnectOptions?: WalletConnectOptions;
+      appMetaData?: AppMetadata;
+    }
   ): Promise<void> => {
     const injectedWalletProvider = new InjectedWalletProvider(
       { disallowed: [] },
-      options?.dappName ?? 'Sygma Widget'
+      options?.appMetaData?.name ?? 'Sygma Widget'
     );
     const wallets = await injectedWalletProvider.getWallets();
 
@@ -166,7 +181,9 @@ export class WalletController implements ReactiveController {
             signerAddress: accounts[0].address,
             accounts,
             unsubscribeSubstrateAccounts: unsub,
-            disconnect: wallet.disconnect
+            disconnect: wallet.disconnect,
+            substrateProvider:
+              this.walletContext.value?.substrateWallet?.substrateProvider
           }
         })
       );
@@ -207,7 +224,9 @@ export class WalletController implements ReactiveController {
               this.walletContext.value.substrateWallet
                 .unsubscribeSubstrateAccounts,
             //TODO: convert address to network format
-            accounts
+            accounts,
+            substrateProvider:
+              this.walletContext.value.substrateWallet.substrateProvider
           }
         })
       );
@@ -224,7 +243,9 @@ export class WalletController implements ReactiveController {
           substrateWallet: {
             signer: this.walletContext.value.substrateWallet.signer,
             signerAddress: account.address,
-            accounts: this.walletContext.value.substrateWallet.accounts
+            accounts: this.walletContext.value.substrateWallet.accounts,
+            substrateProvider:
+              this.walletContext.value.substrateWallet.substrateProvider
           }
         })
       );

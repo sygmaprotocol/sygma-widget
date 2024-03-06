@@ -1,15 +1,18 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
 import { utils, type BigNumber } from 'ethers';
-import type { HTMLTemplateResult } from 'lit';
+import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
 import { networkIconsMap } from '../../assets';
-import { TokenBalanceController } from '../../controllers/wallet-manager/token-balance';
+import { DEFAULT_ETH_DECIMALS } from '../../constants';
+import {
+  BALANCE_UPDATE_KEY,
+  TokenBalanceController
+} from '../../controllers/wallet-manager/token-balance';
 import { tokenBalanceToNumber } from '../../utils/token';
 import type { DropdownOption } from '../common/dropdown/dropdown';
-import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import { BaseComponent } from '../common/base-component';
 import { styles } from './styles';
 
@@ -51,9 +54,8 @@ export class AmountSelector extends BaseComponent {
 
   _onInputAmountChangeHandler = (event: Event): void => {
     const { value } = event.target as HTMLInputElement;
-    if (!this._validateAmount(value)) return;
-
     this.amount = Number.parseFloat(value);
+    if (!this._validateAmount(value)) return;
     if (this.selectedResource) {
       this.onResourceSelected(
         this.selectedResource,
@@ -64,6 +66,17 @@ export class AmountSelector extends BaseComponent {
       );
     }
   };
+
+  requestUpdate(
+    name?: PropertyKey,
+    oldValue?: unknown,
+    options?: PropertyDeclaration<unknown, unknown>
+  ): void {
+    super.requestUpdate(name, oldValue, options);
+    if (name === BALANCE_UPDATE_KEY) {
+      this._validateAmount(String(this.amount));
+    }
+  }
 
   _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
     this.selectedResource = value;
@@ -143,7 +156,7 @@ export class AmountSelector extends BaseComponent {
               class="amountSelectorInput"
               placeholder="0.000"
               @change=${this._onInputAmountChangeHandler}
-              value=${this.amount.toString()}
+              value=${this.amount === 0 ? '' : this.amount.toString()}
             />
             <section class="selectorSection">
               <dropdown-component

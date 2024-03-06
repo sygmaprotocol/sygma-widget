@@ -48,9 +48,7 @@ export class ConnectWalletButton extends BaseComponent {
 
   private onConnectClicked = (): void => {
     if (this.sourceNetwork) {
-      this.walletController.connectWallet(this.sourceNetwork, {
-        dappUrl: this.dappUrl
-      });
+      this.walletController.connectWallet(this.sourceNetwork);
     }
   };
 
@@ -59,11 +57,11 @@ export class ConnectWalletButton extends BaseComponent {
   };
 
   private isWalletConnected(): boolean {
-    return !!this.wallets.evmWallet || !!this.wallets.substrateWallet;
+    return !!this.wallets.evmWallet || !!this.wallets.substrateWallet?.signer;
   }
 
   private renderConnectWalletButton(): HTMLTemplateResult | undefined {
-    if (this.wallets.substrateWallet) return;
+    if (this.wallets.substrateWallet?.signer) return;
 
     return when(
       this.isWalletConnected(),

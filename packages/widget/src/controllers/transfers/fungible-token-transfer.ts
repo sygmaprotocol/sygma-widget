@@ -9,11 +9,13 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction } from 'ethers';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
-
-import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { SubmittableResult } from '@polkadot/api';
 import { walletContext } from '../../context';
+import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
+import { buildSubstrateFungibleTransactions } from './substrate';
 
 export enum FungibleTransferState {
   MISSING_SOURCE_NETWORK,
@@ -52,6 +54,10 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected executeNextEvmTransaction = executeNextEvmTransaction;
   protected pendingEvmApprovalTransactions: UnsignedTransaction[] = [];
   protected pendingEvmTransferTransaction?: UnsignedTransaction;
+
+  // Substrate transfer
+  protected buildSubstrateTransactions = buildSubstrateFungibleTransactions;
+  protected transferTx?: SubmittableExtrinsic<'promise', SubmittableResult>;
 
   protected config: Config;
   protected env: Environment = Environment.MAINNET;
@@ -276,6 +282,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       case Network.SUBSTRATE:
         {
           //TODO: add substrate logic
+          void this.buildSubstrateTransactions();
         }
         break;
       default:
