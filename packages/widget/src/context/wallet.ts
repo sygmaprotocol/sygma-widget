@@ -5,6 +5,7 @@ import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { BaseComponent } from '../components/common/base-component';
 
 export interface EvmWallet {
@@ -14,11 +15,12 @@ export interface EvmWallet {
 }
 
 export interface SubstrateWallet {
-  signer: Signer;
-  signerAddress: string;
-  accounts: Account[];
+  signer?: Signer;
+  signerAddress?: string;
+  accounts?: Account[];
   unsubscribeSubstrateAccounts?: UnsubscribeFn;
   disconnect?: () => Promise<void>;
+  substrateProvider?: ApiPromise | string;
 }
 
 export interface WalletContext {
@@ -57,11 +59,33 @@ export class WalletContextProvider extends BaseComponent {
   @property({ attribute: false, type: Object })
   evmWalllet?: EvmWallet;
 
-  connectedCallback(): void {
+  @property({ attribute: false })
+  substrateProvider?: ApiPromise | string;
+
+  async connectedCallback(): Promise<void> {
     super.connectedCallback();
     if (this.evmWalllet) {
       this.walletContext.evmWallet = this.evmWalllet;
     }
+
+    let wssProvider;
+
+    if (this.substrateProvider && typeof this.substrateProvider === 'string') {
+      wssProvider = new WsProvider(this.substrateProvider);
+    }
+
+    let api: ApiPromise;
+
+    if (wssProvider) {
+      api = await ApiPromise.create({ provider: wssProvider });
+    } else {
+      api = this.substrateProvider as ApiPromise;
+    }
+
+    this.walletContext.substrateWallet = {
+      substrateProvider: api
+    };
+
     this.addEventListener('walletUpdate', (event: WalletUpdateEvent) => {
       this.walletContext = {
         ...this.walletContext,

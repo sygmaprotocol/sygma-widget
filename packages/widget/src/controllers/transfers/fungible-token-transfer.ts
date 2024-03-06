@@ -56,8 +56,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected pendingEvmTransferTransaction?: UnsignedTransaction;
 
   // Substrate transfer
-  protected buildSubstrateFungibleTransactions =
-    buildSubstrateFungibleTransactions;
+  protected buildSubstrateTransactions = buildSubstrateFungibleTransactions;
   protected transferTx?: SubmittableExtrinsic<'promise', SubmittableResult>;
 
   protected config: Config;
@@ -290,7 +289,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       case Network.SUBSTRATE:
         {
           //TODO: add substrate logic
-          void this.buildSubstrateFungibleTransactions();
+          void this.buildSubstrateTransactions();
         }
         break;
       default:

@@ -1,12 +1,19 @@
 import { ERC20__factory } from '@buildwithsygma/sygma-contracts';
-import type { EvmResource, Resource } from '@buildwithsygma/sygma-sdk-core';
+import type {
+  EvmResource,
+  Resource,
+  SubstrateResource
+} from '@buildwithsygma/sygma-sdk-core';
 import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
 import { Web3Provider } from '@ethersproject/providers';
 import { ContextConsumer } from '@lit/context';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
+import type { ApiPromise } from '@polkadot/api';
+import { getAssetBalance } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
+import type { SubstrateWallet } from '../../context/wallet';
 
 const BALANCE_REFRESH_MS = 5_000;
 
@@ -45,6 +52,7 @@ export class TokenBalanceController implements ReactiveController {
     }
     this.balance = BigNumber.from(0);
     this.host.requestUpdate();
+
     if (isEvmResource(resource)) {
       if (resource.type === ResourceType.FUNGIBLE) {
         //trigger so we don't wait BALANCE_REFRESH_MS before displaying balance
@@ -59,12 +67,27 @@ export class TokenBalanceController implements ReactiveController {
       //resource.native is not set :shrug:
       if (resource.symbol === 'eth') {
         void this.subscribeEvmNativeBalanceUpdate();
+
         this.timeout = setInterval(
           this.subscribeEvmNativeBalanceUpdate,
           BALANCE_REFRESH_MS
         );
         return;
       }
+    } else {
+      const { substrateProvider, accounts } = this.walletContext.value
+        ?.substrateWallet as SubstrateWallet;
+
+      void this.suscribeSubstrateBalanceUpdate(
+        substrateProvider as ApiPromise,
+        resource,
+        accounts![0].address
+      );
+      this.timeout = setInterval(
+        this.suscribeSubstrateBalanceUpdate,
+        BALANCE_REFRESH_MS
+      ) as unknown as ReturnType<typeof setInterval>; //dubious
+      return;
     }
     throw new Error('Unsupported resource');
   }
@@ -99,6 +122,26 @@ export class TokenBalanceController implements ReactiveController {
       this.loadingBalance = false;
       this.balance = balance;
       this.decimals = 18;
+      this.host.requestUpdate();
+    }.bind(this)();
+  };
+
+  suscribeSubstrateBalanceUpdate = (
+    apiPromise: ApiPromise,
+    resource: SubstrateResource,
+    accountAddress: string
+  ): void => {
+    void async function (this: TokenBalanceController) {
+      const balance = await getAssetBalance(
+        apiPromise,
+        (resource as unknown as { assetID: number }).assetID,
+        accountAddress
+      );
+      this.loadingBalance = true;
+      this.host.requestUpdate();
+      this.loadingBalance = false;
+      this.balance = BigNumber.from(BigInt(balance.balance.toString()));
+      this.decimals = resource.decimals!;
       this.host.requestUpdate();
     }.bind(this)();
   };
