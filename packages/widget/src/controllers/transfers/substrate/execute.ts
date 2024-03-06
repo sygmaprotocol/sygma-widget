@@ -8,7 +8,7 @@ export async function executeNextSubstrateTransaction(
     this.walletContext.value?.substrateWallet?.accounts![0].address;
   if (!address) return;
 
-  const unsub = await this.transferTx?.signAndSend(
+  const unsub = (await this.transferTx?.signAndSend(
     address,
     ({ events = [], status }) => {
       if (status.isInBlock) {
@@ -23,8 +23,8 @@ export async function executeNextSubstrateTransaction(
       } else if (status.isDropped || status.isInvalid) {
         this.errorMessage = 'Transfer transaction reverted or rejected';
         console.log('Error: Transaction dropped');
-        unsub!();
+        unsub();
       }
     }
-  );
+  )) as unknown as () => void;
 }
