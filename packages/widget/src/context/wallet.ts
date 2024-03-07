@@ -1,4 +1,3 @@
-
 import { createContext, provide } from '@lit/context';
 import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
