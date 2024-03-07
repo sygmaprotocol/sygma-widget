@@ -1,30 +1,59 @@
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { SubmittableResult } from '@polkadot/api';
 import type { FungibleTokenTransferController } from '../fungible-token-transfer';
 
 export async function executeNextSubstrateTransaction(
   this: FungibleTokenTransferController
 ): Promise<void> {
   this.errorMessage = null;
-  const address =
-    this.walletContext.value?.substrateWallet?.accounts![0].address;
-  if (!address) return;
+  const destinationAddress = this.destinatonAddress;
+  const sender = this.walletContext.value?.substrateWallet?.accounts![0];
+  const signer = this.walletContext.value?.substrateWallet?.signer;
+  if (
+    this.pendingTransferTransactions === undefined ||
+    destinationAddress == undefined ||
+    sender?.address == undefined
+  )
+    return;
 
-  const unsub = (await this.transferTx?.signAndSend(
-    address,
-    ({ events = [], status }) => {
-      if (status.isInBlock) {
-        console.log(
-          'Successful transfer of',
-          this.resourceAmount,
-          'with hash',
-          status.asInBlock.toHex()
-        );
-      } else if (status.isFinalized) {
-        console.log('Finalized block hash', status.asFinalized.toHex());
-      } else if (status.isDropped || status.isInvalid) {
+  await (
+    this.pendingTransferTransactions as SubmittableExtrinsic<
+      'promise',
+      SubmittableResult
+    >
+  ).signAndSend(
+    sender.address,
+    { signer: signer },
+    ({
+      isInBlock,
+      isFinalized,
+      blockNumber,
+      txIndex,
+      isError,
+      isCompleted
+    }) => {
+      if (isInBlock) {
+        this.waitingTxExecution = false;
+        this.host.requestUpdate();
+      }
+
+      if (isCompleted) {
+        this.pendingTransferTransactions = undefined;
+        this.transferTransactionId = `${blockNumber?.toString()}-${txIndex?.toString()}`;
+        this.host.requestUpdate();
+      }
+
+      if (isError) {
         this.errorMessage = 'Transfer transaction reverted or rejected';
-        console.log('Error: Transaction dropped');
-        unsub();
+        this.waitingTxExecution = false;
+        this.host.requestUpdate();
+      }
+
+      if (isFinalized) {
+        this.waitingUserConfirmation = false;
+        this.waitingTxExecution = false;
+        this.host.requestUpdate();
       }
     }
-  )) as unknown as () => void;
+  );
 }

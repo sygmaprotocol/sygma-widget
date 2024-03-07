@@ -148,7 +148,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.destinatonAddress = address;
     if (this.destinatonAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
-      this.pendingEvmTransferTransaction = undefined;
+      this.pendingTransferTransactions = undefined;
     }
     void this.buildTransactions();
     this.host.requestUpdate();
@@ -195,9 +195,10 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.pendingEvmApprovalTransactions.length > 0) {
       return FungibleTransferState.PENDING_APPROVALS;
     }
-    if (this.pendingEvmTransferTransaction) {
+    if (this.pendingTransferTransactions) {
       return FungibleTransferState.PENDING_TRANSFER;
     }
+
     return FungibleTransferState.UNKNOWN;
   }
 
