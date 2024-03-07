@@ -15,7 +15,10 @@ import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
-import { buildSubstrateFungibleTransactions } from './substrate';
+import {
+  buildSubstrateFungibleTransactions,
+  executeNextSubstrateTransaction
+} from './substrate';
 
 export enum FungibleTransferState {
   MISSING_SOURCE_NETWORK,
@@ -53,11 +56,13 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected buildEvmTransactions = buildEvmFungibleTransactions;
   protected executeNextEvmTransaction = executeNextEvmTransaction;
   protected pendingEvmApprovalTransactions: UnsignedTransaction[] = [];
-  protected pendingEvmTransferTransaction?: UnsignedTransaction;
+  protected pendingTransferTransactions?:
+    | UnsignedTransaction
+    | SubmittableExtrinsic<'promise', SubmittableResult>;
 
   // Substrate transfer
   protected buildSubstrateTransactions = buildSubstrateFungibleTransactions;
-  protected transferTx?: SubmittableExtrinsic<'promise', SubmittableResult>;
+  protected executeSubstrateTransaction = executeNextSubstrateTransaction;
 
   protected config: Config;
   protected env: Environment = Environment.MAINNET;
@@ -103,7 +108,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.sourceNetwork = undefined;
     this.destinationNetwork = undefined;
     this.pendingEvmApprovalTransactions = [];
-    this.pendingEvmTransferTransaction = undefined;
+    this.pendingTransferTransactions = undefined;
     this.destinatonAddress = '';
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
@@ -209,6 +214,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       case Network.SUBSTRATE:
         {
           //TODO: add substrate logic
+          void this.executeSubstrateTransaction();
         }
         break;
       default:

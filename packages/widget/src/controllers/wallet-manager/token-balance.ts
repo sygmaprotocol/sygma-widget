@@ -75,17 +75,11 @@ export class TokenBalanceController implements ReactiveController {
         return;
       }
     } else {
-      const { substrateProvider, accounts } = this.walletContext.value
-        ?.substrateWallet as SubstrateWallet;
-
-      void this.suscribeSubstrateBalanceUpdate(
-        substrateProvider as ApiPromise,
-        resource,
-        accounts![0].address
-      );
+      void this.suscribeSubstrateBalanceUpdate(resource);
       this.timeout = setInterval(
         this.suscribeSubstrateBalanceUpdate,
-        BALANCE_REFRESH_MS
+        BALANCE_REFRESH_MS,
+        resource
       ) as unknown as ReturnType<typeof setInterval>; //dubious
       return;
     }
@@ -126,14 +120,15 @@ export class TokenBalanceController implements ReactiveController {
     }.bind(this)();
   };
 
-  suscribeSubstrateBalanceUpdate = (
-    apiPromise: ApiPromise,
-    resource: SubstrateResource,
-    accountAddress: string
-  ): void => {
+  suscribeSubstrateBalanceUpdate = (resource: SubstrateResource): void => {
+    const { substrateProvider: apiPromise, accounts } = this.walletContext.value
+      ?.substrateWallet as SubstrateWallet;
+
+    const accountAddress = accounts![0].address;
+
     void async function (this: TokenBalanceController) {
       const balance = await getAssetBalance(
-        apiPromise,
+        apiPromise as ApiPromise,
         (resource as unknown as { assetID: number }).assetID,
         accountAddress
       );
@@ -142,7 +137,7 @@ export class TokenBalanceController implements ReactiveController {
       this.loadingBalance = false;
       this.balance = BigNumber.from(BigInt(balance.balance.toString()));
       this.decimals = resource.decimals!;
-      this.host.requestUpdate();
+      this.host.requestUpdate(BALANCE_UPDATE_KEY);
     }.bind(this)();
   };
 }

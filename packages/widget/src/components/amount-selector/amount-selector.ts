@@ -81,7 +81,7 @@ export class AmountSelector extends BaseComponent {
   _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
     this.selectedResource = value;
     this.amount = 0;
-    this.tokenBalanceController.startBalanceUpdates(value);
+    this.tokenBalanceController.startBalanceUpdates(this.selectedResource);
   };
 
   _validateAmount(amount: string): boolean {
