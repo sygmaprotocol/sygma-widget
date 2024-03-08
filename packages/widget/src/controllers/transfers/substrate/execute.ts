@@ -7,7 +7,7 @@ export async function executeNextSubstrateTransaction(
 ): Promise<void> {
   this.errorMessage = null;
   const destinationAddress = this.destinatonAddress;
-  const sender = this.walletContext.value?.substrateWallet?.accounts![0];
+  const sender = this.walletContext.value?.substrateWallet?.signerAddress;
   const signer = this.walletContext.value?.substrateWallet?.signer;
   if (
     this.pendingTransferTransactions === undefined ||
