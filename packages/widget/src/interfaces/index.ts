@@ -38,3 +38,11 @@ export interface ISygmaProtocolWidget {
   theme?: Theme;
   walletConnectOptions?: WalletConnectOptions;
 }
+
+export class SdkInitializedEvent extends CustomEvent<{
+  hasInitialized: boolean;
+}> {
+  constructor(update: { hasInitialized: boolean }) {
+    super('sdk-initialized', { detail: update, composed: true, bubbles: true });
+  }
+}
