@@ -1,18 +1,21 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { consume } from '@lit/context';
-import type { HTMLTemplateResult, PropertyValues } from 'lit';
+import type { HTMLTemplateResult, PropertyValues, TemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
 
-import { configContext, walletContext } from '../../../context';
+import { choose } from 'lit/directives/choose.js';
+import { greenCircleIcon, plusIcon } from '../../../assets';
 import type { ConfigContext, WalletContext } from '../../../context';
-import greenCircleIcon from '../../../assets/icons/greenCircleIcon';
-import plusIcon from '../../../assets/icons/plusIcon';
+import { walletContext } from '../../../context';
+import { configContext } from '../../../context/config';
 import { WalletController } from '../../../controllers';
 import { shortAddress } from '../../../utils';
-import { BaseComponent } from '../base-component/base-component';
+import { BaseComponent } from '../base-component';
 
+import { WalletContextKeys } from '../../../context/wallet';
 import { connectWalletStyles } from './connect-wallet.styles';
 
 @customElement('sygma-connect-wallet-btn')
@@ -27,6 +30,9 @@ export class ConnectWalletButton extends BaseComponent {
     }
   })
   sourceNetwork?: Domain;
+
+  @property({ type: String })
+  dappUrl?: string;
 
   @consume({ context: walletContext, subscribe: true })
   @state()
@@ -62,49 +68,63 @@ export class ConnectWalletButton extends BaseComponent {
     return !!this.wallets.evmWallet || !!this.wallets.substrateWallet;
   }
 
-  render(): HTMLTemplateResult {
+  private renderConnectWalletButton(): HTMLTemplateResult | undefined {
+    if (this.wallets.substrateWallet) return;
+
+    return when(
+      this.isWalletConnected(),
+      () =>
+        html` <button
+          role="button"
+          @click=${this.onDisconnectClicked}
+          class="connectWalletButton"
+        >
+          Disconnect
+        </button>`,
+      () =>
+        html` <button
+          @click=${this.onConnectClicked}
+          role="button"
+          class="connectWalletButton"
+        >
+          ${plusIcon} Connect Wallet
+        </button>`
+    );
+  }
+
+  private renderWalletAddress(): TemplateResult | undefined {
     const evmWallet = this.wallets.evmWallet;
-    const substrateWallet = this.wallets.substrateWallet;
-    //TODO: this is wrong we need to enable user to select account
-    const substrateAccount = substrateWallet?.accounts[0];
-    return html` <div class="connectWalletContainer">
-      ${when(
-        !!evmWallet?.address,
-        () =>
-          html`<span class="walletAddress" title=${evmWallet?.address ?? ''}
-            >${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}</span
-          >`
-      )}
-      ${when(
-        !!substrateAccount,
+    const activeWalletKey = (
+      Object.keys(this.wallets) as (keyof typeof this.wallets)[]
+    ).find((key) => !!this.wallets[key]);
+
+    return choose(activeWalletKey, [
+      [
+        WalletContextKeys.EVM_WALLET,
         () =>
           html`<span
             class="walletAddress"
-            title=${substrateAccount?.address ?? ''}
-            >${greenCircleIcon} ${substrateAccount?.name}
-            ${shortAddress(substrateAccount?.address ?? '')}</span
-          >`
-      )}
-      ${when(
-        this.isWalletConnected(),
-        () =>
-          html`<button
-            @click=${this.onDisconnectClicked}
-            class="connectWalletButton"
+            title=${ifDefined(evmWallet?.address)}
           >
-            Disconnect
-          </button>`,
-        () =>
-          html`<button
-            @click=${this.onConnectClicked}
-            class="connectWalletButton"
-          >
-            ${plusIcon} Connect Wallet
-          </button>`
-      )}
+            ${greenCircleIcon} ${shortAddress(evmWallet?.address ?? '')}
+          </span>`
+      ],
+      [
+        WalletContextKeys.SUBSTRATE_WALLET,
+        () => html`
+          <sygma-substrate-account-selector></sygma-substrate-account-selector>
+        `
+      ]
+    ]);
+  }
+
+  render(): HTMLTemplateResult {
+    return html` <div class="connectWalletContainer">
+      ${this.renderWalletAddress()} ${this.renderConnectWalletButton()}
     </div>`;
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     'sygma-connect-wallet-btn': ConnectWalletButton;

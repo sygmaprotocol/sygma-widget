@@ -9,9 +9,11 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction } from 'ethers';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
-import { walletContext } from '../../context/wallet';
+
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { SdkInitializedEvent } from '../../interfaces';
+import { walletContext } from '../../context';
+
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
 export enum FungibleTransferState {
@@ -85,29 +87,31 @@ export class FungibleTokenTransferController implements ReactiveController {
    * Infinite Try/catch wrapper around
    * {@link Config} from `@buildwithsygma/sygma-sdk-core`
    * and emits a {@link SdkInitializedEvent}
+   * @param {number} retryMs time to wait before retry in ms
    * @returns {void}
    */
-  async retryInitSdk(): Promise<void> {
+  async retryInitSdk(retryMs = 100): Promise<void> {
     try {
+      console.log('retryMs: ' + retryMs);
       await this.config.init(1, this.env);
       this.host.dispatchEvent(
         new SdkInitializedEvent({ hasInitialized: true })
       );
     } catch (error) {
-      // Add a sleep to avoid thousands of calls?
-      return this.retryInitSdk();
+      setTimeout(() => {
+        this.retryInitSdk(retryMs * 2).catch(console.error);
+      }, retryMs);
     }
   }
 
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
-    // await this.config.init(1, this.env);
+    // await this.config.init(1, env);
     await this.retryInitSdk();
-    this.supportedSourceNetworks = this.config
-      .getDomains()
-      //remove once we have proper substrate transfer support
-      .filter((n) => n.type === Network.EVM);
+    this.supportedSourceNetworks = this.config.getDomains();
+    //remove once we have proper substrate transfer support
+    // .filter((n) => n.type === Network.EVM);
     this.supportedDestinationNetworks = this.config.getDomains();
     this.host.requestUpdate();
   }
