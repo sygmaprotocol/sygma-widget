@@ -6,7 +6,7 @@ export async function buildSubstrateFungibleTransactions(
   this: FungibleTokenTransferController
 ): Promise<void> {
   const address =
-    this.walletContext.value?.substrateWallet?.accounts![0].address;
+    this.walletContext.value?.substrateWallet?.signerAddress;
   if (
     !this.sourceNetwork ||
     !this.destinationNetwork ||
