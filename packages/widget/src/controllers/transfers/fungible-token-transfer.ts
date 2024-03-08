@@ -13,6 +13,7 @@ import type { ReactiveController, ReactiveElement } from 'lit';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { walletContext } from '../../context';
 
+import { SdkInitializedEvent } from '../../interfaces';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
 export enum FungibleTransferState {
@@ -86,17 +87,19 @@ export class FungibleTokenTransferController implements ReactiveController {
    * Infinite Try/catch wrapper around
    * {@link Config} from `@buildwithsygma/sygma-sdk-core`
    * and emits a {@link SdkInitializedEvent}
+   * @param {number} time to wait before retrying request in ms
    * @returns {void}
    */
-  async retryInitSdk(): Promise<void> {
+  async retryInitSdk(retryMs = 100): Promise<void> {
     try {
       await this.config.init(1, this.env);
       this.host.dispatchEvent(
         new SdkInitializedEvent({ hasInitialized: true })
       );
     } catch (error) {
-      // Add a sleep to avoid thousands of calls?
-      return this.retryInitSdk();
+      setTimeout(() => {
+        this.retryInitSdk(retryMs * 2).catch(console.error);
+      }, retryMs);
     }
   }
 
