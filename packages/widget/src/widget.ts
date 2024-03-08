@@ -24,6 +24,7 @@ import './context/wallet';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
+  SdkInitializedEvent,
   Theme
 } from './interfaces';
 import { styles } from './styles';
@@ -65,8 +66,12 @@ class SygmaProtocolWidget
 
   @property({ type: Object }) appMetadata?: AppMetadata;
 
+  // ? where is this used?
   @state()
   private isLoading = false;
+
+  @state()
+  private sdkInitialized = false;
 
   @state()
   private sourceNetwork?: Domain;
@@ -111,6 +116,8 @@ class SygmaProtocolWidget
             </section>
             <section class="widgetContent">
               <sygma-fungible-transfer
+                @sdk-initialized=${(event: SdkInitializedEvent) =>
+                  (this.sdkInitialized = event.detail.hasInitialized)}
                 .environment=${this.environment as Environment}
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
@@ -121,7 +128,7 @@ class SygmaProtocolWidget
             </section>
             <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
             ${when(
-              this.isLoading,
+              this.isLoading || !this.sdkInitialized,
               () => html`<sygma-overlay-component></sygma-overlay-component>`
             )}
           </section>

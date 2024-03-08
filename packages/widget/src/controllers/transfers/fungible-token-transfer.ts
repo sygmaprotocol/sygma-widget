@@ -11,6 +11,7 @@ import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import { walletContext } from '../../context/wallet';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
+import { SdkInitializedEvent } from '../../interfaces';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
 export enum FungibleTransferState {
@@ -80,10 +81,29 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.reset();
   }
 
+  /**
+   * Infinite Try/catch wrapper around
+   * {@link Config} from `@buildwithsygma/sygma-sdk-core`
+   * and emits a {@link SdkInitializedEvent}
+   * @returns {void}
+   */
+  async retryInitSdk(): Promise<void> {
+    try {
+      await this.config.init(1, this.env);
+      this.host.dispatchEvent(
+        new SdkInitializedEvent({ hasInitialized: true })
+      );
+    } catch (error) {
+      // Add a sleep to avoid thousands of calls?
+      return this.retryInitSdk();
+    }
+  }
+
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
-    await this.config.init(1, this.env);
+    // await this.config.init(1, this.env);
+    await this.retryInitSdk();
     this.supportedSourceNetworks = this.config
       .getDomains()
       //remove once we have proper substrate transfer support
