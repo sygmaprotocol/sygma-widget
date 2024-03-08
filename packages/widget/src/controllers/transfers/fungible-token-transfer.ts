@@ -56,7 +56,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected buildEvmTransactions = buildEvmFungibleTransactions;
   protected executeNextEvmTransaction = executeNextEvmTransaction;
   protected pendingEvmApprovalTransactions: UnsignedTransaction[] = [];
-  protected pendingTransferTransactions?:
+  protected pendingTransferTransaction?:
     | UnsignedTransaction
     | SubmittableExtrinsic<'promise', SubmittableResult>;
 
