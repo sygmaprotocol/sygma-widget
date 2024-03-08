@@ -5,8 +5,7 @@ import { type FungibleTokenTransferController } from '../fungible-token-transfer
 export async function buildSubstrateFungibleTransactions(
   this: FungibleTokenTransferController
 ): Promise<void> {
-  const address =
-    this.walletContext.value?.substrateWallet?.signerAddress;
+  const address = this.walletContext.value?.substrateWallet?.signerAddress;
   if (
     !this.sourceNetwork ||
     !this.destinationNetwork ||
@@ -33,7 +32,7 @@ export async function buildSubstrateFungibleTransactions(
   );
 
   const fee = await substrateTransfer.getFee(transfer);
-  this.pendingTransferTransactions = substrateTransfer.buildTransferTransaction(
+  this.pendingTransferTransaction = substrateTransfer.buildTransferTransaction(
     transfer,
     fee
   );

@@ -20,6 +20,11 @@ import {
   executeNextSubstrateTransaction
 } from './substrate';
 
+export type SubstrateTransaction = SubmittableExtrinsic<
+  'promise',
+  SubmittableResult
+>;
+
 export enum FungibleTransferState {
   MISSING_SOURCE_NETWORK,
   MISSING_DESTINATION_NETWORK,
@@ -58,7 +63,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected pendingEvmApprovalTransactions: UnsignedTransaction[] = [];
   protected pendingTransferTransaction?:
     | UnsignedTransaction
-    | SubmittableExtrinsic<'promise', SubmittableResult>;
+    | SubstrateTransaction;
 
   // Substrate transfer
   protected buildSubstrateTransactions = buildSubstrateFungibleTransactions;
@@ -108,7 +113,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.sourceNetwork = undefined;
     this.destinationNetwork = undefined;
     this.pendingEvmApprovalTransactions = [];
-    this.pendingTransferTransactions = undefined;
+    this.pendingTransferTransaction = undefined;
     this.destinatonAddress = '';
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
@@ -148,7 +153,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.destinatonAddress = address;
     if (this.destinatonAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
-      this.pendingTransferTransactions = undefined;
+      this.pendingTransferTransaction = undefined;
     }
     void this.buildTransactions();
     this.host.requestUpdate();
@@ -195,7 +200,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.pendingEvmApprovalTransactions.length > 0) {
       return FungibleTransferState.PENDING_APPROVALS;
     }
-    if (this.pendingTransferTransactions) {
+    if (this.pendingTransferTransaction) {
       return FungibleTransferState.PENDING_TRANSFER;
     }
 

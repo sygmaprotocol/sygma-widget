@@ -101,9 +101,7 @@ class SygmaProtocolWidget
         .theme=${this.theme}
         .walletConnectOptions=${this.walletConnectOptions}
       >
-        <sygma-wallet-context-provider
-          .substrateProvider=${'wss://rhala-node.phala.network/ws'}
-        >
+        <sygma-wallet-context-provider>
           <section
             class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
           >

@@ -43,13 +43,13 @@ export async function executeNextEvmTransaction(
     this.host.requestUpdate();
     try {
       const tx = await signer.sendTransaction(
-        this.pendingTransferTransactions! as TransactionRequest
+        this.pendingTransferTransaction! as TransactionRequest
       );
       this.waitingUserConfirmation = false;
       this.waitingTxExecution = true;
       this.host.requestUpdate();
       const receipt = await tx.wait();
-      this.pendingTransferTransactions = undefined;
+      this.pendingTransferTransaction = undefined;
       this.transferTransactionId = receipt.transactionHash;
     } catch (e) {
       console.log(e);

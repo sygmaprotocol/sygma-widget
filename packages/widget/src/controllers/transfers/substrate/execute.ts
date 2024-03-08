@@ -10,19 +10,19 @@ export async function executeNextSubstrateTransaction(
   const sender = this.walletContext.value?.substrateWallet?.signerAddress;
   const signer = this.walletContext.value?.substrateWallet?.signer;
   if (
-    this.pendingTransferTransactions === undefined ||
+    this.pendingTransferTransaction === undefined ||
     destinationAddress == undefined ||
-    sender?.address == undefined
+    sender == undefined
   )
     return;
 
   await (
-    this.pendingTransferTransactions as SubmittableExtrinsic<
+    this.pendingTransferTransaction as SubmittableExtrinsic<
       'promise',
       SubmittableResult
     >
   ).signAndSend(
-    sender.address,
+    sender,
     { signer: signer },
     ({
       isInBlock,
@@ -38,7 +38,7 @@ export async function executeNextSubstrateTransaction(
       }
 
       if (isCompleted) {
-        this.pendingTransferTransactions = undefined;
+        this.pendingTransferTransaction = undefined;
         this.transferTransactionId = `${blockNumber?.toString()}-${txIndex?.toString()}`;
         this.host.requestUpdate();
       }
