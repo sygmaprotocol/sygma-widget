@@ -20,7 +20,7 @@ export interface SubstrateWallet {
   accounts?: Account[];
   unsubscribeSubstrateAccounts?: UnsubscribeFn;
   disconnect?: () => Promise<void>;
-  substrateProvider?: ApiPromise | string;
+  substrateProvider?: ApiPromise;
 }
 
 export interface WalletContext {
