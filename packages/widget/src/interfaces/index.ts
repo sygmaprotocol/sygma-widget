@@ -34,3 +34,11 @@ export interface ISygmaProtocolWidget {
   customLogo?: SVGElement;
   theme?: Theme;
 }
+
+export class SdkInitializedEvent extends CustomEvent<{
+  hasInitialized: boolean;
+}> {
+  constructor(update: { hasInitialized: boolean }) {
+    super('sdk-initialized', { detail: update, composed: true, bubbles: true });
+  }
+}
