@@ -68,23 +68,18 @@ export class WalletContextProvider extends BaseComponent {
       this.walletContext.evmWallet = this.evmWalllet;
     }
 
-    let wssProvider;
-
-    if (this.substrateProvider && typeof this.substrateProvider === 'string') {
-      wssProvider = new WsProvider(this.substrateProvider);
-    }
-
     let api: ApiPromise;
 
-    if (wssProvider) {
+    if (this.substrateProvider && typeof this.substrateProvider === 'string') {
+      const wssProvider = new WsProvider(this.substrateProvider);
       api = await ApiPromise.create({ provider: wssProvider });
     } else {
       api = this.substrateProvider as ApiPromise;
     }
 
-    this.walletContext.substrateWallet = {
-      substrateProvider: api
-    };
+    this.walletContext = api
+      ? { substrateWallet: { substrateProvider: api } }
+      : {};
 
     this.addEventListener('walletUpdate', (event: WalletUpdateEvent) => {
       this.walletContext = {
