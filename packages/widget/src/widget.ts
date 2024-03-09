@@ -43,7 +43,7 @@ class SygmaProtocolWidget
 
   @property({ type: Object }) evmProvider?: Eip1193Provider;
 
-  @property() substrateProvider?: ApiPromise | string;
+  @property({ type: Object }) substrateProvider?: ApiPromise;
 
   @property({ type: Object }) substrateSigner?: Signer;
 
@@ -101,7 +101,9 @@ class SygmaProtocolWidget
         .theme=${this.theme}
         .walletConnectOptions=${this.walletConnectOptions}
       >
-        <sygma-wallet-context-provider>
+        <sygma-wallet-context-provider
+          .substrateProvider=${this.substrateProvider}
+        >
           <section
             class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
           >

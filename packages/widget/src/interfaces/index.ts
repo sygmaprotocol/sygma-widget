@@ -25,7 +25,7 @@ export interface ISygmaProtocolWidget {
   whitelistedSourceNetworks?: string[];
   whitelistedDestinationNetworks?: string[];
   evmProvider?: Eip1193Provider;
-  substrateProvider?: ApiPromise | string;
+  substrateProvider?: ApiPromise;
   substrateSigner?: Signer;
   show?: boolean;
   whitelistedSourceResources?: Array<EvmResource | SubstrateResource>;

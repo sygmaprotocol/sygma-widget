@@ -127,17 +127,23 @@ export class TokenBalanceController implements ReactiveController {
     const accountAddress = accounts![0].address;
 
     void async function (this: TokenBalanceController) {
-      const tokenBalance = await getAssetBalance(
-        apiPromise as ApiPromise,
-        (resource as unknown as { assetID: number }).assetID,
-        accountAddress
-      );
-      this.loadingBalance = true;
-      this.host.requestUpdate();
-      this.loadingBalance = false;
-      this.balance = BigNumber.from(BigInt(tokenBalance.balance.toString()));
-      this.decimals = resource.decimals!;
-      this.host.requestUpdate(BALANCE_UPDATE_KEY);
+      try {
+        this.loadingBalance = true;
+        const tokenBalance = await getAssetBalance(
+          apiPromise as ApiPromise,
+          (resource as unknown as { assetID: number }).assetID,
+          accountAddress
+        );
+        this.host.requestUpdate();
+        this.loadingBalance = false;
+        this.balance = BigNumber.from(tokenBalance.balance.toString());
+        this.decimals = resource.decimals!;
+        this.host.requestUpdate(BALANCE_UPDATE_KEY);
+      } catch (e) {
+        console.error(e);
+        this.loadingBalance = false;
+        this.host.requestUpdate();
+      }
     }.bind(this)();
   };
 }
