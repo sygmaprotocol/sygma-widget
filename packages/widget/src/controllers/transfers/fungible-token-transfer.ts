@@ -293,7 +293,6 @@ export class FungibleTokenTransferController implements ReactiveController {
         break;
       case Network.SUBSTRATE:
         {
-          //TODO: add substrate logic
           void this.buildSubstrateTransactions();
         }
         break;
