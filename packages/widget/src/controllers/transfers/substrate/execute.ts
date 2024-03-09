@@ -24,16 +24,14 @@ export async function executeNextSubstrateTransaction(
   ).signAndSend(
     sender,
     { signer: signer },
-    ({
-      isInBlock,
-      isFinalized,
-      blockNumber,
-      txIndex,
-      isError,
-      isCompleted
-    }) => {
-      if (isInBlock) {
+    ({ blockNumber, txIndex, isError, isCompleted, status }) => {
+      if (status.isInBlock) {
         this.waitingTxExecution = false;
+        this.host.requestUpdate();
+      }
+
+      if (status.isBroadcast) {
+        this.waitingUserConfirmation = false;
         this.host.requestUpdate();
       }
 
@@ -45,12 +43,6 @@ export async function executeNextSubstrateTransaction(
 
       if (isError) {
         this.errorMessage = 'Transfer transaction reverted or rejected';
-        this.waitingTxExecution = false;
-        this.host.requestUpdate();
-      }
-
-      if (isFinalized) {
-        this.waitingUserConfirmation = false;
         this.waitingTxExecution = false;
         this.host.requestUpdate();
       }
