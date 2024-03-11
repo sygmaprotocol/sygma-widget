@@ -185,6 +185,21 @@ export class FungibleTokenTransferController implements ReactiveController {
   };
 
   getTransferState(): FungibleTransferState {
+    if (this.transferTransactionId) {
+      return FungibleTransferState.COMPLETED;
+    }
+    if (this.waitingUserConfirmation) {
+      return FungibleTransferState.WAITING_USER_CONFIRMATION;
+    }
+    if (this.waitingTxExecution) {
+      return FungibleTransferState.WAITING_TX_EXECUTION;
+    }
+    if (this.pendingEvmApprovalTransactions.length > 0) {
+      return FungibleTransferState.PENDING_APPROVALS;
+    }
+    if (this.pendingEvmTransferTransaction) {
+      return FungibleTransferState.PENDING_TRANSFER;
+    }
     if (!this.sourceNetwork) {
       return FungibleTransferState.MISSING_SOURCE_NETWORK;
     }
@@ -212,21 +227,6 @@ export class FungibleTokenTransferController implements ReactiveController {
         this.sourceNetwork.chainId
     ) {
       return FungibleTransferState.WRONG_CHAIN;
-    }
-    if (this.waitingUserConfirmation) {
-      return FungibleTransferState.WAITING_USER_CONFIRMATION;
-    }
-    if (this.waitingTxExecution) {
-      return FungibleTransferState.WAITING_TX_EXECUTION;
-    }
-    if (this.transferTransactionId) {
-      return FungibleTransferState.COMPLETED;
-    }
-    if (this.pendingEvmApprovalTransactions.length > 0) {
-      return FungibleTransferState.PENDING_APPROVALS;
-    }
-    if (this.pendingEvmTransferTransaction) {
-      return FungibleTransferState.PENDING_TRANSFER;
     }
     return FungibleTransferState.UNKNOWN;
   }
