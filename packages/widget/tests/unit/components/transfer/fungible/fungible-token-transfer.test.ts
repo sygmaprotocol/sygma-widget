@@ -1,6 +1,8 @@
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { afterEach, assert, describe, it } from 'vitest';
 import { html } from 'lit';
+import type { Domain } from '@buildwithsygma/sygma-sdk-core';
+import { Network } from '@buildwithsygma/sygma-sdk-core';
 import type { AddressInput } from '../../../../../src/components';
 import { FungibleTokenTransfer } from '../../../../../src/components';
 import type { WalletContextProvider } from '../../../../../src/context';
@@ -21,6 +23,18 @@ describe('Fungible token Transfer', function () {
   });
 
   it('Fill the destination address -> when networks types are the same', async () => {
+    const sourceNetwork: Domain = {
+      id: 2,
+      chainId: 11155111,
+      name: 'sepolia',
+      type: Network.EVM
+    };
+    const destinationNetwork: Domain = {
+      id: 5,
+      chainId: 338,
+      name: 'cronos',
+      type: Network.EVM
+    };
     const connectedAddress = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
     const walletContext = await fixture<WalletContextProvider>(html`
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
@@ -40,6 +54,12 @@ describe('Fungible token Transfer', function () {
       html` <sygma-fungible-transfer></sygma-fungible-transfer>`,
       { parentNode: walletContext }
     );
+
+    // Set Source and Destination Networks
+    fungibleTransfer.transferController.sourceNetwork = sourceNetwork;
+    fungibleTransfer.transferController.destinationNetwork = destinationNetwork;
+    fungibleTransfer.requestUpdate();
+    await fungibleTransfer.updateComplete;
 
     const sygmaAddressInput = fungibleTransfer.shadowRoot!.querySelector(
       'sygma-address-input'
