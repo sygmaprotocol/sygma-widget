@@ -84,6 +84,12 @@ export class FungibleTokenTransfer extends BaseComponent {
   }
 
   private getSenderDefaultDestinationAddress(): string {
+    if (
+      !this.transferController.sourceNetwork ||
+      !this.transferController.destinationNetwork
+    )
+      return '';
+
     return this.sourceAndDestinationNetworkHasEqualType()
       ? this.walletController.walletContext.value?.evmWallet?.address || ''
       : this.transferController.destinatonAddress || '';
