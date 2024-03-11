@@ -3,7 +3,8 @@ import type { EvmResource, Resource } from '@buildwithsygma/sygma-sdk-core';
 import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
 import { Web3Provider } from '@ethersproject/providers';
 import { ContextConsumer } from '@lit/context';
-import { BigNumber } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { ethers } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
@@ -20,7 +21,7 @@ export class TokenBalanceController implements ReactiveController {
   loadingBalance: boolean = true;
 
   //"wei"
-  balance: BigNumber = BigNumber.from(0);
+  balance: BigNumber = ethers.constants.Zero;
   decimals: number = 18;
 
   timeout?: ReturnType<typeof setInterval>;
@@ -43,7 +44,7 @@ export class TokenBalanceController implements ReactiveController {
     if (this.timeout) {
       clearInterval(this.timeout);
     }
-    this.balance = BigNumber.from(0);
+    this.balance = ethers.constants.Zero;
     this.host.requestUpdate();
     if (isEvmResource(resource)) {
       if (resource.type === ResourceType.FUNGIBLE) {

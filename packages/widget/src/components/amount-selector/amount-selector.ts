@@ -13,7 +13,10 @@ import {
   BALANCE_UPDATE_KEY,
   TokenBalanceController
 } from '../../controllers/wallet-manager/token-balance';
-import { tokenBalanceToNumber } from '../../utils/token';
+import {
+  tokenBalanceToNumber,
+  truncateBigNumberToString
+} from '../../utils/token';
 import { BaseComponent } from '../common';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { styles } from './styles';
@@ -46,17 +49,7 @@ export class AmountSelector extends BaseComponent {
 
   tokenBalanceController = new TokenBalanceController(this);
 
-  _useMaxBalance = (): void => {
-    this.amount = tokenBalanceToNumber(
-      this.tokenBalanceController.balance,
-      this.tokenBalanceController.decimals
-    );
-  };
-
-  _onInputAmountChangeHandler = (event: Event): void => {
-    const { value } = event.target as HTMLInputElement;
-    this.amount = Number.parseFloat(value);
-    if (!this._validateAmount(value)) return;
+  _handleOnResourceSelectedCallback = (): void => {
     if (this.selectedResource) {
       this.onResourceSelected(
         this.selectedResource,
@@ -66,6 +59,21 @@ export class AmountSelector extends BaseComponent {
         )
       );
     }
+  };
+
+  _useMaxBalance = (): void => {
+    this.amount = tokenBalanceToNumber(
+      this.tokenBalanceController.balance,
+      this.tokenBalanceController.decimals
+    );
+    this._handleOnResourceSelectedCallback();
+  };
+
+  _onInputAmountChangeHandler = (event: Event): void => {
+    const { value } = event.target as HTMLInputElement;
+    this.amount = Number.parseFloat(value);
+    if (!this._validateAmount(value)) return;
+    this._handleOnResourceSelectedCallback();
   };
 
   requestUpdate(
@@ -118,7 +126,7 @@ export class AmountSelector extends BaseComponent {
     return html`
       <section class="balanceContent">
         <span
-          >${`${tokenBalanceToNumber(this.tokenBalanceController.balance, this.tokenBalanceController.decimals).toFixed(4)}`}</span
+          >${`${truncateBigNumberToString(this.tokenBalanceController.balance, this.tokenBalanceController.decimals, 4)}`}</span
         >
         <button class="maxButton" @click=${this._useMaxBalance}>Max</button>
       </section>

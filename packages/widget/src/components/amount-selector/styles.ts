@@ -69,6 +69,7 @@ export const styles = css`
   .balanceContent {
     display: flex;
     width: 100%;
+    align-items: center;
     justify-content: flex-end;
     gap: 0.375rem;
   }

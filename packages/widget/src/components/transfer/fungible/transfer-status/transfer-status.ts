@@ -1,4 +1,5 @@
-import { BigNumber, utils } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { html, type HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { BaseComponent } from '../../../common';
@@ -14,7 +15,7 @@ export class TransferStatus extends BaseComponent {
 
   @property({ type: String }) destinationNetworkName: string = '';
 
-  @property({ type: Object }) amount: BigNumber = BigNumber.from(0);
+  @property({ type: Object }) amount: BigNumber = ethers.constants.Zero;
 
   @property({ type: Number }) tokenDecimals: number = DEFAULT_ETH_DECIMALS;
 
@@ -44,7 +45,7 @@ export class TransferStatus extends BaseComponent {
         </span>
       </div>
       <div class="tokenInfo">
-        ${this.formatAmount(this.amount ?? BigNumber.from(0))}
+        ${this.formatAmount(this.amount ?? ethers.constants.Zero)}
         ${this.resourceSymbol}
       </div>
       <div class="transferStatusDescription">
