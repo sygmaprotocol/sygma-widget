@@ -1,10 +1,4 @@
-import type {
-  Domain,
-  EvmResource,
-  Resource,
-  Route,
-  SubstrateResource
-} from '@buildwithsygma/sygma-sdk-core';
+import type { Domain, Resource, Route } from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
   Environment,
@@ -276,24 +270,6 @@ export class FungibleTokenTransferController implements ReactiveController {
             !this.supportedDestinationNetworks.includes(route.toDomain)
         )
         .map((route) => route.toDomain);
-    }
-
-    const hasSelectedResourceChange =
-      this.sourceNetwork?.type === Network.EVM
-        ? (this.supportedResources as EvmResource[]).find(
-            (resource) =>
-              resource.address !==
-                (this.selectedResource as EvmResource)?.address &&
-              resource.symbol === (this.selectedResource as EvmResource)?.symbol
-          )
-        : (this.supportedResources as SubstrateResource[]).find(
-            (resource) =>
-              resource.assetId !==
-              (this.selectedResource as SubstrateResource)?.assetId
-          );
-
-    if (hasSelectedResourceChange) {
-      this.selectedResource = hasSelectedResourceChange;
     }
 
     void this.buildTransactions();
