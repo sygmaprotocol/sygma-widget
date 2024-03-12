@@ -56,8 +56,10 @@ describe('Fungible token Transfer', function () {
     );
 
     // Set Source and Destination Networks
-    fungibleTransfer.transferController.sourceNetwork = sourceNetwork;
-    fungibleTransfer.transferController.destinationNetwork = destinationNetwork;
+    fungibleTransfer.transferController.onSourceNetworkSelected(sourceNetwork);
+    fungibleTransfer.transferController.onDestinationNetworkSelected(
+      destinationNetwork
+    );
     fungibleTransfer.requestUpdate();
     await fungibleTransfer.updateComplete;
 

@@ -9,7 +9,7 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction } from 'ethers';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
-import { walletContext } from '../../context/wallet';
+import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
@@ -40,6 +40,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public selectedResource?: Resource;
   public resourceAmount: BigNumber = BigNumber.from(0);
   public destinatonAddress: string = '';
+  public defaultDestinationAddress: string = '';
 
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
@@ -114,8 +115,25 @@ export class FungibleTokenTransferController implements ReactiveController {
     void this.filterDestinationNetworksAndResources(network);
   };
 
+  getSenderDefaultDestinationAddress = (): void => {
+    if (!this.sourceNetwork || !this.destinationNetwork) {
+      this.defaultDestinationAddress = '';
+      return;
+    }
+
+    const isSameNetwork =
+      this.sourceNetwork.chainId === this.destinationNetwork.chainId;
+    const isSameType = this.sourceNetwork.type === this.destinationNetwork.type;
+
+    this.defaultDestinationAddress =
+      isSameNetwork || isSameType
+        ? this.walletContext.value?.evmWallet?.address || ''
+        : '';
+  };
+
   onDestinationNetworkSelected = (network: Domain | undefined): void => {
     this.destinationNetwork = network;
+    this.getSenderDefaultDestinationAddress();
     if (this.sourceNetwork && !this.selectedResource) {
       //filter resources
       void this.filterDestinationNetworksAndResources(this.sourceNetwork);
@@ -139,6 +157,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       this.pendingEvmTransferTransaction = undefined;
     }
     void this.buildTransactions();
+    this.getSenderDefaultDestinationAddress();
     this.host.requestUpdate();
   };
 

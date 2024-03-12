@@ -76,25 +76,6 @@ export class FungibleTokenTransfer extends BaseComponent {
     }
   };
 
-  private sourceAndDestinationNetworkHasEqualType(): boolean {
-    return (
-      this.transferController.sourceNetwork?.type ===
-      this.transferController.destinationNetwork?.type
-    );
-  }
-
-  private getSenderDefaultDestinationAddress(): string {
-    if (
-      !this.transferController.sourceNetwork ||
-      !this.transferController.destinationNetwork
-    )
-      return '';
-
-    return this.sourceAndDestinationNetworkHasEqualType()
-      ? this.walletController.walletContext.value?.evmWallet?.address || ''
-      : this.transferController.destinatonAddress || '';
-  }
-
   render(): HTMLTemplateResult {
     const state = this.transferController.getTransferState();
     return choose(
@@ -161,7 +142,7 @@ export class FungibleTokenTransfer extends BaseComponent {
       </section>
       <section>
         <sygma-address-input
-          .address=${this.getSenderDefaultDestinationAddress()}
+          .address=${this.transferController.defaultDestinationAddress}
           .onAddressChange=${this.transferController.onDestinationAddressChange}
           .networkType=${this.transferController.destinationNetwork?.type}
         >
