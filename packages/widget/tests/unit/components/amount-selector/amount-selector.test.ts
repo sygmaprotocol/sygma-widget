@@ -129,7 +129,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
     input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
     await el.updateComplete;
 
-    expect(mockOptionSelectHandler).toHaveBeenCalledTimes(2);
+    expect(mockOptionSelectHandler).toHaveBeenCalledTimes(1);
     expect(mockOptionSelectHandler).toHaveBeenCalledWith(
       el.selectedResource,
       utils.parseEther(amount)

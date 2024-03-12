@@ -70,6 +70,9 @@ export class TokenBalanceController implements ReactiveController {
   }
 
   resetBalance(): void {
+    if (this.timeout) {
+      clearInterval(this.timeout);
+    }
     this.balance = BigNumber.from(0);
   }
 

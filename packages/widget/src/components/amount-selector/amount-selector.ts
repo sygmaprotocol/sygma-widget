@@ -1,5 +1,6 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
-import { utils, BigNumber } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { utils } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -39,7 +40,7 @@ export class AmountSelector extends BaseComponent {
   onResourceSelected: (resource: Resource, amount: BigNumber) => void =
     () => {};
 
-  @property({ type: Object }) selectedResource: Resource | null = null;
+  @state() selectedResource: Resource | null = null;
   @state() validationMessage: string | null = null;
   @state() amount: number = 0;
 
@@ -78,17 +79,15 @@ export class AmountSelector extends BaseComponent {
     }
   }
 
-  _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
-    this.selectedResource = value;
-    this.amount = 0;
-    this.tokenBalanceController.startBalanceUpdates(value);
-    this.onResourceSelected(
-      this.selectedResource,
-      utils.parseUnits(
-        BigNumber.from(this.amount).toString(),
-        this.selectedResource.decimals ?? DEFAULT_ETH_DECIMALS
-      )
-    );
+  _onResourceSelectedHandler = (option?: DropdownOption<Resource>): void => {
+    if (option) {
+      this.selectedResource = option.value;
+      this.amount = 0;
+      this.tokenBalanceController.startBalanceUpdates(this.selectedResource);
+    } else {
+      this.selectedResource = null;
+      this.tokenBalanceController.resetBalance();
+    }
   };
 
   _validateAmount(amount: string): boolean {
@@ -173,11 +172,6 @@ export class AmountSelector extends BaseComponent {
             />
             <section class="selectorSection">
               <dropdown-component
-                .preselectedOption=${this._normalizeOptions().filter(
-                  (o) =>
-                    o.id === this.preselectedToken ||
-                    o.name === this.preselectedToken
-                )}
                 ?disabled=${this.disabled}
                 .onOptionSelected=${this._onResourceSelectedHandler}
                 .options=${this._normalizeOptions()}
