@@ -36,7 +36,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
     await el.updateComplete;
 
     const balanceDisplay = el.shadowRoot!.querySelector('.balanceContent span');
-    assert.strictEqual(balanceDisplay!.textContent, '5,0001');
+    assert.strictEqual(balanceDisplay!.textContent, '5.0001');
   });
 
   it('useMax button works', async () => {

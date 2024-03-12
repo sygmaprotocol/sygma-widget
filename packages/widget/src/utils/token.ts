@@ -3,25 +3,19 @@ import { utils } from 'ethers';
 
 export function tokenBalanceToNumber(
   amount: BigNumber,
-  decimals: number
+  decimals: number,
+  withFormattedDecimals = false
 ): number {
-  return Number.parseFloat(utils.formatUnits(amount, decimals));
+  const value = Number.parseFloat(utils.formatUnits(amount, decimals));
+
+  if (withFormattedDecimals) {
+    return tokenBalanceToNumberWithDecimals(value);
+  }
+
+  return value;
 }
 
-export function truncateBigNumberToString(
-  value: BigNumber,
-  decimals: number,
-  displayDecimals: number = 4
-): string {
-  const valueStr = utils.formatUnits(value, decimals);
-
-  const parts = valueStr.split('.');
-  const integerPart = parts[0];
-  let decimalPart = parts.length > 1 ? parts[1] : '';
-
-  decimalPart = decimalPart.slice(0, displayDecimals);
-
-  if (displayDecimals === 0) return integerPart;
-
-  return `${integerPart},${decimalPart}`;
+// This function is used to round the token balance to 4 decimal places
+function tokenBalanceToNumberWithDecimals(value: number): number {
+  return Math.floor(value * 10000) / 10000;
 }
