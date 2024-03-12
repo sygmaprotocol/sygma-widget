@@ -38,15 +38,14 @@ export class TransferStatus extends BaseComponent {
       <h3 class="transferStatusMainMessage">Started a transfer</h3>
       <div class="destinationMessage">
         <span class="networkIcon">
-          From ${this.renderNetworkIcon(this.sourceNetworkName ?? '')}
+          From ${this.renderNetworkIcon(this.sourceNetworkName)}
           ${this.sourceNetworkName ?? 'Unknown'} to
-          ${this.renderNetworkIcon(this.destinationNetworkName ?? '')}
+          ${this.renderNetworkIcon(this.destinationNetworkName)}
           ${this.destinationNetworkName ?? 'Unknown'}
         </span>
       </div>
       <div class="tokenInfo">
-        ${this.formatAmount(this.amount ?? ethers.constants.Zero)}
-        ${this.resourceSymbol}
+        ${this.formatAmount(this.amount)} ${this.resourceSymbol}
       </div>
       <div class="transferStatusDescription">
         <span>
