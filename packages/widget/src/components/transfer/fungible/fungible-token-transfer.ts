@@ -138,6 +138,7 @@ export class FungibleTokenTransfer extends BaseComponent {
           .resources=${this.transferController.supportedResources}
           .onResourceSelected=${this.transferController.onResourceSelected}
           accountBalance="0"
+          .selectedResource=${this.transferController.selectedResource}
         >
         </sygma-resource-selector>
       </section>

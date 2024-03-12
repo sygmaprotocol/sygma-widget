@@ -1,5 +1,5 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
-import { utils, type BigNumber } from 'ethers';
+import { utils, BigNumber } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -39,8 +39,8 @@ export class AmountSelector extends BaseComponent {
   onResourceSelected: (resource: Resource, amount: BigNumber) => void =
     () => {};
 
+  @property({ type: Object }) selectedResource: Resource | null = null;
   @state() validationMessage: string | null = null;
-  @state() selectedResource: Resource | null = null;
   @state() amount: number = 0;
 
   tokenBalanceController = new TokenBalanceController(this);
@@ -82,6 +82,13 @@ export class AmountSelector extends BaseComponent {
     this.selectedResource = value;
     this.amount = 0;
     this.tokenBalanceController.startBalanceUpdates(value);
+    this.onResourceSelected(
+      this.selectedResource,
+      utils.parseUnits(
+        BigNumber.from(this.amount).toString(),
+        this.selectedResource.decimals ?? DEFAULT_ETH_DECIMALS
+      )
+    );
   };
 
   _validateAmount(amount: string): boolean {
@@ -138,7 +145,7 @@ export class AmountSelector extends BaseComponent {
   }
 
   updated(changedProperties: PropertyValues): void {
-    if (changedProperties.has('resources')) {
+    if (changedProperties.has('selectedResource')) {
       this.tokenBalanceController.resetBalance();
     }
   }
