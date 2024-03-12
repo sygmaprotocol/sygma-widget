@@ -152,7 +152,6 @@ describe('address-input component', function () {
 
     await listener;
 
-    console.log(mockAddressChangeHandler.mock.calls);
     assert.equal(mockAddressChangeHandler.mock.calls.length, 4);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[2], [
       '0xebFC7A970CAAbC18C8e8b7367147C18FC7'
@@ -215,6 +214,7 @@ describe('address-input component', function () {
     input.dispatchEvent(new Event('input'));
 
     await listener;
+
     assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
