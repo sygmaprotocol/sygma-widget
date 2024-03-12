@@ -1,4 +1,10 @@
-import type { Domain, Resource, Route } from '@buildwithsygma/sygma-sdk-core';
+import type {
+  Domain,
+  EvmResource,
+  Resource,
+  Route,
+  SubstrateResource
+} from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
   Environment,
@@ -237,6 +243,7 @@ export class FungibleTokenTransferController implements ReactiveController {
         )
         .map((route) => route.toDomain);
     }
+
     this.supportedResources = this.routesCache
       .get(sourceNetwork.chainId)!
       .filter(
@@ -247,18 +254,10 @@ export class FungibleTokenTransferController implements ReactiveController {
       )
       .map((route) => route.resource);
 
-    const isDestinationNetworkRouteSupported =
-      this.supportedDestinationNetworks.some(
-        (destinationDomain) =>
-          destinationDomain.id === this.destinationNetwork?.id
-      );
-
-    //unselect destination if equal to source network or isn't in list of available destination networks
-    if (
-      this.destinationNetwork?.id === sourceNetwork.id ||
-      !isDestinationNetworkRouteSupported
-    ) {
+    // unselect destination if equal to source network or isn't in list of available destination networks
+    if (this.destinationNetwork?.id === sourceNetwork.id) {
       this.destinationNetwork = undefined;
+      this.selectedResource = undefined;
     }
 
     // imposible route source -> source
@@ -277,6 +276,24 @@ export class FungibleTokenTransferController implements ReactiveController {
             !this.supportedDestinationNetworks.includes(route.toDomain)
         )
         .map((route) => route.toDomain);
+    }
+
+    const hasSelectedResourceChange =
+      this.sourceNetwork?.type === Network.EVM
+        ? (this.supportedResources as EvmResource[]).find(
+            (resource) =>
+              resource.address !==
+                (this.selectedResource as EvmResource)?.address &&
+              resource.symbol === (this.selectedResource as EvmResource)?.symbol
+          )
+        : (this.supportedResources as SubstrateResource[]).find(
+            (resource) =>
+              resource.assetId !==
+              (this.selectedResource as SubstrateResource)?.assetId
+          );
+
+    if (hasSelectedResourceChange) {
+      this.selectedResource = hasSelectedResourceChange;
     }
 
     void this.buildTransactions();
