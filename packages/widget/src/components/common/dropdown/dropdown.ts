@@ -56,7 +56,7 @@ export class Dropdown extends BaseComponent {
     removeEventListener('click', this._handleOutsideClick);
   }
 
-  updated(changedProperties: PropertyValues<typeof this>): void {
+  updated(changedProperties: PropertyValues<this>): void {
     super.updated(changedProperties);
     //if options changed, check if we have selected option that doesn't exist
     if (changedProperties.has('options') && this.selectedOption) {
