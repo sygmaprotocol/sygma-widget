@@ -313,9 +313,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildwithsygma/sygma-sdk-core@npm:^2.7.2":
-  version: 2.7.2
-  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.7.2"
+"@buildwithsygma/sygma-sdk-core@npm:^2.7.4":
+  version: 2.7.4
+  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.7.4"
   dependencies:
     "@buildwithsygma/sygma-contracts": "npm:2.5.1"
     "@ethersproject/abi": "npm:^5.7.0"
@@ -331,7 +331,7 @@ __metadata:
     "@polkadot/util": "npm:12.2.1"
     "@polkadot/util-crypto": "npm:12.2.1"
     ethers: "npm:5.6.2"
-  checksum: fbfdffd22eee5fad947e453b31d7d2263127f653c6bf8d7ccaaaff19ef5aa0f892e0c509a35b1a0f09910bb5d7a0e7584dd19d6aa30c3d30d55187b02d681e12
+  checksum: 67983b8e879936af472ed00e27b4378f3a1758bea8157960aa4da7dcbfe95c83604cfb56ceae37dfefaec136005ad8bce5c36b9f49b4dd819537b718a583be88
   languageName: node
   linkType: hard
 
@@ -357,7 +357,7 @@ __metadata:
   resolution: "@buildwithsygma/sygmaprotocol-widget@workspace:packages/widget"
   dependencies:
     "@buildwithsygma/sygma-contracts": "npm:^2.5.1"
-    "@buildwithsygma/sygma-sdk-core": "npm:^2.7.2"
+    "@buildwithsygma/sygma-sdk-core": "npm:^2.7.4"
     "@ethersproject/abstract-signer": "npm:^5.7.0"
     "@ethersproject/contracts": "npm:^5.7.0"
     "@ethersproject/providers": "npm:^5.7.2"

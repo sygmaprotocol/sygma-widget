@@ -129,7 +129,7 @@ export class TokenBalanceController implements ReactiveController {
         this.loadingBalance = true;
         const tokenBalance = await getAssetBalance(
           apiPromise as ApiPromise,
-          (resource as unknown as { assetID: number }).assetID,
+          resource.assetID as number,
           signerAddress as string
         );
         this.host.requestUpdate();

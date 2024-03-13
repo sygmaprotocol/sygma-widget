@@ -31,10 +31,10 @@ export async function buildSubstrateFungibleTransactions(
     String(this.resourceAmount)
   );
 
-  const fee = await substrateTransfer.getFee(transfer);
+  this.fee = await substrateTransfer.getFee(transfer);
   this.pendingTransferTransaction = substrateTransfer.buildTransferTransaction(
     transfer,
-    fee
+    this.fee
   );
   this.host.requestUpdate();
 }
