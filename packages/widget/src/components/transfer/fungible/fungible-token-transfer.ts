@@ -115,6 +115,7 @@ export class FungibleTokenTransfer extends BaseComponent {
             if (network) {
               this.onSourceNetworkSelected?.(network);
               this.transferController.onSourceNetworkSelected(network);
+              void this.walletController.switchChain(network?.chainId);
             }
           }}
           .networks=${this.transferController.supportedSourceNetworks}
