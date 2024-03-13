@@ -69,6 +69,13 @@ export class TokenBalanceController implements ReactiveController {
     throw new Error('Unsupported resource');
   }
 
+  resetBalance(): void {
+    if (this.timeout) {
+      clearInterval(this.timeout);
+    }
+    this.balance = BigNumber.from(0);
+  }
+
   subscribeERC20BalanceUpdate = (resource: EvmResource): void => {
     const provider = this.walletContext.value?.evmWallet?.provider;
     const address = this.walletContext.value?.evmWallet?.address;

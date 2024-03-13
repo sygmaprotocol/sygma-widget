@@ -60,6 +60,7 @@ export class Dropdown extends BaseComponent {
         !this.options.map((o) => o.value).includes(this.selectedOption.value)
       ) {
         this.selectedOption = null;
+        this.onOptionSelected(undefined);
       }
     }
   }
