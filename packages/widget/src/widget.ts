@@ -131,24 +131,8 @@ class SygmaProtocolWidget
               () => html`<sygma-overlay-component></sygma-overlay-component>`
             )}
           </section>
-          <section class="widgetContent">
-            <sygma-fungible-transfer
-              @sdk-initialized=${(event: SdkInitializedEvent) =>
-                (this.sdkInitialized = event.detail.hasInitialized)}
-              .onSourceNetworkSelected=${(domain: Domain) =>
-                (this.sourceNetwork = domain)}
-              .whitelistedSourceResources=${this.whitelistedSourceNetworks}
-              environment=${Environment.TESTNET}
-            >
-            </sygma-fungible-transfer>
-          </section>
-          <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
-          ${when(
-            this.isLoading || !this.sdkInitialized,
-            () => html`<sygma-overlay-component></sygma-overlay-component>`
-          )}
-        </section>
-      </sygma-wallet-context-provider>
+        </sygma-wallet-context-provider>
+      </sygma-config-context-provider>
     `;
   }
 }
