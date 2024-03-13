@@ -1,5 +1,9 @@
-import { EVMAssetTransfer } from '@buildwithsygma/sygma-sdk-core';
+import {
+  EVMAssetTransfer,
+  FeeHandlerType
+} from '@buildwithsygma/sygma-sdk-core';
 import { Web3Provider } from '@ethersproject/providers';
+import { constants, utils } from 'ethers';
 import { type FungibleTokenTransferController } from '../fungible-token-transfer';
 
 /**
@@ -28,14 +32,43 @@ export async function buildEvmFungibleTransactions(
 
   const evmTransfer = new EVMAssetTransfer();
   await evmTransfer.init(new Web3Provider(provider, providerChaiId), this.env);
+
+  // Hack to make fungible transfer behave like it does on substrate side
+  // where fee is deducted from user inputted amount rather than added on top
+  const originalTransfer = await evmTransfer.createFungibleTransfer(
+    address,
+    this.destinationNetwork.chainId,
+    this.destinatonAddress,
+    this.selectedResource.resourceId,
+    this.resourceAmount.toString()
+  );
+  const originalFee = await evmTransfer.getFee(originalTransfer);
+  //in case of percentage fee handler, we are calculating what amount + fee will result int user inputed amount
+  //in case of fixed fee handler, fee is taken from native token
+  if (originalFee.type === FeeHandlerType.PERCENTAGE) {
+    const feePercentage = originalFee.fee
+      .mul(constants.WeiPerEther)
+      .div(this.resourceAmount);
+
+    this.resourceAmount = this.resourceAmount
+      .mul(constants.WeiPerEther)
+      .div(
+        utils.parseEther(
+          String(1 + Number.parseFloat(utils.formatEther(feePercentage)))
+        )
+      );
+    console.log('new amount', utils.formatEther(this.resourceAmount));
+  }
+
   const transfer = await evmTransfer.createFungibleTransfer(
     address,
     this.destinationNetwork.chainId,
     this.destinationAddress,
     this.selectedResource.resourceId,
-    String(this.resourceAmount)
+    this.resourceAmount.toString()
   );
   const fee = await evmTransfer.getFee(transfer);
+  transfer.details;
   this.pendingEvmApprovalTransactions = await evmTransfer.buildApprovals(
     transfer,
     fee
