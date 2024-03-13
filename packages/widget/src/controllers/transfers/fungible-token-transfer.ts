@@ -39,8 +39,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public destinationNetwork?: Domain;
   public selectedResource?: Resource;
   public resourceAmount: BigNumber = BigNumber.from(0);
-  public destinatonAddress: string = '';
-  public defaultDestinationAddress: string = '';
+  public destinationAddress: string = '';
 
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
@@ -98,7 +97,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.destinationNetwork = undefined;
     this.pendingEvmApprovalTransactions = [];
     this.pendingEvmTransferTransaction = undefined;
-    this.destinatonAddress = '';
+    this.destinationAddress = '';
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
     this.transferTransactionId = undefined;
@@ -117,7 +116,7 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   getSenderDefaultDestinationAddress = (): void => {
     if (!this.sourceNetwork || !this.destinationNetwork) {
-      this.defaultDestinationAddress = '';
+      this.destinationAddress = '';
       return;
     }
 
@@ -125,7 +124,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       this.sourceNetwork.chainId === this.destinationNetwork.chainId;
     const isSameType = this.sourceNetwork.type === this.destinationNetwork.type;
 
-    this.defaultDestinationAddress =
+    this.destinationAddress =
       isSameNetwork || isSameType
         ? this.walletContext.value?.evmWallet?.address || ''
         : '';
@@ -151,13 +150,12 @@ export class FungibleTokenTransferController implements ReactiveController {
   };
 
   onDestinationAddressChange = (address: string): void => {
-    this.destinatonAddress = address;
-    if (this.destinatonAddress.length === 0) {
+    this.destinationAddress = address;
+    if (this.destinationAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
       this.pendingEvmTransferTransaction = undefined;
     }
     void this.buildTransactions();
-    this.getSenderDefaultDestinationAddress();
     this.host.requestUpdate();
   };
 
@@ -189,7 +187,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.resourceAmount.eq(0)) {
       return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
     }
-    if (this.destinatonAddress === '') {
+    if (this.destinationAddress === '') {
       return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
     }
     if (
@@ -281,7 +279,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       !this.destinationNetwork ||
       !this.resourceAmount ||
       !this.selectedResource ||
-      !this.destinatonAddress
+      !this.destinationAddress
     ) {
       return;
     }
