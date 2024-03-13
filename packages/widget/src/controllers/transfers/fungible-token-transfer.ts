@@ -240,15 +240,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     // either first time or we had source === destination
     if (!this.destinationNetwork) {
       this.supportedDestinationNetworks = routes
-        .filter((route) => {
-          console.log(
-            'route, sourcenetwork',
-            route,
-            sourceNetwork.chainId,
-            this.supportedDestinationNetworks.includes(route.toDomain)
-          );
-          return route.toDomain.chainId !== sourceNetwork.chainId;
-        })
+        .filter((route) => route.toDomain.chainId !== sourceNetwork.chainId)
         .map((route) => route.toDomain);
     } // source change but not destination, check if route is supported
     else if (this.supportedDestinationNetworks.length) {
