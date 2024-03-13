@@ -54,8 +54,8 @@ export class AmountSelector extends BaseComponent {
 
   _onInputAmountChangeHandler = (event: Event): void => {
     const { value } = event.target as HTMLInputElement;
-    this.amount = Number.parseFloat(value);
     if (!this._validateAmount(value)) return;
+    this.amount = Number.parseFloat(value);
     if (this.selectedResource) {
       this.onResourceSelected(
         this.selectedResource,
