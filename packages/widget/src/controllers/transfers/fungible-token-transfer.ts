@@ -20,6 +20,7 @@ import type { SubstrateFee } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
+import { SdkInitializedEvent } from '../../interfaces';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
   buildSubstrateFungibleTransactions,
@@ -105,10 +106,30 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.reset();
   }
 
+  /**
+   * Infinite Try/catch wrapper around
+   * {@link Config} from `@buildwithsygma/sygma-sdk-core`
+   * and emits a {@link SdkInitializedEvent}
+   * @param {number} time to wait before retrying request in ms
+   * @returns {void}
+   */
+  async retryInitSdk(retryMs = 100): Promise<void> {
+    try {
+      await this.config.init(1, this.env);
+      this.host.dispatchEvent(
+        new SdkInitializedEvent({ hasInitialized: true })
+      );
+    } catch (error) {
+      setTimeout(() => {
+        this.retryInitSdk(retryMs * 2).catch(console.error);
+      }, retryMs);
+    }
+  }
+
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
-    await this.config.init(1, env);
+    await this.retryInitSdk();
     this.supportedSourceNetworks = this.config.getDomains();
     //remove once we have proper substrate transfer support
     // .filter((n) => n.type === Network.EVM);
