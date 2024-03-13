@@ -181,9 +181,7 @@ export class WalletController implements ReactiveController {
             signerAddress: accounts[0].address,
             accounts,
             unsubscribeSubstrateAccounts: unsub,
-            disconnect: wallet.disconnect,
-            substrateProvider:
-              this.walletContext.value?.substrateWallet?.substrateProvider
+            disconnect: wallet.disconnect
           }
         })
       );
@@ -224,9 +222,7 @@ export class WalletController implements ReactiveController {
               this.walletContext.value.substrateWallet
                 .unsubscribeSubstrateAccounts,
             //TODO: convert address to network format
-            accounts,
-            substrateProvider:
-              this.walletContext.value.substrateWallet.substrateProvider
+            accounts
           }
         })
       );
@@ -243,9 +239,7 @@ export class WalletController implements ReactiveController {
           substrateWallet: {
             signer: this.walletContext.value.substrateWallet.signer,
             signerAddress: account.address,
-            accounts: this.walletContext.value.substrateWallet.accounts,
-            substrateProvider:
-              this.walletContext.value.substrateWallet.substrateProvider
+            accounts: this.walletContext.value.substrateWallet.accounts
           }
         })
       );

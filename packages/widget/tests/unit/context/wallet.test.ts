@@ -3,7 +3,6 @@ import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { afterEach, assert, describe, it } from 'vitest';
-import type { ApiPromise } from '@polkadot/api';
 import {
   WalletContextProvider,
   WalletUpdateEvent,
@@ -60,18 +59,5 @@ describe('wallet context provider', function () {
     );
 
     assert.deepEqual(context.value, { evmWallet: undefined });
-
-    const mockedApiPromise = {} as unknown as ApiPromise;
-
-    contextProvider.dispatchEvent(
-      new WalletUpdateEvent({
-        substrateWallet: { substrateProvider: mockedApiPromise }
-      })
-    );
-
-    assert.deepEqual(context.value, {
-      substrateWallet: { substrateProvider: mockedApiPromise },
-      evmWallet: undefined
-    });
   });
 });

@@ -21,6 +21,7 @@ import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { SdkInitializedEvent } from '../../interfaces';
+import { substrateProviderContext } from '../../context/wallet';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
   buildSubstrateFungibleTransactions,
@@ -84,6 +85,10 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
+  substrateProviderContext: ContextConsumer<
+    typeof substrateProviderContext,
+    ReactiveElement
+  >;
 
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
@@ -99,6 +104,11 @@ export class FungibleTokenTransferController implements ReactiveController {
         }
         this.host.requestUpdate();
       }
+    });
+
+    this.substrateProviderContext = new ContextConsumer(host, {
+      context: substrateProviderContext,
+      subscribe: true
     });
   }
 

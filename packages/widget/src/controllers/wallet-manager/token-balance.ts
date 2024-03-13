@@ -13,6 +13,7 @@ import type { ApiPromise } from '@polkadot/api';
 import { getAssetBalance } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
+import { substrateProviderContext } from '../../context/wallet';
 import type { SubstrateWallet } from '../../context/wallet';
 
 const BALANCE_REFRESH_MS = 5_000;
@@ -23,6 +24,10 @@ export class TokenBalanceController implements ReactiveController {
   host: ReactiveElement;
 
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
+  substrateProviderContext: ContextConsumer<
+    typeof substrateProviderContext,
+    ReactiveElement
+  >;
 
   loadingBalance: boolean = true;
 
@@ -36,6 +41,10 @@ export class TokenBalanceController implements ReactiveController {
     (this.host = host).addController(this);
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
+      subscribe: true
+    });
+    this.substrateProviderContext = new ContextConsumer(host, {
+      context: substrateProviderContext,
       subscribe: true
     });
   }
@@ -121,8 +130,9 @@ export class TokenBalanceController implements ReactiveController {
   };
 
   suscribeSubstrateBalanceUpdate = (resource: SubstrateResource): void => {
-    const { substrateProvider: apiPromise, signerAddress } = this.walletContext
-      .value?.substrateWallet as SubstrateWallet;
+    const { signerAddress } = this.walletContext.value
+      ?.substrateWallet as SubstrateWallet;
+    const apiPromise = this.substrateProviderContext.value?.substrateProvider;
 
     void async function (this: TokenBalanceController) {
       try {
@@ -131,7 +141,7 @@ export class TokenBalanceController implements ReactiveController {
         const tokenBalance = await getAssetBalance(
           apiPromise as ApiPromise,
           resource.assetID as number,
-          signerAddress as string
+          signerAddress
         );
         this.loadingBalance = false;
         this.balance = BigNumber.from(tokenBalance.balance.toString());

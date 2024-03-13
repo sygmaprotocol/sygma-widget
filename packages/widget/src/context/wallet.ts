@@ -16,12 +16,11 @@ export interface EvmWallet {
 }
 
 export interface SubstrateWallet {
-  signer?: Signer;
-  signerAddress?: string;
-  accounts?: Account[];
+  signer: Signer;
+  signerAddress: string;
+  accounts: Account[];
   unsubscribeSubstrateAccounts?: UnsubscribeFn;
   disconnect?: () => Promise<void>;
-  substrateProvider?: ApiPromise;
 }
 
 export interface WalletContext {
@@ -34,6 +33,10 @@ export enum WalletContextKeys {
   SUBSTRATE_WALLET = 'substrateWallet'
 }
 
+export interface SubstrateProviderContext {
+  substrateProvider?: ApiPromise;
+}
+
 declare global {
   interface HTMLElementEventMap {
     walletUpdate: WalletUpdateEvent;
@@ -42,6 +45,10 @@ declare global {
 
 export const walletContext = createContext<WalletContext>(
   Symbol('sygma-wallet-context')
+);
+
+export const substrateProviderContext = createContext<SubstrateProviderContext>(
+  Symbol('substrate-provider-context')
 );
 
 export class WalletUpdateEvent extends CustomEvent<WalletContext> {
@@ -57,6 +64,10 @@ export class WalletContextProvider extends BaseComponent {
   @provide({ context: walletContext })
   private walletContext: WalletContext = {};
 
+  @provide({ context: substrateProviderContext })
+  /* @ts-expect-error-next-line */
+  private substrateProviderContext: SubstrateProviderContext = {};
+
   @property({ attribute: false, type: Object })
   evmWalllet?: EvmWallet;
 
@@ -67,6 +78,12 @@ export class WalletContextProvider extends BaseComponent {
     super.connectedCallback();
     if (this.evmWalllet) {
       this.walletContext.evmWallet = this.evmWalllet;
+    }
+
+    if (this.substrateProvider) {
+      this.substrateProviderContext = {
+        substrateProvider: this.substrateProvider
+      };
     }
 
     this.addEventListener('walletUpdate', (event: WalletUpdateEvent) => {
@@ -90,8 +107,10 @@ export class WalletContextProvider extends BaseComponent {
   // since we provider as property from widget
   protected updated(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has('substrateProvider')) {
-      this.walletContext = this.substrateProvider
-        ? { substrateWallet: { substrateProvider: this.substrateProvider } }
+      this.substrateProviderContext = this.substrateProvider
+        ? {
+            substrateProvider: this.substrateProvider
+          }
         : {};
     }
   }

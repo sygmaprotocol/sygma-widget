@@ -19,7 +19,7 @@ export async function buildSubstrateFungibleTransactions(
 
   const substrateTransfer = new SubstrateAssetTransfer();
   await substrateTransfer.init(
-    this.walletContext.value?.substrateWallet?.substrateProvider as ApiPromise,
+    this.substrateProviderContext.value?.substrateProvider as ApiPromise,
     this.env
   );
 
