@@ -138,7 +138,7 @@ export class TokenBalanceController implements ReactiveController {
         this.decimals = resource.decimals!;
         this.host.requestUpdate(BALANCE_UPDATE_KEY);
       } catch (e) {
-        console.error(e);
+        console.error("Failed to fetch account's token balance", e);
         this.loadingBalance = false;
         this.host.requestUpdate();
       }
