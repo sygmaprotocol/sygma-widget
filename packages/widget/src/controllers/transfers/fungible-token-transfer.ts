@@ -236,8 +236,6 @@ export class FungibleTokenTransferController implements ReactiveController {
       this.supportedDestinationNetworks = [];
     }
 
-    const routes = this.routesCache.get(sourceNetwork.chainId)!;
-
     // either first time or we had source === destination
     if (!this.destinationNetwork) {
       this.supportedDestinationNetworks = routes
