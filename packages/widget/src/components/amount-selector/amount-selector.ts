@@ -1,10 +1,12 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
-import { utils, type BigNumber } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { utils } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
+import type { PropertyValues } from '@lit/reactive-element';
 import { networkIconsMap } from '../../assets';
 import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import {
@@ -21,8 +23,7 @@ export class AmountSelector extends BaseComponent {
   static styles = styles;
 
   @property({
-    type: Array,
-    hasChanged: (n, o) => n !== o
+    type: Array
   })
   resources: Resource[] = [];
 
@@ -39,8 +40,8 @@ export class AmountSelector extends BaseComponent {
   onResourceSelected: (resource: Resource, amount: BigNumber) => void =
     () => {};
 
-  @state() validationMessage: string | null = null;
   @state() selectedResource: Resource | null = null;
+  @state() validationMessage: string | null = null;
   @state() amount: number = 0;
 
   tokenBalanceController = new TokenBalanceController(this);
@@ -78,10 +79,15 @@ export class AmountSelector extends BaseComponent {
     }
   }
 
-  _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
-    this.selectedResource = value;
-    this.amount = 0;
-    this.tokenBalanceController.startBalanceUpdates(value);
+  _onResourceSelectedHandler = (option?: DropdownOption<Resource>): void => {
+    if (option) {
+      this.selectedResource = option.value;
+      this.amount = 0;
+      this.tokenBalanceController.startBalanceUpdates(this.selectedResource);
+    } else {
+      this.selectedResource = null;
+      this.tokenBalanceController.resetBalance();
+    }
   };
 
   _validateAmount(amount: string): boolean {
@@ -137,6 +143,15 @@ export class AmountSelector extends BaseComponent {
     );
   }
 
+  updated(changedProperties: PropertyValues<this>): void {
+    if (changedProperties.has('selectedResource')) {
+      if (changedProperties.get('selectedResource') !== null) {
+        this.tokenBalanceController.resetBalance();
+        this.amount = 0;
+      }
+    }
+  }
+
   render(): HTMLTemplateResult {
     const amountSelectorContainerClasses = classMap({
       amountSelectorContainer: true,
@@ -156,15 +171,10 @@ export class AmountSelector extends BaseComponent {
               class="amountSelectorInput"
               placeholder="0.000"
               @change=${this._onInputAmountChangeHandler}
-              value=${this.amount === 0 ? '' : this.amount.toString()}
+              .value=${this.amount === 0 ? '' : this.amount.toString()}
             />
             <section class="selectorSection">
               <dropdown-component
-                .preselectedOption=${this._normalizeOptions().filter(
-                  (o) =>
-                    o.id === this.preselectedToken ||
-                    o.name === this.preselectedToken
-                )}
                 ?disabled=${this.disabled}
                 .onOptionSelected=${this._onResourceSelectedHandler}
                 .options=${this._normalizeOptions()}
