@@ -143,7 +143,7 @@ export class AmountSelector extends BaseComponent {
     );
   }
 
-  updated(changedProperties: PropertyValues): void {
+  updated(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has('selectedResource')) {
       if (changedProperties.get('selectedResource') !== null) {
         this.tokenBalanceController.resetBalance();
