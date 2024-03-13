@@ -80,7 +80,7 @@ export class TokenBalanceController implements ReactiveController {
         this.suscribeSubstrateBalanceUpdate,
         BALANCE_REFRESH_MS,
         resource
-      ) as unknown as ReturnType<typeof setInterval>; //dubious
+      );
       return;
     }
     throw new Error('Unsupported resource');

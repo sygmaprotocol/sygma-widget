@@ -35,14 +35,14 @@ export async function buildEvmFungibleTransactions(
     this.selectedResource.resourceId,
     String(this.resourceAmount)
   );
-  const fee = await evmTransfer.getFee(transfer);
+  this.fee = await evmTransfer.getFee(transfer);
   this.pendingEvmApprovalTransactions = await evmTransfer.buildApprovals(
     transfer,
-    fee
+    this.fee
   );
   this.pendingTransferTransaction = await evmTransfer.buildTransferTransaction(
     transfer,
-    fee
+    this.fee
   );
   this.host.requestUpdate();
 }

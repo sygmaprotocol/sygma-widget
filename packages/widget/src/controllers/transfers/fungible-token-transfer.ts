@@ -1,4 +1,9 @@
-import type { Domain, Resource, Route } from '@buildwithsygma/sygma-sdk-core';
+import type {
+  Domain,
+  EvmFee,
+  Resource,
+  Route
+} from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
   Environment,
@@ -11,6 +16,7 @@ import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { SubmittableResult } from '@polkadot/api';
+import type { SubstrateFee } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
@@ -56,6 +62,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
+  public fee: EvmFee | SubstrateFee | null = null;
 
   //Evm transfer
   protected buildEvmTransactions = buildEvmFungibleTransactions;

@@ -24,20 +24,16 @@ export async function executeNextSubstrateTransaction(
   ).signAndSend(
     sender,
     { signer: signer },
-    ({ blockNumber, txIndex, isError, isCompleted, status }) => {
+    ({ blockNumber, txIndex, isError, status }) => {
       if (status.isInBlock) {
         this.waitingTxExecution = false;
+        this.pendingTransferTransaction = undefined;
+        this.transferTransactionId = `${blockNumber?.toString()}-${txIndex?.toString()}`;
         this.host.requestUpdate();
       }
 
       if (status.isBroadcast) {
         this.waitingUserConfirmation = false;
-        this.host.requestUpdate();
-      }
-
-      if (isCompleted) {
-        this.pendingTransferTransaction = undefined;
-        this.transferTransactionId = `${blockNumber?.toString()}-${txIndex?.toString()}`;
         this.host.requestUpdate();
       }
 
