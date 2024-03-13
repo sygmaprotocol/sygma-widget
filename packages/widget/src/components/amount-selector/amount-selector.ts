@@ -147,6 +147,7 @@ export class AmountSelector extends BaseComponent {
     if (changedProperties.has('selectedResource')) {
       if (changedProperties.get('selectedResource') !== null) {
         this.tokenBalanceController.resetBalance();
+        this.amount = 0;
       }
     }
   }
@@ -170,7 +171,7 @@ export class AmountSelector extends BaseComponent {
               class="amountSelectorInput"
               placeholder="0.000"
               @change=${this._onInputAmountChangeHandler}
-              value=${this.amount === 0 ? '' : this.amount.toString()}
+              .value=${this.amount === 0 ? '' : this.amount.toString()}
             />
             <section class="selectorSection">
               <dropdown-component
