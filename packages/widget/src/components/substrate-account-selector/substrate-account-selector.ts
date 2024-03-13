@@ -46,7 +46,7 @@ export class SubstrateAccountSelector extends BaseComponent {
     const substrateWallet = this.wallets.substrateWallet;
     if (!substrateWallet) return [];
 
-    return substrateWallet.accounts!.map((account: Account) => ({
+    return substrateWallet.accounts.map((account: Account) => ({
       id: account.address,
       name: shortAddress(account?.address ?? ''),
       value: account,
