@@ -227,9 +227,10 @@ export class FungibleTokenTransferController implements ReactiveController {
     }
 
     this.supportedResources = [];
+    const routes = this.routesCache.get(sourceNetwork.chainId)!;
 
     // unselect destination if equal to source network or isn't in list of available destination networks
-    if (this.destinationNetwork?.id === sourceNetwork.id) {
+    if (this.destinationNetwork?.id === sourceNetwork.id || !routes.length) {
       this.destinationNetwork = undefined;
       this.selectedResource = undefined;
       this.supportedDestinationNetworks = [];
@@ -243,7 +244,7 @@ export class FungibleTokenTransferController implements ReactiveController {
         .filter((route) => route.toDomain.chainId !== sourceNetwork.chainId)
         .map((route) => route.toDomain);
     } // source change but not destination, check if route is supported
-    else if (this.supportedDestinationNetworks.length) {
+    else if (this.supportedDestinationNetworks.length && routes.length) {
       const isSourceOnSuportedDestinations =
         this.supportedDestinationNetworks.some(
           (destinationDomain) =>
