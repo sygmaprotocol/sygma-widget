@@ -74,7 +74,7 @@ export class TokenBalanceController implements ReactiveController {
     if (this.timeout) {
       clearInterval(this.timeout);
     }
-    this.balance = BigNumber.from(0);
+    this.balance = ethers.constants.Zero;
   }
 
   subscribeERC20BalanceUpdate = (resource: EvmResource): void => {
