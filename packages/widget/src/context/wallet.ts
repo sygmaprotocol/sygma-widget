@@ -88,7 +88,7 @@ export class WalletContextProvider extends BaseComponent {
   }
 
   // since we provider as property from widget
-  protected updated(changedProperties: PropertyValues): void {
+  protected updated(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has('substrateProvider')) {
       this.walletContext = this.substrateProvider
         ? { substrateWallet: { substrateProvider: this.substrateProvider } }
