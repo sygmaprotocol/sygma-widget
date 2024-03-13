@@ -128,7 +128,7 @@ export class AmountSelector extends BaseComponent {
     return html`
       <section class="balanceContent">
         <span
-          >${`${tokenBalanceToNumber(this.tokenBalanceController.balance, this.tokenBalanceController.decimals, true)}`}</span
+          >${`${tokenBalanceToNumber(this.tokenBalanceController.balance, this.tokenBalanceController.decimals, 4)}`}</span
         >
         <button class="maxButton" @click=${this._useMaxBalance}>Max</button>
       </section>

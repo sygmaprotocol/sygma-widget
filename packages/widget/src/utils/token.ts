@@ -4,18 +4,22 @@ import { utils } from 'ethers';
 export function tokenBalanceToNumber(
   amount: BigNumber,
   decimals: number,
-  withFormattedDecimals = false
+  formattedDecimals?: number
 ): number {
   const value = Number.parseFloat(utils.formatUnits(amount, decimals));
 
-  if (withFormattedDecimals) {
-    return tokenBalanceToNumberWithDecimals(value);
+  if (formattedDecimals) {
+    return tokenBalanceToNumberWithDecimals(value, formattedDecimals);
   }
 
   return value;
 }
 
-// This function is used to round the token balance to 4 decimal places
-function tokenBalanceToNumberWithDecimals(value: number): number {
-  return Math.floor(value * 10000) / 10000;
+// This function is used to round the token balance to the correct number of decimals
+function tokenBalanceToNumberWithDecimals(
+  value: number,
+  formattedDecimals: number
+): number {
+  const factor = Math.pow(10, formattedDecimals);
+  return Math.floor(value * factor) / factor;
 }
