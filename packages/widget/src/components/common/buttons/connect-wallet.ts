@@ -40,7 +40,7 @@ export class ConnectWalletButton extends BaseComponent {
 
   private walletController = new WalletController(this);
 
-  updated(changedProperties: PropertyValues): void {
+  updated(changedProperties: PropertyValues<this>): void {
     super.updated(changedProperties);
     if (changedProperties.has('sourceNetwork')) {
       this.walletController.sourceNetworkUpdated(this.sourceNetwork);

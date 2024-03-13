@@ -72,7 +72,7 @@ export class Dropdown extends BaseComponent {
     removeEventListener('click', this._handleOutsideClick);
   }
 
-  updated(changedProperties: PropertyValues<typeof this>): void {
+  updated(changedProperties: PropertyValues<this>): void {
     super.updated(changedProperties);
 
     // Set pre-selected option after transfer is completed
