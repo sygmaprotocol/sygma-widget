@@ -40,7 +40,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
   });
 
   it('useMax button works', async () => {
-    const balance = 100;
+    const balance = '100';
     const mockOptionSelectHandler = vi.fn();
     const dropdownOption: DropdownOption<Resource> = {
       name: 'Resource1',
@@ -68,7 +68,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
     useMaxButton?.click();
     await el.updateComplete;
 
-    assert.equal(el.amount, balance);
+    assert.equal(el.amount, '100.0');
     expect(mockOptionSelectHandler).toHaveBeenCalledOnce();
     expect(mockOptionSelectHandler).toHaveBeenCalledWith(
       el.selectedResource,
@@ -108,7 +108,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
     el._onResourceSelectedHandler(dropdownOption);
     await el.updateComplete;
 
-    expect(el.amount).toEqual(0);
+    expect(el.amount).toEqual('0');
     expect(el.tokenBalanceController.balance.toNumber()).toEqual(0);
     expect(el.tokenBalanceController.decimals).toEqual(18);
   });
