@@ -1,25 +1,20 @@
-import type { BigNumber } from 'ethers';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 
 export function tokenBalanceToNumber(
   amount: BigNumber,
   decimals: number,
   formattedDecimals?: number
-): number {
-  const value = Number.parseFloat(utils.formatUnits(amount, decimals));
+): string {
+  let value = utils.formatUnits(amount, decimals);
 
   if (formattedDecimals) {
-    return tokenBalanceToNumberWithDecimals(value, formattedDecimals);
+    let valueBigNumber = utils.parseUnits(value, decimals);
+    const factor = BigNumber.from(10).pow(formattedDecimals);
+    valueBigNumber = valueBigNumber
+      .mul(factor)
+      .div(BigNumber.from(10).pow(decimals));
+    value = utils.formatUnits(valueBigNumber, formattedDecimals);
   }
 
   return value;
-}
-
-// This function is used to round the token balance to the correct number of decimals
-function tokenBalanceToNumberWithDecimals(
-  value: number,
-  formattedDecimals: number
-): number {
-  const factor = Math.pow(10, formattedDecimals);
-  return Math.floor(value * factor) / factor;
 }
