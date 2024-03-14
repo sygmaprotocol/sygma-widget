@@ -57,7 +57,6 @@ export async function buildEvmFungibleTransactions(
           String(1 + Number.parseFloat(utils.formatEther(feePercentage)))
         )
       );
-    console.log('new amount', utils.formatEther(this.resourceAmount));
   }
 
   const transfer = await evmTransfer.createFungibleTransfer(
