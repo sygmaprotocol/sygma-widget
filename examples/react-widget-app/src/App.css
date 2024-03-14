@@ -25,37 +25,30 @@ html {
     background-color: #FE5614; 
     border-radius: 50px; 
     margin: 0 36.5%; 
-    padding-top: 1%;
-    padding-bottom: 1%;
-    padding-left: 1.5%;
+    padding: 0.8% 0;
+    justify-content: space-around;
 }
 
+.icon-wrapper {
+    flex-direction: column;
+}
 
-.footer a {
-    margin: 0 8%;
+.icon-wrapper img {
+    width: 30px;
+    height: 30px;
+}
+
+.icon-wrapper a {
     color: black;
     text-decoration: none;
     font-size: medium;
 }
 
-.footer a:hover {
+.icon-wrapper a:hover {
     color: white;
     font-weight: bold;
-}
-  
-.footer img {
-    width: 30px;
-    height: 30px;
-}
-
-#website-icon {
-    margin-left: 20%;
 }
 
 #github-icon{
     width: 50px;
-}
-
-#docs-icon{
-    margin-left: 10%;
 }
