@@ -41,6 +41,7 @@ export interface SubstrateProviderContext {
 declare global {
   interface HTMLElementEventMap {
     walletUpdate: WalletUpdateEvent;
+    substrateProviderUpdate: SubstrateProviderUpdateEvent;
   }
 }
 
@@ -58,6 +59,16 @@ export class WalletUpdateEvent extends CustomEvent<WalletContext> {
   }
 }
 
+export class SubstrateProviderUpdateEvent extends CustomEvent<SubstrateProviderContext> {
+  constructor(update: Partial<SubstrateProviderContext>) {
+    super('substrateProviderUpdate', {
+      detail: update,
+      composed: true,
+      bubbles: true
+    });
+  }
+}
+
 @customElement('sygma-wallet-context-provider')
 export class WalletContextProvider extends BaseComponent {
   //TODO: add properties to allow widget to pass external provider/signers.
@@ -66,7 +77,6 @@ export class WalletContextProvider extends BaseComponent {
   private walletContext: WalletContext = {};
 
   @provide({ context: substrateProviderContext })
-  /* @ts-expect-error-next-line */
   private substrateProviderContext: SubstrateProviderContext = {};
 
   @property({ attribute: false, type: Object })
@@ -103,6 +113,16 @@ export class WalletContextProvider extends BaseComponent {
         );
       }
     });
+
+    this.addEventListener(
+      'substrateProviderUpdate',
+      (event: SubstrateProviderUpdateEvent) => {
+        this.substrateProviderContext = {
+          ...this.substrateProviderContext,
+          ...event.detail
+        };
+      }
+    );
   }
 
   // since we provider as property from widget

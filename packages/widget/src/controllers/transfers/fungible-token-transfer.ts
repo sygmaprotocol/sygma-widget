@@ -21,7 +21,10 @@ import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { SdkInitializedEvent } from '../../interfaces';
-import { substrateProviderContext } from '../../context/wallet';
+import {
+  SubstrateProviderUpdateEvent,
+  substrateProviderContext
+} from '../../context/wallet';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
   buildSubstrateFungibleTransactions,
@@ -176,13 +179,17 @@ export class FungibleTokenTransferController implements ReactiveController {
   setSubstrateProvider = (sourceNetwork: Domain | undefined): void => {
     const providers = this.substrateProviderContext.value?.substrateProviders;
     if (!providers) {
-      throw new Error('No Substrate providers available');
+      return;
     }
     const provider = providers.find((p) => p.domainId === sourceNetwork?.id);
 
     this.substrateProvider = provider?.api;
-    this.substrateProviderContext.value!.selectedProvider =
-      this.substrateProvider;
+    this.host.dispatchEvent(
+      new SubstrateProviderUpdateEvent({
+        ...this.substrateProviderContext.value,
+        selectedProvider: this.substrateProvider
+      })
+    );
     this.host.requestUpdate();
   };
 
