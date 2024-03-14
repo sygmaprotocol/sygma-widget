@@ -34,7 +34,8 @@ export enum WalletContextKeys {
 }
 
 export interface SubstrateProviderContext {
-  substrateProvider?: ApiPromise;
+  substrateProviders?: Array<{ domainId: number; api: ApiPromise }>;
+  selectedProvider?: ApiPromise;
 }
 
 declare global {
@@ -72,7 +73,7 @@ export class WalletContextProvider extends BaseComponent {
   evmWalllet?: EvmWallet;
 
   @property({ attribute: false })
-  substrateProvider?: ApiPromise;
+  substrateProviders?: Array<{ domainId: number; api: ApiPromise }> = [];
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -80,9 +81,9 @@ export class WalletContextProvider extends BaseComponent {
       this.walletContext.evmWallet = this.evmWalllet;
     }
 
-    if (this.substrateProvider) {
+    if (this.substrateProviders) {
       this.substrateProviderContext = {
-        substrateProvider: this.substrateProvider
+        substrateProviders: this.substrateProviders
       };
     }
 
@@ -106,10 +107,10 @@ export class WalletContextProvider extends BaseComponent {
 
   // since we provider as property from widget
   protected updated(changedProperties: PropertyValues<this>): void {
-    if (changedProperties.has('substrateProvider')) {
-      this.substrateProviderContext = this.substrateProvider
+    if (changedProperties.has('substrateProviders')) {
+      this.substrateProviderContext = this.substrateProviders
         ? {
-            substrateProvider: this.substrateProvider
+            substrateProviders: this.substrateProviders
           }
         : {};
     }

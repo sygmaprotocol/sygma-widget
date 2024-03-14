@@ -132,7 +132,7 @@ export class TokenBalanceController implements ReactiveController {
   suscribeSubstrateBalanceUpdate = (resource: SubstrateResource): void => {
     const { signerAddress } = this.walletContext.value
       ?.substrateWallet as SubstrateWallet;
-    const apiPromise = this.substrateProviderContext.value?.substrateProvider;
+    const apiPromise = this.substrateProviderContext.value?.selectedProvider;
 
     void async function (this: TokenBalanceController) {
       try {

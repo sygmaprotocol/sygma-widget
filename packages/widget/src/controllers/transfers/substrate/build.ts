@@ -1,5 +1,4 @@
 import { SubstrateAssetTransfer } from '@buildwithsygma/sygma-sdk-core/substrate';
-import type { ApiPromise } from '@polkadot/api';
 import { type FungibleTokenTransferController } from '../fungible-token-transfer';
 
 export async function buildSubstrateFungibleTransactions(
@@ -12,16 +11,14 @@ export async function buildSubstrateFungibleTransactions(
     !this.resourceAmount ||
     !this.selectedResource ||
     !this.destinatonAddress ||
-    !address
+    !address ||
+    !this.substrateProvider
   ) {
     return;
   }
 
   const substrateTransfer = new SubstrateAssetTransfer();
-  await substrateTransfer.init(
-    this.substrateProviderContext.value?.substrateProvider as ApiPromise,
-    this.env
-  );
+  await substrateTransfer.init(this.substrateProvider, this.env);
 
   const transfer = await substrateTransfer.createFungibleTransfer(
     address,

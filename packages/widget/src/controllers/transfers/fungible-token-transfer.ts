@@ -15,7 +15,7 @@ import type { UnsignedTransaction } from 'ethers';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { SubmittableResult } from '@polkadot/api';
+import type { ApiPromise, SubmittableResult } from '@polkadot/api';
 import type { SubstrateFee } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
@@ -77,6 +77,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   // Substrate transfer
   protected buildSubstrateTransactions = buildSubstrateFungibleTransactions;
   protected executeSubstrateTransaction = executeNextSubstrateTransaction;
+  protected substrateProvider?: ApiPromise;
 
   protected config: Config;
   protected env: Environment = Environment.MAINNET;
@@ -166,7 +167,23 @@ export class FungibleTokenTransferController implements ReactiveController {
       return;
     }
     this.sourceNetwork = network;
+    if (this.sourceNetwork.type === Network.SUBSTRATE) {
+      this.setSubstrateProvider(this.sourceNetwork);
+    }
     void this.filterDestinationNetworksAndResources(network);
+  };
+
+  setSubstrateProvider = (sourceNetwork: Domain | undefined): void => {
+    const providers = this.substrateProviderContext.value?.substrateProviders;
+    if (!providers) {
+      throw new Error('No Substrate providers available');
+    }
+    const provider = providers.find((p) => p.domainId === sourceNetwork?.id);
+
+    this.substrateProvider = provider?.api;
+    this.substrateProviderContext.value!.selectedProvider =
+      this.substrateProvider;
+    this.host.requestUpdate();
   };
 
   onDestinationNetworkSelected = (network: Domain | undefined): void => {
@@ -281,6 +298,11 @@ export class FungibleTokenTransferController implements ReactiveController {
         await getRoutes(this.env, sourceNetwork.chainId, 'fungible')
       );
     }
+
+    if (!this.substrateProvider && sourceNetwork.type === Network.SUBSTRATE) {
+      this.setSubstrateProvider(sourceNetwork);
+    }
+
     this.supportedResources = [];
     if (!this.destinationNetwork) {
       this.supportedDestinationNetworks = this.routesCache
