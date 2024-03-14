@@ -181,8 +181,8 @@ export class AmountSelector extends BaseComponent {
               type="number"
               class="amountSelectorInput"
               placeholder="0.000"
-              @change=${this._onInputAmountChangeHandler}
-              .value=${this.amount === '' ? '' : this.amount.toString()}
+              @input=${this._onInputAmountChangeHandler}
+              .value=${this.amount}
             />
             <section class="selectorSection">
               <dropdown-component
