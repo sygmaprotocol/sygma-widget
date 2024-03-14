@@ -149,7 +149,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
       '.amountSelectorInput'
     ) as HTMLInputElement;
     input.value = amount;
-    input.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     await el.updateComplete;
 
     expect(mockOptionSelectHandler).toHaveBeenCalledTimes(1);
@@ -170,7 +170,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
         '.amountSelectorInput'
       ) as HTMLInputElement;
       input.value = '150';
-      input.dispatchEvent(new Event('change'));
+      input.dispatchEvent(new Event('input'));
       await nextFrame();
 
       const validationMessage = el.shadowRoot!.querySelector(
@@ -191,7 +191,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
         '.amountSelectorInput'
       ) as HTMLInputElement;
       input.value = '150';
-      input.dispatchEvent(new Event('change'));
+      input.dispatchEvent(new Event('input'));
       await nextFrame();
 
       const validationMessage = el.shadowRoot!.querySelector(
@@ -218,7 +218,7 @@ describe('Amount selector component - sygma-resource-selector', () => {
         '.amountSelectorInput'
       ) as HTMLInputElement;
       input.value = '-2';
-      input.dispatchEvent(new Event('change'));
+      input.dispatchEvent(new Event('input'));
       await el.updateComplete;
 
       const validationMessage = el.shadowRoot!.querySelector(
