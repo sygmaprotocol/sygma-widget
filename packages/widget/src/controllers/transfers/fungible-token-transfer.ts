@@ -16,9 +16,8 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction } from 'ethers';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
-
-import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { walletContext } from '../../context';
+import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { SdkInitializedEvent } from '../../interfaces';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
@@ -49,7 +48,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public destinationNetwork?: Domain;
   public selectedResource?: Resource;
   public resourceAmount: BigNumber = BigNumber.from(0);
-  public destinatonAddress: string = '';
+  public destinationAddress: string = '';
 
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
@@ -138,7 +137,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.destinationNetwork = undefined;
     this.pendingEvmApprovalTransactions = [];
     this.pendingEvmTransferTransaction = undefined;
-    this.destinatonAddress = '';
+    this.destinationAddress = '';
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
     this.transferTransactionId = undefined;
@@ -156,8 +155,25 @@ export class FungibleTokenTransferController implements ReactiveController {
     void this.filterDestinationNetworksAndResources(network);
   };
 
+  setSenderDefaultDestinationAddress = (): void => {
+    if (!this.sourceNetwork || !this.destinationNetwork) {
+      this.destinationAddress = '';
+      return;
+    }
+
+    const isSameNetwork =
+      this.sourceNetwork.chainId === this.destinationNetwork.chainId;
+    const isSameType = this.sourceNetwork.type === this.destinationNetwork.type;
+
+    this.destinationAddress =
+      isSameNetwork || isSameType
+        ? this.walletContext.value?.evmWallet?.address || ''
+        : '';
+  };
+
   onDestinationNetworkSelected = (network: Domain | undefined): void => {
     this.destinationNetwork = network;
+    this.setSenderDefaultDestinationAddress();
     if (this.sourceNetwork && !this.selectedResource) {
       //filter resources
       void this.filterDestinationNetworksAndResources(this.sourceNetwork);
@@ -175,8 +191,8 @@ export class FungibleTokenTransferController implements ReactiveController {
   };
 
   onDestinationAddressChange = (address: string): void => {
-    this.destinatonAddress = address;
-    if (this.destinatonAddress.length === 0) {
+    this.destinationAddress = address;
+    if (this.destinationAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
       this.pendingEvmTransferTransaction = undefined;
     }
@@ -212,7 +228,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.resourceAmount.eq(0)) {
       return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
     }
-    if (this.destinatonAddress === '') {
+    if (this.destinationAddress === '') {
       return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
     }
     if (
@@ -321,7 +337,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       !this.destinationNetwork ||
       !this.resourceAmount ||
       !this.selectedResource ||
-      !this.destinatonAddress
+      !this.destinationAddress
     ) {
       this.resetFee();
       return;
