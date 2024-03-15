@@ -229,5 +229,26 @@ describe('Amount selector component - sygma-resource-selector', () => {
         'Amount must be greater than 0'
       );
     });
+
+    it('throw error when amount is NOT parseable', async () => {
+      const el = await fixture<AmountSelector>(
+        html` <sygma-resource-selector></sygma-resource-selector>`
+      );
+
+      // input amount with non-numeric value
+      const input = el.shadowRoot!.querySelector(
+        '.amountSelectorInput'
+      ) as HTMLInputElement;
+      input.value = 'nonParseableValue';
+      input.dispatchEvent(new Event('input'));
+      await el.updateComplete;
+
+      const validationMessage = el.shadowRoot!.querySelector(
+        '.validationMessage'
+      ) as HTMLDivElement;
+
+      assert.strictEqual(el.amount, '0');
+      assert.strictEqual(validationMessage.textContent, 'Invalid amount value');
+    });
   });
 });

@@ -63,18 +63,22 @@ export class AmountSelector extends BaseComponent {
 
   _onInputAmountChangeHandler = (event: Event): void => {
     const { value } = event.target as HTMLInputElement;
-    const amount = utils.parseUnits(
-      value,
-      this.tokenBalanceController.decimals
-    );
-    this.amount = utils.formatUnits(
-      amount,
-      this.tokenBalanceController.decimals
-    );
 
-    if (!this._validateAmount(value)) return;
-    if (this.selectedResource) {
-      this.onResourceSelected(this.selectedResource, BigNumber.from(amount));
+    try {
+      const amount = utils.parseUnits(
+        value,
+        this.tokenBalanceController.decimals
+      );
+      this.amount = utils.formatUnits(
+        amount,
+        this.tokenBalanceController.decimals
+      );
+      if (!this._validateAmount(value)) return;
+      if (this.selectedResource) {
+        this.onResourceSelected(this.selectedResource, BigNumber.from(amount));
+      }
+    } catch (error) {
+      this.validationMessage = 'Invalid amount value';
     }
   };
 
