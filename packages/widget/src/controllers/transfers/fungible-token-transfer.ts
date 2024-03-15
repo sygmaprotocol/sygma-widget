@@ -1,4 +1,9 @@
-import type { Domain, Resource, Route } from '@buildwithsygma/sygma-sdk-core';
+import type {
+  Domain,
+  EvmFee,
+  Resource,
+  Route
+} from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
   Environment,
@@ -47,6 +52,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
+  public fee?: EvmFee;
 
   //Evm transfer
   protected buildEvmTransactions = buildEvmFungibleTransactions;
@@ -114,6 +120,10 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
   }
 
+  resetFee(): void {
+    this.fee = undefined;
+  }
+
   reset(): void {
     this.sourceNetwork = undefined;
     this.destinationNetwork = undefined;
@@ -123,6 +133,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
     this.transferTransactionId = undefined;
+    this.resetFee();
     void this.init(this.env);
   }
 
@@ -286,6 +297,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       !this.selectedResource ||
       !this.destinatonAddress
     ) {
+      this.resetFee();
       return;
     }
     switch (this.sourceNetwork.type) {
