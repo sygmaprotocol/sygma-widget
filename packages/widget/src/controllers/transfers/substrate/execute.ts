@@ -24,7 +24,7 @@ export async function executeNextSubstrateTransaction(
   ).signAndSend(
     sender,
     { signer: signer },
-    ({ blockNumber, txIndex, isError, status }) => {
+    ({ blockNumber, txIndex, status, dispatchError }) => {
       if (status.isInBlock) {
         this.waitingTxExecution = false;
         this.pendingTransferTransaction = undefined;
@@ -37,10 +37,16 @@ export async function executeNextSubstrateTransaction(
         this.host.requestUpdate();
       }
 
-      if (isError) {
-        this.errorMessage = 'Transfer transaction reverted or rejected';
-        this.waitingTxExecution = false;
-        this.host.requestUpdate();
+      if (dispatchError) {
+        if (dispatchError.isModule) {
+          const decoded = this.substrateProvider?.registry.findMetaError(
+            dispatchError.asModule
+          );
+          const [docs] = decoded?.docs || ['Transfer failed'];
+          this.errorMessage = docs;
+          this.waitingTxExecution = false;
+          this.host.requestUpdate();
+        }
       }
     }
   );
