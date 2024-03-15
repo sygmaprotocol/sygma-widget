@@ -1,6 +1,7 @@
-import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { SubmittableResult } from '@polkadot/api';
-import type { FungibleTokenTransferController } from '../fungible-token-transfer';
+import type {
+  FungibleTokenTransferController,
+  SubstrateTransaction
+} from '../fungible-token-transfer';
 
 export async function executeNextSubstrateTransaction(
   this: FungibleTokenTransferController
@@ -16,12 +17,8 @@ export async function executeNextSubstrateTransaction(
   )
     return;
 
-  await (
-    this.pendingTransferTransaction as SubmittableExtrinsic<
-      'promise',
-      SubmittableResult
-    >
-  ).signAndSend(
+  this.waitingTxExecution = true;
+  await (this.pendingTransferTransaction as SubstrateTransaction).signAndSend(
     sender,
     { signer: signer },
     ({ blockNumber, txIndex, status, dispatchError }) => {
