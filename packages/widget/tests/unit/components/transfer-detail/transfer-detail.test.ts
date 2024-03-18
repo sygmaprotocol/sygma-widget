@@ -53,10 +53,10 @@ describe('sygma-fungible-transfer-detail', function () {
       ></sygma-fungible-transfer-detail>
     `);
 
-    const transferStatus = el.shadowRoot!.querySelector(
+    const transferDetail = el.shadowRoot!.querySelector(
       '.transferDetail'
     ) as HTMLElement;
 
-    assert.isNotNull(transferStatus);
+    assert.isNotNull(transferDetail);
   });
 });
