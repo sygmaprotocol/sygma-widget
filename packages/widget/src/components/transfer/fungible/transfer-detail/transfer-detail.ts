@@ -68,14 +68,18 @@ export class FungibleTransferDetail extends BaseComponent {
 
   render(): HTMLTemplateResult {
     return html`
-      ${when(
-        this.fee !== undefined,
-        () =>
-          html`<div class="transferDetailBox">
-            <div class="transferDetailBox-label">Fee</div>
-            <div class="transferDetailBox-value">${this.displayFee()}</div>
-          </div>`
-      )}
+      <section class="transferDetail">
+        ${when(
+          this.fee !== undefined,
+          () =>
+            html`<div class="transferDetailContainer">
+              <div class="transferDetailContainer-label">Fee</div>
+              <div class="transferDetailContainer-value">
+                ${this.displayFee()}
+              </div>
+            </div>`
+        )}
+      </section>
     `;
   }
 }
