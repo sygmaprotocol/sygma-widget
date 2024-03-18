@@ -1,6 +1,5 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
-import type { BigNumber } from 'ethers';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -35,14 +34,14 @@ export class AmountSelector extends BaseComponent {
 
   @property({ attribute: false })
   /**
-   * amount is in lowest denomination (it's up to parent component to get resource decimals)
+   * amount is in the lowest denomination (it's up to parent component to get resource decimals)
    */
   onResourceSelected: (resource: Resource, amount: BigNumber) => void =
     () => {};
 
   @state() selectedResource: Resource | null = null;
   @state() validationMessage: string | null = null;
-  @state() amount: number = 0;
+  @state() amount: string = '0';
 
   tokenBalanceController = new TokenBalanceController(this);
 
@@ -51,12 +50,6 @@ export class AmountSelector extends BaseComponent {
       this.tokenBalanceController.balance,
       this.tokenBalanceController.decimals
     );
-  };
-
-  _onInputAmountChangeHandler = (event: Event): void => {
-    const { value } = event.target as HTMLInputElement;
-    this.amount = Number.parseFloat(value);
-    if (!this._validateAmount(value)) return;
     if (this.selectedResource) {
       this.onResourceSelected(
         this.selectedResource,
@@ -65,6 +58,27 @@ export class AmountSelector extends BaseComponent {
           this.selectedResource.decimals ?? DEFAULT_ETH_DECIMALS
         )
       );
+    }
+  };
+
+  _onInputAmountChangeHandler = (event: Event): void => {
+    const { value } = event.target as HTMLInputElement;
+
+    try {
+      const amount = utils.parseUnits(
+        value,
+        this.tokenBalanceController.decimals
+      );
+      this.amount = utils.formatUnits(
+        amount,
+        this.tokenBalanceController.decimals
+      );
+      if (!this._validateAmount(value)) return;
+      if (this.selectedResource) {
+        this.onResourceSelected(this.selectedResource, BigNumber.from(amount));
+      }
+    } catch (error) {
+      this.validationMessage = 'Invalid amount value';
     }
   };
 
@@ -82,7 +96,7 @@ export class AmountSelector extends BaseComponent {
   _onResourceSelectedHandler = (option?: DropdownOption<Resource>): void => {
     if (option) {
       this.selectedResource = option.value;
-      this.amount = 0;
+      this.amount = '0';
       this.tokenBalanceController.startBalanceUpdates(this.selectedResource);
     } else {
       this.selectedResource = null;
@@ -91,26 +105,27 @@ export class AmountSelector extends BaseComponent {
   };
 
   _validateAmount(amount: string): boolean {
-    const parsedAmount = Number.parseFloat(amount);
-    if (isNaN(parsedAmount)) {
-      this.validationMessage = 'Invalid amount value';
-      return false;
-    }
-    if (parsedAmount < 0) {
-      this.validationMessage = 'Amount must be greater than 0';
-      return false;
-    } else if (
-      parsedAmount >
-      tokenBalanceToNumber(
-        this.tokenBalanceController.balance,
+    try {
+      const parsedAmount = utils.parseUnits(
+        amount,
         this.tokenBalanceController.decimals
-      )
-    ) {
-      this.validationMessage = 'Amount exceeds account balance';
-      return false;
-    } else {
+      );
+
+      if (parsedAmount.lte(BigNumber.from(0))) {
+        this.validationMessage = 'Amount must be greater than 0';
+        return false;
+      }
+
+      if (parsedAmount.gt(this.tokenBalanceController.balance)) {
+        this.validationMessage = 'Amount exceeds account balance';
+        return false;
+      }
+
       this.validationMessage = null;
       return true;
+    } catch (error) {
+      this.validationMessage = 'Invalid amount value';
+      return false;
     }
   }
 
@@ -118,7 +133,7 @@ export class AmountSelector extends BaseComponent {
     return html`
       <section class="balanceContent">
         <span
-          >${`${tokenBalanceToNumber(this.tokenBalanceController.balance, this.tokenBalanceController.decimals).toFixed(4)}`}</span
+          >${`${tokenBalanceToNumber(this.tokenBalanceController.balance, this.tokenBalanceController.decimals, 4)}`}</span
         >
         <button class="maxButton" @click=${this._useMaxBalance}>Max</button>
       </section>
@@ -147,7 +162,7 @@ export class AmountSelector extends BaseComponent {
     if (changedProperties.has('selectedResource')) {
       if (changedProperties.get('selectedResource') !== null) {
         this.tokenBalanceController.resetBalance();
-        this.amount = 0;
+        this.amount = '0';
       }
     }
   }
@@ -170,8 +185,8 @@ export class AmountSelector extends BaseComponent {
               type="number"
               class="amountSelectorInput"
               placeholder="0.000"
-              @change=${this._onInputAmountChangeHandler}
-              .value=${this.amount === 0 ? '' : this.amount.toString()}
+              @input=${this._onInputAmountChangeHandler}
+              .value=${this.amount}
             />
             <section class="selectorSection">
               <dropdown-component
