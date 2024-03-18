@@ -1,8 +1,17 @@
 html {
     background-color: #F5F0E9;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+}
+
+body {
+    margin: 0.5%;
+    font-family: 'Inter', sans-serif;
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    src: url('https://fonts.googleapis.com/css2?family=Inter:wght@200..900');
 }
 
 .centered {
@@ -12,8 +21,9 @@ html {
 }
 
 .text-container {
-    font-size: 20px;
+    font-size: 1.1rem;
     font-style: italic;
+    text-align: center;
 }
 
 .text-container a {
@@ -23,8 +33,9 @@ html {
 
 .footer {
     background-color: #FE5614; 
-    border-radius: 50px; 
-    margin: 0 36.5%; 
+    border-radius: 5rem; 
+    width: 20rem;
+    margin: 0 auto; 
     padding: 0.8% 0;
     justify-content: space-around;
 }
@@ -34,8 +45,8 @@ html {
 }
 
 .icon-wrapper img {
-    width: 30px;
-    height: 30px;
+    width: 1.8rem;
+    height: 1.8rem;
 }
 
 .icon-wrapper a {
@@ -50,5 +61,5 @@ html {
 }
 
 #github-icon{
-    width: 50px;
+    width: 3.2rem;
 }
