@@ -68,6 +68,10 @@ export class FungibleTokenTransferController implements ReactiveController {
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
 
+  get __config(): Config {
+    return this.config;
+  }
+
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();

@@ -1,8 +1,9 @@
-import {
-  FeeHandlerType,
-  type Domain,
-  type EvmFee,
-  type Resource
+import { FeeHandlerType } from '@buildwithsygma/sygma-sdk-core';
+import type {
+  Config,
+  Domain,
+  EvmFee,
+  Resource
 } from '@buildwithsygma/sygma-sdk-core';
 import '../../../common/buttons/button';
 import type { HTMLTemplateResult } from 'lit';
@@ -26,10 +27,14 @@ export class FungibleTransferDetail extends BaseComponent {
   @property({ type: Object })
   sourceNetwork?: Domain;
 
+  @property({ type: Object })
+  config?: Config;
+
   displayFee(): string {
     if (!this.fee) return '';
     let balance = '';
     let symbol = '';
+    let decimals: number | undefined = undefined;
 
     if (this.fee.type === FeeHandlerType.PERCENTAGE) {
       if (this.selectedResource) {
@@ -38,14 +43,26 @@ export class FungibleTransferDetail extends BaseComponent {
         }
 
         if (this.selectedResource.decimals) {
-          balance = tokenBalanceToNumber(
-            this.fee.fee,
-            this.selectedResource?.decimals
-          ).toFixed(4);
+          decimals = this.selectedResource?.decimals;
         }
       }
     }
-    // ? show other types of fee
+
+    if (this.fee.type === FeeHandlerType.BASIC) {
+      if (this.sourceNetwork && this.config) {
+        const domainConfig = this.config.getDomainConfig(this.sourceNetwork.id);
+        if (domainConfig) {
+          symbol = domainConfig.nativeTokenSymbol.toUpperCase();
+          decimals = Number(domainConfig.nativeTokenDecimals);
+        }
+      }
+    }
+
+    if (decimals) {
+      balance = tokenBalanceToNumber(this.fee.fee, decimals).toFixed(4);
+    }
+
+    // ? dynamic
     return `${balance} ${symbol}`;
   }
 
