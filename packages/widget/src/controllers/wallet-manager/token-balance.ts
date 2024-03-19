@@ -1,5 +1,6 @@
 import { ERC20__factory } from '@buildwithsygma/sygma-contracts';
 import type {
+  Domain,
   EvmResource,
   Resource,
   SubstrateResource
@@ -55,7 +56,7 @@ export class TokenBalanceController implements ReactiveController {
     clearInterval(this.timeout);
   }
 
-  startBalanceUpdates(resource: Resource): void {
+  startBalanceUpdates(resource: Resource, domain?: Domain): void {
     if (this.timeout) {
       clearInterval(this.timeout);
     }
@@ -84,13 +85,16 @@ export class TokenBalanceController implements ReactiveController {
         return;
       }
     } else {
-      void this.suscribeSubstrateBalanceUpdate(resource);
-      this.timeout = setInterval(
-        this.suscribeSubstrateBalanceUpdate,
-        BALANCE_REFRESH_MS,
-        resource
-      );
-      return;
+      if (domain) {
+        const params = { resource, domain };
+        void this.suscribeSubstrateBalanceUpdate(params);
+        this.timeout = setInterval(
+          this.suscribeSubstrateBalanceUpdate,
+          BALANCE_REFRESH_MS,
+          params
+        );
+        return;
+      }
     }
     throw new Error('Unsupported resource');
   }
@@ -129,10 +133,17 @@ export class TokenBalanceController implements ReactiveController {
     }.bind(this)();
   };
 
-  suscribeSubstrateBalanceUpdate = (resource: SubstrateResource): void => {
+  suscribeSubstrateBalanceUpdate = (params: {
+    resource: SubstrateResource;
+    domain: Domain;
+  }): void => {
+    const { resource, domain } = params;
     const { signerAddress } = this.walletContext.value
       ?.substrateWallet as SubstrateWallet;
-    const apiPromise = this.substrateProviderContext.value?.selectedProvider;
+    const apiPromise =
+      this.substrateProviderContext.value?.substrateProviders?.get(
+        domain.chainId
+      );
 
     void async function (this: TokenBalanceController) {
       try {
@@ -140,7 +151,7 @@ export class TokenBalanceController implements ReactiveController {
         this.host.requestUpdate();
         const tokenBalance = await getAssetBalance(
           apiPromise as ApiPromise,
-          resource.assetID as number,
+          resource.assetId as number,
           signerAddress
         );
         this.loadingBalance = false;

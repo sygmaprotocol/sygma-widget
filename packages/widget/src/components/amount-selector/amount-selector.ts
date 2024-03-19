@@ -1,4 +1,4 @@
-import type { Resource } from '@buildwithsygma/sygma-sdk-core';
+import type { Domain, Resource } from '@buildwithsygma/sygma-sdk-core';
 import { utils, type BigNumber } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
@@ -19,6 +19,11 @@ import { styles } from './styles';
 @customElement('sygma-resource-selector')
 export class AmountSelector extends BaseComponent {
   static styles = styles;
+
+  @property({
+    type: Object
+  })
+  sourceNetwork?: Domain;
 
   @property({
     type: Array,
@@ -81,7 +86,10 @@ export class AmountSelector extends BaseComponent {
   _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
     this.selectedResource = value;
     this.amount = 0;
-    this.tokenBalanceController.startBalanceUpdates(this.selectedResource);
+    this.tokenBalanceController.startBalanceUpdates(
+      this.selectedResource,
+      this.sourceNetwork
+    );
   };
 
   _validateAmount(amount: string): boolean {

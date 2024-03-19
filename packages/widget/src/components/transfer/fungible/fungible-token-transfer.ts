@@ -132,6 +132,7 @@ export class FungibleTokenTransfer extends BaseComponent {
       </section>
       <section>
         <sygma-resource-selector
+          .sourceNetwork=${this.transferController.sourceNetwork}
           .disabled=${!this.transferController.sourceNetwork ||
           !this.transferController.destinationNetwork}
           .resources=${this.transferController.supportedResources}

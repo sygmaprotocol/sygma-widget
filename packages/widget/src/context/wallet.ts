@@ -1,6 +1,7 @@
 import { createContext, provide } from '@lit/context';
 import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
+import type { u32 } from '@polkadot/types-codec';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
@@ -33,15 +34,15 @@ export enum WalletContextKeys {
   SUBSTRATE_WALLET = 'substrateWallet'
 }
 
+export type ParachainProviders = Map<number, ApiPromise>;
+
 export interface SubstrateProviderContext {
-  substrateProviders?: Array<{ domainId: number; api: ApiPromise }>;
-  selectedProvider?: ApiPromise;
+  substrateProviders?: ParachainProviders;
 }
 
 declare global {
   interface HTMLElementEventMap {
     walletUpdate: WalletUpdateEvent;
-    substrateProviderUpdate: SubstrateProviderUpdateEvent;
   }
 }
 
@@ -59,16 +60,6 @@ export class WalletUpdateEvent extends CustomEvent<WalletContext> {
   }
 }
 
-export class SubstrateProviderUpdateEvent extends CustomEvent<SubstrateProviderContext> {
-  constructor(update: Partial<SubstrateProviderContext>) {
-    super('substrateProviderUpdate', {
-      detail: update,
-      composed: true,
-      bubbles: true
-    });
-  }
-}
-
 @customElement('sygma-wallet-context-provider')
 export class WalletContextProvider extends BaseComponent {
   //TODO: add properties to allow widget to pass external provider/signers.
@@ -77,23 +68,52 @@ export class WalletContextProvider extends BaseComponent {
   private walletContext: WalletContext = {};
 
   @provide({ context: substrateProviderContext })
-  private substrateProviderContext: SubstrateProviderContext = {};
+  substrateProviderContext: SubstrateProviderContext = {};
 
   @property({ attribute: false, type: Object })
   evmWalllet?: EvmWallet;
 
   @property({ attribute: false })
-  substrateProviders?: Array<{ domainId: number; api: ApiPromise }> = [];
+  substrateProviders?: Array<ApiPromise> = [];
 
-  connectedCallback(): void {
+  /**
+   * Creates a provider map w.r.t parachain ids
+   * @param {Array<ApiPromise>} providers array of {@link ApiPromise}
+   * @returns {Promise<ParachainProviders>}
+   */
+  async createProvidersMap(
+    providers: Array<ApiPromise>
+  ): Promise<ParachainProviders> {
+    const map: ParachainProviders = new Map();
+
+    for (const provider of providers) {
+      try {
+        // ! following pallet might not be available on all chains
+        // ? should we add polkadot type augmentations here?
+        const parachainId = await provider.query.parachainInfo.parachainId();
+        const _parachainId = (parachainId as u32).toNumber();
+        map.set(_parachainId, provider);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    return map;
+  }
+
+  async connectedCallback(): Promise<void> {
     super.connectedCallback();
     if (this.evmWalllet) {
       this.walletContext.evmWallet = this.evmWalllet;
     }
 
     if (this.substrateProviders) {
+      const providersMap = await this.createProvidersMap(
+        this.substrateProviders
+      );
+
       this.substrateProviderContext = {
-        substrateProviders: this.substrateProviders
+        substrateProviders: providersMap
       };
     }
 
@@ -113,26 +133,22 @@ export class WalletContextProvider extends BaseComponent {
         );
       }
     });
-
-    this.addEventListener(
-      'substrateProviderUpdate',
-      (event: SubstrateProviderUpdateEvent) => {
-        this.substrateProviderContext = {
-          ...this.substrateProviderContext,
-          ...event.detail
-        };
-      }
-    );
   }
 
   // since we provider as property from widget
-  protected updated(changedProperties: PropertyValues<this>): void {
+  protected async updated(
+    changedProperties: PropertyValues<this>
+  ): Promise<void> {
     if (changedProperties.has('substrateProviders')) {
-      this.substrateProviderContext = this.substrateProviders
-        ? {
-            substrateProviders: this.substrateProviders
-          }
-        : {};
+      if (this.substrateProviders) {
+        const providers = await this.createProvidersMap(
+          this.substrateProviders
+        );
+
+        this.substrateProviderContext = {
+          substrateProviders: providers
+        };
+      }
     }
   }
 
