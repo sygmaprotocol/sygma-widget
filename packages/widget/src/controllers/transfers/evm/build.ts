@@ -1,6 +1,7 @@
 import {
   EVMAssetTransfer,
-  FeeHandlerType
+  FeeHandlerType,
+  type PercentageFee
 } from '@buildwithsygma/sygma-sdk-core';
 import { Web3Provider } from '@ethersproject/providers';
 import { constants, utils } from 'ethers';
@@ -46,17 +47,26 @@ export async function buildEvmFungibleTransactions(
   //in case of percentage fee handler, we are calculating what amount + fee will result int user inputed amount
   //in case of fixed fee handler, fee is taken from native token
   if (originalFee.type === FeeHandlerType.PERCENTAGE) {
+    const { lowerBound, upperBound } = originalFee as PercentageFee;
+
     const feePercentage = originalFee.fee
       .mul(constants.WeiPerEther)
       .div(this.resourceAmount);
 
-    this.resourceAmount = this.resourceAmount
+    const actualAmount = this.resourceAmount
       .mul(constants.WeiPerEther)
       .div(
         utils.parseEther(
           String(1 + Number.parseFloat(utils.formatEther(feePercentage)))
         )
       );
+    const feeAmount = this.resourceAmount.sub(actualAmount);
+    if (feeAmount.lt(lowerBound)) {
+      this.resourceAmount = this.resourceAmount.sub(lowerBound);
+    }
+    if (feeAmount.gt(upperBound)) {
+      this.resourceAmount = this.resourceAmount.sub(upperBound);
+    }
   }
 
   const transfer = await evmTransfer.createFungibleTransfer(
