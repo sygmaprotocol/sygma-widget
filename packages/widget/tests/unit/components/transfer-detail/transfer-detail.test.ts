@@ -2,7 +2,7 @@ import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { html } from 'lit';
 import { afterEach, assert, describe, it } from 'vitest';
 import type {
-  Domain,
+  BaseConfig,
   EvmFee,
   EvmResource
 } from '@buildwithsygma/sygma-sdk-core';
@@ -25,13 +25,6 @@ describe('sygma-fungible-transfer-detail', function () {
   });
 
   it('renders transfer-detail', async () => {
-    const mockedSource: Domain = {
-      id: 1,
-      name: 'Network1',
-      chainId: 12,
-      type: Network.EVM
-    };
-
     const mockedFee: EvmFee = {
       fee: constants.Zero,
       type: FeeHandlerType.BASIC,
@@ -44,12 +37,25 @@ describe('sygma-fungible-transfer-detail', function () {
       address: ''
     };
 
+    const mockedSourceDomainConfig: BaseConfig<Network> = {
+      id: 1,
+      chainId: 1,
+      name: 'ethereum',
+      type: Network.EVM,
+      bridge: '',
+      nativeTokenSymbol: 'ETH',
+      nativeTokenFullName: 'Ether',
+      nativeTokenDecimals: BigInt(18),
+      startBlock: BigInt(0),
+      blockConfirmations: 0,
+      resources: []
+    };
+
     const el = await fixture(html`
       <sygma-fungible-transfer-detail
         .fee=${mockedFee}
         .selectedResource=${mockedResource}
-        .sourceNetwork=${mockedSource}
-        .config=${undefined}
+        .sourceDomainConfig=${mockedSourceDomainConfig}
       ></sygma-fungible-transfer-detail>
     `);
 

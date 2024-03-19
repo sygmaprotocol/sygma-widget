@@ -1,8 +1,8 @@
 import { FeeHandlerType } from '@buildwithsygma/sygma-sdk-core';
 import type {
-  Config,
-  Domain,
+  BaseConfig,
   EvmFee,
+  Network,
   Resource
 } from '@buildwithsygma/sygma-sdk-core';
 import '../../../common/buttons/button';
@@ -25,44 +25,38 @@ export class FungibleTransferDetail extends BaseComponent {
   selectedResource?: Resource;
 
   @property({ type: Object })
-  sourceNetwork?: Domain;
-
-  @property({ type: Object })
-  config?: Config;
+  sourceDomainConfig?: BaseConfig<Network>;
 
   displayFee(): string {
     if (!this.fee) return '';
     let balance = '';
     let symbol = '';
     let decimals: number | undefined = undefined;
+    const { type, fee } = this.fee;
 
-    if (this.fee.type === FeeHandlerType.PERCENTAGE) {
+    if (type === FeeHandlerType.PERCENTAGE) {
       if (this.selectedResource) {
         if (this.selectedResource.symbol) {
           symbol = this.selectedResource.symbol;
         }
 
         if (this.selectedResource.decimals) {
-          decimals = this.selectedResource?.decimals;
+          decimals = this.selectedResource.decimals;
         }
       }
     }
 
-    if (this.fee.type === FeeHandlerType.BASIC) {
-      if (this.sourceNetwork && this.config) {
-        const domainConfig = this.config.getDomainConfig(this.sourceNetwork.id);
-        if (domainConfig) {
-          symbol = domainConfig.nativeTokenSymbol.toUpperCase();
-          decimals = Number(domainConfig.nativeTokenDecimals);
-        }
+    if (type === FeeHandlerType.BASIC) {
+      if (this.sourceDomainConfig) {
+        symbol = this.sourceDomainConfig.nativeTokenSymbol.toUpperCase();
+        decimals = Number(this.sourceDomainConfig.nativeTokenDecimals);
       }
     }
 
     if (decimals) {
-      balance = tokenBalanceToNumber(this.fee.fee, decimals).toFixed(4);
+      balance = tokenBalanceToNumber(fee, decimals).toFixed(4);
     }
 
-    // ? dynamic
     return `${balance} ${symbol}`;
   }
 

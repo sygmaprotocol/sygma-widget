@@ -150,10 +150,9 @@ export class FungibleTokenTransfer extends BaseComponent {
       </section>
       <section>
         <sygma-fungible-transfer-detail
-          .sourceNetwork=${this.transferController.sourceNetwork}
           .selectedResource=${this.transferController.selectedResource}
           .fee=${this.transferController.fee}
-          .config=${this.transferController.__config}
+          .sourceDomainConfig=${this.transferController.sourceDomainConfig}
         ></sygma-fungible-transfer-detail>
       </section>
       <section>

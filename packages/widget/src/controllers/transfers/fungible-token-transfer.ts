@@ -1,8 +1,10 @@
 import type {
   Domain,
+  EthereumConfig,
   EvmFee,
   Resource,
-  Route
+  Route,
+  SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
@@ -68,8 +70,11 @@ export class FungibleTokenTransferController implements ReactiveController {
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
 
-  get __config(): Config {
-    return this.config;
+  get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
+    if (this.sourceNetwork) {
+      return this.config.getDomainConfig(this.sourceNetwork.id);
+    }
+    return undefined;
   }
 
   constructor(host: ReactiveElement) {
