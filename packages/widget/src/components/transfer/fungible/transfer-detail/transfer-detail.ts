@@ -27,21 +27,21 @@ export class FungibleTransferDetail extends BaseComponent {
   @property({ type: Object })
   sourceDomainConfig?: BaseConfig<Network>;
 
-  getFeeParams(type: FeeHandlerType): { decimals: string; symbol: string } {
-    let decimals = '';
+  getFeeParams(type: FeeHandlerType): { decimals?: number; symbol: string } {
+    let decimals = undefined;
     let symbol = '';
 
     switch (type) {
       case FeeHandlerType.BASIC:
         if (this.sourceDomainConfig) {
-          decimals = this.sourceDomainConfig.nativeTokenDecimals.toString();
+          decimals = Number(this.sourceDomainConfig.nativeTokenDecimals);
           symbol = this.sourceDomainConfig.nativeTokenSymbol.toUpperCase();
         }
         return { decimals, symbol };
       case FeeHandlerType.DYNAMIC:
         if (this.selectedResource) {
           symbol = this.selectedResource.symbol ?? '';
-          decimals = this.selectedResource.decimals?.toString() ?? '';
+          decimals = this.selectedResource.decimals ?? undefined;
         }
         return { decimals, symbol };
       default:
@@ -55,8 +55,8 @@ export class FungibleTransferDetail extends BaseComponent {
     const { fee } = this.fee;
     let _fee = '';
 
-    if (decimals.length > 0) {
-      _fee = tokenBalanceToNumber(fee, Number(decimals)).toFixed(4);
+    if (decimals) {
+      _fee = tokenBalanceToNumber(fee, decimals).toFixed(4);
     }
 
     return `${_fee} ${symbol}`;
