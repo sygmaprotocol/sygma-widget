@@ -3,16 +3,17 @@ import { css } from 'lit';
 export const styles = css`
   .transferDetailContainer {
     display: flex;
-    width: 100%;
-    justify-content: space-between;
-    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 400;
   }
 
   .transferDetailContainerLabel {
-    color: var(--zinc-400);
+    color: var(--Neutral-700, #404040);
+    flex: 1 0 0;
   }
 
   .transferDetailContainerValue {
-    font-weight: 400;
+    color: var(--zinc-600, #52525b);
+    text-align: right;
   }
 `;

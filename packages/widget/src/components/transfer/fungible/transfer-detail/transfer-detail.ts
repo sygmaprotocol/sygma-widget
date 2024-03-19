@@ -38,7 +38,7 @@ export class FungibleTransferDetail extends BaseComponent {
           symbol = this.sourceDomainConfig.nativeTokenSymbol.toUpperCase();
         }
         return { decimals, symbol };
-      case FeeHandlerType.DYNAMIC:
+      case FeeHandlerType.PERCENTAGE:
         if (this.selectedResource) {
           symbol = this.selectedResource.symbol ?? '';
           decimals = this.selectedResource.decimals ?? undefined;
@@ -69,7 +69,7 @@ export class FungibleTransferDetail extends BaseComponent {
           this.fee !== undefined,
           () =>
             html`<div class="transferDetailContainer">
-              <div class="transferDetailContainerLabel">Fee</div>
+              <div class="transferDetailContainerLabel">Bridge Fee</div>
               <div class="transferDetailContainerValue">${this.getFee()}</div>
             </div>`
         )}
