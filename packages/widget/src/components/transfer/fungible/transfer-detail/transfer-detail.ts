@@ -27,37 +27,39 @@ export class FungibleTransferDetail extends BaseComponent {
   @property({ type: Object })
   sourceDomainConfig?: BaseConfig<Network>;
 
-  displayFee(): string {
-    if (!this.fee) return '';
-    let balance = '';
+  getFeeParams(type: FeeHandlerType): { decimals: string; symbol: string } {
+    let decimals = '';
     let symbol = '';
-    let decimals: number | undefined = undefined;
-    const { type, fee } = this.fee;
 
-    if (type === FeeHandlerType.PERCENTAGE) {
-      if (this.selectedResource) {
-        if (this.selectedResource.symbol) {
-          symbol = this.selectedResource.symbol;
+    switch (type) {
+      case FeeHandlerType.BASIC:
+        if (this.sourceDomainConfig) {
+          decimals = this.sourceDomainConfig.nativeTokenDecimals.toString();
+          symbol = this.sourceDomainConfig.nativeTokenSymbol.toUpperCase();
         }
-
-        if (this.selectedResource.decimals) {
-          decimals = this.selectedResource.decimals;
+        return { decimals, symbol };
+      case FeeHandlerType.DYNAMIC:
+        if (this.selectedResource) {
+          symbol = this.selectedResource.symbol ?? '';
+          decimals = this.selectedResource.decimals?.toString() ?? '';
         }
-      }
+        return { decimals, symbol };
+      default:
+        return { decimals, symbol };
+    }
+  }
+
+  getFee(): string {
+    if (!this.fee) return '';
+    const { symbol, decimals } = this.getFeeParams(this.fee.type);
+    const { fee } = this.fee;
+    let _fee = '';
+
+    if (decimals.length > 0) {
+      _fee = tokenBalanceToNumber(fee, Number(decimals)).toFixed(4);
     }
 
-    if (type === FeeHandlerType.BASIC) {
-      if (this.sourceDomainConfig) {
-        symbol = this.sourceDomainConfig.nativeTokenSymbol.toUpperCase();
-        decimals = Number(this.sourceDomainConfig.nativeTokenDecimals);
-      }
-    }
-
-    if (decimals) {
-      balance = tokenBalanceToNumber(fee, decimals).toFixed(4);
-    }
-
-    return `${balance} ${symbol}`;
+    return `${_fee} ${symbol}`;
   }
 
   render(): HTMLTemplateResult {
@@ -67,10 +69,8 @@ export class FungibleTransferDetail extends BaseComponent {
           this.fee !== undefined,
           () =>
             html`<div class="transferDetailContainer">
-              <div class="transferDetailContainer-label">Fee</div>
-              <div class="transferDetailContainer-value">
-                ${this.displayFee()}
-              </div>
+              <div class="transferDetailContainerLabel">Fee</div>
+              <div class="transferDetailContainerValue">${this.getFee()}</div>
             </div>`
         )}
       </section>

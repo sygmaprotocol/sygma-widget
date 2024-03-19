@@ -8,11 +8,11 @@ export const styles = css`
     margin-bottom: 0.25rem;
   }
 
-  .transferDetailContainer-label {
+  .transferDetailContainerLabel {
     color: var(--zinc-400);
   }
 
-  .transferDetailContainer-value {
+  .transferDetailContainerValue {
     font-weight: 400;
   }
 `;
