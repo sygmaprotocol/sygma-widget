@@ -14,8 +14,8 @@ import {
 } from '../../controllers/wallet-manager/token-balance';
 import { tokenBalanceToNumber } from '../../utils/token';
 import type { DropdownOption } from '../common/dropdown/dropdown';
-import { styles } from './styles';
 import { BaseComponent } from '../common/base-component';
+import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
 export class AmountSelector extends BaseComponent {
@@ -143,7 +143,8 @@ export class AmountSelector extends BaseComponent {
   _renderErrorMessages(): HTMLTemplateResult {
     return when(
       this.validationMessage,
-      () => html`<div class="validationMessage">${this.validationMessage}</div>`
+      () =>
+        html` <div class="validationMessage">${this.validationMessage}</div>`
     );
   }
 

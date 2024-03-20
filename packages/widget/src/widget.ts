@@ -115,8 +115,7 @@ class SygmaProtocolWidget
             <section class="widgetContent">
               <sygma-fungible-transfer
                 .environment=${this.environment as Environment}
-                .environment=${this.environment as Environment}
-              .onSourceNetworkSelected=${(domain: Domain) =>
+                .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
                 .whitelistedSourceResources=${this.whitelistedSourceNetworks}
                 environment=${Environment.TESTNET}
@@ -126,7 +125,7 @@ class SygmaProtocolWidget
             <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
             ${when(
               this.isLoading || !this.sdkInitialized,
-              () => html`<sygma-overlay-component></sygma-overlay-component>`
+              () => html` <sygma-overlay-component></sygma-overlay-component>`
             )}
           </section>
         </sygma-wallet-context-provider>
