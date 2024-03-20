@@ -4,6 +4,7 @@ import sygmaIcon from './public/sygmaIcon.svg'
 import gitHubIcon from './public/githubIcon.png'
 import docsIcon from './public/docsIcon.png'
 import closeIcon from './public/closeIcon.png'
+import sidebarIcon from './public/sidebarIcon.png'
 import { useState } from 'react';
 
 function App() {
@@ -49,7 +50,7 @@ function App() {
       </main>
       {!sidebarOpen && (
         <div id="open-sidebar-button" onClick={toggleSidebar}>
-          <img src={sygmaIcon} alt="Toggle Sidebar" className="icon" />
+          <img src={sidebarIcon} alt="Toggle Sidebar" className="icon" />
         </div>
       )}
     </div>
