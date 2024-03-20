@@ -13,10 +13,12 @@ export async function executeNextSubstrateTransaction(
   if (
     this.pendingTransferTransaction === undefined ||
     destinationAddress == undefined ||
-    sender == undefined
+    sender == undefined ||
+    this.sourceNetwork === undefined
   )
     return;
 
+  const provider = this.getSubstrateProvider(this.sourceNetwork?.chainId);
   this.waitingTxExecution = true;
   await (this.pendingTransferTransaction as SubstrateTransaction).signAndSend(
     sender,
@@ -36,7 +38,7 @@ export async function executeNextSubstrateTransaction(
 
       if (dispatchError) {
         if (dispatchError.isModule) {
-          const decoded = this.substrateProvider?.registry.findMetaError(
+          const decoded = provider?.registry.findMetaError(
             dispatchError.asModule
           );
           const [docs] = decoded?.docs || ['Transfer failed'];

@@ -21,6 +21,7 @@ import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { SdkInitializedEvent } from '../../interfaces';
+import type { ParachainId } from '../../context/wallet';
 import { substrateProviderContext } from '../../context/wallet';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
@@ -77,7 +78,6 @@ export class FungibleTokenTransferController implements ReactiveController {
   // Substrate transfer
   protected buildSubstrateTransactions = buildSubstrateFungibleTransactions;
   protected executeSubstrateTransaction = executeNextSubstrateTransaction;
-  protected substrateProvider?: ApiPromise;
 
   protected config: Config;
   protected env: Environment = Environment.MAINNET;
@@ -115,6 +115,22 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   hostDisconnected(): void {
     this.reset();
+  }
+
+  /**
+   * Provides substrate provider
+   * based on parachain id
+   * @param {ParachainId} parachainId
+   * @returns {ApiPromise | undefined}
+   */
+  getSubstrateProvider(parachainId: ParachainId): ApiPromise | undefined {
+    if (this.sourceNetwork && this.sourceNetwork.type === Network.SUBSTRATE) {
+      return this.substrateProviderContext.value?.substrateProviders?.get(
+        parachainId
+      );
+    }
+
+    return undefined;
   }
 
   /**
@@ -167,21 +183,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       return;
     }
     this.sourceNetwork = network;
-    if (this.sourceNetwork.type === Network.SUBSTRATE) {
-      this.setSubstrateProvider(this.sourceNetwork);
-    }
     void this.filterDestinationNetworksAndResources(network);
-  };
-
-  setSubstrateProvider = (sourceNetwork: Domain | undefined): void => {
-    const providers = this.substrateProviderContext.value?.substrateProviders;
-    if (!providers || !sourceNetwork) {
-      return;
-    }
-
-    const provider = providers.get(sourceNetwork.chainId);
-    this.substrateProvider = provider;
-    this.host.requestUpdate();
   };
 
   onDestinationNetworkSelected = (network: Domain | undefined): void => {
@@ -295,10 +297,6 @@ export class FungibleTokenTransferController implements ReactiveController {
         sourceNetwork.chainId,
         await getRoutes(this.env, sourceNetwork.chainId, 'fungible')
       );
-    }
-
-    if (!this.substrateProvider && sourceNetwork.type === Network.SUBSTRATE) {
-      this.setSubstrateProvider(sourceNetwork);
     }
 
     this.supportedResources = [];
