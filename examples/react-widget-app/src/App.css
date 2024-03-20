@@ -99,6 +99,11 @@ body, html {
     cursor: pointer; 
 }
 
+#open-sidebar-button img {
+    height: 3.2rem;
+    width: 3.2rem;
+}
+
 #close-icon{
     position: absolute;
     top: 0.5rem;
