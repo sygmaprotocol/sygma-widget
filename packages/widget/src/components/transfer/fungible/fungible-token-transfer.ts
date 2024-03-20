@@ -13,11 +13,11 @@ import '../../address-input';
 import '../../amount-selector';
 import './transfer-button';
 import './transfer-status';
-import { BaseComponent } from '../../common/base-component';
 import '../../network-selector';
 import { Directions } from '../../network-selector/network-selector';
 import { WalletController } from '../../../controllers';
 import { styles } from './styles';
+import { BaseComponent } from '../../common/base-component';
 
 @customElement('sygma-fungible-transfer')
 export class FungibleTokenTransfer extends BaseComponent {
@@ -72,7 +72,7 @@ export class FungibleTokenTransfer extends BaseComponent {
     }
 
     if (state === FungibleTransferState.COMPLETED) {
-      return;
+      this.transferController.reset();
     }
   };
 
@@ -114,6 +114,7 @@ export class FungibleTokenTransfer extends BaseComponent {
             if (network) {
               this.onSourceNetworkSelected?.(network);
               this.transferController.onSourceNetworkSelected(network);
+              void this.walletController.switchChain(network?.chainId);
             }
           }}
           .networks=${this.transferController.supportedSourceNetworks}
@@ -142,8 +143,9 @@ export class FungibleTokenTransfer extends BaseComponent {
       </section>
       <section>
         <sygma-address-input
-          .address=${this.transferController.destinatonAddress}
+          .address=${this.transferController.destinationAddress}
           .onAddressChange=${this.transferController.onDestinationAddressChange}
+          .networkType=${this.transferController.destinationNetwork?.type}
         >
         </sygma-address-input>
       </section>
