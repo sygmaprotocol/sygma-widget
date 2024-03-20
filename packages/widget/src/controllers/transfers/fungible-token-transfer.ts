@@ -175,11 +175,11 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   setSubstrateProvider = (sourceNetwork: Domain | undefined): void => {
     const providers = this.substrateProviderContext.value?.substrateProviders;
-    if (!providers || !sourceNetwork?.chainId) {
+    if (!providers || !sourceNetwork) {
       return;
     }
 
-    const provider = providers.get(sourceNetwork?.chainId);
+    const provider = providers.get(sourceNetwork.chainId);
     this.substrateProvider = provider;
     this.host.requestUpdate();
   };

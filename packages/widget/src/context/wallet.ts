@@ -34,7 +34,8 @@ export enum WalletContextKeys {
   SUBSTRATE_WALLET = 'substrateWallet'
 }
 
-export type ParachainProviders = Map<number, ApiPromise>;
+export type ParachainId = number;
+export type ParachainProviders = Map<ParachainId, ApiPromise>;
 
 export interface SubstrateProviderContext {
   substrateProviders?: ParachainProviders;
@@ -88,8 +89,7 @@ export class WalletContextProvider extends BaseComponent {
 
     for (const provider of providers) {
       try {
-        // ! following pallet might not be available on all chains
-        // ? should we add polkadot type augmentations here?
+        // TODO: use polkadot type augmentation to remove "as 32"
         const parachainId = await provider.query.parachainInfo.parachainId();
         const _parachainId = (parachainId as u32).toNumber();
         map.set(_parachainId, provider);
