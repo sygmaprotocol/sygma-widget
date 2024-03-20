@@ -86,7 +86,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   }
 
   renderTransferStatus(): HTMLTemplateResult {
-    return html`<section>
+    return html` <section>
       <sygma-transfer-status
         .amount=${this.transferController.resourceAmount}
         .tokenDecimals=${this.transferController.selectedResource?.decimals}

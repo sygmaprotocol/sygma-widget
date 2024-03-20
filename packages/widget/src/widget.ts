@@ -125,7 +125,7 @@ class SygmaProtocolWidget
             <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
             ${when(
               this.isLoading || !this.sdkInitialized,
-              () => html`<sygma-overlay-component></sygma-overlay-component>`
+              () => html` <sygma-overlay-component></sygma-overlay-component>`
             )}
           </section>
         </sygma-wallet-context-provider>

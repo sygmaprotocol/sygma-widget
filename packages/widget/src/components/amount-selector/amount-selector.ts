@@ -143,7 +143,8 @@ export class AmountSelector extends BaseComponent {
   _renderErrorMessages(): HTMLTemplateResult {
     return when(
       this.validationMessage,
-      () => html`<div class="validationMessage">${this.validationMessage}</div>`
+      () =>
+        html` <div class="validationMessage">${this.validationMessage}</div>`
     );
   }
 

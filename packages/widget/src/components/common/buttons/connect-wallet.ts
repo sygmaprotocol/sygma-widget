@@ -7,8 +7,8 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
 
 import { choose } from 'lit/directives/choose.js';
-import { configContext, walletContext } from '../../../context';
 import type { ConfigContext, WalletContext } from '../../../context';
+import { configContext, walletContext } from '../../../context';
 import { greenCircleIcon, plusIcon } from '../../../assets';
 import { WalletController } from '../../../controllers';
 import { shortAddress } from '../../../utils';
