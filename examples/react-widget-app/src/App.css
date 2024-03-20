@@ -30,6 +30,7 @@ body, html {
 }
 
 .sidebar{
+    position: relative;
     height: 100vh;
     width: 20%;
     background-color: rgba(254, 86, 20, 0.2);
@@ -99,9 +100,9 @@ body, html {
 }
 
 #close-icon{
-    position: relative;
+    position: absolute;
     top: 0.5rem;
-    left: 9rem;
+    right: 0.5rem;
     cursor: pointer;
 }
 
