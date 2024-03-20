@@ -6,8 +6,8 @@ import {
   getRoutes
 } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
-import type { UnsignedTransaction } from 'ethers';
-import { BigNumber } from 'ethers';
+import type { UnsignedTransaction, BigNumber } from 'ethers';
+import { ethers } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
@@ -38,7 +38,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public sourceNetwork?: Domain;
   public destinationNetwork?: Domain;
   public selectedResource?: Resource;
-  public resourceAmount: BigNumber = BigNumber.from(0);
+  public resourceAmount: BigNumber = ethers.constants.Zero;
   public destinationAddress: string = '';
 
   public supportedSourceNetworks: Domain[] = [];
