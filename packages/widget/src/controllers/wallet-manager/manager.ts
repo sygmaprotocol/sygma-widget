@@ -61,6 +61,9 @@ export class WalletController implements ReactiveController {
   disconnectWallet = (): void => {
     this.disconnectEvmWallet();
     this.disconnectSubstrateWallet();
+    this.host.dispatchEvent(
+      new CustomEvent('wallet-disconnected', { bubbles: true, composed: true })
+    );
   };
 
   disconnectEvmWallet = (): void => {

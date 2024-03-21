@@ -16,7 +16,7 @@ import type { AppMetadata } from '@web3-onboard/common';
 import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
-import './components/amount-selector';
+import './components/resource-amount-selector';
 import { BaseComponent } from './components/common/base-component/base-component';
 import './components/transfer/fungible/fungible-token-transfer';
 import './components/network-selector';

@@ -1,4 +1,4 @@
-export { AmountSelector } from './amount-selector';
+export { ResourceAmountSelector } from './resource-amount-selector';
 export { NetworkSelector } from './network-selector';
 export { OverlayComponent } from './common/overlay-component';
 export { ConnectWalletButton } from './common/buttons/connect-wallet';
