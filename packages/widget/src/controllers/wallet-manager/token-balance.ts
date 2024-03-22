@@ -140,6 +140,9 @@ export class TokenBalanceController implements ReactiveController {
     const { resource, domain } = params;
     const { signerAddress } = this.walletContext.value
       ?.substrateWallet as SubstrateWallet;
+
+    // ! domain.chainId is not parachain ID
+    // ! therefore this doesn't work
     const apiPromise =
       this.substrateProviderContext.value?.substrateProviders?.get(
         domain.chainId
