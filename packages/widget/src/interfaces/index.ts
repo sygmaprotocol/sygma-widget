@@ -1,9 +1,11 @@
 import type {
+  Environment,
   EvmResource,
   SubstrateResource
 } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
+import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
 
 export type ThemeVariables =
   | 'mainColor'
@@ -22,6 +24,7 @@ export interface Eip1193Provider {
 }
 
 export interface ISygmaProtocolWidget {
+  environment?: Environment;
   whitelistedSourceNetworks?: string[];
   whitelistedDestinationNetworks?: string[];
   evmProvider?: Eip1193Provider;
@@ -33,6 +36,7 @@ export interface ISygmaProtocolWidget {
   darkTheme?: boolean;
   customLogo?: SVGElement;
   theme?: Theme;
+  walletConnectOptions?: WalletConnectOptions;
 }
 
 export class SdkInitializedEvent extends CustomEvent<{

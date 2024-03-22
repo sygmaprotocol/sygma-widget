@@ -13,10 +13,10 @@ import '../../address-input';
 import '../../amount-selector';
 import './transfer-button';
 import './transfer-status';
-import { BaseComponent } from '../../common/base-component';
 import '../../network-selector';
 import { Directions } from '../../network-selector/network-selector';
 import { WalletController } from '../../../controllers';
+import { BaseComponent } from '../../common/base-component';
 import { styles } from './styles';
 
 @customElement('sygma-fungible-transfer')
@@ -26,7 +26,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   @property({ type: Array }) whitelistedSourceResources?: Array<string>;
 
   @property({ type: String })
-  environment: Environment = Environment.MAINNET;
+  environment?: Environment = Environment.MAINNET;
 
   @property({ type: Object })
   onSourceNetworkSelected?: (domain: Domain) => void;
@@ -36,7 +36,7 @@ export class FungibleTokenTransfer extends BaseComponent {
 
   connectedCallback(): void {
     super.connectedCallback();
-    void this.transferController.init(this.environment);
+    void this.transferController.init(this.environment!);
   }
 
   private onClick = (): void => {
@@ -72,7 +72,7 @@ export class FungibleTokenTransfer extends BaseComponent {
     }
 
     if (state === FungibleTransferState.COMPLETED) {
-      return;
+      this.transferController.reset();
     }
   };
 
@@ -86,7 +86,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   }
 
   renderTransferStatus(): HTMLTemplateResult {
-    return html`<section>
+    return html` <section>
       <sygma-transfer-status
         .amount=${this.transferController.resourceAmount}
         .tokenDecimals=${this.transferController.selectedResource?.decimals}
@@ -114,6 +114,7 @@ export class FungibleTokenTransfer extends BaseComponent {
             if (network) {
               this.onSourceNetworkSelected?.(network);
               this.transferController.onSourceNetworkSelected(network);
+              void this.walletController.switchChain(network?.chainId);
             }
           }}
           .networks=${this.transferController.supportedSourceNetworks}
@@ -142,8 +143,9 @@ export class FungibleTokenTransfer extends BaseComponent {
       </section>
       <section>
         <sygma-address-input
-          .address=${this.transferController.destinatonAddress}
+          .address=${this.transferController.destinationAddress}
           .onAddressChange=${this.transferController.onDestinationAddressChange}
+          .networkType=${this.transferController.destinationNetwork?.type}
         >
         </sygma-address-input>
       </section>

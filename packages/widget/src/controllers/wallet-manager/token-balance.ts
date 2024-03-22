@@ -3,12 +3,15 @@ import type { EvmResource, Resource } from '@buildwithsygma/sygma-sdk-core';
 import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
 import { Web3Provider } from '@ethersproject/providers';
 import { ContextConsumer } from '@lit/context';
-import { BigNumber } from 'ethers';
+import { ethers } from 'ethers';
+import type { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
 
 const BALANCE_REFRESH_MS = 5_000;
+
+export const BALANCE_UPDATE_KEY = 'accountBalance';
 
 export class TokenBalanceController implements ReactiveController {
   host: ReactiveElement;
@@ -18,7 +21,7 @@ export class TokenBalanceController implements ReactiveController {
   loadingBalance: boolean = true;
 
   //"wei"
-  balance: BigNumber = BigNumber.from(0);
+  balance: BigNumber = ethers.constants.Zero;
   decimals: number = 18;
 
   timeout?: ReturnType<typeof setInterval>;
@@ -41,7 +44,7 @@ export class TokenBalanceController implements ReactiveController {
     if (this.timeout) {
       clearInterval(this.timeout);
     }
-    this.balance = BigNumber.from(0);
+    this.balance = ethers.constants.Zero;
     this.host.requestUpdate();
     if (isEvmResource(resource)) {
       if (resource.type === ResourceType.FUNGIBLE) {
@@ -67,6 +70,13 @@ export class TokenBalanceController implements ReactiveController {
     throw new Error('Unsupported resource');
   }
 
+  resetBalance(): void {
+    if (this.timeout) {
+      clearInterval(this.timeout);
+    }
+    this.balance = ethers.constants.Zero;
+  }
+
   subscribeERC20BalanceUpdate = (resource: EvmResource): void => {
     const provider = this.walletContext.value?.evmWallet?.provider;
     const address = this.walletContext.value?.evmWallet?.address;
@@ -80,7 +90,7 @@ export class TokenBalanceController implements ReactiveController {
       this.decimals = await ierc20.decimals();
       this.balance = await ierc20.balanceOf(address);
       this.loadingBalance = false;
-      this.host.requestUpdate();
+      this.host.requestUpdate(BALANCE_UPDATE_KEY);
     }.bind(this)();
   };
 
