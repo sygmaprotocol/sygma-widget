@@ -60,8 +60,11 @@ export class FungibleTokenTransferController implements ReactiveController {
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
 
-  isWalletConnected(context: WalletContext): boolean {
-    return !!context.evmWallet || !!context.substrateWallet;
+  isWalletDisconnected(context: WalletContext): boolean {
+    // Skip the method call during init
+    if (Object.values(context).length === 0) return false;
+
+    return !(!!context.evmWallet || !!context.substrateWallet);
   }
 
   constructor(host: ReactiveElement) {
@@ -78,8 +81,7 @@ export class FungibleTokenTransferController implements ReactiveController {
         }
         this.host.requestUpdate();
 
-        // Check if update is due to wallet event and skip the method call during init
-        if (Object.values(context).length && !this.isWalletConnected(context)) {
+        if (this.isWalletDisconnected(context)) {
           this.reset();
           this.supportedResources = [];
         }
