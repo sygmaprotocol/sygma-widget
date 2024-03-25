@@ -9,6 +9,7 @@ import {
   FungibleTokenTransferController,
   FungibleTransferState
 } from '../../../controllers/transfers/fungible-token-transfer';
+import '../../common/buttons/button';
 import '../../address-input';
 import '../../amount-selector';
 import './transfer-button';
@@ -144,6 +145,7 @@ export class FungibleTokenTransfer extends BaseComponent {
         <sygma-address-input
           .address=${this.transferController.destinatonAddress}
           .onAddressChange=${this.transferController.onDestinationAddressChange}
+          .networkType=${this.transferController.destinationNetwork?.type}
         >
         </sygma-address-input>
       </section>
