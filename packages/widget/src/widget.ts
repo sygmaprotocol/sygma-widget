@@ -44,10 +44,7 @@ class SygmaProtocolWidget
 
   @property({ type: Object }) evmProvider?: Eip1193Provider;
 
-  @property({ type: Array }) substrateProviders?: Array<{
-    domainId: number;
-    api: ApiPromise;
-  }>;
+  @property({ type: Array }) substrateProviders?: Array<ApiPromise>;
 
   @property({ type: Object }) substrateSigner?: Signer;
 

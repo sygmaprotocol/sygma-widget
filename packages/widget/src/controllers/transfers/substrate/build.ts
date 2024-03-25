@@ -16,8 +16,9 @@ export async function buildSubstrateFungibleTransactions(
     return;
   }
 
+  // TODO: change `chainId` to `parachainId`
   const parachainId = this.sourceNetwork.chainId;
-  const substrateProvider = this.getSubstrateProvider(parachainId);
+  const substrateProvider = this.getSubstrateProvider(2004);
 
   if (!substrateProvider) {
     return;
