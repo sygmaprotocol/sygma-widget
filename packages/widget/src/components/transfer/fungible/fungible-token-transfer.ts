@@ -9,6 +9,7 @@ import {
   FungibleTokenTransferController,
   FungibleTransferState
 } from '../../../controllers/transfers/fungible-token-transfer';
+import '../../common/buttons/button';
 import '../../address-input';
 import '../../resource-amount-selector';
 import './transfer-button';
