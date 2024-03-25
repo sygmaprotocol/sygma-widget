@@ -1,10 +1,13 @@
 import { createContext, provide } from '@lit/context';
 import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
+import type { u32 } from '@polkadot/types-codec';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import type { ApiPromise } from '@polkadot/api';
+import type { PropertyValues } from '@lit/reactive-element';
 import { BaseComponent } from '../components/common/base-component';
 
 export interface EvmWallet {
@@ -31,6 +34,13 @@ export enum WalletContextKeys {
   SUBSTRATE_WALLET = 'substrateWallet'
 }
 
+export type ParachainId = number;
+export type ParachainProviders = Map<ParachainId, ApiPromise>;
+
+export interface SubstrateProviderContext {
+  substrateProviders?: ParachainProviders;
+}
+
 declare global {
   interface HTMLElementEventMap {
     walletUpdate: WalletUpdateEvent;
@@ -39,6 +49,10 @@ declare global {
 
 export const walletContext = createContext<WalletContext>(
   Symbol('sygma-wallet-context')
+);
+
+export const substrateProviderContext = createContext<SubstrateProviderContext>(
+  Symbol('substrate-provider-context')
 );
 
 export class WalletUpdateEvent extends CustomEvent<WalletContext> {
@@ -54,14 +68,55 @@ export class WalletContextProvider extends BaseComponent {
   @provide({ context: walletContext })
   private walletContext: WalletContext = {};
 
+  @provide({ context: substrateProviderContext })
+  substrateProviderContext: SubstrateProviderContext = {};
+
   @property({ attribute: false, type: Object })
   evmWalllet?: EvmWallet;
 
-  connectedCallback(): void {
+  @property({ attribute: false })
+  substrateProviders?: Array<ApiPromise> = [];
+
+  /**
+   * Creates a provider map w.r.t parachain ids
+   * @param {Array<ApiPromise>} providers array of {@link ApiPromise}
+   * @returns {Promise<ParachainProviders>}
+   */
+  async createProvidersMap(
+    providers: Array<ApiPromise>
+  ): Promise<ParachainProviders> {
+    const map: ParachainProviders = new Map();
+
+    for (const provider of providers) {
+      try {
+        // TODO: use polkadot type augmentation to remove "as 32"
+        const parachainId = await provider.query.parachainInfo.parachainId();
+        const _parachainId = (parachainId as u32).toNumber();
+        map.set(_parachainId, provider);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    return map;
+  }
+
+  async connectedCallback(): Promise<void> {
     super.connectedCallback();
     if (this.evmWalllet) {
       this.walletContext.evmWallet = this.evmWalllet;
     }
+
+    if (this.substrateProviders) {
+      const providersMap = await this.createProvidersMap(
+        this.substrateProviders
+      );
+
+      this.substrateProviderContext = {
+        substrateProviders: providersMap
+      };
+    }
+
     this.addEventListener('walletUpdate', (event: WalletUpdateEvent) => {
       this.walletContext = {
         ...this.walletContext,
@@ -78,6 +133,23 @@ export class WalletContextProvider extends BaseComponent {
         );
       }
     });
+  }
+
+  // since we provider as property from widget
+  protected async updated(
+    changedProperties: PropertyValues<this>
+  ): Promise<void> {
+    if (changedProperties.has('substrateProviders')) {
+      if (this.substrateProviders) {
+        const providers = await this.createProvidersMap(
+          this.substrateProviders
+        );
+
+        this.substrateProviderContext = {
+          substrateProviders: providers
+        };
+      }
+    }
   }
 
   disconnectedCallback(): void {

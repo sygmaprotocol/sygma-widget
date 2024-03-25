@@ -10,6 +10,9 @@ import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
+
+import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
+import type { AppMetadata } from '@web3-onboard/common';
 import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
@@ -33,13 +36,15 @@ class SygmaProtocolWidget
 {
   static styles = styles;
 
+  @property({ type: String }) environment?: Environment;
+
   @property({ type: Array }) whitelistedSourceNetworks?: string[];
 
   @property({ type: Array }) whitelistedDestinationNetworks?: string[];
 
   @property({ type: Object }) evmProvider?: Eip1193Provider;
 
-  @property() substrateProvider?: ApiPromise | string;
+  @property({ type: Array }) substrateProviders?: Array<ApiPromise>;
 
   @property({ type: Object }) substrateSigner?: Signer;
 
@@ -56,6 +61,10 @@ class SygmaProtocolWidget
   @property({ type: Object }) customLogo?: SVGElement;
 
   @property({ type: Object }) theme?: Theme;
+
+  @property({ type: Object }) walletConnectOptions?: WalletConnectOptions;
+
+  @property({ type: Object }) appMetadata?: AppMetadata;
 
   @state()
   private isLoading = false;
@@ -77,34 +86,54 @@ class SygmaProtocolWidget
     return html``;
   }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    const env = import.meta.env.VITE_BRIDGE_ENV ?? Environment.MAINNET;
+    if (Object.values(Environment).includes(env as Environment)) {
+      this.environment = env as Environment;
+    } else {
+      throw new Error(
+        `Invalid environment value, please choose following: ${Object.values(Environment).join(', ')}`
+      );
+    }
+  }
+
   render(): HTMLTemplateResult {
     return html`
-      <sygma-wallet-context-provider>
-        <section
-          class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
+      <sygma-config-context-provider
+        .appMetadata=${this.appMetadata}
+        .theme=${this.theme}
+        .walletConnectOptions=${this.walletConnectOptions}
+      >
+        <sygma-wallet-context-provider
+          .substrateProviders=${this.substrateProviders}
         >
-          <section class="widgetHeader">
-            <div class="brandLogoContainer title">[Brand] Transfer</div>
-            ${this.renderConnect()}
+          <section
+            class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
+          >
+            <section class="widgetHeader">
+              <div class="brandLogoContainer title">[Brand] Transfer</div>
+              ${this.renderConnect()}
+            </section>
+            <section class="widgetContent">
+              <sygma-fungible-transfer
+                @sdk-initialized=${(event: SdkInitializedEvent) =>
+                  (this.sdkInitialized = event.detail.hasInitialized)}
+                .onSourceNetworkSelected=${(domain: Domain) =>
+                  (this.sourceNetwork = domain)}
+                .whitelistedSourceResources=${this.whitelistedSourceNetworks}
+                environment=${Environment.TESTNET}
+              >
+              </sygma-fungible-transfer>
+            </section>
+            <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
+            ${when(
+              this.isLoading || !this.sdkInitialized,
+              () => html`<sygma-overlay-component></sygma-overlay-component>`
+            )}
           </section>
-          <section class="widgetContent">
-            <sygma-fungible-transfer
-              @sdk-initialized=${(event: SdkInitializedEvent) =>
-                (this.sdkInitialized = event.detail.hasInitialized)}
-              .onSourceNetworkSelected=${(domain: Domain) =>
-                (this.sourceNetwork = domain)}
-              .whitelistedSourceResources=${this.whitelistedSourceNetworks}
-              environment=${Environment.TESTNET}
-            >
-            </sygma-fungible-transfer>
-          </section>
-          <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
-          ${when(
-            this.isLoading || !this.sdkInitialized,
-            () => html`<sygma-overlay-component></sygma-overlay-component>`
-          )}
-        </section>
-      </sygma-wallet-context-provider>
+        </sygma-wallet-context-provider>
+      </sygma-config-context-provider>
     `;
   }
 }
