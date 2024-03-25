@@ -34,15 +34,6 @@ export class FungibleTokenTransfer extends BaseComponent {
   transferController = new FungibleTokenTransferController(this);
   walletController = new WalletController(this);
 
-  constructor() {
-    super();
-
-    document.addEventListener('wallet-disconnected', () => {
-      this.transferController.reset();
-      this.transferController.supportedResources = [];
-    });
-  }
-
   connectedCallback(): void {
     super.connectedCallback();
     void this.transferController.init(this.environment!);

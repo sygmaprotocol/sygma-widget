@@ -9,6 +9,7 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction, BigNumber } from 'ethers';
 import { ethers } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
+import type { WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
@@ -59,19 +60,29 @@ export class FungibleTokenTransferController implements ReactiveController {
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
 
+  isWalletConnected(context: WalletContext): boolean {
+    return !!context.evmWallet || !!context.substrateWallet;
+  }
+
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
       subscribe: true,
-      callback: () => {
+      callback: (context: Partial<WalletContext>) => {
         try {
           this.buildTransactions();
         } catch (e) {
           console.error(e);
         }
         this.host.requestUpdate();
+
+        // Check if update is due to wallet event and skip the method call during init
+        if (Object.values(context).length && !this.isWalletConnected(context)) {
+          this.reset();
+          this.supportedResources = [];
+        }
       }
     });
   }

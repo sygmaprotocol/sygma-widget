@@ -159,33 +159,6 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
     );
   });
 
-  it('resets the fields on wallet disconnect event', async () => {
-    // Set up and attach the component to the DOM
-    const el = await fixture<ResourceAmountSelector>(
-      html` <sygma-resource-amount-selector
-        .resources=${resources}
-      ></sygma-resource-amount-selector>`
-    );
-
-    el.selectedResource = el.resources[0];
-    el.amount = '100';
-    await el.updateComplete;
-
-    // Dispatch the wallet-disconnected event
-    el.dispatchEvent(
-      new CustomEvent('wallet-disconnected', {
-        bubbles: true,
-        composed: true
-      })
-    );
-    await el.updateComplete; // Wait for the component to process the event
-
-    // Assertions to verify the state has been reset
-    assert.equal(el.amount, '0');
-    assert.isNull(el.selectedResource);
-    assert.isEmpty(el.resources);
-  });
-
   describe('Validation', () => {
     it('validates input amount when balance is low', async () => {
       const el = await fixture(

@@ -49,12 +49,12 @@ export class WalletContextProvider extends BaseComponent {
   private walletContext: WalletContext = {};
 
   @property({ attribute: false, type: Object })
-  evmWalllet?: EvmWallet;
+  evmWallet?: EvmWallet;
 
   connectedCallback(): void {
     super.connectedCallback();
-    if (this.evmWalllet) {
-      this.walletContext.evmWallet = this.evmWalllet;
+    if (this.evmWallet) {
+      this.walletContext.evmWallet = this.evmWallet;
     }
     this.addEventListener('walletUpdate', (event: WalletUpdateEvent) => {
       this.walletContext = {

@@ -41,16 +41,6 @@ export class ResourceAmountSelector extends BaseComponent {
   @state() validationMessage: string | null = null;
   @state() amount: string = '0';
 
-  constructor() {
-    super();
-    document.addEventListener('wallet-disconnected', () => {
-      this.amount = '0';
-      this.selectedResource = null;
-      this.resources = [];
-      this.tokenBalanceController.resetBalance();
-    });
-  }
-
   tokenBalanceController = new TokenBalanceController(this);
 
   _useMaxBalance = (): void => {
