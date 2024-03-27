@@ -1,4 +1,11 @@
-import type { Domain, Resource, Route } from '@buildwithsygma/sygma-sdk-core';
+import type {
+  Domain,
+  EthereumConfig,
+  EvmFee,
+  Resource,
+  Route,
+  SubstrateConfig
+} from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
   Environment,
@@ -48,6 +55,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
+  public fee?: EvmFee;
 
   //Evm transfer
   protected buildEvmTransactions = buildEvmFungibleTransactions;
@@ -68,6 +76,13 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (Object.values(context).length === 0) return false;
 
     return !(!!context.evmWallet || !!context.substrateWallet);
+  }
+
+  get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
+    if (this.sourceNetwork) {
+      return this.config.getDomainConfig(this.sourceNetwork.id);
+    }
+    return undefined;
   }
 
   constructor(host: ReactiveElement) {
@@ -127,6 +142,10 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
   }
 
+  resetFee(): void {
+    this.fee = undefined;
+  }
+
   reset({ omitSourceNetworkReset } = { omitSourceNetworkReset: false }): void {
     if (!omitSourceNetworkReset) {
       this.sourceNetwork = undefined;
@@ -138,6 +157,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
     this.transferTransactionId = undefined;
+    this.resetFee();
     void this.init(this.env);
   }
 
@@ -335,6 +355,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       !this.selectedResource ||
       !this.destinationAddress
     ) {
+      this.resetFee();
       return;
     }
     switch (this.sourceNetwork.type) {
