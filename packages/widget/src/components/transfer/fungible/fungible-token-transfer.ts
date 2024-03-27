@@ -13,6 +13,7 @@ import '../../address-input';
 import '../../amount-selector';
 import './transfer-button';
 import './transfer-status';
+import './transfer-detail';
 import { BaseComponent } from '../../common/base-component';
 import '../../network-selector';
 import { Directions } from '../../network-selector/network-selector';
@@ -146,6 +147,13 @@ export class FungibleTokenTransfer extends BaseComponent {
           .onAddressChange=${this.transferController.onDestinationAddressChange}
         >
         </sygma-address-input>
+      </section>
+      <section>
+        <sygma-fungible-transfer-detail
+          .selectedResource=${this.transferController.selectedResource}
+          .fee=${this.transferController.fee}
+          .sourceDomainConfig=${this.transferController.sourceDomainConfig}
+        ></sygma-fungible-transfer-detail>
       </section>
       <section>
         <sygma-fungible-transfer-button

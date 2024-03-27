@@ -1,3 +1,4 @@
+import '../../../common/buttons/button';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
