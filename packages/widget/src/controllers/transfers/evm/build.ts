@@ -45,27 +45,24 @@ export async function buildEvmFungibleTransactions(
   );
   const originalFee = await evmTransfer.getFee(originalTransfer);
   //in case of percentage fee handler, we are calculating what amount + fee will result int user inputed amount
-  //in case of fixed fee handler, fee is taken from native token
+  //in case of fixed(basic) fee handler, fee is taken from native token
   if (originalFee.type === FeeHandlerType.PERCENTAGE) {
-    const { lowerBound, upperBound } = originalFee as PercentageFee;
-
-    const feePercentage = originalFee.fee
+    const { lowerBound, upperBound, percentage } = originalFee as PercentageFee;
+    const userInputAmount = this.resourceAmount;
+    //calculate amount without fee (percentage)
+    const feelessAmount = userInputAmount
       .mul(constants.WeiPerEther)
-      .div(this.resourceAmount);
+      .div(utils.parseEther(String(1 + percentage)));
 
-    const actualAmount = this.resourceAmount
-      .mul(constants.WeiPerEther)
-      .div(
-        utils.parseEther(
-          String(1 + Number.parseFloat(utils.formatEther(feePercentage)))
-        )
-      );
-    const feeAmount = this.resourceAmount.sub(actualAmount);
-    if (feeAmount.lt(lowerBound)) {
-      this.resourceAmount = this.resourceAmount.sub(lowerBound);
+    const calculatedFee = userInputAmount.sub(feelessAmount);
+    this.resourceAmount = feelessAmount;
+    //if calculated percentage fee is less than lower fee bound, substract lower bound from user input. If lower bound is 0, bound is ignored
+    if (calculatedFee.lt(lowerBound) && lowerBound.gt(0)) {
+      this.resourceAmount = userInputAmount.sub(lowerBound);
     }
-    if (feeAmount.gt(upperBound)) {
-      this.resourceAmount = this.resourceAmount.sub(upperBound);
+    //if calculated percentage fee is more than upper fee bound, substract upper bound from user input. If upper bound is 0, bound is ignored
+    if (calculatedFee.gt(upperBound) && upperBound.gt(0)) {
+      this.resourceAmount = userInputAmount.sub(upperBound);
     }
   }
 
