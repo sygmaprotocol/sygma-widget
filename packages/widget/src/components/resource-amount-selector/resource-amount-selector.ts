@@ -17,13 +17,11 @@ import { BaseComponent } from '../common';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { styles } from './styles';
 
-@customElement('sygma-resource-selector')
-export class AmountSelector extends BaseComponent {
+@customElement('sygma-resource-amount-selector')
+export class ResourceAmountSelector extends BaseComponent {
   static styles = styles;
 
-  @property({
-    type: Array
-  })
+  @property({ type: Array })
   resources: Resource[] = [];
 
   @property({ type: Boolean })
@@ -205,6 +203,6 @@ export class AmountSelector extends BaseComponent {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sygma-resource-selector': AmountSelector;
+    'sygma-resource-amount-selector': ResourceAmountSelector;
   }
 }
