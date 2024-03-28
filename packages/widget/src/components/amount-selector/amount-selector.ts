@@ -1,20 +1,21 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
-import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { utils, type BigNumber } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
+import type { ApiPromise } from '@polkadot/api';
 import { networkIconsMap } from '../../assets';
 import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import {
   BALANCE_UPDATE_KEY,
   TokenBalanceController
 } from '../../controllers/wallet-manager/token-balance';
-import { tokenBalanceToNumber } from '../../utils/token';
+
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { BaseComponent } from '../common/base-component';
+import { tokenBalanceToNumber } from '../../utils/token';
 import { styles } from './styles';
 
 @customElement('sygma-resource-selector')
@@ -22,9 +23,9 @@ export class AmountSelector extends BaseComponent {
   static styles = styles;
 
   @property({
-    type: Number
+    type: Object
   })
-  sourceParachainId?: ParachainID;
+  sourceSubstrateProvider?: ApiPromise;
 
   @property({
     type: Array,
@@ -90,7 +91,7 @@ export class AmountSelector extends BaseComponent {
 
     this.tokenBalanceController.startBalanceUpdates(
       this.selectedResource,
-      this.sourceParachainId
+      this.sourceSubstrateProvider
     );
   };
 

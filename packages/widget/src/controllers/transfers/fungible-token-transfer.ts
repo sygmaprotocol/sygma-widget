@@ -25,7 +25,6 @@ import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { SdkInitializedEvent } from '../../interfaces';
-import type { ParachainId } from '../../context/wallet';
 import { substrateProviderContext } from '../../context/wallet';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
@@ -127,22 +126,18 @@ export class FungibleTokenTransferController implements ReactiveController {
    * @param {ParachainId} parachainId
    * @returns {ApiPromise | undefined}
    */
-  getSubstrateProvider(parachainId: ParachainId): ApiPromise | undefined {
-    if (this.sourceNetwork && this.sourceNetwork.type === Network.SUBSTRATE) {
-      return this.substrateProviderContext.value?.substrateProviders?.get(
-        parachainId
-      );
-    }
-
-    return undefined;
+  getSubstrateProvider(parachainId: ParachainID): ApiPromise | undefined {
+    return this.substrateProviderContext.value?.substrateProviders?.get(
+      parachainId
+    );
   }
 
-  getSourceParachainId(): ParachainID | undefined {
+  getSourceSubstrateProvider(): ApiPromise | undefined {
     if (this.sourceNetwork && this.sourceNetwork.type === Network.SUBSTRATE) {
       const domainConfig = this.config.getDomainConfig(
         this.sourceNetwork.id
       ) as SubstrateConfig;
-      return domainConfig.parachainId;
+      return this.getSubstrateProvider(domainConfig.parachainId as ParachainID);
     }
 
     return undefined;

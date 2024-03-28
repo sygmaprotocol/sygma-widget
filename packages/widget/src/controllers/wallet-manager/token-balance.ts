@@ -10,7 +10,6 @@ import { ContextConsumer } from '@lit/context';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { ApiPromise } from '@polkadot/api';
-import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { getAssetBalance } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
@@ -56,7 +55,10 @@ export class TokenBalanceController implements ReactiveController {
     clearInterval(this.timeout);
   }
 
-  startBalanceUpdates(resource: Resource, parachainId?: ParachainID): void {
+  startBalanceUpdates(
+    resource: Resource,
+    substrateProvider?: ApiPromise
+  ): void {
     if (this.timeout) {
       clearInterval(this.timeout);
     }
@@ -85,8 +87,8 @@ export class TokenBalanceController implements ReactiveController {
         return;
       }
     } else {
-      if (parachainId) {
-        const params = { resource, parachainId };
+      if (substrateProvider) {
+        const params = { resource, substrateProvider };
         void this.suscribeSubstrateBalanceUpdate(params);
         this.timeout = setInterval(
           this.suscribeSubstrateBalanceUpdate,
@@ -135,21 +137,18 @@ export class TokenBalanceController implements ReactiveController {
 
   suscribeSubstrateBalanceUpdate = (params: {
     resource: SubstrateResource;
-    parachainId: ParachainID;
+    substrateProvider: ApiPromise;
   }): void => {
-    const { resource, parachainId } = params;
+    const { resource, substrateProvider } = params;
     const { signerAddress } = this.walletContext.value
       ?.substrateWallet as SubstrateWallet;
-
-    const apiPromise =
-      this.substrateProviderContext.value?.substrateProviders?.get(parachainId);
 
     void async function (this: TokenBalanceController) {
       try {
         this.loadingBalance = true;
         this.host.requestUpdate();
         const tokenBalance = await getAssetBalance(
-          apiPromise as ApiPromise,
+          substrateProvider,
           resource.assetID as number,
           signerAddress
         );

@@ -1,11 +1,10 @@
-import { ParachainID, SubstrateAssetTransfer } from '@buildwithsygma/sygma-sdk-core/substrate';
-import type { SubstrateConfig } from '@buildwithsygma/sygma-sdk-core';
+import { SubstrateAssetTransfer } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { type FungibleTokenTransferController } from '../fungible-token-transfer';
 
 export async function buildSubstrateFungibleTransactions(
   this: FungibleTokenTransferController
 ): Promise<void> {
-  const parachainId = this.getSourceParachainId();
+  const substrateProvider = this.getSourceSubstrateProvider();
   const address = this.walletContext.value?.substrateWallet?.signerAddress;
 
   if (
@@ -14,15 +13,9 @@ export async function buildSubstrateFungibleTransactions(
     !this.resourceAmount ||
     !this.selectedResource ||
     !this.destinatonAddress ||
-    !parachainId ||
+    !substrateProvider ||
     !address
   ) {
-    return;
-  }
-
-  const substrateProvider = this.getSubstrateProvider(parachainId);
-
-  if (!substrateProvider) {
     return;
   }
 
