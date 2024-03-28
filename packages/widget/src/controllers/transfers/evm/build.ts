@@ -74,7 +74,6 @@ export async function buildEvmFungibleTransactions(
     this.resourceAmount.toString()
   );
   const fee = await evmTransfer.getFee(transfer);
-  transfer.details;
   this.pendingEvmApprovalTransactions = await evmTransfer.buildApprovals(
     transfer,
     fee
