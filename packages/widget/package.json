@@ -29,7 +29,7 @@
   "author": "Sygmaprotocol Product Team",
   "dependencies": {
     "@buildwithsygma/sygma-contracts": "^2.5.1",
-    "@buildwithsygma/sygma-sdk-core": "^2.7.2",
+    "@buildwithsygma/sygma-sdk-core": "^2.10.0",
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/contracts": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
