@@ -1,4 +1,5 @@
-import type { Domain, Resource } from '@buildwithsygma/sygma-sdk-core';
+import type { Resource } from '@buildwithsygma/sygma-sdk-core';
+import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { utils, type BigNumber } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
@@ -21,9 +22,9 @@ export class AmountSelector extends BaseComponent {
   static styles = styles;
 
   @property({
-    type: Object
+    type: Number
   })
-  sourceNetwork?: Domain;
+  sourceParachainId?: ParachainID;
 
   @property({
     type: Array,
@@ -86,9 +87,10 @@ export class AmountSelector extends BaseComponent {
   _onResourceSelectedHandler = ({ value }: DropdownOption<Resource>): void => {
     this.selectedResource = value;
     this.amount = 0;
+
     this.tokenBalanceController.startBalanceUpdates(
       this.selectedResource,
-      this.sourceNetwork
+      this.sourceParachainId
     );
   };
 

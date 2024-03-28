@@ -2,7 +2,8 @@ import type {
   Domain,
   EvmFee,
   Resource,
-  Route
+  Route,
+  SubstrateConfig
 } from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
@@ -16,7 +17,10 @@ import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ApiPromise, SubmittableResult } from '@polkadot/api';
-import type { SubstrateFee } from '@buildwithsygma/sygma-sdk-core/substrate';
+import type {
+  ParachainID,
+  SubstrateFee
+} from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
@@ -128,6 +132,17 @@ export class FungibleTokenTransferController implements ReactiveController {
       return this.substrateProviderContext.value?.substrateProviders?.get(
         parachainId
       );
+    }
+
+    return undefined;
+  }
+
+  getSourceParachainId(): ParachainID | undefined {
+    if (this.sourceNetwork && this.sourceNetwork.type === Network.SUBSTRATE) {
+      const domainConfig = this.config.getDomainConfig(
+        this.sourceNetwork.id
+      ) as SubstrateConfig;
+      return domainConfig.parachainId;
     }
 
     return undefined;

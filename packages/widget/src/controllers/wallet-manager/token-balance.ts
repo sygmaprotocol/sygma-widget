@@ -1,6 +1,5 @@
 import { ERC20__factory } from '@buildwithsygma/sygma-contracts';
 import type {
-  Domain,
   EvmResource,
   Resource,
   SubstrateResource
@@ -11,6 +10,7 @@ import { ContextConsumer } from '@lit/context';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { ApiPromise } from '@polkadot/api';
+import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { getAssetBalance } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
@@ -56,7 +56,7 @@ export class TokenBalanceController implements ReactiveController {
     clearInterval(this.timeout);
   }
 
-  startBalanceUpdates(resource: Resource, domain?: Domain): void {
+  startBalanceUpdates(resource: Resource, parachainId?: ParachainID): void {
     if (this.timeout) {
       clearInterval(this.timeout);
     }
@@ -85,8 +85,8 @@ export class TokenBalanceController implements ReactiveController {
         return;
       }
     } else {
-      if (domain) {
-        const params = { resource, domain };
+      if (parachainId) {
+        const params = { resource, parachainId };
         void this.suscribeSubstrateBalanceUpdate(params);
         this.timeout = setInterval(
           this.suscribeSubstrateBalanceUpdate,
@@ -135,18 +135,14 @@ export class TokenBalanceController implements ReactiveController {
 
   suscribeSubstrateBalanceUpdate = (params: {
     resource: SubstrateResource;
-    domain: Domain;
+    parachainId: ParachainID;
   }): void => {
-    const { resource, domain } = params;
+    const { resource, parachainId } = params;
     const { signerAddress } = this.walletContext.value
       ?.substrateWallet as SubstrateWallet;
 
-    // ! domain.chainId is not parachain ID
-    // ! therefore this doesn't work
     const apiPromise =
-      this.substrateProviderContext.value?.substrateProviders?.get(
-        domain.chainId
-      );
+      this.substrateProviderContext.value?.substrateProviders?.get(parachainId);
 
     void async function (this: TokenBalanceController) {
       try {
