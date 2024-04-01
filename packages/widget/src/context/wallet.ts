@@ -94,7 +94,7 @@ export class WalletContextProvider extends BaseComponent {
         const _parachainId = (parachainId as u32).toNumber();
         map.set(_parachainId, provider);
       } catch (error) {
-        console.error(error);
+        console.error('user provided substrate provider ignored', error);
       }
     }
 

@@ -23,6 +23,7 @@ export async function buildEvmFungibleTransactions(
     !address ||
     providerChaiId !== this.sourceNetwork.chainId
   ) {
+    this.resetFee();
     return;
   }
 

@@ -1,5 +1,6 @@
 import type {
   Domain,
+  EthereumConfig,
   EvmFee,
   Resource,
   Route,
@@ -94,6 +95,13 @@ export class FungibleTokenTransferController implements ReactiveController {
     ReactiveElement
   >;
 
+  get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
+    if (this.sourceNetwork) {
+      return this.config.getDomainConfig(this.sourceNetwork.id);
+    }
+    return undefined;
+  }
+
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
@@ -174,6 +182,10 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
   }
 
+  resetFee(): void {
+    this.fee = null;
+  }
+
   reset(): void {
     this.sourceNetwork = undefined;
     this.destinationNetwork = undefined;
@@ -183,6 +195,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
     this.transferTransactionId = undefined;
+    this.resetFee();
     void this.init(this.env);
   }
 
@@ -348,6 +361,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       !this.selectedResource ||
       !this.destinatonAddress
     ) {
+      this.resetFee();
       return;
     }
     switch (this.sourceNetwork.type) {
