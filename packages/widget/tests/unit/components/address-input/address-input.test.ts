@@ -45,6 +45,7 @@ describe('address-input component', function () {
 
     let el = await fixture(html`
       <sygma-address-input
+        .networkType=${Network.EVM}
         .address=${'0x123'}
         .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
@@ -64,7 +65,7 @@ describe('address-input component', function () {
 
     el = await fixture(html`
       <sygma-address-input
-        .network=${Network.SUBSTRATE}
+        .networkType=${Network.SUBSTRATE}
         .address=${'42sy'}
         .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
@@ -162,7 +163,7 @@ describe('address-input component', function () {
 
     const el = await fixture(html`
       <sygma-address-input
-        .network=${Network.SUBSTRATE}
+        .networkType=${Network.SUBSTRATE}
         .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
@@ -219,7 +220,7 @@ describe('address-input component', function () {
 
     const el = await fixture(html`
       <sygma-address-input
-        .network=${Network.SUBSTRATE}
+        .networkType=${Network.SUBSTRATE}
         .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
     `);
