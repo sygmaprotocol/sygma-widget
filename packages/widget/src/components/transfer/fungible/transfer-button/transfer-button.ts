@@ -6,7 +6,6 @@ import { choose } from 'lit/directives/choose.js';
 import { FungibleTransferState } from '../../../../controllers/transfers/fungible-token-transfer';
 import type { Button } from '../../../common';
 import { BaseComponent } from '../../../common/base-component';
-import '../../../common/buttons/button';
 
 const enabledStates = [
   FungibleTransferState.WRONG_CHAIN,
