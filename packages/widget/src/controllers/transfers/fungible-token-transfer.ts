@@ -255,17 +255,40 @@ export class FungibleTokenTransferController implements ReactiveController {
         await getRoutes(this.env, sourceNetwork.chainId, 'fungible')
       );
     }
+
     this.supportedResources = [];
-    if (!this.destinationNetwork) {
-      this.supportedDestinationNetworks = this.routesCache
-        .get(sourceNetwork.chainId)!
-        .filter(
-          (route) =>
-            route.toDomain.chainId !== sourceNetwork.chainId &&
-            !this.supportedDestinationNetworks.includes(route.toDomain)
-        )
-        .map((route) => route.toDomain);
+    const routes = this.routesCache.get(sourceNetwork.chainId)!;
+
+    // unselect destination if equal to source network or isn't in list of available destination networks
+    if (this.destinationNetwork?.id === sourceNetwork.id || !routes.length) {
+      this.destinationNetwork = undefined;
+      this.selectedResource = undefined;
+      this.supportedDestinationNetworks = [];
     }
+
+    // either first time or we had source === destination
+    if (!this.destinationNetwork) {
+      this.supportedDestinationNetworks = routes
+        .filter((route) => route.toDomain.chainId !== sourceNetwork.chainId)
+        .map((route) => route.toDomain);
+    } // source change but not destination, check if route is supported
+    else if (this.supportedDestinationNetworks.length && routes.length) {
+      const isSourceOnSuportedDestinations =
+        this.supportedDestinationNetworks.some(
+          (destinationDomain) =>
+            destinationDomain.chainId === this.sourceNetwork?.chainId
+        );
+      if (isSourceOnSuportedDestinations) {
+        this.supportedDestinationNetworks = routes
+          .filter(
+            (route) =>
+              route.toDomain.chainId !== sourceNetwork.chainId &&
+              !this.supportedDestinationNetworks.includes(route.toDomain)
+          )
+          .map((route) => route.toDomain);
+      }
+    }
+
     this.supportedResources = this.routesCache
       .get(sourceNetwork.chainId)!
       .filter(
@@ -275,13 +298,7 @@ export class FungibleTokenTransferController implements ReactiveController {
             !this.supportedResources.includes(route.resource))
       )
       .map((route) => route.resource);
-    //unselect destination if equal to source network or isn't in list of available destination networks
-    if (
-      this.destinationNetwork?.id === sourceNetwork.id ||
-      !this.supportedDestinationNetworks.includes(this.destinationNetwork!)
-    ) {
-      this.destinationNetwork = undefined;
-    }
+
     void this.buildTransactions();
     this.host.requestUpdate();
   };
