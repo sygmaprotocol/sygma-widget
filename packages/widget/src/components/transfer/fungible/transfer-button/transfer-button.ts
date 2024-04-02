@@ -9,12 +9,8 @@ import { BaseComponent } from '../../../common';
 const enabledStates = [
   FungibleTransferState.PENDING_APPROVALS,
   FungibleTransferState.PENDING_TRANSFER,
-  FungibleTransferState.COMPLETED
-];
-
-const disabledState = [
+  FungibleTransferState.COMPLETED,
   FungibleTransferState.WRONG_CHAIN,
-  FungibleTransferState.WRONG_DESTINATION_ADDRESS,
   FungibleTransferState.WALLET_NOT_CONNECTED
 ];
 
@@ -32,12 +28,9 @@ export class FungibleTransferButton extends BaseComponent {
   @property({ type: Object })
   onClick: () => void = () => {};
 
-  handleDisabledState = (): boolean =>
-    !enabledStates.includes(this.state) || disabledState.includes(this.state);
-
   render(): HTMLTemplateResult {
     return html`<sygma-action-button
-      .disabled=${this.handleDisabledState()}
+      .disabled=${!enabledStates.includes(this.state)}
       .isLoading=${loadingStates.includes(this.state)}
       .text=${choose(
         this.state,

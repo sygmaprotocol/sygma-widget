@@ -112,6 +112,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       this.sourceNetwork = undefined;
     }
     this.destinationNetwork = undefined;
+    this.selectedResource = undefined;
     this.pendingEvmApprovalTransactions = [];
     this.pendingEvmTransferTransaction = undefined;
     this.destinationAddress = '';
@@ -183,15 +184,15 @@ export class FungibleTokenTransferController implements ReactiveController {
   };
 
   getTransferState(): FungibleTransferState {
-    if (this.transferTransactionId) {
-      return FungibleTransferState.COMPLETED;
-    }
+    // Loading states
     if (this.waitingUserConfirmation) {
       return FungibleTransferState.WAITING_USER_CONFIRMATION;
     }
     if (this.waitingTxExecution) {
       return FungibleTransferState.WAITING_TX_EXECUTION;
     }
+
+    // Error States
     if (!this.sourceNetwork) {
       return FungibleTransferState.MISSING_SOURCE_NETWORK;
     }
@@ -211,6 +212,11 @@ export class FungibleTokenTransferController implements ReactiveController {
     }
     if (this.destinationAddress === '') {
       return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
+    }
+
+    // Enabled States
+    if (this.transferTransactionId) {
+      return FungibleTransferState.COMPLETED;
     }
 
     if (
