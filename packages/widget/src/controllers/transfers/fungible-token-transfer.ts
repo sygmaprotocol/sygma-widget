@@ -1,11 +1,4 @@
-import type {
-  Domain,
-  EthereumConfig,
-  EvmFee,
-  Resource,
-  Route,
-  SubstrateConfig
-} from '@buildwithsygma/sygma-sdk-core';
+import type { Domain, Resource, Route } from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
   Environment,
@@ -16,10 +9,9 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction, BigNumber } from 'ethers';
 import { ethers } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
+import type { WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
-
-import { SdkInitializedEvent } from '../../interfaces';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
 export enum FungibleTransferState {
@@ -53,7 +45,6 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
-  public fee?: EvmFee;
 
   //Evm transfer
   protected buildEvmTransactions = buildEvmFungibleTransactions;
@@ -69,11 +60,11 @@ export class FungibleTokenTransferController implements ReactiveController {
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
 
-  get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
-    if (this.sourceNetwork) {
-      return this.config.getDomainConfig(this.sourceNetwork.id);
-    }
-    return undefined;
+  isWalletDisconnected(context: WalletContext): boolean {
+    // Skip the method call during init
+    if (Object.values(context).length === 0) return false;
+
+    return !(!!context.evmWallet || !!context.substrateWallet);
   }
 
   constructor(host: ReactiveElement) {
@@ -82,13 +73,18 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
       subscribe: true,
-      callback: () => {
+      callback: (context: Partial<WalletContext>) => {
         try {
           this.buildTransactions();
         } catch (e) {
           console.error(e);
         }
         this.host.requestUpdate();
+
+        if (this.isWalletDisconnected(context)) {
+          this.reset();
+          this.supportedResources = [];
+        }
       }
     });
   }
@@ -97,39 +93,15 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.reset();
   }
 
-  /**
-   * Infinite Try/catch wrapper around
-   * {@link Config} from `@buildwithsygma/sygma-sdk-core`
-   * and emits a {@link SdkInitializedEvent}
-   * @param {number} time to wait before retrying request in ms
-   * @returns {void}
-   */
-  async retryInitSdk(retryMs = 100): Promise<void> {
-    try {
-      await this.config.init(1, this.env);
-      this.host.dispatchEvent(
-        new SdkInitializedEvent({ hasInitialized: true })
-      );
-    } catch (error) {
-      setTimeout(() => {
-        this.retryInitSdk(retryMs * 2).catch(console.error);
-      }, retryMs);
-    }
-  }
-
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
     await this.config.init(1, this.env);
     this.supportedSourceNetworks = this.config.getDomains();
     //remove once we have proper substrate transfer support
-    // .filter((n) => n.type === Network.EVM);
+    //.filter((n) => n.type === Network.EVM);
     this.supportedDestinationNetworks = this.config.getDomains();
     this.host.requestUpdate();
-  }
-
-  resetFee(): void {
-    this.fee = undefined;
   }
 
   reset(): void {
@@ -141,7 +113,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
     this.transferTransactionId = undefined;
-    this.resetFee();
     void this.init(this.env);
   }
 
@@ -339,7 +310,6 @@ export class FungibleTokenTransferController implements ReactiveController {
       !this.selectedResource ||
       !this.destinationAddress
     ) {
-      this.resetFee();
       return;
     }
     switch (this.sourceNetwork.type) {
