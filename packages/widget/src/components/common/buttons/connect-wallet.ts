@@ -105,6 +105,7 @@ export class ConnectWalletButton extends BaseComponent {
     </div>`;
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     'sygma-connect-wallet-btn': ConnectWalletButton;

@@ -25,6 +25,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   static styles = styles;
 
   @property({ type: Array }) whitelistedSourceResources?: Array<string>;
+  @property({ type: Array }) whitelistedDestinationNetworks?: Array<string>;
 
   @property({ type: String })
   environment?: Environment = Environment.MAINNET;
@@ -32,7 +33,11 @@ export class FungibleTokenTransfer extends BaseComponent {
   @property({ type: Object })
   onSourceNetworkSelected?: (domain: Domain) => void;
 
-  transferController = new FungibleTokenTransferController(this);
+  transferController = new FungibleTokenTransferController(
+    this,
+    this.whitelistedSourceResources,
+    this.whitelistedDestinationNetworks
+  );
   walletController = new WalletController(this);
 
   connectedCallback(): void {

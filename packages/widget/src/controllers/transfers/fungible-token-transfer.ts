@@ -46,6 +46,9 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
 
+  public whitelistedSourceResources?: string[];
+  public whitelistedDestinationNetworks?: string[];
+
   //Evm transfer
   protected buildEvmTransactions = buildEvmFungibleTransactions;
   protected executeNextEvmTransaction = executeNextEvmTransaction;
@@ -67,9 +70,15 @@ export class FungibleTokenTransferController implements ReactiveController {
     return !(!!context.evmWallet || !!context.substrateWallet);
   }
 
-  constructor(host: ReactiveElement) {
+  constructor(
+    host: ReactiveElement,
+    whitelistedSourceResources?: string[],
+    whitelistedDestinationNetworks?: string[]
+  ) {
     (this.host = host).addController(this);
     this.config = new Config();
+    this.whitelistedSourceResources = whitelistedSourceResources;
+    this.whitelistedDestinationNetworks = whitelistedDestinationNetworks;
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
       subscribe: true,
