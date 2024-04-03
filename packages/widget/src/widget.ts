@@ -6,6 +6,7 @@ import type {
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
+import type { WalletInit } from '@web3-onboard/common';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -32,6 +33,8 @@ class SygmaProtocolWidget
   implements ISygmaProtocolWidget
 {
   static styles = styles;
+
+  @property({ type: Array }) walletModules?: WalletInit[];
 
   @property({ type: Array }) whitelistedSourceNetworks?: string[];
 
@@ -79,7 +82,7 @@ class SygmaProtocolWidget
 
   render(): HTMLTemplateResult {
     return html`
-      <sygma-wallet-context-provider>
+      <sygma-wallet-context-provider .walletModules=${this.walletModules}>
         <section
           class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
         >

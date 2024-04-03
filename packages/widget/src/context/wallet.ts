@@ -2,6 +2,7 @@ import { createContext, provide } from '@lit/context';
 import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
 import type { EIP1193Provider } from '@web3-onboard/core';
+import type { WalletInit } from '@web3-onboard/common';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -24,6 +25,7 @@ export interface SubstrateWallet {
 export interface WalletContext {
   evmWallet?: EvmWallet;
   substrateWallet?: SubstrateWallet;
+  wallets?: WalletInit[];
 }
 
 export enum WalletContextKeys {
@@ -57,8 +59,12 @@ export class WalletContextProvider extends BaseComponent {
   @property({ attribute: false, type: Object })
   evmWalllet?: EvmWallet;
 
+  @property({ type: Array })
+  wallets?: WalletInit[];
+
   connectedCallback(): void {
     super.connectedCallback();
+    this.walletContext.wallets = this.wallets;
     if (this.evmWalllet) {
       this.walletContext.evmWallet = this.evmWalllet;
     }

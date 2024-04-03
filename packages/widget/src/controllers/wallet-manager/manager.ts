@@ -7,14 +7,42 @@ import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
+import type { WalletInit } from '@web3-onboard/common';
 
 import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
 
 export class WalletController implements ReactiveController {
+  readonly WALLET_CONNECT_PROJECT_ID = '2f5a3439ef861e2a3959d85afcd32d06';
+
   host: ReactiveElement;
 
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
+
+  /**
+   * Provides list of wallets specified by 3rd party
+   * if not, provides default list
+   * @param {{ dappUrl?: string }} options
+   * @returns {WalletInit[]}
+   */
+  getWallets(options?: { dappUrl?: string }): WalletInit[] {
+    const specifiedWallets = this.walletContext.value?.wallets;
+
+    if (!!specifiedWallets && specifiedWallets.length > 0)
+      return specifiedWallets;
+
+    const wallets = [];
+    const injected = injectedModule();
+    const walletConnect = walletConnectModule({
+      projectId: this.WALLET_CONNECT_PROJECT_ID,
+      dappUrl: options?.dappUrl
+    });
+
+    wallets.push(injected);
+    wallets.push(walletConnect);
+
+    return wallets;
+  }
 
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
@@ -92,16 +120,10 @@ export class WalletController implements ReactiveController {
     network: Domain,
     options?: { dappUrl?: string }
   ): Promise<void> => {
-    const injected = injectedModule();
+    const specifiedWallets = this.getWallets(options);
 
     const onboard = Onboard({
-      wallets: [
-        injected,
-        walletConnectModule({
-          projectId: '2f5a3439ef861e2a3959d85afcd32d06',
-          dappUrl: options?.dappUrl
-        })
-      ],
+      wallets: specifiedWallets,
       chains: [
         {
           id: network.chainId
