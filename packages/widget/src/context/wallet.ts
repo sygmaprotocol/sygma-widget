@@ -64,7 +64,9 @@ export class WalletContextProvider extends BaseComponent {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.walletContext.wallets = this.wallets;
+    if (this.wallets) {
+      this.walletContext.wallets = this.wallets;
+    }
     if (this.evmWalllet) {
       this.walletContext.evmWallet = this.evmWalllet;
     }
