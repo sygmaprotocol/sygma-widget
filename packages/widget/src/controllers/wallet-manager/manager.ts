@@ -31,16 +31,13 @@ export class WalletController implements ReactiveController {
     if (!!specifiedWallets && specifiedWallets.length > 0)
       return specifiedWallets;
 
-    const wallets = [];
     const injected = injectedModule();
     const walletConnect = walletConnectModule({
       projectId: this.WALLET_CONNECT_PROJECT_ID,
       dappUrl: options?.dappUrl
     });
 
-    wallets.push(injected);
-    wallets.push(walletConnect);
-
+    const wallets = [injected, walletConnect];
     return wallets;
   }
 
