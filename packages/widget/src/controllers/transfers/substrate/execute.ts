@@ -18,7 +18,7 @@ export async function executeNextSubstrateTransaction(
   )
     return;
 
-  const provider = this.getSourceSubstrateProvider();
+  const provider = this.sourceSubstrateProvider;
   this.waitingTxExecution = true;
   await (this.pendingTransferTransaction as SubstrateTransaction).signAndSend(
     sender,

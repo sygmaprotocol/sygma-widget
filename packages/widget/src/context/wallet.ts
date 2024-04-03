@@ -107,6 +107,7 @@ export class WalletContextProvider extends BaseComponent {
       this.walletContext.evmWallet = this.evmWalllet;
     }
 
+    // TODO: add default substrate providers
     if (this.substrateProviders) {
       const providersMap = await this.createProvidersMap(
         this.substrateProviders

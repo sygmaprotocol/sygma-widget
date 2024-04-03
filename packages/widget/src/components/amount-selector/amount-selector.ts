@@ -1,11 +1,14 @@
-import type { Resource } from '@buildwithsygma/sygma-sdk-core';
+import type {
+  EthereumConfig,
+  Resource,
+  SubstrateConfig
+} from '@buildwithsygma/sygma-sdk-core';
 import { utils, type BigNumber } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
-import type { ApiPromise } from '@polkadot/api';
 import { networkIconsMap } from '../../assets';
 import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import {
@@ -25,7 +28,7 @@ export class AmountSelector extends BaseComponent {
   @property({
     type: Object
   })
-  sourceSubstrateProvider?: ApiPromise;
+  sourceDomainConfig?: EthereumConfig | SubstrateConfig;
 
   @property({
     type: Array,
@@ -91,7 +94,7 @@ export class AmountSelector extends BaseComponent {
 
     this.tokenBalanceController.startBalanceUpdates(
       this.selectedResource,
-      this.sourceSubstrateProvider
+      this.sourceDomainConfig
     );
   };
 

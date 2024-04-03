@@ -1,7 +1,9 @@
 import { ERC20__factory } from '@buildwithsygma/sygma-contracts';
 import type {
+  EthereumConfig,
   EvmResource,
   Resource,
+  SubstrateConfig,
   SubstrateResource
 } from '@buildwithsygma/sygma-sdk-core';
 import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
@@ -9,7 +11,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { ContextConsumer } from '@lit/context';
 import { BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
-import type { ApiPromise } from '@polkadot/api';
+import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { getAssetBalance } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
@@ -57,7 +59,7 @@ export class TokenBalanceController implements ReactiveController {
 
   startBalanceUpdates(
     resource: Resource,
-    substrateProvider?: ApiPromise
+    sourceDomainConfig?: EthereumConfig | SubstrateConfig
   ): void {
     if (this.timeout) {
       clearInterval(this.timeout);
@@ -87,8 +89,12 @@ export class TokenBalanceController implements ReactiveController {
         return;
       }
     } else {
-      if (substrateProvider) {
-        const params = { resource, substrateProvider };
+      const config = sourceDomainConfig as SubstrateConfig;
+      if (config.parachainId) {
+        const params = {
+          resource,
+          parachainId: config.parachainId as ParachainID
+        };
         void this.suscribeSubstrateBalanceUpdate(params);
         this.timeout = setInterval(
           this.suscribeSubstrateBalanceUpdate,
@@ -97,6 +103,7 @@ export class TokenBalanceController implements ReactiveController {
         );
         return;
       }
+      throw new Error('parachainId unavailable');
     }
     throw new Error('Unsupported resource');
   }
@@ -137,11 +144,19 @@ export class TokenBalanceController implements ReactiveController {
 
   suscribeSubstrateBalanceUpdate = (params: {
     resource: SubstrateResource;
-    substrateProvider: ApiPromise;
+    parachainId: ParachainID;
   }): void => {
-    const { resource, substrateProvider } = params;
+    const { resource, parachainId } = params;
+
+    const substrateProvider =
+      this.substrateProviderContext.value?.substrateProviders?.get(parachainId);
     const { signerAddress } = this.walletContext.value
       ?.substrateWallet as SubstrateWallet;
+
+    if (!substrateProvider) {
+      console.error('substrate provider unavailable');
+      return;
+    }
 
     void async function (this: TokenBalanceController) {
       try {

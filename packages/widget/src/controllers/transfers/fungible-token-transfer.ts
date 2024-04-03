@@ -102,6 +102,29 @@ export class FungibleTokenTransferController implements ReactiveController {
     return undefined;
   }
 
+  get sourceSubstrateProvider(): ApiPromise | undefined {
+    if (this.sourceNetwork && this.sourceNetwork.type === Network.SUBSTRATE) {
+      const domainConfig = this.config.getDomainConfig(
+        this.sourceNetwork.id
+      ) as SubstrateConfig;
+      return this.getSubstrateProvider(domainConfig.parachainId as ParachainID);
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Provides substrate provider
+   * based on parachain id
+   * @param {ParachainId} parachainId
+   * @returns {ApiPromise | undefined}
+   */
+  getSubstrateProvider(parachainId: ParachainID): ApiPromise | undefined {
+    return this.substrateProviderContext.value?.substrateProviders?.get(
+      parachainId
+    );
+  }
+
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
@@ -126,29 +149,6 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   hostDisconnected(): void {
     this.reset();
-  }
-
-  /**
-   * Provides substrate provider
-   * based on parachain id
-   * @param {ParachainId} parachainId
-   * @returns {ApiPromise | undefined}
-   */
-  getSubstrateProvider(parachainId: ParachainID): ApiPromise | undefined {
-    return this.substrateProviderContext.value?.substrateProviders?.get(
-      parachainId
-    );
-  }
-
-  getSourceSubstrateProvider(): ApiPromise | undefined {
-    if (this.sourceNetwork && this.sourceNetwork.type === Network.SUBSTRATE) {
-      const domainConfig = this.config.getDomainConfig(
-        this.sourceNetwork.id
-      ) as SubstrateConfig;
-      return this.getSubstrateProvider(domainConfig.parachainId as ParachainID);
-    }
-
-    return undefined;
   }
 
   /**
