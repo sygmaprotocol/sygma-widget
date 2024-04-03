@@ -120,10 +120,10 @@ export class WalletController implements ReactiveController {
     network: Domain,
     options?: { dappUrl?: string }
   ): Promise<void> => {
-    const specifiedWallets = this.getWallets(options);
+    const walletsToConnect = this.getWallets(options);
 
     const onboard = Onboard({
-      wallets: specifiedWallets,
+      wallets: walletsToConnect,
       chains: [
         {
           id: network.chainId
