@@ -69,9 +69,6 @@ class SygmaProtocolWidget
   private isLoading = false;
 
   @state()
-  private sdkInitialized = false;
-
-  @state()
   private sourceNetwork?: Domain;
 
   private renderConnect(): HTMLTemplateResult {
@@ -124,8 +121,8 @@ class SygmaProtocolWidget
             </section>
             <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
             ${when(
-              this.isLoading || !this.sdkInitialized,
-              () => html` <sygma-overlay-component></sygma-overlay-component>`
+              this.isLoading,
+              () => html`<sygma-overlay-component></sygma-overlay-component>`
             )}
           </section>
         </sygma-wallet-context-provider>
