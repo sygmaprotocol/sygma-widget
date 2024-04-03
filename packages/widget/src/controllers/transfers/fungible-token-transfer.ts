@@ -146,7 +146,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   onDestinationNetworkSelected = (network: Domain | undefined): void => {
     this.destinationNetwork = network;
     this.setSenderDefaultDestinationAddress();
-    if (this.sourceNetwork && !this.selectedResource) {
+    if (this.sourceNetwork) {
       //filter resources
       void this.filterDestinationNetworksAndResources(this.sourceNetwork);
       return;
