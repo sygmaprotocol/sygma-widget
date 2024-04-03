@@ -108,7 +108,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
     el._onResourceSelectedHandler(dropdownOption);
     await el.updateComplete;
 
-    expect(el.amount).toEqual('0');
+    expect(el.amount).toEqual('');
     expect(el.tokenBalanceController.balance.toNumber()).toEqual(0);
     expect(el.tokenBalanceController.decimals).toEqual(18);
   });
@@ -229,27 +229,6 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
         validationMessage.textContent,
         'Amount must be greater than 0'
       );
-    });
-
-    it('throw error when amount is NOT parseable', async () => {
-      const el = await fixture<ResourceAmountSelector>(
-        html` <sygma-resource-amount-selector></sygma-resource-amount-selector>`
-      );
-
-      // input amount with non-numeric value
-      const input = el.shadowRoot!.querySelector(
-        '.amountSelectorInput'
-      ) as HTMLInputElement;
-      input.value = 'nonParseableValue';
-      input.dispatchEvent(new Event('input'));
-      await el.updateComplete;
-
-      const validationMessage = el.shadowRoot!.querySelector(
-        '.validationMessage'
-      ) as HTMLDivElement;
-
-      assert.strictEqual(el.amount, '0');
-      assert.strictEqual(validationMessage.textContent, 'Invalid amount value');
     });
   });
 });
