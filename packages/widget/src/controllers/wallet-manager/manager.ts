@@ -28,8 +28,9 @@ export class WalletController implements ReactiveController {
   getWallets(options?: { dappUrl?: string }): WalletInit[] {
     const specifiedWallets = this.walletContext.value?.wallets;
 
-    if (!!specifiedWallets && specifiedWallets.length > 0)
+    if (!!specifiedWallets && specifiedWallets.length > 0) {
       return specifiedWallets;
+    }
 
     const injected = injectedModule();
     const walletConnect = walletConnectModule({
