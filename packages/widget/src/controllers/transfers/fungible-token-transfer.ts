@@ -16,12 +16,10 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction, BigNumber } from 'ethers';
 import { ethers } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
-
 import type { WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
-import { SdkInitializedEvent } from '../../interfaces';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
 export enum FungibleTransferState {
@@ -78,13 +76,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     return !(!!context.evmWallet || !!context.substrateWallet);
   }
 
-  get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
-    if (this.sourceNetwork) {
-      return this.config.getDomainConfig(this.sourceNetwork.id);
-    }
-    return undefined;
-  }
-
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
@@ -107,37 +98,25 @@ export class FungibleTokenTransferController implements ReactiveController {
     });
   }
 
-  hostDisconnected(): void {
-    this.reset();
+  get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
+    if (this.config.environment && this.sourceNetwork) {
+      return this.config.getDomainConfig(this.sourceNetwork.id);
+    }
+    return undefined;
   }
 
-  /**
-   * Infinite Try/catch wrapper around
-   * {@link Config} from `@buildwithsygma/sygma-sdk-core`
-   * and emits a {@link SdkInitializedEvent}
-   * @param {number} time to wait before retrying request in ms
-   * @returns {void}
-   */
-  async retryInitSdk(retryMs = 100): Promise<void> {
-    try {
-      await this.config.init(1, this.env);
-      this.host.dispatchEvent(
-        new SdkInitializedEvent({ hasInitialized: true })
-      );
-    } catch (error) {
-      setTimeout(() => {
-        this.retryInitSdk(retryMs * 2).catch(console.error);
-      }, retryMs);
-    }
+  hostDisconnected(): void {
+    this.reset();
   }
 
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
     await this.config.init(1, this.env);
-    this.supportedSourceNetworks = this.config.getDomains();
-    //remove once we have proper substrate transfer support
-    // .filter((n) => n.type === Network.EVM);
+    this.supportedSourceNetworks = this.config
+      .getDomains()
+      //remove once we have proper substrate transfer support
+      .filter((n) => n.type === Network.EVM);
     this.supportedDestinationNetworks = this.config.getDomains();
     this.host.requestUpdate();
   }
@@ -265,6 +244,7 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   executeTransaction(): void {
     if (!this.sourceNetwork) {
+      this.resetFee();
       return;
     }
     switch (this.sourceNetwork.type) {
@@ -355,7 +335,6 @@ export class FungibleTokenTransferController implements ReactiveController {
       !this.selectedResource ||
       !this.destinationAddress
     ) {
-      this.resetFee();
       return;
     }
     switch (this.sourceNetwork.type) {

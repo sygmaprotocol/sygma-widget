@@ -181,6 +181,32 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
         'Amount exceeds account balance'
       );
     });
+    it('revalidates on account balance change', async () => {
+      const el = await fixture<ResourceAmountSelector>(
+        html` <sygma-resource-amount-selector></sygma-resource-amount-selector>`
+      );
+
+      // input amount greater than balance
+      const input = el.shadowRoot!.querySelector(
+        '.amountSelectorInput'
+      ) as HTMLInputElement;
+      input.value = '150';
+      input.dispatchEvent(new Event('input'));
+      await nextFrame();
+
+      const validationMessage = el.shadowRoot!.querySelector(
+        '.validationMessage'
+      ) as HTMLDivElement;
+      assert.strictEqual(
+        validationMessage.textContent,
+        'Amount exceeds account balance'
+      );
+
+      el.tokenBalanceController.balance = utils.parseUnits('400', 'ether');
+      el.requestUpdate(BALANCE_UPDATE_KEY);
+      await el.updateComplete;
+      assert.isNull(el.shadowRoot!.querySelector('.validationMessage'));
+    });
 
     it('revalidates on account balance change', async () => {
       const el = await fixture<ResourceAmountSelector>(
@@ -225,6 +251,30 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       const validationMessage = el.shadowRoot!.querySelector(
         '.validationMessage'
       ) as HTMLDivElement;
+      assert.strictEqual(
+        validationMessage.textContent,
+        'Amount must be greater than 0'
+      );
+    });
+
+    it('throw error when amount is NOT parseable', async () => {
+      const el = await fixture<ResourceAmountSelector>(
+        html` <sygma-resource-amount-selector></sygma-resource-amount-selector>`
+      );
+
+      // input amount with non-numeric value
+      const input = el.shadowRoot!.querySelector(
+        '.amountSelectorInput'
+      ) as HTMLInputElement;
+      input.value = 'nonParseableValue';
+      input.dispatchEvent(new Event('input'));
+      await el.updateComplete;
+
+      const validationMessage = el.shadowRoot!.querySelector(
+        '.validationMessage'
+      ) as HTMLDivElement;
+
+      assert.strictEqual(el.amount, '0');
       assert.strictEqual(
         validationMessage.textContent,
         'Amount must be greater than 0'

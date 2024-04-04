@@ -6,10 +6,10 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { when } from 'lit/directives/when.js';
 
-import { configContext, walletContext } from '../../../context';
-import type { ConfigContext, WalletContext } from '../../../context';
 import { choose } from 'lit/directives/choose.js';
 import { greenCircleIcon, plusIcon } from '../../../assets';
+import type { ConfigContext, WalletContext } from '../../../context';
+import { configContext, walletContext } from '../../../context';
 import { WalletController } from '../../../controllers';
 import { shortAddress } from '../../../utils';
 import { BaseComponent } from '../base-component';
