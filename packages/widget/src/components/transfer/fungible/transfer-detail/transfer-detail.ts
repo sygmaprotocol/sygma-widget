@@ -56,7 +56,7 @@ export class FungibleTransferDetail extends BaseComponent {
     let _fee = '';
 
     if (decimals) {
-      _fee = tokenBalanceToNumber(fee, decimals).toFixed(4);
+      _fee = tokenBalanceToNumber(fee, decimals, 4);
     }
 
     return `${_fee} ${symbol}`;

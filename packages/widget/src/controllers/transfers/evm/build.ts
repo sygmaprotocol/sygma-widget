@@ -18,7 +18,7 @@ export async function buildEvmFungibleTransactions(
     !this.destinationNetwork ||
     !this.resourceAmount ||
     !this.selectedResource ||
-    !this.destinatonAddress ||
+    !this.destinationAddress ||
     !provider ||
     !address ||
     providerChaiId !== this.sourceNetwork.chainId
@@ -32,7 +32,7 @@ export async function buildEvmFungibleTransactions(
   const transfer = await evmTransfer.createFungibleTransfer(
     address,
     this.destinationNetwork.chainId,
-    this.destinatonAddress,
+    this.destinationAddress,
     this.selectedResource.resourceId,
     String(this.resourceAmount)
   );

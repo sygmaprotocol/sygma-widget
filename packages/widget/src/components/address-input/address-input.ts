@@ -4,6 +4,7 @@ import type { HTMLTemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
+import type { PropertyValues } from '@lit/reactive-element';
 import { validateAddress } from '../../utils';
 import { BaseComponent } from '../common/base-component/base-component';
 
@@ -24,7 +25,7 @@ export class AddressInput extends BaseComponent {
   @property({
     type: String
   })
-  network: Network = Network.EVM;
+  networkType: Network = Network.EVM;
 
   @state()
   errorMessage: string | null = null;
@@ -46,14 +47,17 @@ export class AddressInput extends BaseComponent {
       return;
     }
 
-    this.errorMessage = validateAddress(trimedValue, this.network);
+    this.errorMessage = validateAddress(trimedValue, this.networkType);
 
-    if (!this.errorMessage) {
-      void this.onAddressChange(trimedValue);
-    } else {
-      void this.onAddressChange('');
-    }
+    this.onAddressChange(trimedValue);
   };
+
+  protected updated(changedProperties: PropertyValues): void {
+    //revalidating address on network change
+    if (changedProperties.has('networkType')) {
+      this.handleAddressChange(this.address);
+    }
+  }
 
   render(): HTMLTemplateResult {
     return html` <section class="inputAddressSection">
@@ -74,7 +78,7 @@ export class AddressInput extends BaseComponent {
               e.preventDefault();
             }
           }}
-          @change=${(evt: Event) =>
+          @input=${(evt: Event) =>
             this.handleAddressChange((evt.target as HTMLInputElement).value)}
         ></textarea>
       </div>

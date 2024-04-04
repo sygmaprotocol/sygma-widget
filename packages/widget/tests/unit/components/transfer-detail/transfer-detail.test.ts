@@ -68,8 +68,8 @@ describe('sygma-fungible-transfer-detail', function () {
   });
 
   it('shows fee correctly', async () => {
-    const value = '1.0000 ETH';
-    mockedFee.fee = parseUnits('1');
+    const value = '1.02 ETH';
+    mockedFee.fee = parseUnits('1.02', 18);
 
     const el = await fixture(html`
       <sygma-fungible-transfer-detail
