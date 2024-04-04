@@ -36,20 +36,20 @@ export class AddressInput extends BaseComponent {
   }
 
   private handleAddressChange = (value: string): void => {
-    const trimmedValue = value.replace(/\s+/g, '').trim();
-    this.address = trimmedValue;
+    const trimedValue = value.replace(/\s+/g, '').trim();
+    this.address = trimedValue;
     if (this.errorMessage) {
       this.errorMessage = null;
     }
 
-    if (!trimmedValue) {
+    if (!trimedValue) {
       void this.onAddressChange('');
       return;
     }
 
-    this.errorMessage = validateAddress(trimmedValue, this.networkType);
+    this.errorMessage = validateAddress(trimedValue, this.networkType);
 
-    this.onAddressChange(trimmedValue);
+    this.onAddressChange(trimedValue);
   };
 
   protected updated(changedProperties: PropertyValues): void {

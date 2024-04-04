@@ -1,11 +1,11 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
+import type { PropertyValues } from '@lit/reactive-element';
 import { BigNumber, utils } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
-import type { PropertyValues } from '@lit/reactive-element';
 import { networkIconsMap } from '../../assets';
 import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import {
@@ -13,17 +13,15 @@ import {
   TokenBalanceController
 } from '../../controllers/wallet-manager/token-balance';
 import { tokenBalanceToNumber } from '../../utils/token';
+import { BaseComponent } from '../common/base-component/base-component';
 import type { DropdownOption } from '../common/dropdown/dropdown';
-import { BaseComponent } from '../common/base-component';
 import { styles } from './styles';
 
-@customElement('sygma-resource-selector')
-export class AmountSelector extends BaseComponent {
+@customElement('sygma-resource-amount-selector')
+export class ResourceAmountSelector extends BaseComponent {
   static styles = styles;
 
-  @property({
-    type: Array
-  })
+  @property({ type: Array })
   resources: Resource[] = [];
 
   @property({ type: Boolean })
@@ -41,7 +39,7 @@ export class AmountSelector extends BaseComponent {
 
   @state() selectedResource: Resource | null = null;
   @state() validationMessage: string | null = null;
-  @state() amount: string = '0';
+  @state() amount: string = '';
 
   tokenBalanceController = new TokenBalanceController(this);
 
@@ -62,17 +60,17 @@ export class AmountSelector extends BaseComponent {
   };
 
   _onInputAmountChangeHandler = (event: Event): void => {
-    const { value } = event.target as HTMLInputElement;
+    let { value } = event.target as HTMLInputElement;
 
+    if (value === '') {
+      value = '0';
+    }
     try {
       const amount = utils.parseUnits(
         value,
         this.tokenBalanceController.decimals
       );
-      this.amount = utils.formatUnits(
-        amount,
-        this.tokenBalanceController.decimals
-      );
+      this.amount = value;
       if (!this._validateAmount(value)) return;
       if (this.selectedResource) {
         this.onResourceSelected(this.selectedResource, BigNumber.from(amount));
@@ -96,7 +94,7 @@ export class AmountSelector extends BaseComponent {
   _onResourceSelectedHandler = (option?: DropdownOption<Resource>): void => {
     if (option) {
       this.selectedResource = option.value;
-      this.amount = '0';
+      this.amount = '';
       this.tokenBalanceController.startBalanceUpdates(this.selectedResource);
     } else {
       this.selectedResource = null;
@@ -105,6 +103,9 @@ export class AmountSelector extends BaseComponent {
   };
 
   _validateAmount(amount: string): boolean {
+    if (amount === '') {
+      amount = '0';
+    }
     try {
       const parsedAmount = utils.parseUnits(
         amount,
@@ -163,7 +164,7 @@ export class AmountSelector extends BaseComponent {
     if (changedProperties.has('selectedResource')) {
       if (changedProperties.get('selectedResource') !== null) {
         this.tokenBalanceController.resetBalance();
-        this.amount = '0';
+        this.amount = '';
       }
     }
   }
@@ -206,6 +207,6 @@ export class AmountSelector extends BaseComponent {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sygma-resource-selector': AmountSelector;
+    'sygma-resource-amount-selector': ResourceAmountSelector;
   }
 }

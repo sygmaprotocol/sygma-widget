@@ -97,7 +97,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     });
   }
   get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
-    if (this.sourceNetwork) {
+    if (this.config.environment && this.sourceNetwork) {
       return this.config.getDomainConfig(this.sourceNetwork.id);
     }
     return undefined;
@@ -111,9 +111,10 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
     this.env = env;
     await this.config.init(1, this.env);
-    this.supportedSourceNetworks = this.config.getDomains();
-    //remove once we have proper substrate transfer support
-    //.filter((n) => n.type === Network.EVM);
+    this.supportedSourceNetworks = this.config
+      .getDomains()
+      //remove once we have proper substrate transfer support
+      .filter((n) => n.type === Network.EVM);
     this.supportedDestinationNetworks = this.config.getDomains();
     this.host.requestUpdate();
   }
@@ -164,7 +165,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   onDestinationNetworkSelected = (network: Domain | undefined): void => {
     this.destinationNetwork = network;
     this.setSenderDefaultDestinationAddress();
-    if (this.sourceNetwork && !this.selectedResource) {
+    if (this.sourceNetwork) {
       //filter resources
       void this.filterDestinationNetworksAndResources(this.sourceNetwork);
       return;
