@@ -49,7 +49,6 @@ describe('Fungible token Transfer', function () {
         }
       })
     );
-
     const fungibleTransfer = await fixture<FungibleTokenTransfer>(
       html` <sygma-fungible-transfer></sygma-fungible-transfer>`,
       { parentNode: walletContext }
@@ -83,7 +82,8 @@ describe('Fungible token Transfer', function () {
               address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
             }
           ],
-          signer: {}
+          signer: {},
+          signerAddress: '155EekK'
         }
       })
     );

@@ -107,29 +107,15 @@ export class FungibleTokenTransferController implements ReactiveController {
       }
     });
   }
+  get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
+    if (this.config.environment && this.sourceNetwork) {
+      return this.config.getDomainConfig(this.sourceNetwork.id);
+    }
+    return undefined;
+  }
 
   hostDisconnected(): void {
     this.reset();
-  }
-
-  /**
-   * Infinite Try/catch wrapper around
-   * {@link Config} from `@buildwithsygma/sygma-sdk-core`
-   * and emits a {@link SdkInitializedEvent}
-   * @param {number} time to wait before retrying request in ms
-   * @returns {void}
-   */
-  async retryInitSdk(retryMs = 100): Promise<void> {
-    try {
-      await this.config.init(1, this.env);
-      this.host.dispatchEvent(
-        new SdkInitializedEvent({ hasInitialized: true })
-      );
-    } catch (error) {
-      setTimeout(() => {
-        this.retryInitSdk(retryMs * 2).catch(console.error);
-      }, retryMs);
-    }
   }
 
   async init(env: Environment): Promise<void> {
@@ -219,20 +205,21 @@ export class FungibleTokenTransferController implements ReactiveController {
   };
 
   getTransferState(): FungibleTransferState {
-    // Enabled state
     if (this.transferTransactionId) {
       return FungibleTransferState.COMPLETED;
     }
-
-    // Loading states
     if (this.waitingUserConfirmation) {
       return FungibleTransferState.WAITING_USER_CONFIRMATION;
     }
     if (this.waitingTxExecution) {
       return FungibleTransferState.WAITING_TX_EXECUTION;
     }
-
-    // Error States
+    if (this.pendingEvmApprovalTransactions.length > 0) {
+      return FungibleTransferState.PENDING_APPROVALS;
+    }
+    if (this.pendingEvmTransferTransaction) {
+      return FungibleTransferState.PENDING_TRANSFER;
+    }
     if (!this.sourceNetwork) {
       return FungibleTransferState.MISSING_SOURCE_NETWORK;
     }
@@ -258,8 +245,9 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.resourceAmount.eq(0)) {
       return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
     }
-
-    // Enabled States
+    if (this.destinationAddress === '') {
+      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
+    }
     if (
       !this.walletContext.value?.evmWallet &&
       !this.walletContext.value?.substrateWallet
@@ -273,19 +261,12 @@ export class FungibleTokenTransferController implements ReactiveController {
     ) {
       return FungibleTransferState.WRONG_CHAIN;
     }
-
-    if (this.pendingEvmApprovalTransactions.length > 0) {
-      return FungibleTransferState.PENDING_APPROVALS;
-    }
-    if (this.pendingEvmTransferTransaction) {
-      return FungibleTransferState.PENDING_TRANSFER;
-    }
-
     return FungibleTransferState.UNKNOWN;
   }
 
   executeTransaction(): void {
     if (!this.sourceNetwork) {
+      this.resetFee();
       return;
     }
     switch (this.sourceNetwork.type) {
@@ -376,7 +357,6 @@ export class FungibleTokenTransferController implements ReactiveController {
       !this.selectedResource ||
       !this.destinationAddress
     ) {
-      this.resetFee();
       return;
     }
     switch (this.sourceNetwork.type) {

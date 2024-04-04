@@ -14,11 +14,10 @@ import '../../address-input';
 import '../../resource-amount-selector';
 import './transfer-button';
 import './transfer-status';
-import './transfer-detail';
-import { BaseComponent } from '../../common/base-component';
 import '../../network-selector';
 import { Directions } from '../../network-selector/network-selector';
 import { WalletController } from '../../../controllers';
+import { BaseComponent } from '../../common/base-component';
 import { styles } from './styles';
 
 @customElement('sygma-fungible-transfer')
@@ -79,7 +78,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   };
 
   renderTransferStatus(): HTMLTemplateResult {
-    return html`<section>
+    return html` <section>
       <sygma-transfer-status
         .amount=${this.transferController.resourceAmount}
         .tokenDecimals=${this.transferController.selectedResource?.decimals}

@@ -17,7 +17,6 @@ import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
 import './components/resource-amount-selector';
-import './components/amount-selector';
 import { BaseComponent } from './components/common/base-component';
 import './components/transfer/fungible/fungible-token-transfer';
 import './components/network-selector';
@@ -116,6 +115,8 @@ class SygmaProtocolWidget
             </section>
             <section class="widgetContent">
               <sygma-fungible-transfer
+                @sdk-initialized=${(event: SdkInitializedEvent) =>
+                (this.sdkInitialized = event.detail.hasInitialized)}
                 .environment=${this.environment as Environment}
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
@@ -126,27 +127,10 @@ class SygmaProtocolWidget
             </section>
             <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
             ${when(
-              this.isLoading,
+              this.isLoading || !this.sdkInitialized,
               () => html`<sygma-overlay-component></sygma-overlay-component>`
             )}
           </section>
-          <section class="widgetContent">
-            <sygma-fungible-transfer
-              @sdk-initialized=${(event: SdkInitializedEvent) =>
-                (this.sdkInitialized = event.detail.hasInitialized)}
-              .onSourceNetworkSelected=${(domain: Domain) =>
-                (this.sourceNetwork = domain)}
-              .whitelistedSourceResources=${this.whitelistedSourceNetworks}
-              environment=${Environment.TESTNET}
-            >
-            </sygma-fungible-transfer>
-          </section>
-          <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
-          ${when(
-            this.isLoading || !this.sdkInitialized,
-            () => html`<sygma-overlay-component></sygma-overlay-component>`
-          )}
-        </section>
         </sygma-wallet-context-provider>
       </sygma-config-context-provider>
     `;
