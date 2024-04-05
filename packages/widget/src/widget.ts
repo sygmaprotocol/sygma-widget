@@ -6,14 +6,13 @@ import type {
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
-import type { WalletInit } from '@web3-onboard/common';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
-import type { AppMetadata } from '@web3-onboard/common';
+import type { WalletInit, AppMetadata } from '@web3-onboard/common';
 import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
