@@ -107,6 +107,7 @@ class SygmaProtocolWidget
       >
         <sygma-wallet-context-provider
           .substrateProviders=${this.substrateProviders}
+          .environment=${this.environment}
         >
           <section
             class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"

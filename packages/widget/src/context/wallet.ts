@@ -4,11 +4,13 @@ import type { Signer } from '@polkadot/api/types';
 import type { u32 } from '@polkadot/types-codec';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
+import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import type { ApiPromise } from '@polkadot/api';
+import { WsProvider, ApiPromise } from '@polkadot/api';
 import type { PropertyValues } from '@lit/reactive-element';
 import { BaseComponent } from '../components/common/base-component';
+import { SUBSTRATE_CHAIN_RPCS } from '../constants';
 
 export interface EvmWallet {
   address: string;
@@ -77,6 +79,21 @@ export class WalletContextProvider extends BaseComponent {
   @property({ attribute: false })
   substrateProviders?: Array<ApiPromise> = [];
 
+  @property({ type: String }) environment?: Environment;
+
+  get defaultSubstrateProviders(): Array<ApiPromise> {
+    const defaultConnections: Array<ApiPromise> = [];
+    const environment = this.environment ?? Environment.TESTNET;
+
+    for (const connection of SUBSTRATE_CHAIN_RPCS[environment]) {
+      const provider = new WsProvider(connection);
+      const api = new ApiPromise({ provider });
+      defaultConnections.push(api);
+    }
+
+    return defaultConnections;
+  }
+
   /**
    * Creates a provider map w.r.t parachain ids
    * @param {Array<ApiPromise>} providers array of {@link ApiPromise}
@@ -89,6 +106,7 @@ export class WalletContextProvider extends BaseComponent {
 
     for (const provider of providers) {
       try {
+        await provider.isReady;
         // TODO: use polkadot type augmentation to remove "as 32"
         const parachainId = await provider.query.parachainInfo.parachainId();
         const _parachainId = (parachainId as u32).toNumber();
@@ -107,16 +125,20 @@ export class WalletContextProvider extends BaseComponent {
       this.walletContext.evmWallet = this.evmWalllet;
     }
 
-    // TODO: add default substrate providers
+    let substrateProviders;
     if (this.substrateProviders) {
-      const providersMap = await this.createProvidersMap(
+      substrateProviders = await this.createProvidersMap(
         this.substrateProviders
       );
-
-      this.substrateProviderContext = {
-        substrateProviders: providersMap
-      };
+    } else {
+      substrateProviders = await this.createProvidersMap(
+        this.defaultSubstrateProviders
+      );
     }
+
+    this.substrateProviderContext = {
+      substrateProviders: substrateProviders
+    };
 
     this.addEventListener('walletUpdate', (event: WalletUpdateEvent) => {
       this.walletContext = {
