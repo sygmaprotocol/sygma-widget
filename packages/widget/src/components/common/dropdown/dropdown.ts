@@ -6,7 +6,7 @@ import { when } from 'lit/directives/when.js';
 
 import { chevronIcon, networkIconsMap } from '../../../assets';
 import { capitalize } from '../../../utils';
-import { BaseComponent } from '../base-component/base-component';
+import { BaseComponent } from '../base-component';
 
 import { styles } from './styles';
 
@@ -36,11 +36,34 @@ export class Dropdown extends BaseComponent {
   @property({ type: Array })
   options: DropdownOption[] = [];
 
+  @property({ type: String })
+  preSelectedOption = '';
+
   @state()
   selectedOption: DropdownOption | null = null;
 
   @property({ attribute: false })
   onOptionSelected: (option?: DropdownOption) => void = () => {};
+
+  constructor() {
+    super();
+    console.log('Preselect from Constructor');
+    this._setPreselectedOption();
+  }
+
+  _setPreselectedOption = (): void => {
+    if (this.preSelectedOption) {
+      console.log('HAS PRESELECTED OPTION');
+      const newOption =
+        this.options.find((o) => o.name === this.preSelectedOption) || null;
+
+      console.log('Preselect from _setPreselectedOption', newOption);
+      if (newOption) {
+        this.selectedOption = newOption;
+        this.onOptionSelected(newOption);
+      }
+    }
+  };
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -54,13 +77,30 @@ export class Dropdown extends BaseComponent {
 
   updated(changedProperties: PropertyValues<typeof this>): void {
     super.updated(changedProperties);
+
+    if (changedProperties.has('preSelectedOption')) {
+      this._setPreselectedOption();
+    }
+
+    if (
+      changedProperties.has('options') &&
+      this.preSelectedOption &&
+      this.selectedOption?.name !== this.preSelectedOption
+    ) {
+      this._setPreselectedOption();
+    }
+
     //if options changed, check if we have selected option that doesn't exist
     if (changedProperties.has('options') && this.selectedOption) {
       if (
         !this.options.map((o) => o.value).includes(this.selectedOption.value)
       ) {
-        this.selectedOption = null;
-        this.onOptionSelected(undefined);
+        if (!this.preSelectedOption) {
+          this.selectedOption = null;
+          this.onOptionSelected(undefined);
+        } else {
+          this._setPreselectedOption();
+        }
       }
     }
   }
@@ -123,6 +163,8 @@ export class Dropdown extends BaseComponent {
   }
 
   render(): HTMLTemplateResult {
+    console.log('dropdown render selectedValue', this.preSelectedOption);
+    console.log('dropdown render selectedOption', this.selectedOption);
     return html`
       <div
         part="dropdownWrapper"
