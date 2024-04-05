@@ -143,10 +143,43 @@ export class WalletController implements ReactiveController {
         })
       );
       if (network.chainId !== providerChainId) {
-        void provider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: utils.hexValue(network.chainId) }]
-        });
+        try {
+          await provider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: utils.hexValue(network.chainId) }]
+          });
+        } catch (swithError) {
+          const { chainId } = network;
+
+          const chainData = (await (
+            await fetch(import.meta.env.VITE_CHAIN_ID_URL)
+          ).json()) as Array<{
+            chainId: number;
+            name: string;
+            rpc: string[];
+            nativeCurrency: { name: string; symbol: string; decimals: number };
+          }>;
+
+          const selectedChain = chainData.find(
+            (chain) => chain.chainId === chainId
+          );
+
+          await provider.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: `0x${chainId.toString(16)}`,
+                chainName: selectedChain!.name,
+                rpcUrls: [selectedChain!.rpc[0]],
+                nativeCurrency: {
+                  name: selectedChain!.nativeCurrency.name,
+                  symbol: selectedChain!.nativeCurrency.symbol,
+                  decimals: selectedChain!.nativeCurrency.decimals
+                }
+              }
+            ]
+          });
+        }
       }
       this.host.requestUpdate();
     }
