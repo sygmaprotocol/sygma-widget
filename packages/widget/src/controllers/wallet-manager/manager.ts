@@ -7,8 +7,9 @@ import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
-import type { WalletInit } from '@web3-onboard/common';
+import type { WalletInit, AppMetadata } from '@web3-onboard/common';
 
+import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
 import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
 
@@ -25,7 +26,10 @@ export class WalletController implements ReactiveController {
    * @param {{ dappUrl?: string }} options
    * @returns {WalletInit[]}
    */
-  getWallets(options?: { dappUrl?: string }): WalletInit[] {
+  getWallets(options?: {
+    walletConnectOptions?: WalletConnectOptions;
+    appMetaData?: AppMetadata;
+  }): WalletInit[] {
     const specifiedWallets = this.walletContext.value?.wallets;
 
     if (!!specifiedWallets && specifiedWallets.length > 0) {
@@ -33,12 +37,18 @@ export class WalletController implements ReactiveController {
     }
 
     const injected = injectedModule();
-    const walletConnect = walletConnectModule({
-      projectId: this.WALLET_CONNECT_PROJECT_ID,
-      dappUrl: options?.dappUrl
-    });
 
-    const wallets = [injected, walletConnect];
+    const wallets = [injected];
+
+    if (options?.walletConnectOptions?.projectId) {
+      wallets.push(
+        walletConnectModule({
+          projectId: this.WALLET_CONNECT_PROJECT_ID,
+          dappUrl: options?.walletConnectOptions.dappUrl
+        })
+      );
+    }
+
     return wallets;
   }
 
@@ -59,7 +69,13 @@ export class WalletController implements ReactiveController {
     }
   }
 
-  connectWallet = (network: Domain, options?: { dappUrl?: string }): void => {
+  connectWallet = (
+    network: Domain,
+    options?: {
+      walletConnectOptions?: WalletConnectOptions;
+      appMetaData?: AppMetadata;
+    }
+  ): void => {
     switch (network.type) {
       case Network.EVM:
         {
@@ -116,11 +132,15 @@ export class WalletController implements ReactiveController {
 
   connectEvmWallet = async (
     network: Domain,
-    options?: { dappUrl?: string }
+    options?: {
+      walletConnectOptions?: WalletConnectOptions;
+      appMetaData?: AppMetadata;
+    }
   ): Promise<void> => {
     const walletsToConnect = this.getWallets(options);
 
     const onboard = Onboard({
+      appMetadata: options?.appMetaData,
       wallets: walletsToConnect,
       chains: [
         {
@@ -162,11 +182,14 @@ export class WalletController implements ReactiveController {
 
   connectSubstrateWallet = async (
     _network: Domain, // TODO: remove underscore prefix once arg usage is added
-    options?: { dappUrl?: string; dappName?: string }
+    options?: {
+      walletConnectOptions?: WalletConnectOptions;
+      appMetaData?: AppMetadata;
+    }
   ): Promise<void> => {
     const injectedWalletProvider = new InjectedWalletProvider(
       { disallowed: [] },
-      options?.dappName ?? 'Sygma Widget'
+      options?.appMetaData?.name ?? 'Sygma Widget'
     );
     const wallets = await injectedWalletProvider.getWallets();
 
