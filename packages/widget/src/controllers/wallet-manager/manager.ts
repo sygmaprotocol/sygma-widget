@@ -164,21 +164,26 @@ export class WalletController implements ReactiveController {
             (chain) => chain.chainId === chainId
           );
 
-          await provider.request({
-            method: 'wallet_addEthereumChain',
-            params: [
-              {
-                chainId: `0x${chainId.toString(16)}`,
-                chainName: selectedChain!.name,
-                rpcUrls: [selectedChain!.rpc[0]],
-                nativeCurrency: {
-                  name: selectedChain!.nativeCurrency.name,
-                  symbol: selectedChain!.nativeCurrency.symbol,
-                  decimals: selectedChain!.nativeCurrency.decimals
+          try {
+            await provider.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId: `0x${chainId.toString(16)}`,
+                  chainName: selectedChain!.name,
+                  rpcUrls: [selectedChain!.rpc[0]],
+                  nativeCurrency: {
+                    name: selectedChain!.nativeCurrency.name,
+                    symbol: selectedChain!.nativeCurrency.symbol,
+                    decimals: selectedChain!.nativeCurrency.decimals
+                  }
                 }
-              }
-            ]
-          });
+              ]
+            });
+          } catch (addeError) {
+            // how do we notify the user for this error?
+            console.error(addeError);
+          }
         }
       }
       this.host.requestUpdate();
