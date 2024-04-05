@@ -14,8 +14,6 @@ import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
 
 export class WalletController implements ReactiveController {
-  readonly WALLET_CONNECT_PROJECT_ID = '2f5a3439ef861e2a3959d85afcd32d06';
-
   host: ReactiveElement;
 
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
@@ -43,7 +41,7 @@ export class WalletController implements ReactiveController {
     if (options?.walletConnectOptions?.projectId) {
       wallets.push(
         walletConnectModule({
-          projectId: this.WALLET_CONNECT_PROJECT_ID,
+          projectId: options?.walletConnectOptions.projectId,
           dappUrl: options?.walletConnectOptions.dappUrl
         })
       );
