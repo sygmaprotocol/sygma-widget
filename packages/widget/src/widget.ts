@@ -17,7 +17,7 @@ import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
 import './components/resource-amount-selector';
-import { BaseComponent } from './components/common/base-component/base-component';
+import { BaseComponent } from './components/common';
 import './components/transfer/fungible/fungible-token-transfer';
 import './components/network-selector';
 import './context/wallet';
