@@ -73,9 +73,6 @@ export class FungibleTokenTransfer extends BaseComponent {
     }
 
     if (state === FungibleTransferState.COMPLETED) {
-      console.log(
-        '============ Resetting transfer controller ================='
-      );
       this.transferController.reset({ omitSourceNetworkReset: true });
     }
   };
@@ -154,11 +151,6 @@ export class FungibleTokenTransfer extends BaseComponent {
   }
 
   render(): HTMLTemplateResult {
-    console.log(
-      'render {this.transferController.sourceNetwork?.name',
-      this.transferController.sourceNetwork?.name
-    );
-
     const state = this.transferController.getTransferState();
     return choose(
       state,

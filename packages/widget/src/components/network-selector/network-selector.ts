@@ -56,7 +56,6 @@ export class NetworkSelector extends BaseComponent {
   }
 
   render(): HTMLTemplateResult {
-    console.log('selectedNetwork', this.selectedNetwork);
     return html`<div class="selectorContainer">
       <dropdown-component
         .preSelectedOption=${this.selectedNetwork}

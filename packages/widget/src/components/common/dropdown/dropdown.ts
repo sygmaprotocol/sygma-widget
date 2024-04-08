@@ -47,17 +47,14 @@ export class Dropdown extends BaseComponent {
 
   constructor() {
     super();
-    console.log('Preselect from Constructor');
     this._setPreselectedOption();
   }
 
   _setPreselectedOption = (): void => {
     if (this.preSelectedOption) {
-      console.log('HAS PRESELECTED OPTION');
       const newOption =
         this.options.find((o) => o.name === this.preSelectedOption) || null;
 
-      console.log('Preselect from _setPreselectedOption', newOption);
       if (newOption) {
         this.selectedOption = newOption;
         this.onOptionSelected(newOption);
@@ -78,10 +75,7 @@ export class Dropdown extends BaseComponent {
   updated(changedProperties: PropertyValues<typeof this>): void {
     super.updated(changedProperties);
 
-    if (changedProperties.has('preSelectedOption')) {
-      this._setPreselectedOption();
-    }
-
+    // Set pre-selected option after transfer is completed
     if (
       changedProperties.has('options') &&
       this.preSelectedOption &&
@@ -163,8 +157,6 @@ export class Dropdown extends BaseComponent {
   }
 
   render(): HTMLTemplateResult {
-    console.log('dropdown render selectedValue', this.preSelectedOption);
-    console.log('dropdown render selectedOption', this.selectedOption);
     return html`
       <div
         part="dropdownWrapper"
