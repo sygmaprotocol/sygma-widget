@@ -105,7 +105,11 @@ export class WalletController implements ReactiveController {
           params: [{ chainId: utils.hexValue(chainId) }]
         });
       } catch (switchError) {
-        console.log('env', import.meta.env.VITE_CHAIN_ID_URL);
+        console.log(
+          'env',
+          import.meta.env.VITE_CHAIN_ID_URL,
+          import.meta.env.VITE_BRIDGE_ENV
+        );
         const chainData = (await (
           await fetch(import.meta.env.VITE_CHAIN_ID_URL)
         ).json()) as ChainDataResponse;
