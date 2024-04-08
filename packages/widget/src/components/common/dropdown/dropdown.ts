@@ -89,11 +89,11 @@ export class Dropdown extends BaseComponent {
       if (
         !this.options.map((o) => o.value).includes(this.selectedOption.value)
       ) {
-        if (!this.preSelectedOption) {
+        if (this.preSelectedOption) {
+          this._setPreselectedOption();
+        } else {
           this.selectedOption = null;
           this.onOptionSelected(undefined);
-        } else {
-          this._setPreselectedOption();
         }
       }
     }
