@@ -46,7 +46,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
 
-  public whitelistedSourceResources?: string[];
+  public whitelistedSourceNetworks?: string[];
   public whitelistedDestinationNetworks?: string[];
 
   //Evm transfer
@@ -72,13 +72,23 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   constructor(
     host: ReactiveElement,
-    whitelistedSourceResources?: string[],
+    whitelistedSourceNetworks?: string[],
     whitelistedDestinationNetworks?: string[]
   ) {
     (this.host = host).addController(this);
     this.config = new Config();
-    this.whitelistedSourceResources = whitelistedSourceResources;
+
+    console.log('CONSTRUCTOR');
+    console.log('whitelistedSourceNetworks', whitelistedSourceNetworks);
+    console.log(
+      'whitelistedDestinationNetworks',
+      whitelistedDestinationNetworks
+    );
+
+    // Whitelisting provided by user
+    this.whitelistedSourceNetworks = whitelistedSourceNetworks;
     this.whitelistedDestinationNetworks = whitelistedDestinationNetworks;
+
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
       subscribe: true,
@@ -109,8 +119,27 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.supportedSourceNetworks = this.config
       .getDomains()
       //remove once we have proper substrate transfer support
-      .filter((n) => n.type === Network.EVM);
-    this.supportedDestinationNetworks = this.config.getDomains();
+      .filter((n) => n.type === Network.EVM)
+      .filter((network) => {
+        console.log('network', network.name);
+        console.log(this.whitelistedSourceNetworks?.includes(network.name));
+        console.log(
+          !this.whitelistedSourceNetworks ||
+            this.whitelistedSourceNetworks.includes(network.name)
+        );
+        return (
+          !this.whitelistedSourceNetworks ||
+          this.whitelistedSourceNetworks.includes(network.name)
+        );
+      });
+
+    this.supportedDestinationNetworks = this.config
+      .getDomains()
+      .filter(
+        (network) =>
+          !this.whitelistedDestinationNetworks?.length ||
+          this.whitelistedDestinationNetworks.includes(network.name)
+      );
     this.host.requestUpdate();
   }
 

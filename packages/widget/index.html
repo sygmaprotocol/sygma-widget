@@ -10,8 +10,14 @@
 </head>
 
 <body>
-  <sygmaprotocol-widget>
+  <sygmaprotocol-widget id="sygmaprotocolWidget" >
   </sygmaprotocol-widget>
+
+    <script>
+      const widget = document.getElementById('sygmaprotocolWidget');
+      widget.whitelistedSourceNetworks = ['sepolia'];
+    </script>
 </body>
+
 
 </html>

@@ -25,6 +25,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   static styles = styles;
 
   @property({ type: Array }) whitelistedSourceResources?: Array<string>;
+  @property({ type: Array }) whitelistedSourceNetworks?: Array<string>;
   @property({ type: Array }) whitelistedDestinationNetworks?: Array<string>;
 
   @property({ type: String })
@@ -33,15 +34,19 @@ export class FungibleTokenTransfer extends BaseComponent {
   @property({ type: Object })
   onSourceNetworkSelected?: (domain: Domain) => void;
 
-  transferController = new FungibleTokenTransferController(
-    this,
-    this.whitelistedSourceResources,
-    this.whitelistedDestinationNetworks
-  );
+  transferController!: FungibleTokenTransferController;
   walletController = new WalletController(this);
 
   connectedCallback(): void {
     super.connectedCallback();
+    console.log('whitelistedSourceResources | whitelistedDestinationNetworks');
+    console.log('CALLBACK', this.whitelistedSourceNetworks);
+
+    this.transferController = new FungibleTokenTransferController(
+      this,
+      this.whitelistedSourceResources,
+      this.whitelistedDestinationNetworks
+    );
     void this.transferController.init(this.environment!);
   }
 
@@ -57,7 +62,7 @@ export class FungibleTokenTransfer extends BaseComponent {
       case FungibleTransferState.WALLET_NOT_CONNECTED:
         {
           this.walletController.connectWallet(
-            this.transferController.sourceNetwork!
+            this.transferController.sourceNetwork
           );
         }
         break;
@@ -156,6 +161,10 @@ export class FungibleTokenTransfer extends BaseComponent {
   }
 
   render(): HTMLTemplateResult {
+    console.log('whitelistedSourceNetworks | whitelistedDestinationNetworks');
+    console.log(this.whitelistedSourceNetworks);
+    console.log(this.whitelistedDestinationNetworks);
+
     const state = this.transferController.getTransferState();
     return choose(
       state,
