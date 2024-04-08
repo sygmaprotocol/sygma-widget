@@ -45,11 +45,6 @@ export class Dropdown extends BaseComponent {
   @property({ attribute: false })
   onOptionSelected: (option?: DropdownOption) => void = () => {};
 
-  constructor() {
-    super();
-    this._setPreselectedOption();
-  }
-
   _setPreselectedOption = (): void => {
     if (this.preSelectedOption) {
       const newOption =
@@ -64,6 +59,7 @@ export class Dropdown extends BaseComponent {
 
   connectedCallback(): void {
     super.connectedCallback();
+    this._setPreselectedOption();
     addEventListener('click', this._handleOutsideClick);
   }
 
