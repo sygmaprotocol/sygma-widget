@@ -105,8 +105,10 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
   }
 
-  reset(): void {
-    this.sourceNetwork = undefined;
+  reset({ omitSourceNetworkReset } = { omitSourceNetworkReset: false }): void {
+    if (!omitSourceNetworkReset) {
+      this.sourceNetwork = undefined;
+    }
     this.destinationNetwork = undefined;
     this.pendingEvmApprovalTransactions = [];
     this.pendingEvmTransferTransaction = undefined;
