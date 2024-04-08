@@ -57,14 +57,14 @@ export class FungibleTokenTransfer extends BaseComponent {
         break;
       case FungibleTransferState.WRONG_CHAIN:
         {
-          this.walletController.switchChain(
+          void this.walletController.switchChain(
             this.transferController.sourceNetwork!.chainId
           );
         }
         break;
       case FungibleTransferState.COMPLETED:
         {
-          this.walletController.switchChain(
+          void this.walletController.switchChain(
             this.transferController.sourceNetwork!.chainId
           );
         }
