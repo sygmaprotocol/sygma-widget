@@ -37,8 +37,8 @@ export class Dropdown extends BaseComponent {
   @property({ type: Array })
   options: DropdownOption[] = [];
 
-  @property({ type: Object })
-  actionOption: HTMLTemplateResult | null = null;
+  @property({ type: String })
+  preSelectedOption = '';
 
   @state()
   selectedOption: DropdownOption | null = null;
@@ -46,8 +46,21 @@ export class Dropdown extends BaseComponent {
   @property({ attribute: false })
   onOptionSelected: (option?: DropdownOption) => void = () => {};
 
+  _setPreselectedOption = (): void => {
+    if (this.preSelectedOption) {
+      const newOption =
+        this.options.find((o) => o.name === this.preSelectedOption) || null;
+
+      if (newOption) {
+        this.selectedOption = newOption;
+        this.onOptionSelected(newOption);
+      }
+    }
+  };
+
   connectedCallback(): void {
     super.connectedCallback();
+    this._setPreselectedOption();
     addEventListener('click', this._handleOutsideClick);
   }
 
@@ -58,14 +71,28 @@ export class Dropdown extends BaseComponent {
 
   updated(changedProperties: PropertyValues<this>): void {
     super.updated(changedProperties);
+
+    // Set pre-selected option after transfer is completed
+    if (
+      changedProperties.has('options') &&
+      this.preSelectedOption &&
+      this.selectedOption?.name !== this.preSelectedOption
+    ) {
+      this._setPreselectedOption();
+    }
+
     //if options changed, check if we have selected option that doesn't exist
     if (changedProperties.has('options') && this.selectedOption) {
       if (
         Array.isArray(this.options) &&
         !this.options.map((o) => o.value).includes(this.selectedOption.value)
       ) {
-        this.selectedOption = null;
-        this.onOptionSelected(undefined);
+        if (this.preSelectedOption) {
+          this._setPreselectedOption();
+        } else {
+          this.selectedOption = null;
+          this.onOptionSelected(undefined);
+        }
       }
     }
   }
