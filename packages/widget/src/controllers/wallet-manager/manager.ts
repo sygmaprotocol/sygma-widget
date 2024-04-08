@@ -12,6 +12,16 @@ import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/type
 import type { AppMetadata } from '@web3-onboard/common';
 import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
+import type { Eip1193Provider } from '../../interfaces';
+
+type ChainData = {
+  chainId: number;
+  name: string;
+  rpc: string[];
+  nativeCurrency: { name: string; symbol: string; decimals: number };
+};
+
+type ChainDataResponse = Array<ChainData>;
 
 export class WalletController implements ReactiveController {
   host: ReactiveElement;
@@ -87,12 +97,27 @@ export class WalletController implements ReactiveController {
     }
   };
 
-  switchChain(chainId: number): void {
+  async switchChain(chainId: number): Promise<void> {
     if (this.walletContext.value?.evmWallet) {
-      void this.walletContext.value.evmWallet.provider.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: utils.hexValue(chainId) }]
-      });
+      try {
+        await this.walletContext.value.evmWallet.provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: utils.hexValue(chainId) }]
+        });
+      } catch (switchError) {
+        const chainData = (await (
+          await fetch(import.meta.env.VITE_CHAIN_ID_URL)
+        ).json()) as ChainDataResponse;
+
+        const selectedChain = chainData.find(
+          (chain) => chain.chainId === chainId
+        ) as ChainData;
+
+        void this.addEvmChain(
+          selectedChain,
+          this.walletContext.value.evmWallet.provider
+        );
+      }
     }
   }
 
@@ -148,42 +173,18 @@ export class WalletController implements ReactiveController {
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: utils.hexValue(network.chainId) }]
           });
-        } catch (swithError) {
+        } catch (switchError) {
           const { chainId } = network;
 
           const chainData = (await (
             await fetch(import.meta.env.VITE_CHAIN_ID_URL)
-          ).json()) as Array<{
-            chainId: number;
-            name: string;
-            rpc: string[];
-            nativeCurrency: { name: string; symbol: string; decimals: number };
-          }>;
+          ).json()) as ChainDataResponse;
 
           const selectedChain = chainData.find(
             (chain) => chain.chainId === chainId
-          );
+          ) as ChainData;
 
-          try {
-            await provider.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainId: `0x${chainId.toString(16)}`,
-                  chainName: selectedChain!.name,
-                  rpcUrls: [selectedChain!.rpc[0]],
-                  nativeCurrency: {
-                    name: selectedChain!.nativeCurrency.name,
-                    symbol: selectedChain!.nativeCurrency.symbol,
-                    decimals: selectedChain!.nativeCurrency.decimals
-                  }
-                }
-              ]
-            });
-          } catch (addeError) {
-            // how do we notify the user for this error?
-            console.error(addeError);
-          }
+          void this.addEvmChain(selectedChain, provider);
         }
       }
       this.host.requestUpdate();
@@ -266,4 +267,29 @@ export class WalletController implements ReactiveController {
       this.disconnectSubstrateWallet();
     }
   };
+
+  private async addEvmChain(
+    chainData: ChainData,
+    provider: Eip1193Provider
+  ): Promise<void> {
+    try {
+      await provider.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: `0x${chainData.chainId.toString(16)}`,
+            chainName: chainData.name,
+            rpcUrls: [chainData.rpc[0]],
+            nativeCurrency: {
+              name: chainData.nativeCurrency.name,
+              symbol: chainData.nativeCurrency.symbol,
+              decimals: chainData.nativeCurrency.decimals
+            }
+          }
+        ]
+      });
+    } catch (addeError) {
+      console.error(addeError);
+    }
+  }
 }
