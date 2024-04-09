@@ -13,6 +13,7 @@ import type { AppMetadata } from '@web3-onboard/common';
 import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
 import type { Eip1193Provider } from '../../interfaces';
+import { CHAIN_ID_URL } from '../../constants';
 
 type ChainData = {
   chainId: number;
@@ -106,7 +107,7 @@ export class WalletController implements ReactiveController {
         });
       } catch (switchError) {
         const chainData = (await (
-          await fetch(import.meta.env.VITE_CHAIN_ID_URL)
+          await fetch(CHAIN_ID_URL)
         ).json()) as ChainDataResponse;
 
         const selectedChain = chainData.find(
@@ -177,7 +178,7 @@ export class WalletController implements ReactiveController {
           const { chainId } = network;
 
           const chainData = (await (
-            await fetch(import.meta.env.VITE_CHAIN_ID_URL)
+            await fetch(CHAIN_ID_URL)
           ).json()) as ChainDataResponse;
 
           const selectedChain = chainData.find(
