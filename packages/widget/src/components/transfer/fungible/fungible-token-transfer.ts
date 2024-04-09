@@ -117,20 +117,17 @@ export class FungibleTokenTransfer extends BaseComponent {
         <sygma-network-selector
           .direction=${Directions.TO}
           .icons=${true}
-          .onNetworkSelected=${
-            this.transferController.onDestinationNetworkSelected
-          }
+          .onNetworkSelected=${this.transferController
+            .onDestinationNetworkSelected}
           .networks=${this.transferController.supportedDestinationNetworks}
         >
         </sygma-network-selector>
       </section>
       <section>
-        <sygma-resource-selector
+        <sygma-resource-amount-selector
           .sourceDomainConfig=${this.transferController.sourceDomainConfig}
-          .disabled=${
-            !this.transferController.sourceNetwork ||
-            !this.transferController.destinationNetwork
-          }
+          .disabled=${!this.transferController.sourceNetwork ||
+          !this.transferController.destinationNetwork}
           .resources=${this.transferController.supportedResources}
           .onResourceSelected=${this.transferController.onResourceSelected}
         >
