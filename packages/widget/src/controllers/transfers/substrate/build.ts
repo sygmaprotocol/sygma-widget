@@ -12,7 +12,7 @@ export async function buildSubstrateFungibleTransactions(
     !this.destinationNetwork ||
     !this.resourceAmount ||
     !this.selectedResource ||
-    !this.destinatonAddress ||
+    !this.destinationAddress ||
     !substrateProvider ||
     !address
   ) {
@@ -25,7 +25,7 @@ export async function buildSubstrateFungibleTransactions(
   const transfer = await substrateTransfer.createFungibleTransfer(
     address,
     this.destinationNetwork.chainId,
-    this.destinatonAddress,
+    this.destinationAddress,
     this.selectedResource.resourceId,
     String(this.resourceAmount)
   );

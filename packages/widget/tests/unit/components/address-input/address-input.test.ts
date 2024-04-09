@@ -1,5 +1,10 @@
 import { afterEach, assert, describe, it, vi } from 'vitest';
-import { fixture, fixtureCleanup, oneEvent } from '@open-wc/testing-helpers';
+import {
+  elementUpdated,
+  fixture,
+  fixtureCleanup,
+  oneEvent
+} from '@open-wc/testing-helpers';
 import { html } from 'lit';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { AddressInput } from '../../../../src/components';
@@ -98,15 +103,15 @@ describe('address-input component', function () {
 
     assert.equal(input.value.trim(), '0x123');
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
     input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['0x123']);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
       '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'
     ]);
@@ -125,14 +130,14 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
     input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
 
@@ -144,12 +149,15 @@ describe('address-input component', function () {
 
     input.value = '';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[2], ['']);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 4);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[2], [
+      '0xebFC7A970CAAbC18C8e8b7367147C18FC7'
+    ]);
+    assert.deepEqual(mockAddressChangeHandler.mock.lastCall, ['']);
 
     const errorMessageAfterClean = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -172,15 +180,15 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
 
     input.value = '42sydUvocBuEorweEPqxY5vZae1VaTtWoJFiKMrPbRamy2BL';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
       '42sydUvocBuEorweEPqxY5vZae1VaTtWoJFiKMrPbRamy2BL'
@@ -200,15 +208,15 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
 
     input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492';
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
       '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'
@@ -229,15 +237,15 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
 
     input.value = '42sydUvocBuEorweEPqxY5vZae1VaTtWoJFiKMrPbRamy'; // invalid substrate address
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
 
@@ -261,15 +269,15 @@ describe('address-input component', function () {
       '.inputAddress'
     ) as HTMLInputElement;
 
-    const listener = oneEvent(input, 'change', false);
+    const listener = oneEvent(input, 'input', false);
 
     input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7585'; // invalid eth address
 
-    input.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('input'));
 
     await listener;
 
-    assert.equal(mockAddressChangeHandler.mock.calls.length, 2);
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
 
@@ -278,5 +286,40 @@ describe('address-input component', function () {
     ) as HTMLInputElement;
 
     assert.equal(errorMessage.textContent, 'invalid Ethereum address');
+  });
+
+  it('displays error message when there is an address but we change network', async () => {
+    const mockAddressChangeHandler = vi.fn();
+
+    const el = await fixture<AddressInput>(html`
+      <sygma-address-input
+        .onAddressChange=${mockAddressChangeHandler}
+      ></sygma-address-input>
+    `);
+
+    const input = el.shadowRoot!.querySelector(
+      '.inputAddress'
+    ) as HTMLInputElement;
+
+    const listener = oneEvent(input, 'input', false);
+    input.value = '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492';
+
+    input.dispatchEvent(new Event('input'));
+
+    await listener;
+
+    assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
+
+    el.networkType = Network.SUBSTRATE;
+
+    await elementUpdated(el);
+
+    const errorMessage = el.shadowRoot!.querySelector(
+      '.errorMessage'
+    ) as HTMLInputElement;
+
+    assert.equal(errorMessage.textContent, 'invalid Substrate address');
   });
 });
