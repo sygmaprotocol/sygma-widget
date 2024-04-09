@@ -15,6 +15,9 @@ import { WalletUpdateEvent, walletContext } from '../../context';
 import type { Eip1193Provider } from '../../interfaces';
 import { CHAIN_ID_URL } from '../../constants';
 
+/**
+ * This is a stripped version of the response that is returned from chainId service
+ */
 type ChainData = {
   chainId: number;
   name: string;
@@ -98,7 +101,7 @@ export class WalletController implements ReactiveController {
     }
   };
 
-  async switchChain(chainId: number): Promise<void> {
+  async switchEvmChain(chainId: number): Promise<void> {
     if (this.walletContext.value?.evmWallet) {
       try {
         await this.walletContext.value.evmWallet.provider.request({
@@ -169,24 +172,7 @@ export class WalletController implements ReactiveController {
         })
       );
       if (network.chainId !== providerChainId) {
-        try {
-          await provider.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: utils.hexValue(network.chainId) }]
-          });
-        } catch (switchError) {
-          const { chainId } = network;
-
-          const chainData = (await (
-            await fetch(CHAIN_ID_URL)
-          ).json()) as ChainDataResponse;
-
-          const selectedChain = chainData.find(
-            (chain) => chain.chainId === chainId
-          ) as ChainData;
-
-          void this.addEvmChain(selectedChain, provider);
-        }
+        await this.switchEvmChain(network.chainId);
       }
       this.host.requestUpdate();
     }

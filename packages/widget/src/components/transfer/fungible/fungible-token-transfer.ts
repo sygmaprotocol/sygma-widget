@@ -57,14 +57,14 @@ export class FungibleTokenTransfer extends BaseComponent {
         break;
       case FungibleTransferState.WRONG_CHAIN:
         {
-          void this.walletController.switchChain(
+          void this.walletController.switchEvmChain(
             this.transferController.sourceNetwork!.chainId
           );
         }
         break;
       case FungibleTransferState.COMPLETED:
         {
-          void this.walletController.switchChain(
+          void this.walletController.switchEvmChain(
             this.transferController.sourceNetwork!.chainId
           );
         }
@@ -105,7 +105,7 @@ export class FungibleTokenTransfer extends BaseComponent {
             if (network) {
               this.onSourceNetworkSelected?.(network);
               this.transferController.onSourceNetworkSelected(network);
-              void this.walletController.switchChain(network?.chainId);
+              void this.walletController.switchEvmChain(network?.chainId);
             }
           }}
           .networks=${this.transferController.supportedSourceNetworks}
