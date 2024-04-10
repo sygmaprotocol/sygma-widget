@@ -11,13 +11,12 @@ import type { WalletInit, AppMetadata } from '@web3-onboard/common';
 
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
 import { utils } from 'ethers';
-import { configContext, WalletUpdateEvent, walletContext } from '../../context';
+import { WalletUpdateEvent, walletContext } from '../../context';
 
 export class WalletController implements ReactiveController {
   host: ReactiveElement;
 
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
-  _configContext: ContextConsumer<typeof configContext, ReactiveElement>;
 
   /**
    * Provides list of wallets specified by 3rd party
@@ -27,29 +26,18 @@ export class WalletController implements ReactiveController {
    */
   getWallets(options?: {
     walletConnectOptions?: WalletConnectOptions;
+    walletSelectorWalletConfigurations?: WalletInit[];
     appMetaData?: AppMetadata;
   }): WalletInit[] {
     // always have injected ones
     const injected = injectedModule();
     let wallets = [injected];
 
-    if (options?.walletConnectOptions?.projectId) {
-      // wallet connect can be directly provided by
-      // the user, do we still need to check this?
-      // seems unnecessary
-      wallets.push(
-        walletConnectModule({
-          projectId: options?.walletConnectOptions.projectId,
-          dappUrl: options?.walletConnectOptions.dappUrl
-        })
-      );
-    }
-
-    const specifiedWallets =
-      this._configContext.value?.walletSelectorWalletConfigurations;
-
-    if (!!specifiedWallets && specifiedWallets.length > 0) {
-      wallets = wallets.concat(specifiedWallets);
+    if (
+      options?.walletSelectorWalletConfigurations &&
+      options?.walletSelectorWalletConfigurations.length > 0
+    ) {
+      wallets = wallets.concat(options.walletSelectorWalletConfigurations);
     }
 
     return wallets;
@@ -60,11 +48,6 @@ export class WalletController implements ReactiveController {
 
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
-      subscribe: true
-    });
-
-    this._configContext = new ContextConsumer(host, {
-      context: configContext,
       subscribe: true
     });
   }
@@ -83,6 +66,7 @@ export class WalletController implements ReactiveController {
     options?: {
       walletConnectOptions?: WalletConnectOptions;
       appMetaData?: AppMetadata;
+      walletSelectorWalletConfigurations?: WalletInit[];
     }
   ): void => {
     switch (network.type) {
