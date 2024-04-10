@@ -101,10 +101,13 @@ export class WalletController implements ReactiveController {
     }
   };
 
-  async switchEvmChain(chainId: number): Promise<void> {
+  async switchEvmChain(
+    chainId: number,
+    provider: Eip1193Provider
+  ): Promise<void> {
     if (this.walletContext.value?.evmWallet) {
       try {
-        await this.walletContext.value.evmWallet.provider.request({
+        await provider.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: utils.hexValue(chainId) }]
         });
@@ -117,10 +120,7 @@ export class WalletController implements ReactiveController {
           (chain) => chain.chainId === chainId
         ) as ChainData;
 
-        void this.addEvmChain(
-          selectedChain,
-          this.walletContext.value.evmWallet.provider
-        );
+        void this.addEvmChain(selectedChain, provider);
       }
     }
   }
@@ -172,7 +172,7 @@ export class WalletController implements ReactiveController {
         })
       );
       if (network.chainId !== providerChainId) {
-        await this.switchEvmChain(network.chainId);
+        await this.switchEvmChain(network.chainId, provider);
       }
       this.host.requestUpdate();
     }
@@ -275,8 +275,8 @@ export class WalletController implements ReactiveController {
           }
         ]
       });
-    } catch (addeError) {
-      console.error("Failed to add evm network into wallet", addeError);
+    } catch (addEvmError) {
+      console.error('Failed to add evm network into wallet', addEvmError);
     }
   }
 }
