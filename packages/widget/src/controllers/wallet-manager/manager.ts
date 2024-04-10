@@ -276,7 +276,7 @@ export class WalletController implements ReactiveController {
         ]
       });
     } catch (addeError) {
-      console.error(addeError);
+      console.error("Failed to add evm network into wallet", addeError);
     }
   }
 }
