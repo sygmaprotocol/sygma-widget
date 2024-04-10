@@ -30,13 +30,10 @@ export class WalletController implements ReactiveController {
   }): WalletInit[] {
     // always have injected ones
     const injected = injectedModule();
-    let wallets = [injected];
+    const wallets = [injected];
 
-    if (
-      options?.walletSelectorWalletConfigurations &&
-      options?.walletSelectorWalletConfigurations.length > 0
-    ) {
-      wallets = wallets.concat(options.walletSelectorWalletConfigurations);
+    if (options?.walletSelectorWalletConfigurations?.length) {
+      wallets.push(...options.walletSelectorWalletConfigurations);
     }
 
     return wallets;
