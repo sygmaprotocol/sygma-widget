@@ -35,7 +35,7 @@ class SygmaProtocolWidget
 {
   static styles = styles;
 
-  @property({ type: Array }) wallets?: WalletInit[];
+  @property({ type: Array }) walletSelectorWalletConfigurations?: WalletInit[];
 
   @property({ type: String }) environment?: Environment;
 
@@ -102,8 +102,10 @@ class SygmaProtocolWidget
         .appMetadata=${this.appMetadata}
         .theme=${this.theme}
         .walletConnectOptions=${this.walletConnectOptions}
+        .walletSelectorWalletConfigurations=${this
+          .walletSelectorWalletConfigurations}
       >
-        <sygma-wallet-context-provider .wallets=${this.wallets}>
+        <sygma-wallet-context-provider>
           <section
             class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
           >

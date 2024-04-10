@@ -3,7 +3,7 @@ import { createContext, ContextProvider } from '@lit/context';
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
 import type { HTMLTemplateResult, PropertyValues } from 'lit';
 import { html } from 'lit';
-import type { AppMetadata } from '@web3-onboard/common';
+import type { AppMetadata, WalletInit } from '@web3-onboard/common';
 import { BaseComponent } from '../components/common/base-component';
 import type { Theme } from '../interfaces';
 
@@ -11,6 +11,7 @@ export interface ConfigContext {
   theme?: Theme;
   walletConnectOptions?: WalletConnectOptions;
   appMetaData?: AppMetadata;
+  walletSelectorWalletConfigurations?: WalletInit[];
 }
 
 export const configContext = createContext<ConfigContext>(
@@ -30,6 +31,9 @@ export class ConfigContextProvider extends BaseComponent {
   @property({ attribute: false, type: Object })
   appMetadata?: AppMetadata;
 
+  @property({ type: Array })
+  walletSelectorWalletConfigurations?: WalletInit[];
+
   @property({ attribute: false, type: Object })
   theme?: Theme;
 
@@ -39,7 +43,9 @@ export class ConfigContextProvider extends BaseComponent {
     this.configContextProvider.setValue({
       theme: this.theme,
       walletConnectOptions: this.walletConnectOptions,
-      appMetaData: this.appMetadata
+      appMetaData: this.appMetadata,
+      walletSelectorWalletConfigurations:
+        this.walletSelectorWalletConfigurations
     });
   }
 

@@ -11,16 +11,17 @@ import type { WalletInit, AppMetadata } from '@web3-onboard/common';
 
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
 import { utils } from 'ethers';
-import { WalletUpdateEvent, walletContext } from '../../context';
+import { configContext, WalletUpdateEvent, walletContext } from '../../context';
 
 export class WalletController implements ReactiveController {
   host: ReactiveElement;
 
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
+  _configContext: ContextConsumer<typeof configContext, ReactiveElement>;
 
   /**
    * Provides list of wallets specified by 3rd party
-   * if not, provides default list
+   * along with default injected connector
    * @param {{ dappUrl?: string }} options
    * @returns {WalletInit[]}
    */
@@ -28,17 +29,14 @@ export class WalletController implements ReactiveController {
     walletConnectOptions?: WalletConnectOptions;
     appMetaData?: AppMetadata;
   }): WalletInit[] {
-    const specifiedWallets = this.walletContext.value?.wallets;
-
-    if (!!specifiedWallets && specifiedWallets.length > 0) {
-      return specifiedWallets;
-    }
-
+    // always have injected ones
     const injected = injectedModule();
-
-    const wallets = [injected];
+    let wallets = [injected];
 
     if (options?.walletConnectOptions?.projectId) {
+      // wallet connect can be directly provided by
+      // the user, do we still need to check this?
+      // seems unnecessary
       wallets.push(
         walletConnectModule({
           projectId: options?.walletConnectOptions.projectId,
@@ -47,13 +45,26 @@ export class WalletController implements ReactiveController {
       );
     }
 
+    const specifiedWallets =
+      this._configContext.value?.walletSelectorWalletConfigurations;
+
+    if (!!specifiedWallets && specifiedWallets.length > 0) {
+      wallets = wallets.concat(specifiedWallets);
+    }
+
     return wallets;
   }
 
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
+
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
+      subscribe: true
+    });
+
+    this._configContext = new ContextConsumer(host, {
+      context: configContext,
       subscribe: true
     });
   }
