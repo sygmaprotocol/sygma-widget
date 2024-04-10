@@ -42,7 +42,7 @@ describe('config context provider', function () {
       theme: undefined,
       walletConnectOptions: undefined,
       appMetaData: { name: 'My Dapp' },
-      walletSelectorWalletConfigurations: undefined
+      walletModules: undefined
     });
   });
 });

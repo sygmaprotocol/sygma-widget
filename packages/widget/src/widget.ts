@@ -35,7 +35,7 @@ class SygmaProtocolWidget
 {
   static styles = styles;
 
-  @property({ type: Array }) walletSelectorWalletConfigurations?: WalletInit[];
+  @property({ type: Array }) walletModules?: WalletInit[];
 
   @property({ type: String }) environment?: Environment;
 
@@ -102,8 +102,7 @@ class SygmaProtocolWidget
         .appMetadata=${this.appMetadata}
         .theme=${this.theme}
         .walletConnectOptions=${this.walletConnectOptions}
-        .walletSelectorWalletConfigurations=${this
-          .walletSelectorWalletConfigurations}
+        .walletModules=${this.walletModules}
       >
         <sygma-wallet-context-provider>
           <section

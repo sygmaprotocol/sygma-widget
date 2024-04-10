@@ -11,7 +11,7 @@ export interface ConfigContext {
   theme?: Theme;
   walletConnectOptions?: WalletConnectOptions;
   appMetaData?: AppMetadata;
-  walletSelectorWalletConfigurations?: WalletInit[];
+  walletModules?: WalletInit[];
 }
 
 export const configContext = createContext<ConfigContext>(
@@ -32,7 +32,7 @@ export class ConfigContextProvider extends BaseComponent {
   appMetadata?: AppMetadata;
 
   @property({ type: Array })
-  walletSelectorWalletConfigurations?: WalletInit[];
+  walletModules?: WalletInit[];
 
   @property({ attribute: false, type: Object })
   theme?: Theme;
@@ -44,8 +44,7 @@ export class ConfigContextProvider extends BaseComponent {
       theme: this.theme,
       walletConnectOptions: this.walletConnectOptions,
       appMetaData: this.appMetadata,
-      walletSelectorWalletConfigurations:
-        this.walletSelectorWalletConfigurations
+      walletModules: this.walletModules
     });
   }
 

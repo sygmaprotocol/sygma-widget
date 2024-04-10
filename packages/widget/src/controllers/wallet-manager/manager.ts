@@ -25,18 +25,15 @@ export class WalletController implements ReactiveController {
    */
   getWallets(options?: {
     walletConnectOptions?: WalletConnectOptions;
-    walletSelectorWalletConfigurations?: WalletInit[];
+    walletModules?: WalletInit[];
     appMetaData?: AppMetadata;
   }): WalletInit[] {
     // always have injected ones
     const injected = injectedModule();
     let wallets = [injected];
 
-    if (
-      options?.walletSelectorWalletConfigurations &&
-      options?.walletSelectorWalletConfigurations.length > 0
-    ) {
-      wallets = wallets.concat(options.walletSelectorWalletConfigurations);
+    if (options?.walletModules?.length) {
+      wallets = wallets.concat(options.walletModules);
     }
 
     return wallets;
@@ -65,7 +62,7 @@ export class WalletController implements ReactiveController {
     options?: {
       walletConnectOptions?: WalletConnectOptions;
       appMetaData?: AppMetadata;
-      walletSelectorWalletConfigurations?: WalletInit[];
+      walletModules?: WalletInit[];
     }
   ): void => {
     switch (network.type) {
