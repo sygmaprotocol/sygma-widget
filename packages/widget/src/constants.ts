@@ -7,8 +7,9 @@ export const MAINNET_EXPLORER_URL = 'https://scan.buildwithsygma.com/transfer/';
 export const TESTNET_EXPLORER_URL =
   'https://scan.test.buildwithsygma.com/transfer/';
 
+type WsUrl = `ws://${string}` | `wss://${string}`;
 export const SUBSTRATE_RPCS: {
-  [env in Environment]: Record<ParachainID, string>;
+  [env in Environment]: Record<ParachainID, WsUrl>;
 } = {
   [Environment.DEVNET]: {},
   [Environment.LOCAL]: {},
