@@ -9,7 +9,7 @@ import type {
 import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
 import { Web3Provider } from '@ethersproject/providers';
 import { ContextConsumer } from '@lit/context';
-import { BigNumber } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { getAssetBalance } from '@buildwithsygma/sygma-sdk-core/substrate';
@@ -34,7 +34,7 @@ export class TokenBalanceController implements ReactiveController {
   loadingBalance: boolean = true;
 
   //"wei"
-  balance: BigNumber = BigNumber.from(0);
+  balance: BigNumber = ethers.constants.Zero;
   decimals: number = 18;
 
   timeout?: ReturnType<typeof setInterval>;
@@ -64,7 +64,7 @@ export class TokenBalanceController implements ReactiveController {
     if (this.timeout) {
       clearInterval(this.timeout);
     }
-    this.balance = BigNumber.from(0);
+    this.balance = ethers.constants.Zero;
     this.host.requestUpdate();
 
     if (isEvmResource(resource)) {
@@ -106,6 +106,13 @@ export class TokenBalanceController implements ReactiveController {
       throw new Error('parachainId unavailable');
     }
     throw new Error('Unsupported resource');
+  }
+
+  resetBalance(): void {
+    if (this.timeout) {
+      clearInterval(this.timeout);
+    }
+    this.balance = ethers.constants.Zero;
   }
 
   subscribeERC20BalanceUpdate = (resource: EvmResource): void => {

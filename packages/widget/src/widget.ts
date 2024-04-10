@@ -16,16 +16,16 @@ import type { AppMetadata } from '@web3-onboard/common';
 import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
-import './components/amount-selector';
-import { BaseComponent } from './components/common/base-component';
+import './components/resource-amount-selector';
+import { BaseComponent } from './components/common/base-component/base-component';
 import './components/transfer/fungible/fungible-token-transfer';
 import './components/network-selector';
 import './context/wallet';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
-  SdkInitializedEvent,
-  Theme
+  Theme,
+  SdkInitializedEvent
 } from './interfaces';
 import { styles } from './styles';
 
@@ -120,6 +120,7 @@ class SygmaProtocolWidget
               <sygma-fungible-transfer
                 @sdk-initialized=${(event: SdkInitializedEvent) =>
                   (this.sdkInitialized = event.detail.hasInitialized)}
+                .environment=${this.environment as Environment}
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
                 .whitelistedSourceResources=${this.whitelistedSourceNetworks}

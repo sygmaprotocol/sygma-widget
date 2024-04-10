@@ -73,7 +73,7 @@ export class WalletContextProvider extends BaseComponent {
   substrateProviderContext: SubstrateProviderContext = {};
 
   @property({ attribute: false, type: Object })
-  evmWalllet?: EvmWallet;
+  evmWallet?: EvmWallet;
 
   @property({ attribute: false })
   substrateProviders?: Array<ApiPromise> = [];
@@ -82,8 +82,8 @@ export class WalletContextProvider extends BaseComponent {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    if (this.evmWalllet) {
-      this.walletContext.evmWallet = this.evmWalllet;
+    if (this.evmWallet) {
+      this.walletContext.evmWallet = this.evmWallet;
     }
 
     const substrateProviders = await this.getSubstrateProviders();
