@@ -5,7 +5,6 @@ import type { Account } from '@polkadot-onboard/core';
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
-import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { WalletInit, AppMetadata } from '@web3-onboard/common';
 
