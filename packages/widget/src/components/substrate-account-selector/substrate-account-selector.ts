@@ -29,8 +29,12 @@ export class SubstrateAccountSelector extends BaseComponent {
   };
 
   private handleSubstrateAccountSelected = (
-    option: DropdownOption<Account>
-  ): void => this.walletController.onSubstrateAccountSelected(option.value);
+    option?: DropdownOption<Account>
+  ): void => {
+    if (option) {
+      this.walletController.onSubstrateAccountSelected(option.value);
+    }
+  };
 
   private renderDisconnectSubstrateButton(): HTMLTemplateResult | undefined {
     return html` <div
