@@ -76,7 +76,7 @@ export class SubstrateAccountSelector extends BaseComponent {
 
   render(): HTMLTemplateResult {
     const substrateWallet = this.wallets.substrateWallet;
-    const substrateAccount = substrateWallet?.accounts![0];
+    const substrateAccount = substrateWallet?.accounts?.[0];
     const options = this.normalizeOptionsData();
 
     return when(
