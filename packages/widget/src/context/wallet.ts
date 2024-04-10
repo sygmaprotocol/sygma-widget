@@ -1,16 +1,15 @@
 import { createContext, provide } from '@lit/context';
 import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
-import type { u32 } from '@polkadot/types-codec';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { WsProvider, ApiPromise } from '@polkadot/api';
-import type { PropertyValues } from '@lit/reactive-element';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { BaseComponent } from '../components/common/base-component';
-import { SUBSTRATE_CHAIN_RPCS } from '../constants';
+import { SUBSTRATE_RPCS } from '../constants';
+import { fetchParachainId } from '../utils/substrate';
 
 export interface EvmWallet {
   address: string;
@@ -81,60 +80,13 @@ export class WalletContextProvider extends BaseComponent {
 
   @property({ type: String }) environment?: Environment;
 
-  get defaultSubstrateProviders(): Array<ApiPromise> {
-    const defaultConnections: Array<ApiPromise> = [];
-    const environment = this.environment ?? Environment.TESTNET;
-
-    for (const connection of SUBSTRATE_CHAIN_RPCS[environment]) {
-      const provider = new WsProvider(connection);
-      const api = new ApiPromise({ provider });
-      defaultConnections.push(api);
-    }
-
-    return defaultConnections;
-  }
-
-  /**
-   * Creates a provider map w.r.t parachain ids
-   * @param {Array<ApiPromise>} providers array of {@link ApiPromise}
-   * @returns {Promise<ParachainProviders>}
-   */
-  async createProvidersMap(
-    providers: Array<ApiPromise>
-  ): Promise<ParachainProviders> {
-    const map: ParachainProviders = new Map();
-
-    for (const provider of providers) {
-      try {
-        await provider.isReady;
-        // TODO: use polkadot type augmentation to remove "as 32"
-        const parachainId = await provider.query.parachainInfo.parachainId();
-        const _parachainId = (parachainId as u32).toNumber();
-        map.set(_parachainId, provider);
-      } catch (error) {
-        console.error('user provided substrate provider ignored', error);
-      }
-    }
-
-    return map;
-  }
-
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     if (this.evmWalllet) {
       this.walletContext.evmWallet = this.evmWalllet;
     }
 
-    let substrateProviders;
-    if (this.substrateProviders) {
-      substrateProviders = await this.createProvidersMap(
-        this.substrateProviders
-      );
-    } else {
-      substrateProviders = await this.createProvidersMap(
-        this.defaultSubstrateProviders
-      );
-    }
+    const substrateProviders = await this.getSubstrateProviders();
 
     this.substrateProviderContext = {
       substrateProviders: substrateProviders
@@ -156,23 +108,6 @@ export class WalletContextProvider extends BaseComponent {
         );
       }
     });
-  }
-
-  // since we provider as property from widget
-  protected async updated(
-    changedProperties: PropertyValues<this>
-  ): Promise<void> {
-    if (changedProperties.has('substrateProviders')) {
-      if (this.substrateProviders) {
-        const providers = await this.createProvidersMap(
-          this.substrateProviders
-        );
-
-        this.substrateProviderContext = {
-          substrateProviders: providers
-        };
-      }
-    }
   }
 
   disconnectedCallback(): void {
@@ -217,6 +152,47 @@ export class WalletContextProvider extends BaseComponent {
       };
     }
   };
+
+  private async getSubstrateProviders(): Promise<ParachainProviders> {
+    const substrateProviders: ParachainProviders = new Map();
+    const specifiedProviders = this.substrateProviders ?? [];
+    const environment = this.environment ?? Environment.TESTNET;
+
+    // create a id -> api map of all specified providers
+    for (const provider of specifiedProviders) {
+      try {
+        const parachainId = await fetchParachainId(provider);
+        console.log('provided provider for ' + parachainId);
+        substrateProviders.set(parachainId, provider);
+      } catch (error) {
+        console.error('unable to fetch parachain id');
+      }
+    }
+
+    // all chains hardcoded on ui
+    // and create their providers
+    // if not already specified by the user
+    const parachainIds = Object.keys(SUBSTRATE_RPCS[environment]);
+    for (const parachainId of parachainIds) {
+      console.log('creating default provider for ' + parachainId);
+      const _parachainId = parseInt(parachainId);
+
+      if (!substrateProviders.has(_parachainId)) {
+        const rpcUrls = SUBSTRATE_RPCS[environment][_parachainId];
+        const provider = new WsProvider(rpcUrls);
+        const api = new ApiPromise({ provider });
+
+        try {
+          await api.isReady;
+          substrateProviders.set(_parachainId, api);
+        } catch (error) {
+          console.error('api error');
+        }
+      }
+    }
+
+    return substrateProviders;
+  }
 
   protected render(): HTMLTemplateResult {
     return html`<slot></slot>`;
