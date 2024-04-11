@@ -24,7 +24,8 @@ import './context/wallet';
 import type {
   Eip1193Provider,
   ISygmaProtocolWidget,
-  Theme
+  Theme,
+  SdkInitializedEvent
 } from './interfaces';
 import { styles } from './styles';
 
@@ -45,7 +46,7 @@ class SygmaProtocolWidget
 
   @property({ type: Object }) evmProvider?: Eip1193Provider;
 
-  @property() substrateProvider?: ApiPromise | string;
+  @property({ type: Array }) substrateProviders?: Array<ApiPromise>;
 
   @property({ type: Object }) substrateSigner?: Signer;
 
@@ -69,6 +70,9 @@ class SygmaProtocolWidget
 
   @state()
   private isLoading = false;
+
+  @state()
+  private sdkInitialized = false;
 
   @state()
   private sourceNetwork?: Domain;
@@ -104,7 +108,10 @@ class SygmaProtocolWidget
         .walletConnectOptions=${this.walletConnectOptions}
         .walletModules=${this.walletModules}
       >
-        <sygma-wallet-context-provider>
+        <sygma-wallet-context-provider
+          .substrateProviders=${this.substrateProviders}
+          .environment=${this.environment}
+        >
           <section
             class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
           >
@@ -113,7 +120,10 @@ class SygmaProtocolWidget
               ${this.renderConnect()}
             </section>
             <section class="widgetContent">
-              <sygma-fungible-transfer.environment=${this.environment as Environment}
+              <sygma-fungible-transfer
+                .environment=${this.environment as Environment}
+                @sdk-initialized=${(event: SdkInitializedEvent) =>
+                  (this.sdkInitialized = event.detail.hasInitialized)}
                 .environment=${this.environment as Environment}
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
@@ -124,7 +134,7 @@ class SygmaProtocolWidget
             </section>
             <section class="poweredBy">${sygmaLogo} Powered by Sygma</section>
             ${when(
-              this.isLoading,
+              this.isLoading || !this.sdkInitialized,
               () => html`<sygma-overlay-component></sygma-overlay-component>`
             )}
           </section>

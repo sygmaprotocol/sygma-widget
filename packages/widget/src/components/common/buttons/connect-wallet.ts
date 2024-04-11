@@ -61,11 +61,11 @@ export class ConnectWalletButton extends BaseComponent {
   };
 
   private isWalletConnected(): boolean {
-    return !!this.wallets.evmWallet || !!this.wallets.substrateWallet;
+    return !!this.wallets.evmWallet || !!this.wallets.substrateWallet?.signer;
   }
 
   private renderConnectWalletButton(): HTMLTemplateResult | undefined {
-    if (this.wallets.substrateWallet) return;
+    if (this.wallets.substrateWallet?.signer) return;
 
     return when(
       this.isWalletConnected(),

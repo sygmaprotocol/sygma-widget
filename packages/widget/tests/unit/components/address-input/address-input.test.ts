@@ -50,6 +50,7 @@ describe('address-input component', function () {
 
     let el = await fixture(html`
       <sygma-address-input
+        .networkType=${Network.EVM}
         .address=${'0x123'}
         .onAddressChange=${mockAddressChangeHandler}
       ></sygma-address-input>
