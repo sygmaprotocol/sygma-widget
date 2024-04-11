@@ -46,7 +46,7 @@ class SygmaProtocolWidget
 
   @property({ type: Object }) evmProvider?: Eip1193Provider;
 
-  @property() substrateProvider?: ApiPromise | string;
+  @property({ type: Array }) substrateProviders?: Array<ApiPromise>;
 
   @property({ type: Object }) substrateSigner?: Signer;
 
@@ -108,7 +108,10 @@ class SygmaProtocolWidget
         .walletConnectOptions=${this.walletConnectOptions}
         .walletModules=${this.walletModules}
       >
-        <sygma-wallet-context-provider>
+        <sygma-wallet-context-provider
+          .substrateProviders=${this.substrateProviders}
+          .environment=${this.environment}
+        >
           <section
             class="widgetContainer ${this.isLoading ? 'noPointerEvents' : ''}"
           >
@@ -119,7 +122,7 @@ class SygmaProtocolWidget
             <section class="widgetContent">
               <sygma-fungible-transfer
                 @sdk-initialized=${(event: SdkInitializedEvent) =>
-                (this.sdkInitialized = event.detail.hasInitialized)}
+                  (this.sdkInitialized = event.detail.hasInitialized)}
                 .environment=${this.environment as Environment}
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}

@@ -1,13 +1,22 @@
 import { ERC20__factory } from '@buildwithsygma/sygma-contracts';
-import type { EvmResource, Resource } from '@buildwithsygma/sygma-sdk-core';
+import type {
+  EthereumConfig,
+  EvmResource,
+  Resource,
+  SubstrateConfig,
+  SubstrateResource
+} from '@buildwithsygma/sygma-sdk-core';
 import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
 import { Web3Provider } from '@ethersproject/providers';
 import { ContextConsumer } from '@lit/context';
-import { ethers } from 'ethers';
-import type { BigNumber } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
+import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
+import { getAssetBalance } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
+import { substrateProviderContext } from '../../context/wallet';
+import type { SubstrateWallet } from '../../context/wallet';
 
 const BALANCE_REFRESH_MS = 5_000;
 
@@ -17,6 +26,10 @@ export class TokenBalanceController implements ReactiveController {
   host: ReactiveElement;
 
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
+  substrateProviderContext: ContextConsumer<
+    typeof substrateProviderContext,
+    ReactiveElement
+  >;
 
   loadingBalance: boolean = true;
 
@@ -32,6 +45,10 @@ export class TokenBalanceController implements ReactiveController {
       context: walletContext,
       subscribe: true
     });
+    this.substrateProviderContext = new ContextConsumer(host, {
+      context: substrateProviderContext,
+      subscribe: true
+    });
   }
 
   hostConnected(): void {}
@@ -40,12 +57,16 @@ export class TokenBalanceController implements ReactiveController {
     clearInterval(this.timeout);
   }
 
-  startBalanceUpdates(resource: Resource): void {
+  startBalanceUpdates(
+    resource: Resource,
+    sourceDomainConfig?: EthereumConfig | SubstrateConfig
+  ): void {
     if (this.timeout) {
       clearInterval(this.timeout);
     }
     this.balance = ethers.constants.Zero;
     this.host.requestUpdate();
+
     if (isEvmResource(resource)) {
       if (resource.type === ResourceType.FUNGIBLE) {
         //trigger so we don't wait BALANCE_REFRESH_MS before displaying balance
@@ -60,12 +81,29 @@ export class TokenBalanceController implements ReactiveController {
       //resource.native is not set :shrug:
       if (resource.symbol === 'eth') {
         void this.subscribeEvmNativeBalanceUpdate();
+
         this.timeout = setInterval(
           this.subscribeEvmNativeBalanceUpdate,
           BALANCE_REFRESH_MS
         );
         return;
       }
+    } else {
+      const config = sourceDomainConfig as SubstrateConfig;
+      if (config.parachainId) {
+        const params = {
+          resource,
+          parachainId: config.parachainId as ParachainID
+        };
+        void this.suscribeSubstrateBalanceUpdate(params);
+        this.timeout = setInterval(
+          this.suscribeSubstrateBalanceUpdate,
+          BALANCE_REFRESH_MS,
+          params
+        );
+        return;
+      }
+      throw new Error('parachainId unavailable');
     }
     throw new Error('Unsupported resource');
   }
@@ -108,6 +146,43 @@ export class TokenBalanceController implements ReactiveController {
       this.balance = balance;
       this.decimals = 18;
       this.host.requestUpdate();
+    }.bind(this)();
+  };
+
+  suscribeSubstrateBalanceUpdate = (params: {
+    resource: SubstrateResource;
+    parachainId: ParachainID;
+  }): void => {
+    const { resource, parachainId } = params;
+
+    const substrateProvider =
+      this.substrateProviderContext.value?.substrateProviders?.get(parachainId);
+    const { signerAddress } = this.walletContext.value
+      ?.substrateWallet as SubstrateWallet;
+
+    if (!substrateProvider) {
+      console.error('substrate provider unavailable');
+      return;
+    }
+
+    void async function (this: TokenBalanceController) {
+      try {
+        this.loadingBalance = true;
+        this.host.requestUpdate();
+        const tokenBalance = await getAssetBalance(
+          substrateProvider,
+          resource.assetID as number,
+          signerAddress
+        );
+        this.loadingBalance = false;
+        this.balance = BigNumber.from(tokenBalance.balance.toString());
+        this.decimals = resource.decimals!;
+        this.host.requestUpdate(BALANCE_UPDATE_KEY);
+      } catch (e) {
+        console.error("Failed to fetch account's token balance", e);
+        this.loadingBalance = false;
+        this.host.requestUpdate();
+      }
     }.bind(this)();
   };
 }
