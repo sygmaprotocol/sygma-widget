@@ -12,7 +12,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
-import type { AppMetadata } from '@web3-onboard/common';
+import type { WalletInit, AppMetadata } from '@web3-onboard/common';
 import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
@@ -35,6 +35,8 @@ class SygmaProtocolWidget
   implements ISygmaProtocolWidget
 {
   static styles = styles;
+
+  @property({ type: Array }) walletModules?: WalletInit[];
 
   @property({ type: String }) environment?: Environment;
 
@@ -104,6 +106,7 @@ class SygmaProtocolWidget
         .appMetadata=${this.appMetadata}
         .theme=${this.theme}
         .walletConnectOptions=${this.walletConnectOptions}
+        .walletModules=${this.walletModules}
       >
         <sygma-wallet-context-provider
           .substrateProviders=${this.substrateProviders}

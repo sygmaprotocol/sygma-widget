@@ -53,7 +53,7 @@ describe('wallet context provider', function () {
     contextProvider.dispatchEvent(
       new WalletUpdateEvent({ evmWallet: fakeEvmWallet })
     );
-
+    
     assert.deepEqual(context.value, { evmWallet: fakeEvmWallet });
 
     contextProvider.dispatchEvent(
