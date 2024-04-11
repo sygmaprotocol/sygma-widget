@@ -52,6 +52,8 @@ describe('wallet context provider', function () {
       new WalletUpdateEvent({ evmWallet: fakeEvmWallet })
     );
 
-    assert.deepEqual(context.value, { evmWallet: fakeEvmWallet });
+    assert.deepEqual(context.value, {
+      evmWallet: fakeEvmWallet
+    });
   });
 });

@@ -5,11 +5,10 @@ import type { Account } from '@polkadot-onboard/core';
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
-import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
+import type { WalletInit, AppMetadata } from '@web3-onboard/common';
 
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
-import type { AppMetadata } from '@web3-onboard/common';
 import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
 import type { Eip1193Provider } from '../../interfaces';
@@ -32,8 +31,31 @@ export class WalletController implements ReactiveController {
 
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
 
+  /**
+   * Provides list of wallets specified by 3rd party
+   * along with default injected connector
+   * @param {{ dappUrl?: string }} options
+   * @returns {WalletInit[]}
+   */
+  getWallets(options?: {
+    walletConnectOptions?: WalletConnectOptions;
+    walletModules?: WalletInit[];
+    appMetaData?: AppMetadata;
+  }): WalletInit[] {
+    // always have injected ones
+    const injected = injectedModule();
+    const wallets = [injected];
+
+    if (options?.walletModules?.length) {
+      wallets.push(...options.walletModules);
+    }
+
+    return wallets;
+  }
+
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
+
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
       subscribe: true
@@ -54,6 +76,7 @@ export class WalletController implements ReactiveController {
     options?: {
       walletConnectOptions?: WalletConnectOptions;
       appMetaData?: AppMetadata;
+      walletModules?: WalletInit[];
     }
   ): void => {
     switch (network.type) {
@@ -132,17 +155,11 @@ export class WalletController implements ReactiveController {
       appMetaData?: AppMetadata;
     }
   ): Promise<void> => {
-    const injected = injectedModule();
-
-    const walletSetup = [injected];
-
-    if (options?.walletConnectOptions?.projectId) {
-      walletSetup.push(walletConnectModule(options.walletConnectOptions));
-    }
+    const walletsToConnect = this.getWallets(options);
 
     const onboard = Onboard({
       appMetadata: options?.appMetaData,
-      wallets: walletSetup,
+      wallets: walletsToConnect,
       chains: [
         {
           id: network.chainId
