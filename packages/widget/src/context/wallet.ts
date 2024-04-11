@@ -7,6 +7,7 @@ import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { BaseComponent } from '../components/common/base-component';
 import { SUBSTRATE_RPCS } from '../constants';
 import { fetchParachainId } from '../utils/substrate';
@@ -35,8 +36,7 @@ export enum WalletContextKeys {
   SUBSTRATE_WALLET = 'substrateWallet'
 }
 
-export type ParachainId = number;
-export type ParachainProviders = Map<ParachainId, ApiPromise>;
+export type ParachainProviders = Map<ParachainID, ApiPromise>;
 
 export interface SubstrateProviderContext {
   substrateProviders?: ParachainProviders;
