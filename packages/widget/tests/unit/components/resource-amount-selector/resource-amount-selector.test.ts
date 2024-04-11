@@ -4,7 +4,7 @@ import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
 import { utils } from 'ethers';
 import { html } from 'lit';
 import { afterEach, assert, describe, expect, it, vi } from 'vitest';
-import { ResourceAmountSelector } from '../../../../src/components';
+import { ResourceAmountSelector } from '../../../../src/components/resource-amount-selector/resource-amount-selector';
 import type { DropdownOption } from '../../../../src/components/common/dropdown/dropdown';
 import { BALANCE_UPDATE_KEY } from '../../../../src/controllers/wallet-manager/token-balance';
 
@@ -108,7 +108,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
     el._onResourceSelectedHandler(dropdownOption);
     await el.updateComplete;
 
-    expect(el.amount).toEqual('0');
+    expect(el.amount).toEqual('');
     expect(el.tokenBalanceController.balance.toNumber()).toEqual(0);
     expect(el.tokenBalanceController.decimals).toEqual(18);
   });
@@ -181,6 +181,32 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
         'Amount exceeds account balance'
       );
     });
+    it('revalidates on account balance change', async () => {
+      const el = await fixture<ResourceAmountSelector>(
+        html` <sygma-resource-amount-selector></sygma-resource-amount-selector>`
+      );
+
+      // input amount greater than balance
+      const input = el.shadowRoot!.querySelector(
+        '.amountSelectorInput'
+      ) as HTMLInputElement;
+      input.value = '150';
+      input.dispatchEvent(new Event('input'));
+      await nextFrame();
+
+      const validationMessage = el.shadowRoot!.querySelector(
+        '.validationMessage'
+      ) as HTMLDivElement;
+      assert.strictEqual(
+        validationMessage.textContent,
+        'Amount exceeds account balance'
+      );
+
+      el.tokenBalanceController.balance = utils.parseUnits('400', 'ether');
+      el.requestUpdate(BALANCE_UPDATE_KEY);
+      await el.updateComplete;
+      assert.isNull(el.shadowRoot!.querySelector('.validationMessage'));
+    });
 
     it('revalidates on account balance change', async () => {
       const el = await fixture<ResourceAmountSelector>(
@@ -249,7 +275,10 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       ) as HTMLDivElement;
 
       assert.strictEqual(el.amount, '0');
-      assert.strictEqual(validationMessage.textContent, 'Invalid amount value');
+      assert.strictEqual(
+        validationMessage.textContent,
+        'Amount must be greater than 0'
+      );
     });
   });
 });

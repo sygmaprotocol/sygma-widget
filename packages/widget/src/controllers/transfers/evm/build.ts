@@ -23,6 +23,7 @@ export async function buildEvmFungibleTransactions(
     !address ||
     providerChaiId !== this.sourceNetwork.chainId
   ) {
+    this.resetFee();
     return;
   }
 
@@ -35,12 +36,12 @@ export async function buildEvmFungibleTransactions(
     this.selectedResource.resourceId,
     String(this.resourceAmount)
   );
-  const fee = await evmTransfer.getFee(transfer);
+  this.fee = await evmTransfer.getFee(transfer);
   this.pendingEvmApprovalTransactions = await evmTransfer.buildApprovals(
     transfer,
-    fee
+    this.fee
   );
   this.pendingEvmTransferTransaction =
-    await evmTransfer.buildTransferTransaction(transfer, fee);
+    await evmTransfer.buildTransferTransaction(transfer, this.fee);
   this.host.requestUpdate();
 }

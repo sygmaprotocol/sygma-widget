@@ -1,10 +1,11 @@
+import '../../../common/buttons/button';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
 import { FungibleTransferState } from '../../../../controllers/transfers/fungible-token-transfer';
 import type { Button } from '../../../common';
-import { BaseComponent } from '../../../common';
+import { BaseComponent } from '../../../common/base-component';
 
 const enabledStates = [
   FungibleTransferState.WRONG_CHAIN,

@@ -3,14 +3,15 @@ import { css } from 'lit';
 export const styles = css`
   .dropdownWrapper {
     min-width: 7.5rem;
+    padding: 0.75rem 1rem;
     position: relative;
-    width: 100%;
     height: 100%;
   }
 
   .dropdown {
     outline: none;
     height: 100%;
+    width: 100%;
   }
 
   .dropdownTrigger {
@@ -45,6 +46,8 @@ export const styles = css`
     position: absolute;
     background-color: var(--white);
     width: 100%;
+    left: 0;
+    min-width: fit-content;
     border-radius: 0.75rem;
     border: 0.0625rem solid var(--gray-100);
     box-shadow:
@@ -63,6 +66,11 @@ export const styles = css`
     padding: 0.75rem 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    border-bottom: 1px solid var(--zinc-200);
+
+    &:last-child {
+      border-bottom: none;
+    }
 
     svg {
       max-width: 1.43656rem;
@@ -87,9 +95,6 @@ export const styles = css`
 
   .optionName {
     margin-left: 0.5rem;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   .dropdownLabel {

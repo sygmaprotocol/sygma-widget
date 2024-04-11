@@ -13,7 +13,7 @@ import {
   TokenBalanceController
 } from '../../controllers/wallet-manager/token-balance';
 import { tokenBalanceToNumber } from '../../utils/token';
-import { BaseComponent } from '../common';
+import { BaseComponent } from '../common/base-component/base-component';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { styles } from './styles';
 
@@ -39,7 +39,7 @@ export class ResourceAmountSelector extends BaseComponent {
 
   @state() selectedResource: Resource | null = null;
   @state() validationMessage: string | null = null;
-  @state() amount: string = '0';
+  @state() amount: string = '';
 
   tokenBalanceController = new TokenBalanceController(this);
 
@@ -60,17 +60,17 @@ export class ResourceAmountSelector extends BaseComponent {
   };
 
   _onInputAmountChangeHandler = (event: Event): void => {
-    const { value } = event.target as HTMLInputElement;
+    let { value } = event.target as HTMLInputElement;
 
+    if (value === '') {
+      value = '0';
+    }
     try {
       const amount = utils.parseUnits(
         value,
         this.tokenBalanceController.decimals
       );
-      this.amount = utils.formatUnits(
-        amount,
-        this.tokenBalanceController.decimals
-      );
+      this.amount = value;
       if (!this._validateAmount(value)) return;
       if (this.selectedResource) {
         this.onResourceSelected(this.selectedResource, BigNumber.from(amount));
@@ -94,7 +94,7 @@ export class ResourceAmountSelector extends BaseComponent {
   _onResourceSelectedHandler = (option?: DropdownOption<Resource>): void => {
     if (option) {
       this.selectedResource = option.value;
-      this.amount = '0';
+      this.amount = '';
       this.tokenBalanceController.startBalanceUpdates(this.selectedResource);
     } else {
       this.selectedResource = null;
@@ -103,6 +103,9 @@ export class ResourceAmountSelector extends BaseComponent {
   };
 
   _validateAmount(amount: string): boolean {
+    if (amount === '') {
+      amount = '0';
+    }
     try {
       const parsedAmount = utils.parseUnits(
         amount,
@@ -141,7 +144,8 @@ export class ResourceAmountSelector extends BaseComponent {
   _renderErrorMessages(): HTMLTemplateResult {
     return when(
       this.validationMessage,
-      () => html`<div class="validationMessage">${this.validationMessage}</div>`
+      () =>
+        html` <div class="validationMessage">${this.validationMessage}</div>`
     );
   }
 
@@ -160,7 +164,7 @@ export class ResourceAmountSelector extends BaseComponent {
     if (changedProperties.has('selectedResource')) {
       if (changedProperties.get('selectedResource') !== null) {
         this.tokenBalanceController.resetBalance();
-        this.amount = '0';
+        this.amount = '';
       }
     }
   }
