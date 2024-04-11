@@ -41,7 +41,9 @@ export async function buildEvmFungibleTransactions(
     transfer,
     this.fee
   );
-  this.pendingEvmTransferTransaction =
-    await evmTransfer.buildTransferTransaction(transfer, this.fee);
+  this.pendingTransferTransaction = await evmTransfer.buildTransferTransaction(
+    transfer,
+    this.fee
+  );
   this.host.requestUpdate();
 }

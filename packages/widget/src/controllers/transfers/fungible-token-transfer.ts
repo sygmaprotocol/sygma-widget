@@ -16,10 +16,28 @@ import { ContextConsumer } from '@lit/context';
 import type { UnsignedTransaction, BigNumber } from 'ethers';
 import { ethers } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
-import type { WalletContext } from '../../context';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { ApiPromise, SubmittableResult } from '@polkadot/api';
+import type {
+  ParachainID,
+  SubstrateFee
+} from '@buildwithsygma/sygma-sdk-core/substrate';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
+
+import { SdkInitializedEvent } from '../../interfaces';
+import { substrateProviderContext } from '../../context/wallet';
+import type { WalletContext } from '../../context';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
+import {
+  buildSubstrateFungibleTransactions,
+  executeNextSubstrateTransaction
+} from './substrate';
+
+export type SubstrateTransaction = SubmittableExtrinsic<
+  'promise',
+  SubmittableResult
+>;
 
 export enum FungibleTransferState {
   MISSING_SOURCE_NETWORK,
@@ -52,13 +70,19 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
-  public fee?: EvmFee;
+  public fee: EvmFee | SubstrateFee | null = null;
 
   //Evm transfer
   protected buildEvmTransactions = buildEvmFungibleTransactions;
   protected executeNextEvmTransaction = executeNextEvmTransaction;
   protected pendingEvmApprovalTransactions: UnsignedTransaction[] = [];
-  protected pendingEvmTransferTransaction?: UnsignedTransaction;
+  protected pendingTransferTransaction?:
+    | UnsignedTransaction
+    | SubstrateTransaction;
+
+  // Substrate transfer
+  protected buildSubstrateTransactions = buildSubstrateFungibleTransactions;
+  protected executeSubstrateTransaction = executeNextSubstrateTransaction;
 
   protected config: Config;
   protected env: Environment = Environment.MAINNET;
@@ -67,12 +91,39 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
+  substrateProviderContext: ContextConsumer<
+    typeof substrateProviderContext,
+    ReactiveElement
+  >;
 
   isWalletDisconnected(context: WalletContext): boolean {
     // Skip the method call during init
     if (Object.values(context).length === 0) return false;
 
     return !(!!context.evmWallet || !!context.substrateWallet);
+  }
+
+  get sourceSubstrateProvider(): ApiPromise | undefined {
+    if (this.sourceNetwork && this.sourceNetwork.type === Network.SUBSTRATE) {
+      const domainConfig = this.config.getDomainConfig(
+        this.sourceNetwork.id
+      ) as SubstrateConfig;
+      return this.getSubstrateProvider(domainConfig.parachainId as ParachainID);
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Provides substrate provider
+   * based on parachain id
+   * @param {ParachainId} parachainId
+   * @returns {ApiPromise | undefined}
+   */
+  getSubstrateProvider(parachainId: ParachainID): ApiPromise | undefined {
+    return this.substrateProviderContext.value?.substrateProviders?.get(
+      parachainId
+    );
   }
 
   constructor(host: ReactiveElement) {
@@ -95,6 +146,11 @@ export class FungibleTokenTransferController implements ReactiveController {
         }
       }
     });
+
+    this.substrateProviderContext = new ContextConsumer(host, {
+      context: substrateProviderContext,
+      subscribe: true
+    });
   }
   get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
     if (this.config.environment && this.sourceNetwork) {
@@ -107,27 +163,45 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.reset();
   }
 
+  /**
+   * Infinite Try/catch wrapper around
+   * {@link Config} from `@buildwithsygma/sygma-sdk-core`
+   * and emits a {@link SdkInitializedEvent}
+   * @param {number} time to wait before retrying request in ms
+   * @returns {void}
+   */
+  async retryInitSdk(retryMs = 100): Promise<void> {
+    try {
+      await this.config.init(1, this.env);
+      this.host.dispatchEvent(
+        new SdkInitializedEvent({ hasInitialized: true })
+      );
+    } catch (error) {
+      setTimeout(() => {
+        this.retryInitSdk(retryMs * 2).catch(console.error);
+      }, retryMs);
+    }
+  }
+
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
+    await this.retryInitSdk();
     await this.config.init(1, this.env);
-    this.supportedSourceNetworks = this.config
-      .getDomains()
-      //remove once we have proper substrate transfer support
-      .filter((n) => n.type === Network.EVM);
+    this.supportedSourceNetworks = this.config.getDomains();
     this.supportedDestinationNetworks = this.config.getDomains();
     this.host.requestUpdate();
   }
 
   resetFee(): void {
-    this.fee = undefined;
+    this.fee = null;
   }
 
   reset(): void {
     this.sourceNetwork = undefined;
     this.destinationNetwork = undefined;
     this.pendingEvmApprovalTransactions = [];
-    this.pendingEvmTransferTransaction = undefined;
+    this.pendingTransferTransaction = undefined;
     this.destinationAddress = '';
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
@@ -185,7 +259,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.destinationAddress = address;
     if (this.destinationAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
-      this.pendingEvmTransferTransaction = undefined;
+      this.pendingTransferTransaction = undefined;
     }
     void this.buildTransactions();
     this.host.requestUpdate();
@@ -204,7 +278,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.pendingEvmApprovalTransactions.length > 0) {
       return FungibleTransferState.PENDING_APPROVALS;
     }
-    if (this.pendingEvmTransferTransaction) {
+    if (this.pendingTransferTransaction) {
       return FungibleTransferState.PENDING_TRANSFER;
     }
     if (!this.sourceNetwork) {
@@ -235,6 +309,22 @@ export class FungibleTokenTransferController implements ReactiveController {
     ) {
       return FungibleTransferState.WRONG_CHAIN;
     }
+    if (this.waitingUserConfirmation) {
+      return FungibleTransferState.WAITING_USER_CONFIRMATION;
+    }
+    if (this.waitingTxExecution) {
+      return FungibleTransferState.WAITING_TX_EXECUTION;
+    }
+    if (this.transferTransactionId) {
+      return FungibleTransferState.COMPLETED;
+    }
+    if (this.pendingEvmApprovalTransactions.length > 0) {
+      return FungibleTransferState.PENDING_APPROVALS;
+    }
+    if (this.pendingTransferTransaction) {
+      return FungibleTransferState.PENDING_TRANSFER;
+    }
+
     return FungibleTransferState.UNKNOWN;
   }
 
@@ -251,7 +341,7 @@ export class FungibleTokenTransferController implements ReactiveController {
         break;
       case Network.SUBSTRATE:
         {
-          //TODO: add substrate logic
+          void this.executeSubstrateTransaction();
         }
         break;
       default:
@@ -341,7 +431,7 @@ export class FungibleTokenTransferController implements ReactiveController {
         break;
       case Network.SUBSTRATE:
         {
-          //TODO: add substrate logic
+          void this.buildSubstrateTransactions();
         }
         break;
       default:

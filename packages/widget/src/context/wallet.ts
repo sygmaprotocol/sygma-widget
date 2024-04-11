@@ -3,9 +3,14 @@ import type { Account, UnsubscribeFn } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
 import type { EIP1193Provider } from '@web3-onboard/core';
 import type { HTMLTemplateResult } from 'lit';
+import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { BaseComponent } from '../components/common/base-component';
+import { SUBSTRATE_RPCS } from '../constants';
+import { fetchParachainId } from '../utils/substrate';
 
 export interface EvmWallet {
   address: string;
@@ -31,6 +36,12 @@ export enum WalletContextKeys {
   SUBSTRATE_WALLET = 'substrateWallet'
 }
 
+export type ParachainProviders = Map<ParachainID, ApiPromise>;
+
+export interface SubstrateProviderContext {
+  substrateProviders?: ParachainProviders;
+}
+
 declare global {
   interface HTMLElementEventMap {
     walletUpdate: WalletUpdateEvent;
@@ -39,6 +50,10 @@ declare global {
 
 export const walletContext = createContext<WalletContext>(
   Symbol('sygma-wallet-context')
+);
+
+export const substrateProviderContext = createContext<SubstrateProviderContext>(
+  Symbol('substrate-provider-context')
 );
 
 export class WalletUpdateEvent extends CustomEvent<WalletContext> {
@@ -54,14 +69,29 @@ export class WalletContextProvider extends BaseComponent {
   @provide({ context: walletContext })
   private walletContext: WalletContext = {};
 
+  @provide({ context: substrateProviderContext })
+  substrateProviderContext: SubstrateProviderContext = {};
+
   @property({ attribute: false, type: Object })
   evmWallet?: EvmWallet;
 
-  connectedCallback(): void {
+  @property({ attribute: false })
+  substrateProviders?: Array<ApiPromise> = [];
+
+  @property({ type: String }) environment?: Environment;
+
+  async connectedCallback(): Promise<void> {
     super.connectedCallback();
     if (this.evmWallet) {
       this.walletContext.evmWallet = this.evmWallet;
     }
+
+    const substrateProviders = await this.getSubstrateProviders();
+
+    this.substrateProviderContext = {
+      substrateProviders: substrateProviders
+    };
+
     this.addEventListener('walletUpdate', (event: WalletUpdateEvent) => {
       this.walletContext = {
         ...this.walletContext,
@@ -122,6 +152,47 @@ export class WalletContextProvider extends BaseComponent {
       };
     }
   };
+
+  private async getSubstrateProviders(): Promise<ParachainProviders> {
+    const substrateProviders: ParachainProviders = new Map();
+    const specifiedProviders = this.substrateProviders ?? [];
+    const environment = this.environment ?? Environment.TESTNET;
+
+    // create a id -> api map of all specified providers
+    for (const provider of specifiedProviders) {
+      try {
+        const parachainId = await fetchParachainId(provider);
+        console.log(`provided provider for ${parachainId}`);
+        substrateProviders.set(parachainId, provider);
+      } catch (error) {
+        console.error('unable to fetch parachain id');
+      }
+    }
+
+    // all chains hardcoded on ui
+    // and create their providers
+    // if not already specified by the user
+    const parachainIds = Object.keys(SUBSTRATE_RPCS[environment]);
+    for (const parachainId of parachainIds) {
+      console.log(`creating default provider for ${parachainId}`);
+      const _parachainId = parseInt(parachainId);
+
+      if (!substrateProviders.has(_parachainId)) {
+        const rpcUrls = SUBSTRATE_RPCS[environment][_parachainId];
+        const provider = new WsProvider(rpcUrls);
+        const api = new ApiPromise({ provider });
+
+        try {
+          await api.isReady;
+          substrateProviders.set(_parachainId, api);
+        } catch (error) {
+          console.error('api error');
+        }
+      }
+    }
+
+    return substrateProviders;
+  }
 
   protected render(): HTMLTemplateResult {
     return html`<slot></slot>`;
