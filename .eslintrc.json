@@ -6,5 +6,8 @@
     "project": ["'./packages/*/tsconfig.json'", "'./examples/*/tsconfig.json'"],
     "ecmaVersion": 2020,
     "sourceType": "module"
+  },
+  "rules": {
+    "import/no-cycle": ["error", {"ignoreExternal": true }]
   }
 }
