@@ -14,6 +14,8 @@ import {
 } from '../../../../src/context';
 import { getMockedEvmWallet } from '../../../utils';
 
+vi.mock('@polkadot/api');
+
 describe('connect-wallet button', function () {
   afterEach(() => {
     fixtureCleanup();

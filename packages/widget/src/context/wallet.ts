@@ -162,7 +162,7 @@ export class WalletContextProvider extends BaseComponent {
     for (const provider of specifiedProviders) {
       try {
         const parachainId = await fetchParachainId(provider);
-        console.log('provided provider for ' + parachainId);
+        console.log(`provided provider for ${parachainId}`);
         substrateProviders.set(parachainId, provider);
       } catch (error) {
         console.error('unable to fetch parachain id');
@@ -174,7 +174,7 @@ export class WalletContextProvider extends BaseComponent {
     // if not already specified by the user
     const parachainIds = Object.keys(SUBSTRATE_RPCS[environment]);
     for (const parachainId of parachainIds) {
-      console.log('creating default provider for ' + parachainId);
+      console.log(`creating default provider for ${parachainId}`);
       const _parachainId = parseInt(parachainId);
 
       if (!substrateProviders.has(_parachainId)) {
