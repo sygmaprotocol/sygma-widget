@@ -1,5 +1,5 @@
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
-import { afterEach, assert, describe, it } from 'vitest';
+import { afterEach, assert, describe, it, vi } from 'vitest';
 
 import { html } from 'lit';
 import type { ConnectWalletButton } from '../../../../src/components';
@@ -7,6 +7,8 @@ import { SubstrateAccountSelector } from '../../../../src/components';
 import type { WalletContextProvider } from '../../../../src/context';
 import { WalletUpdateEvent } from '../../../../src/context';
 import type { Dropdown } from '../../../../src/components/common';
+
+vi.mock('@polkadot/api');
 
 describe('Substrate account selector component', function () {
   afterEach(() => {

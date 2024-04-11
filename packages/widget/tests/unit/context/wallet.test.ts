@@ -2,7 +2,7 @@ import { ContextConsumer } from '@lit/context';
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { afterEach, assert, describe, it } from 'vitest';
+import { afterEach, assert, describe, it, vi } from 'vitest';
 import {
   WalletContextProvider,
   WalletUpdateEvent,
@@ -10,6 +10,8 @@ import {
 } from '../../../src/context';
 import type { EvmWallet } from '../../../src/context';
 import { getMockedEvmWallet } from '../../utils';
+
+vi.mock('@polkadot/api');
 
 @customElement('my-element')
 export class MyElement extends LitElement {}
@@ -52,8 +54,12 @@ describe('wallet context provider', function () {
       new WalletUpdateEvent({ evmWallet: fakeEvmWallet })
     );
 
-    assert.deepEqual(context.value, {
-      evmWallet: fakeEvmWallet
-    });
+    assert.deepEqual(context.value, { evmWallet: fakeEvmWallet });
+
+    contextProvider.dispatchEvent(
+      new WalletUpdateEvent({ evmWallet: undefined })
+    );
+
+    assert.deepEqual(context.value, { evmWallet: undefined });
   });
 });
