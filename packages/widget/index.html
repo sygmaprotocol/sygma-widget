@@ -10,8 +10,15 @@
 </head>
 
 <body>
-  <sygmaprotocol-widget>
+  <sygmaprotocol-widget id="sygmaprotocolWidget" >
   </sygmaprotocol-widget>
+    <script>
+      const widget = document.getElementById('sygmaprotocolWidget');
+      widget.whitelistedSourceNetworks = ['sepolia', 'cronos'];
+      widget.whitelistedDestinationNetworks = ['mumbai', 'sepolia', 'rococo-phala'];
+      widget.whitelistedSourceResources = ['ERC20LRTest'];
+    </script>
 </body>
+
 
 </html>

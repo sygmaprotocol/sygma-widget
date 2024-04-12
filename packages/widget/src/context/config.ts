@@ -1,17 +1,20 @@
 import { customElement, property } from 'lit/decorators.js';
-import { createContext, ContextProvider } from '@lit/context';
+import { ContextProvider, createContext } from '@lit/context';
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
 import type { HTMLTemplateResult, PropertyValues } from 'lit';
 import { html } from 'lit';
 import type { AppMetadata, WalletInit } from '@web3-onboard/common';
-import { BaseComponent } from '../components/common/base-component';
 import type { Theme } from '../interfaces';
+import { BaseComponent } from '../components/common/base-component';
 
 export interface ConfigContext {
   theme?: Theme;
   walletConnectOptions?: WalletConnectOptions;
   appMetaData?: AppMetadata;
   walletModules?: WalletInit[];
+  whitelistedSourceNetworks?: string[];
+  whitelistedDestinationNetworks?: string[];
+  whitelistedSourceResources?: string[];
 }
 
 export const configContext = createContext<ConfigContext>(
@@ -24,6 +27,15 @@ export class ConfigContextProvider extends BaseComponent {
     context: configContext,
     initialValue: {}
   });
+
+  @property({ attribute: false, type: Object })
+  whitelistedSourceNetworks?: string[];
+
+  @property({ attribute: false, type: Object })
+  whitelistedDestinationNetworks?: string[];
+
+  @property({ attribute: false, type: Object })
+  whitelistedSourceResources?: string[];
 
   @property({ attribute: false, type: Object })
   walletConnectOptions?: WalletConnectOptions;
@@ -44,7 +56,10 @@ export class ConfigContextProvider extends BaseComponent {
       theme: this.theme,
       walletConnectOptions: this.walletConnectOptions,
       appMetaData: this.appMetadata,
-      walletModules: this.walletModules
+      walletModules: this.walletModules,
+      whitelistedSourceNetworks: this.whitelistedSourceNetworks,
+      whitelistedDestinationNetworks: this.whitelistedDestinationNetworks,
+      whitelistedSourceResources: this.whitelistedSourceResources
     });
   }
 

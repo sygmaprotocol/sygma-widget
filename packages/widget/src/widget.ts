@@ -1,8 +1,4 @@
-import type {
-  Domain,
-  EvmResource,
-  SubstrateResource
-} from '@buildwithsygma/sygma-sdk-core';
+import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
@@ -17,7 +13,6 @@ import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
 import './components/resource-amount-selector';
-import { BaseComponent } from './components/common/base-component/base-component';
 import './components/transfer/fungible/fungible-token-transfer';
 import './components/network-selector';
 import './context/wallet';
@@ -28,6 +23,7 @@ import type {
   SdkInitializedEvent
 } from './interfaces';
 import { styles } from './styles';
+import { BaseComponent } from './components/common/base-component';
 
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget
@@ -44,6 +40,8 @@ class SygmaProtocolWidget
 
   @property({ type: Array }) whitelistedDestinationNetworks?: string[];
 
+  @property({ type: Array }) whitelistedSourceResources?: string[];
+
   @property({ type: Object }) evmProvider?: Eip1193Provider;
 
   @property({ type: Array }) substrateProviders?: Array<ApiPromise>;
@@ -51,10 +49,6 @@ class SygmaProtocolWidget
   @property({ type: Object }) substrateSigner?: Signer;
 
   @property({ type: Boolean }) show?: boolean;
-
-  @property({ type: Array }) whitelistedSourceResources?: Array<
-    EvmResource | SubstrateResource
-  >;
 
   @property({ type: Boolean }) expandable?: boolean;
 
@@ -106,6 +100,9 @@ class SygmaProtocolWidget
         .appMetadata=${this.appMetadata}
         .theme=${this.theme}
         .walletConnectOptions=${this.walletConnectOptions}
+        .whitelistedSourceNetworks=${this.whitelistedSourceNetworks}
+        .whitelistedDestinationNetworks=${this.whitelistedDestinationNetworks}
+        .whitelistedSourceResources=${this.whitelistedSourceResources}
       >
         <sygma-wallet-context-provider
           .walletModules=${this.walletModules}
@@ -126,7 +123,6 @@ class SygmaProtocolWidget
                 .environment=${this.environment as Environment}
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
-                .whitelistedSourceResources=${this.whitelistedSourceNetworks}
                 environment=${Environment.TESTNET}
               >
               </sygma-fungible-transfer>

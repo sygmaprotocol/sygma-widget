@@ -9,8 +9,8 @@ import type {
 import {
   Config,
   Environment,
-  Network,
-  getRoutes
+  getRoutes,
+  Network
 } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
 import { BigNumber, ethers } from 'ethers';
@@ -22,7 +22,7 @@ import type {
   ParachainID,
   SubstrateFee
 } from '@buildwithsygma/sygma-sdk-core/substrate';
-import { walletContext } from '../../context';
+import { configContext, walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { SdkInitializedEvent } from '../../interfaces';
@@ -93,6 +93,7 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
+  configContext: ContextConsumer<typeof configContext, ReactiveElement>;
   substrateProviderContext: ContextConsumer<
     typeof substrateProviderContext,
     ReactiveElement
@@ -131,6 +132,12 @@ export class FungibleTokenTransferController implements ReactiveController {
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
+
+    this.configContext = new ContextConsumer(host, {
+      context: configContext,
+      subscribe: true
+    });
+
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
       subscribe: true,
@@ -169,8 +176,8 @@ export class FungibleTokenTransferController implements ReactiveController {
    * Infinite Try/catch wrapper around
    * {@link Config} from `@buildwithsygma/sygma-sdk-core`
    * and emits a {@link SdkInitializedEvent}
-   * @param {number} time to wait before retrying request in ms
    * @returns {void}
+   * @param retryMs
    */
   async retryInitSdk(retryMs = 100): Promise<void> {
     try {
@@ -185,13 +192,44 @@ export class FungibleTokenTransferController implements ReactiveController {
     }
   }
 
+  /**
+   * Filter source and destination networks specified by User
+   * @param whitelistedNetworks
+   * @param network
+   */
+  filterWhitelistedNetworks = (
+    whitelistedNetworks: string[] | undefined,
+    network: Domain
+  ): boolean => {
+    // skip filtering if whitelisted networks are empty
+    if (!whitelistedNetworks?.length) return true;
+
+    return whitelistedNetworks.some(
+      (networkName) => networkName.toLowerCase() === network.name.toLowerCase()
+    );
+  };
+
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
     await this.retryInitSdk();
     await this.config.init(1, this.env);
-    this.supportedSourceNetworks = this.config.getDomains();
-    this.supportedDestinationNetworks = this.config.getDomains();
+    this.supportedSourceNetworks = this.config
+      .getDomains()
+      .filter((network) =>
+        this.filterWhitelistedNetworks(
+          this.configContext.value?.whitelistedSourceNetworks,
+          network
+        )
+      );
+    this.supportedDestinationNetworks = this.config
+      .getDomains()
+      .filter((network) =>
+        this.filterWhitelistedNetworks(
+          this.configContext.value?.whitelistedDestinationNetworks,
+          network
+        )
+      );
     this.host.requestUpdate();
   }
 
@@ -385,6 +423,12 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (!this.destinationNetwork) {
       this.supportedDestinationNetworks = routes
         .filter((route) => route.toDomain.chainId !== sourceNetwork.chainId)
+        .filter((route) =>
+          this.filterWhitelistedNetworks(
+            this.configContext.value?.whitelistedDestinationNetworks,
+            route.toDomain
+          )
+        )
         .map((route) => route.toDomain);
     } // source change but not destination, check if route is supported
     else if (this.supportedDestinationNetworks.length && routes.length) {
@@ -412,6 +456,13 @@ export class FungibleTokenTransferController implements ReactiveController {
           (route.toDomain.chainId === this.destinationNetwork?.chainId &&
             !this.supportedResources.includes(route.resource))
       )
+      .filter((route) => {
+        const { whitelistedSourceResources } = this.configContext.value ?? {};
+        // skip filter if resources are not specified
+        if (!whitelistedSourceResources?.length) return true;
+
+        return whitelistedSourceResources.includes(route.resource.symbol!);
+      })
       .map((route) => route.resource);
 
     void this.buildTransactions();

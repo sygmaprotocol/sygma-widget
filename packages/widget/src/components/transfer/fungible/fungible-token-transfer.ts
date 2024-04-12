@@ -28,8 +28,6 @@ import { styles } from './styles';
 export class FungibleTokenTransfer extends BaseComponent {
   static styles = styles;
 
-  @property({ type: Array }) whitelistedSourceResources?: Array<string>;
-
   @property({ type: String })
   environment?: Environment = Environment.MAINNET;
 
