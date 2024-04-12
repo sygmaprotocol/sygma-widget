@@ -111,9 +111,11 @@ export class FungibleTokenTransferController implements ReactiveController {
     network: Domain
   ): boolean => {
     // skip filtering if whitelisted networks are empty
-    if (!whitelistedNetworks || whitelistedNetworks?.length === 0) return true;
+    if (!whitelistedNetworks?.length) return true;
 
-    return whitelistedNetworks?.includes(network.name);
+    return whitelistedNetworks.some(
+      (networkName) => networkName.toLowerCase() === network.name.toLowerCase()
+    );
   };
 
   async init(env: Environment): Promise<void> {
@@ -345,16 +347,11 @@ export class FungibleTokenTransferController implements ReactiveController {
             !this.supportedResources.includes(route.resource))
       )
       .filter((route) => {
+        const { whitelistedSourceResources } = this.configContext.value ?? {};
         // skip filter if resources are not specified
-        if (
-          !this.configContext.value?.whitelistedSourceResources ||
-          this.configContext.value?.whitelistedSourceResources.length === 0
-        )
-          return true;
+        if (!whitelistedSourceResources?.length) return true;
 
-        return this.configContext.value?.whitelistedSourceResources?.includes(
-          route.resource.symbol!
-        );
+        return whitelistedSourceResources.includes(route.resource.symbol!);
       })
       .map((route) => route.resource);
 

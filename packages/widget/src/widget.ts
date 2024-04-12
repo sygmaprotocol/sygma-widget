@@ -1,8 +1,4 @@
-import type {
-  Domain,
-  EvmResource,
-  SubstrateResource
-} from '@buildwithsygma/sygma-sdk-core';
+import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
@@ -42,9 +38,7 @@ class SygmaProtocolWidget
 
   @property({ type: Array }) whitelistedDestinationNetworks?: string[];
 
-  @property({ type: Array }) whitelistedSourceResources?: Array<
-    EvmResource | SubstrateResource
-  >;
+  @property({ type: Array }) whitelistedSourceResources?: string[];
 
   @property({ type: Object }) evmProvider?: Eip1193Provider;
 
