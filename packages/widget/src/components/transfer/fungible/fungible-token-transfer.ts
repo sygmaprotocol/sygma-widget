@@ -5,6 +5,8 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
+import { utils } from 'ethers';
+import { when } from 'lit/directives/when.js';
 import {
   FungibleTokenTransferController,
   FungibleTransferState
@@ -77,6 +79,28 @@ export class FungibleTokenTransfer extends BaseComponent {
     }
   };
 
+  renderAmountOnDestination(): HTMLTemplateResult | null {
+    if (
+      this.transferController.selectedResource &&
+      this.transferController.displayAmountOnDestination
+    ) {
+      const { decimals, symbol } = this.transferController.selectedResource;
+      return html`
+        <div class="amountOnDestination">
+          <span> Amount to receive: </span>
+          <span>
+            ${utils.formatUnits(
+              this.transferController.resourceAmount,
+              decimals
+            )}
+            ${symbol}
+          </span>
+        </div>
+      `;
+    }
+    return null;
+  }
+
   renderTransferStatus(): HTMLTemplateResult {
     return html`<section>
       <sygma-transfer-status
@@ -140,6 +164,11 @@ export class FungibleTokenTransfer extends BaseComponent {
           .networkType=${this.transferController.destinationNetwork?.type}
         >
         </sygma-address-input>
+      </section>
+      <section>
+        ${when(this.transferController.destinationAddress, () =>
+          this.renderAmountOnDestination()
+        )}
       </section>
       <section>
         <sygma-fungible-transfer-button

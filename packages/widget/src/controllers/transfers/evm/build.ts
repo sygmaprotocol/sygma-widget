@@ -66,6 +66,8 @@ export async function buildEvmFungibleTransactions(
     }
   }
 
+  // once resource amount is computed, display the amount to receive
+  this.displayAmountOnDestination = true;
   const transfer = await evmTransfer.createFungibleTransfer(
     address,
     this.destinationNetwork.chainId,

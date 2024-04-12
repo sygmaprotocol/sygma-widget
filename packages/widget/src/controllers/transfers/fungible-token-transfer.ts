@@ -45,6 +45,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
+  public displayAmountOnDestination: boolean = false;
 
   //Evm transfer
   protected buildEvmTransactions = buildEvmFungibleTransactions;
