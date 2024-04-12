@@ -4,8 +4,8 @@ import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/type
 import type { HTMLTemplateResult, PropertyValues } from 'lit';
 import { html } from 'lit';
 import type { AppMetadata } from '@web3-onboard/common';
-import { BaseComponent } from '../components/common';
 import type { Theme } from '../interfaces';
+import { BaseComponent } from '../components/common/base-component';
 
 export interface ConfigContext {
   theme?: Theme;
