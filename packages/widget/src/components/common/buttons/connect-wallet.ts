@@ -11,7 +11,7 @@ import greenCircleIcon from '../../../assets/icons/greenCircleIcon';
 import plusIcon from '../../../assets/icons/plusIcon';
 import { WalletController } from '../../../controllers';
 import { shortAddress } from '../../../utils';
-import { BaseComponent } from '../base-component/base-component';
+import { BaseComponent } from '../base-component';
 
 import { connectWalletStyles } from './connect-wallet.styles';
 

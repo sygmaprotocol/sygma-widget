@@ -2,15 +2,15 @@ import type { Domain, Resource, Route } from '@buildwithsygma/sygma-sdk-core';
 import {
   Config,
   Environment,
-  Network,
-  getRoutes
+  getRoutes,
+  Network
 } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
-import type { UnsignedTransaction, BigNumber } from 'ethers';
+import type { BigNumber, UnsignedTransaction } from 'ethers';
 import { ethers } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { WalletContext } from '../../context';
-import { walletContext } from '../../context';
+import { configContext, walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
@@ -46,9 +46,6 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
 
-  public whitelistedSourceNetworks?: string[];
-  public whitelistedDestinationNetworks?: string[];
-
   //Evm transfer
   protected buildEvmTransactions = buildEvmFungibleTransactions;
   protected executeNextEvmTransaction = executeNextEvmTransaction;
@@ -61,7 +58,9 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected routesCache: Map<number, Route[]> = new Map();
 
   host: ReactiveElement;
+
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
+  configContext: ContextConsumer<typeof configContext, ReactiveElement>;
 
   isWalletDisconnected(context: WalletContext): boolean {
     // Skip the method call during init
@@ -70,24 +69,14 @@ export class FungibleTokenTransferController implements ReactiveController {
     return !(!!context.evmWallet || !!context.substrateWallet);
   }
 
-  constructor(
-    host: ReactiveElement,
-    whitelistedSourceNetworks?: string[],
-    whitelistedDestinationNetworks?: string[]
-  ) {
+  constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
 
-    console.log('CONSTRUCTOR');
-    console.log('whitelistedSourceNetworks', whitelistedSourceNetworks);
-    console.log(
-      'whitelistedDestinationNetworks',
-      whitelistedDestinationNetworks
-    );
-
-    // Whitelisting provided by user
-    this.whitelistedSourceNetworks = whitelistedSourceNetworks;
-    this.whitelistedDestinationNetworks = whitelistedDestinationNetworks;
+    this.configContext = new ContextConsumer(host, {
+      context: configContext,
+      subscribe: true
+    });
 
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
@@ -112,6 +101,21 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.reset();
   }
 
+  /**
+   * Filter source and destination networks specified by User
+   * @param whitelistedNetworks
+   * @param network
+   */
+  filterWhitelistedNetworks = (
+    whitelistedNetworks: string[] | undefined,
+    network: Domain
+  ): boolean => {
+    // skip filtering if whitelisted networks are empty
+    if (!whitelistedNetworks || whitelistedNetworks?.length === 0) return true;
+
+    return whitelistedNetworks?.includes(network.name);
+  };
+
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
@@ -120,26 +124,23 @@ export class FungibleTokenTransferController implements ReactiveController {
       .getDomains()
       //remove once we have proper substrate transfer support
       .filter((n) => n.type === Network.EVM)
-      .filter((network) => {
-        console.log('network', network.name);
-        console.log(this.whitelistedSourceNetworks?.includes(network.name));
-        console.log(
-          !this.whitelistedSourceNetworks ||
-            this.whitelistedSourceNetworks.includes(network.name)
-        );
-        return (
-          !this.whitelistedSourceNetworks ||
-          this.whitelistedSourceNetworks.includes(network.name)
-        );
-      });
+      // Remove networks that are not whitelisted by the user
+      .filter((network) =>
+        this.filterWhitelistedNetworks(
+          this.configContext.value?.whitelistedSourceNetworks,
+          network
+        )
+      );
 
     this.supportedDestinationNetworks = this.config
       .getDomains()
-      .filter(
-        (network) =>
-          !this.whitelistedDestinationNetworks?.length ||
-          this.whitelistedDestinationNetworks.includes(network.name)
+      .filter((network) =>
+        this.filterWhitelistedNetworks(
+          this.configContext.value?.whitelistedDestinationNetworks,
+          network
+        )
       );
+
     this.host.requestUpdate();
   }
 
@@ -310,6 +311,12 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (!this.destinationNetwork) {
       this.supportedDestinationNetworks = routes
         .filter((route) => route.toDomain.chainId !== sourceNetwork.chainId)
+        .filter((route) =>
+          this.filterWhitelistedNetworks(
+            this.configContext.value?.whitelistedDestinationNetworks,
+            route.toDomain
+          )
+        )
         .map((route) => route.toDomain);
     } // source change but not destination, check if route is supported
     else if (this.supportedDestinationNetworks.length && routes.length) {
@@ -337,6 +344,18 @@ export class FungibleTokenTransferController implements ReactiveController {
           (route.toDomain.chainId === this.destinationNetwork?.chainId &&
             !this.supportedResources.includes(route.resource))
       )
+      .filter((route) => {
+        // skip filter if resources are not specified
+        if (
+          !this.configContext.value?.whitelistedSourceResources ||
+          this.configContext.value?.whitelistedSourceResources.length === 0
+        )
+          return true;
+
+        return this.configContext.value?.whitelistedSourceResources?.includes(
+          route.resource.symbol!
+        );
+      })
       .map((route) => route.resource);
 
     void this.buildTransactions();

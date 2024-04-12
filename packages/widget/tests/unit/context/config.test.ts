@@ -28,6 +28,9 @@ describe('config context provider', function () {
     const contextProvider = await fixture<ConfigContextProvider>(html`
       <sygma-config-context-provider
         .appMetadata=${{ name: 'My Dapp' }}
+        .whitelistedSourceNetworks=${['sepolia', 'cronos']}
+        .whitelistedDestinationNetworks=${['mumbai']}
+        .whitelistedSourceResources=${['ERC20LRTest']}
       ></sygma-config-context-provider>
     `);
     const child = await fixture<MyElement>(html` <my-element></my-element> `, {
@@ -41,7 +44,10 @@ describe('config context provider', function () {
     assert.deepEqual(context.value, {
       theme: undefined,
       walletConnectOptions: undefined,
-      appMetaData: { name: 'My Dapp' }
+      appMetaData: { name: 'My Dapp' },
+      whitelistedSourceNetworks: ['sepolia', 'cronos'],
+      whitelistedDestinationNetworks: ['mumbai'],
+      whitelistedSourceResources: ['ERC20LRTest']
     });
   });
 });

@@ -13,11 +13,12 @@ import { when } from 'lit/directives/when.js';
 
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
 import type { AppMetadata } from '@web3-onboard/common';
+import { BaseComponent } from './components/common';
+
 import { sygmaLogo } from './assets';
 import './components';
 import './components/address-input';
 import './components/resource-amount-selector';
-import { BaseComponent } from './components/common';
 import './components/transfer/fungible/fungible-token-transfer';
 import './components/network-selector';
 import './context/wallet';
@@ -41,6 +42,10 @@ class SygmaProtocolWidget
 
   @property({ type: Array }) whitelistedDestinationNetworks?: string[];
 
+  @property({ type: Array }) whitelistedSourceResources?: Array<
+    EvmResource | SubstrateResource
+  >;
+
   @property({ type: Object }) evmProvider?: Eip1193Provider;
 
   @property() substrateProvider?: ApiPromise | string;
@@ -48,10 +53,6 @@ class SygmaProtocolWidget
   @property({ type: Object }) substrateSigner?: Signer;
 
   @property({ type: Boolean }) show?: boolean;
-
-  @property({ type: Array }) whitelistedSourceResources?: Array<
-    EvmResource | SubstrateResource
-  >;
 
   @property({ type: Boolean }) expandable?: boolean;
 
@@ -100,6 +101,9 @@ class SygmaProtocolWidget
         .appMetadata=${this.appMetadata}
         .theme=${this.theme}
         .walletConnectOptions=${this.walletConnectOptions}
+        .whitelistedSourceNetworks=${this.whitelistedSourceNetworks}
+        .whitelistedDestinationNetworks=${this.whitelistedDestinationNetworks}
+        .whitelistedSourceResources=${this.whitelistedSourceResources}
       >
         <sygma-wallet-context-provider>
           <section
@@ -114,9 +118,6 @@ class SygmaProtocolWidget
                 .environment=${this.environment as Environment}
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
-                .whitelistedSourceNetworks=${this.whitelistedSourceNetworks}
-                .whitelistedDestinationNetworks=${this
-                  .whitelistedDestinationNetworks}
                 environment=${Environment.TESTNET}
               >
               </sygma-fungible-transfer>
