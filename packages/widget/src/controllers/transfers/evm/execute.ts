@@ -51,7 +51,6 @@ export async function executeNextEvmTransaction(
       const receipt = await tx.wait();
       this.pendingEvmTransferTransaction = undefined;
       this.transferTransactionId = receipt.transactionHash;
-      this.displayAmountOnDestination = false;
     } catch (e) {
       console.log(e);
       this.errorMessage = 'Transfer transaction reverted or rejected';

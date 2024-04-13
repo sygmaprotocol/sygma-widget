@@ -82,7 +82,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   renderAmountOnDestination(): HTMLTemplateResult | null {
     if (
       this.transferController.selectedResource &&
-      this.transferController.displayAmountOnDestination
+      this.transferController.pendingEvmTransferTransaction !== undefined
     ) {
       const { decimals, symbol } = this.transferController.selectedResource;
       return html`
