@@ -279,18 +279,24 @@ export class WalletController implements ReactiveController {
     chainData: ChainData,
     provider: Eip1193Provider
   ): Promise<void> {
+    const {
+      chainId,
+      name,
+      nativeCurrency: { name: tokenName, symbol, decimals },
+      rpc
+    } = chainData;
     try {
       await provider.request({
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: `0x${chainData.chainId.toString(16)}`,
-            chainName: chainData.name,
-            rpcUrls: [chainData.rpc[0]],
+            chainId: `0x${chainId.toString(16)}`,
+            chainName: name,
+            rpcUrls: [rpc[0]],
             nativeCurrency: {
-              name: chainData.nativeCurrency.name,
-              symbol: chainData.nativeCurrency.symbol,
-              decimals: chainData.nativeCurrency.decimals
+              name: tokenName,
+              symbol: symbol,
+              decimals: decimals
             }
           }
         ]
