@@ -37,6 +37,9 @@ export class Dropdown extends BaseComponent {
   @property({ type: Array })
   options: DropdownOption[] = [];
 
+  @property({ type: Object })
+  actionOption: HTMLTemplateResult | null = null;
+
   @property({ type: String })
   preSelectedOption = '';
 
