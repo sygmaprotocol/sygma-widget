@@ -66,15 +66,6 @@ export class FungibleTokenTransfer extends BaseComponent {
           );
         }
         break;
-      case FungibleTransferState.COMPLETED:
-        {
-          void this.walletController.switchEvmChain(
-            this.transferController.sourceNetwork!.chainId,
-            this.transferController.walletContext.value?.evmWallet
-              ?.provider as Eip1193Provider
-          );
-        }
-        break;
     }
 
     if (state === FungibleTransferState.COMPLETED) {
