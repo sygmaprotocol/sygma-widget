@@ -1,6 +1,12 @@
 import { css } from 'lit';
 
 export const styles = css`
+  .transferDetail {
+    gap: var(--spacing-md, 8px);
+    display: flex;
+    flex-direction: column;
+  }
+
   .transferDetailContainer {
     display: flex;
     font-size: 0.75rem;
