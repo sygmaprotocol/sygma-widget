@@ -4,7 +4,6 @@ export const styles = css`
   .amountSelectorContainer {
     display: flex;
     padding: 0.75rem;
-    margin: 0.5rem 0;
     align-items: center;
     border-radius: 1.5rem;
     flex-direction: column;

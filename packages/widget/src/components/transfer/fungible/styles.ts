@@ -5,12 +5,13 @@ export const styles = css`
     display: flex;
     justify-content: center;
   }
+
   form {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.25rem;
+    gap: 0.5rem;
   }
 
   .amountOnDestination {

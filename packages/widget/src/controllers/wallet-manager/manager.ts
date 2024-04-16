@@ -5,21 +5,57 @@ import type { Account } from '@polkadot-onboard/core';
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
-import walletConnectModule from '@web3-onboard/walletconnect';
 import type { ReactiveController, ReactiveElement } from 'lit';
+import type { WalletInit, AppMetadata } from '@web3-onboard/common';
 
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
-import type { AppMetadata } from '@web3-onboard/common';
 import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
+import type { Eip1193Provider } from '../../interfaces';
+import { CHAIN_ID_URL } from '../../constants';
+
+/**
+ * This is a stripped version of the response that is returned from chainId service
+ */
+type ChainData = {
+  chainId: number;
+  name: string;
+  rpc: string[];
+  nativeCurrency: { name: string; symbol: string; decimals: number };
+};
+
+type ChainDataResponse = Array<ChainData>;
 
 export class WalletController implements ReactiveController {
   host: ReactiveElement;
 
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
 
+  /**
+   * Provides list of wallets specified by 3rd party
+   * along with default injected connector
+   * @param {{ dappUrl?: string }} options
+   * @returns {WalletInit[]}
+   */
+  getWallets(options?: {
+    walletConnectOptions?: WalletConnectOptions;
+    walletModules?: WalletInit[];
+    appMetaData?: AppMetadata;
+  }): WalletInit[] {
+    // always have injected ones
+    const injected = injectedModule();
+    const wallets = [injected];
+
+    if (options?.walletModules?.length) {
+      wallets.push(...options.walletModules);
+    }
+
+    return wallets;
+  }
+
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
+
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
       subscribe: true
@@ -40,6 +76,7 @@ export class WalletController implements ReactiveController {
     options?: {
       walletConnectOptions?: WalletConnectOptions;
       appMetaData?: AppMetadata;
+      walletModules?: WalletInit[];
     }
   ): void => {
     switch (network.type) {
@@ -87,15 +124,29 @@ export class WalletController implements ReactiveController {
     }
   };
 
-  switchChain(chainId: number): void {
+  async switchEvmChain(
+    chainId: number,
+    provider: Eip1193Provider
+  ): Promise<void> {
     if (this.walletContext.value?.evmWallet) {
-      void this.walletContext.value.evmWallet.provider.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: utils.hexValue(chainId) }]
-      });
+      try {
+        await provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: utils.hexValue(chainId) }]
+        });
+      } catch (switchError) {
+        const chainData = (await (
+          await fetch(CHAIN_ID_URL)
+        ).json()) as ChainDataResponse;
+
+        const selectedChain = chainData.find(
+          (chain) => chain.chainId === chainId
+        ) as ChainData;
+
+        void this.addEvmChain(selectedChain, provider);
+      }
     }
   }
-
   connectEvmWallet = async (
     network: Domain,
     options?: {
@@ -103,17 +154,11 @@ export class WalletController implements ReactiveController {
       appMetaData?: AppMetadata;
     }
   ): Promise<void> => {
-    const injected = injectedModule();
-
-    const walletSetup = [injected];
-
-    if (options?.walletConnectOptions?.projectId) {
-      walletSetup.push(walletConnectModule(options.walletConnectOptions));
-    }
+    const walletsToConnect = this.getWallets(options);
 
     const onboard = Onboard({
       appMetadata: options?.appMetaData,
-      wallets: walletSetup,
+      wallets: walletsToConnect,
       chains: [
         {
           id: network.chainId
@@ -143,10 +188,7 @@ export class WalletController implements ReactiveController {
         })
       );
       if (network.chainId !== providerChainId) {
-        void provider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: utils.hexValue(network.chainId) }]
-        });
+        await this.switchEvmChain(network.chainId, provider);
       }
       this.host.requestUpdate();
     }
@@ -178,6 +220,7 @@ export class WalletController implements ReactiveController {
         new WalletUpdateEvent({
           substrateWallet: {
             signer: wallet.signer,
+            signerAddress: accounts[0].address,
             accounts,
             unsubscribeSubstrateAccounts: unsub,
             disconnect: wallet.disconnect
@@ -214,6 +257,8 @@ export class WalletController implements ReactiveController {
         new WalletUpdateEvent({
           substrateWallet: {
             signer: this.walletContext.value.substrateWallet.signer,
+            signerAddress:
+              this.walletContext.value.substrateWallet.signerAddress,
             disconnect: this.walletContext.value.substrateWallet.disconnect,
             unsubscribeSubstrateAccounts:
               this.walletContext.value.substrateWallet
@@ -226,6 +271,51 @@ export class WalletController implements ReactiveController {
     }
     if (accounts.length === 0) {
       this.disconnectSubstrateWallet();
+    }
+  };
+
+  private async addEvmChain(
+    chainData: ChainData,
+    provider: Eip1193Provider
+  ): Promise<void> {
+    const {
+      chainId,
+      name,
+      nativeCurrency: { name: tokenName, symbol, decimals },
+      rpc
+    } = chainData;
+    try {
+      await provider.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: `0x${chainId.toString(16)}`,
+            chainName: name,
+            rpcUrls: [rpc[0]],
+            nativeCurrency: {
+              name: tokenName,
+              symbol: symbol,
+              decimals: decimals
+            }
+          }
+        ]
+      });
+    } catch (addEvmError) {
+      console.error('Failed to add evm network into wallet', addEvmError);
+    }
+  }
+
+  onSubstrateAccountSelected = (account: Account): void => {
+    if (this.walletContext.value?.substrateWallet) {
+      this.host.dispatchEvent(
+        new WalletUpdateEvent({
+          substrateWallet: {
+            signer: this.walletContext.value.substrateWallet.signer,
+            signerAddress: account.address,
+            accounts: this.walletContext.value.substrateWallet.accounts
+          }
+        })
+      );
     }
   };
 }

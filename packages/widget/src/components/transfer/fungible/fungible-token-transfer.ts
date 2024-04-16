@@ -7,6 +7,7 @@ import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
 import { utils } from 'ethers';
 import { when } from 'lit/directives/when.js';
+import type { Eip1193Provider } from 'packages/widget/src/interfaces';
 import {
   FungibleTokenTransferController,
   FungibleTransferState
@@ -60,15 +61,10 @@ export class FungibleTokenTransfer extends BaseComponent {
         break;
       case FungibleTransferState.WRONG_CHAIN:
         {
-          this.walletController.switchChain(
-            this.transferController.sourceNetwork!.chainId
-          );
-        }
-        break;
-      case FungibleTransferState.COMPLETED:
-        {
-          this.walletController.switchChain(
-            this.transferController.sourceNetwork!.chainId
+          void this.walletController.switchEvmChain(
+            this.transferController.sourceNetwork!.chainId,
+            this.transferController.walletContext.value?.evmWallet
+              ?.provider as Eip1193Provider
           );
         }
         break;
@@ -82,7 +78,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   renderAmountOnDestination(): HTMLTemplateResult | null {
     if (
       this.transferController.selectedResource &&
-      this.transferController.pendingEvmTransferTransaction !== undefined
+      this.transferController.pendingTransferTransaction !== undefined
     ) {
       const { decimals, symbol } = this.transferController.selectedResource;
       return html`
@@ -102,7 +98,7 @@ export class FungibleTokenTransfer extends BaseComponent {
   }
 
   renderTransferStatus(): HTMLTemplateResult {
-    return html`<section>
+    return html` <section>
       <sygma-transfer-status
         .amount=${this.transferController.resourceAmount}
         .tokenDecimals=${this.transferController.selectedResource?.decimals}
@@ -131,7 +127,11 @@ export class FungibleTokenTransfer extends BaseComponent {
             if (network) {
               this.onSourceNetworkSelected?.(network);
               this.transferController.onSourceNetworkSelected(network);
-              void this.walletController.switchChain(network?.chainId);
+              void this.walletController.switchEvmChain(
+                network?.chainId,
+                this.transferController.walletContext.value?.evmWallet
+                  ?.provider as Eip1193Provider
+              );
             }
           }}
           .networks=${this.transferController.supportedSourceNetworks}
@@ -150,6 +150,7 @@ export class FungibleTokenTransfer extends BaseComponent {
       </section>
       <section>
         <sygma-resource-amount-selector
+          .sourceDomainConfig=${this.transferController.sourceDomainConfig}
           .disabled=${!this.transferController.sourceNetwork ||
           !this.transferController.destinationNetwork}
           .resources=${this.transferController.supportedResources}
@@ -159,9 +160,9 @@ export class FungibleTokenTransfer extends BaseComponent {
       </section>
       <section>
         <sygma-address-input
+          .networkType=${this.transferController.destinationNetwork?.type}
           .address=${this.transferController.destinationAddress}
           .onAddressChange=${this.transferController.onDestinationAddressChange}
-          .networkType=${this.transferController.destinationNetwork?.type}
         >
         </sygma-address-input>
       </section>
@@ -169,6 +170,11 @@ export class FungibleTokenTransfer extends BaseComponent {
         ${when(this.transferController.destinationAddress, () =>
           this.renderAmountOnDestination()
         )}
+        <sygma-fungible-transfer-detail
+          .selectedResource=${this.transferController.selectedResource}
+          .fee=${this.transferController.fee}
+          .sourceDomainConfig=${this.transferController.sourceDomainConfig}
+        ></sygma-fungible-transfer-detail>
       </section>
       <section>
         <sygma-fungible-transfer-button
