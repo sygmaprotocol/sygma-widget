@@ -20,6 +20,7 @@ export enum FungibleTransferState {
   MISSING_RESOURCE,
   MISSING_RESOURCE_AMOUNT,
   MISSING_DESTINATION_ADDRESS,
+  WRONG_DESTINATION_ADDRESS,
   WALLET_NOT_CONNECTED,
   WRONG_CHAIN,
   PENDING_APPROVALS,
@@ -35,6 +36,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public waitingTxExecution: boolean = false;
   public transferTransactionId?: string;
   public errorMessage: string | null = null;
+  public invalidDestinationAddressErrorMessage: string | null = null;
 
   public sourceNetwork?: Domain;
   public destinationNetwork?: Domain;
@@ -164,11 +166,17 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
   };
 
-  onDestinationAddressChange = (address: string): void => {
+  onDestinationAddressChange = (
+    address: string,
+    errorMessage: string | null
+  ): void => {
     this.destinationAddress = address;
+    this.invalidDestinationAddressErrorMessage = errorMessage;
+
     if (this.destinationAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
       this.pendingEvmTransferTransaction = undefined;
+      this.invalidDestinationAddressErrorMessage = null;
     }
     void this.buildTransactions();
     this.host.requestUpdate();
@@ -204,6 +212,9 @@ export class FungibleTokenTransferController implements ReactiveController {
     }
     if (this.destinationAddress === '') {
       return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
+    }
+    if (this.invalidDestinationAddressErrorMessage) {
+      return FungibleTransferState.WRONG_DESTINATION_ADDRESS;
     }
     if (
       !this.walletContext.value?.evmWallet &&

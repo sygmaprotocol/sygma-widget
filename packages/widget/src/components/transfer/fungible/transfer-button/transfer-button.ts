@@ -8,6 +8,7 @@ import { BaseComponent } from '../../../common';
 
 const enabledStates = [
   FungibleTransferState.WRONG_CHAIN,
+  FungibleTransferState.WRONG_DESTINATION_ADDRESS,
   FungibleTransferState.WALLET_NOT_CONNECTED,
   FungibleTransferState.PENDING_APPROVALS,
   FungibleTransferState.PENDING_TRANSFER,

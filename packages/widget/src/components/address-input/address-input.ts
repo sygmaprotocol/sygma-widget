@@ -6,7 +6,7 @@ import { when } from 'lit/directives/when.js';
 
 import type { PropertyValues } from '@lit/reactive-element';
 import { validateAddress } from '../../utils';
-import { BaseComponent } from '../common/base-component/base-component';
+import { BaseComponent } from '../common';
 
 import { styles } from './styles';
 
@@ -20,11 +20,10 @@ export class AddressInput extends BaseComponent {
   address: string = '';
 
   @property({ attribute: false })
-  onAddressChange: (address: string) => void = () => {};
+  onAddressChange: (address: string, errorMessage?: string | null) => void =
+    () => {};
 
-  @property({
-    type: String
-  })
+  @property({ type: String })
   networkType: Network = Network.EVM;
 
   @state()
@@ -49,7 +48,7 @@ export class AddressInput extends BaseComponent {
 
     this.errorMessage = validateAddress(trimedValue, this.networkType);
 
-    this.onAddressChange(trimedValue);
+    this.onAddressChange(trimedValue, this.errorMessage);
   };
 
   protected updated(changedProperties: PropertyValues): void {
@@ -60,7 +59,7 @@ export class AddressInput extends BaseComponent {
   }
 
   render(): HTMLTemplateResult {
-    return html` <section class="inputAddressSection">
+    return html`<section class="inputAddressSection">
       <div class="inputAddressContainer">
         <label class="labelContainer">
           <span>Send to </span>
