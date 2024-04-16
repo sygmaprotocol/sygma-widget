@@ -23,6 +23,7 @@ export async function buildEvmFungibleTransactions(
     !address ||
     providerChaiId !== this.sourceNetwork.chainId
   ) {
+    this.estimatedGas = undefined;
     this.resetFee();
     return;
   }
@@ -45,5 +46,6 @@ export async function buildEvmFungibleTransactions(
     transfer,
     this.fee
   );
+  await this.estimateGas();
   this.host.requestUpdate();
 }

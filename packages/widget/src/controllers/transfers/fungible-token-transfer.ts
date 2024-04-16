@@ -13,8 +13,8 @@ import {
   getRoutes
 } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
-import type { UnsignedTransaction, BigNumber } from 'ethers';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
+import type { UnsignedTransaction, PopulatedTransaction } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ApiPromise, SubmittableResult } from '@polkadot/api';
@@ -33,6 +33,7 @@ import {
   buildSubstrateFungibleTransactions,
   executeNextSubstrateTransaction
 } from './substrate';
+import { estimateEvmTransactionsGasCost } from './evm/gas-estimate';
 
 export type SubstrateTransaction = SubmittableExtrinsic<
   'promise',
@@ -71,6 +72,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public supportedDestinationNetworks: Domain[] = [];
   public supportedResources: Resource[] = [];
   public fee: EvmFee | SubstrateFee | null = null;
+  public estimatedGas: BigNumber | undefined;
 
   //Evm transfer
   protected buildEvmTransactions = buildEvmFungibleTransactions;
@@ -206,6 +208,7 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
     this.transferTransactionId = undefined;
+    this.estimatedGas = undefined;
     this.resetFee();
     void this.init(this.env);
   }
@@ -437,5 +440,59 @@ export class FungibleTokenTransferController implements ReactiveController {
       default:
         throw new Error('Unsupported network type');
     }
+  }
+
+  public async estimateGas(): Promise<void> {
+    if (!this.sourceNetwork) return;
+    switch (this.sourceNetwork.type) {
+      case Network.EVM:
+        await this.estimateEvmGas();
+        break;
+      case Network.SUBSTRATE:
+        await this.estimateSubstrateGas();
+        break;
+    }
+  }
+
+  private async estimateSubstrateGas(): Promise<void> {
+    if (!this.walletContext.value?.substrateWallet?.signerAddress) return;
+    const sender = this.walletContext.value?.substrateWallet?.signerAddress;
+
+    const paymentInfo = await (
+      this.pendingTransferTransaction as SubstrateTransaction
+    ).paymentInfo(sender);
+
+    const { partialFee } = paymentInfo;
+    this.estimatedGas = BigNumber.from(partialFee.toString());
+  }
+
+  private async estimateEvmGas(): Promise<void> {
+    if (
+      !this.sourceNetwork?.chainId ||
+      !this.walletContext.value?.evmWallet?.provider ||
+      !this.walletContext.value.evmWallet.address
+    )
+      return;
+
+    const state = this.getTransferState();
+    const transactions = [];
+
+    switch (state) {
+      case FungibleTransferState.PENDING_APPROVALS:
+        transactions.push(...this.pendingEvmApprovalTransactions);
+        break;
+      case FungibleTransferState.PENDING_TRANSFER:
+        transactions.push(this.pendingTransferTransaction);
+        break;
+    }
+
+    const estimatedGas = await estimateEvmTransactionsGasCost(
+      this.sourceNetwork?.chainId,
+      this.walletContext.value?.evmWallet?.provider,
+      this.walletContext.value.evmWallet.address,
+      transactions as PopulatedTransaction[]
+    );
+
+    this.estimatedGas = estimatedGas;
   }
 }
