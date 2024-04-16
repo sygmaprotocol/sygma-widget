@@ -5,6 +5,7 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
+import type { Eip1193Provider } from 'packages/widget/src/interfaces';
 import {
   FungibleTokenTransferController,
   FungibleTransferState
@@ -58,15 +59,10 @@ export class FungibleTokenTransfer extends BaseComponent {
         break;
       case FungibleTransferState.WRONG_CHAIN:
         {
-          this.walletController.switchChain(
-            this.transferController.sourceNetwork!.chainId
-          );
-        }
-        break;
-      case FungibleTransferState.COMPLETED:
-        {
-          this.walletController.switchChain(
-            this.transferController.sourceNetwork!.chainId
+          void this.walletController.switchEvmChain(
+            this.transferController.sourceNetwork!.chainId,
+            this.transferController.walletContext.value?.evmWallet
+              ?.provider as Eip1193Provider
           );
         }
         break;
@@ -107,7 +103,11 @@ export class FungibleTokenTransfer extends BaseComponent {
             if (network) {
               this.onSourceNetworkSelected?.(network);
               this.transferController.onSourceNetworkSelected(network);
-              void this.walletController.switchChain(network?.chainId);
+              void this.walletController.switchEvmChain(
+                network?.chainId,
+                this.transferController.walletContext.value?.evmWallet
+                  ?.provider as Eip1193Provider
+              );
             }
           }}
           .networks=${this.transferController.supportedSourceNetworks}
