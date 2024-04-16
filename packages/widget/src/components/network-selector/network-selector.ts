@@ -5,7 +5,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
 import { networkIconsMap } from '../../assets';
-import { BaseComponent } from '../common/base-component';
+import { BaseComponent } from '../common';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 
 import { styles } from './styles';
@@ -27,6 +27,9 @@ export class NetworkSelector extends BaseComponent {
 
   @property({ type: String })
   direction?: Direction;
+
+  @property({ type: String })
+  selectedNetwork?: string;
 
   @property({ attribute: false })
   onNetworkSelected: (option?: Domain) => void = () => {};
@@ -55,6 +58,7 @@ export class NetworkSelector extends BaseComponent {
   render(): HTMLTemplateResult {
     return html`<div class="selectorContainer">
       <dropdown-component
+        .preSelectedOption=${this.selectedNetwork}
         .disabled=${this.disabled}
         .placeholder=${'Select the network'}
         .label=${this.direction}

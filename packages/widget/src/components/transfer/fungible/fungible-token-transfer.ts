@@ -73,7 +73,7 @@ export class FungibleTokenTransfer extends BaseComponent {
     }
 
     if (state === FungibleTransferState.COMPLETED) {
-      this.transferController.reset();
+      this.transferController.reset({ omitSourceNetworkReset: true });
     }
   };
 
@@ -100,6 +100,7 @@ export class FungibleTokenTransfer extends BaseComponent {
     return html` <form @submit=${() => {}}>
       <section class="networkSelectionWrapper">
         <sygma-network-selector
+          .selectedNetwork=${this.transferController.sourceNetwork?.name}
           .direction=${Directions.FROM}
           .icons=${true}
           .onNetworkSelected=${(network?: Domain) => {

@@ -16,7 +16,8 @@ export const styles = css`
     flex-direction: column;
     align-items: center;
     border-radius: 1.5rem;
-    border: 0.0625rem solid var(--zinc-200);
+    border: 1px solid var(--zinc-200);
+    margin-bottom: 1rem;
   }
 
   .destinationMessage {
@@ -36,7 +37,7 @@ export const styles = css`
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 0rem 4.78125rem 0.9375rem 4.78125rem;
+    padding: 0 4.78125rem 0.9375rem 4.78125rem;
 
     color: var(--zinc-600);
     text-align: center;
@@ -53,9 +54,7 @@ export const styles = css`
     align-items: center;
     justify-content: center;
     text-align: center;
-
     color: var(--zinc-500);
-    text-align: center;
     font-size: 0.75rem;
     font-style: normal;
     font-weight: 400;
