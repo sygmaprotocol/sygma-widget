@@ -176,7 +176,7 @@ describe('Fungible token Transfer', function () {
       whitelistedResources.includes(
         resourceSelector.resources[0]?.symbol || ''
       ),
-      `Expected destination network to be one of ${whitelistedResources.join(', ')}, but got ${resourceSelector.resources.join(', ')}`
+      `Expected Resource to be one of ${whitelistedResources.join(', ')}, but got ${resourceSelector.resources.join(', ')}`
     );
   });
 });
