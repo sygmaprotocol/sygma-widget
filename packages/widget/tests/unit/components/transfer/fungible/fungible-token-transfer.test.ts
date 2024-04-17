@@ -18,7 +18,9 @@ describe('Fungible token Transfer', function () {
 
   it('is defined', async () => {
     const el = await fixture(
-      html` <sygma-fungible-transfer></sygma-fungible-transfer>`
+      html` <sygma-fungible-transfer
+        .environment=${Environment.TESTNET}
+      ></sygma-fungible-transfer>`
     );
 
     assert.instanceOf(el, FungibleTokenTransfer);
@@ -52,7 +54,9 @@ describe('Fungible token Transfer', function () {
       })
     );
     const fungibleTransfer = await fixture<FungibleTokenTransfer>(
-      html` <sygma-fungible-transfer></sygma-fungible-transfer>`,
+      html` <sygma-fungible-transfer
+        .environment=${Environment.TESTNET}
+      ></sygma-fungible-transfer>`,
       { parentNode: walletContext }
     );
 
@@ -91,7 +95,9 @@ describe('Fungible token Transfer', function () {
     );
 
     const fungibleTransfer = await fixture<FungibleTokenTransfer>(
-      html` <sygma-fungible-transfer></sygma-fungible-transfer>`,
+      html` <sygma-fungible-transfer
+        .environment=${Environment.TESTNET}
+      ></sygma-fungible-transfer>`,
       { parentNode: walletContext }
     );
 
@@ -118,8 +124,9 @@ describe('Fungible token Transfer', function () {
     const [sygmaSourceNetwork, sygmaDestinationNetwork] =
       fungibleTransfer.shadowRoot!.querySelectorAll('sygma-network-selector');
 
+    await fungibleTransfer.updateComplete;
     // Wait for sdk init
-    await aTimeout(1000);
+    await aTimeout(500);
 
     assert.isTrue(
       whitelistedSourceNetworks.includes(
