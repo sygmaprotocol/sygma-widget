@@ -94,7 +94,7 @@ export class FungibleTransferDetail extends BaseComponent {
       return `${gasFee} ${symbol}`;
     }
 
-    return '';
+    return 'calculating...';
   }
 
   render(): HTMLTemplateResult {
