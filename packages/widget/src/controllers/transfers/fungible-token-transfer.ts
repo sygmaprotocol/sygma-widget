@@ -192,12 +192,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.waitingTxExecution) {
       return FungibleTransferState.WAITING_TX_EXECUTION;
     }
-    if (this.pendingEvmApprovalTransactions.length > 0) {
-      return FungibleTransferState.PENDING_APPROVALS;
-    }
-    if (this.pendingEvmTransferTransaction) {
-      return FungibleTransferState.PENDING_TRANSFER;
-    }
     if (!this.sourceNetwork) {
       return FungibleTransferState.MISSING_SOURCE_NETWORK;
     }
@@ -207,15 +201,18 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (!this.selectedResource) {
       return FungibleTransferState.MISSING_RESOURCE;
     }
+
+    if (this.invalidDestinationAddressErrorMessage?.length) {
+      return FungibleTransferState.WRONG_DESTINATION_ADDRESS;
+    }
+
     if (this.resourceAmount.eq(0)) {
       return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
     }
     if (this.destinationAddress === '') {
       return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
     }
-    if (this.invalidDestinationAddressErrorMessage) {
-      return FungibleTransferState.WRONG_DESTINATION_ADDRESS;
-    }
+
     if (
       !this.walletContext.value?.evmWallet &&
       !this.walletContext.value?.substrateWallet
@@ -229,6 +226,14 @@ export class FungibleTokenTransferController implements ReactiveController {
     ) {
       return FungibleTransferState.WRONG_CHAIN;
     }
+
+    if (this.pendingEvmApprovalTransactions.length > 0) {
+      return FungibleTransferState.PENDING_APPROVALS;
+    }
+    if (this.pendingEvmTransferTransaction) {
+      return FungibleTransferState.PENDING_TRANSFER;
+    }
+
     return FungibleTransferState.UNKNOWN;
   }
 

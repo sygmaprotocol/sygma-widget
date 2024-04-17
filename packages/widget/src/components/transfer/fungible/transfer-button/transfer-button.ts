@@ -7,12 +7,15 @@ import type { Button } from '../../../common';
 import { BaseComponent } from '../../../common';
 
 const enabledStates = [
-  FungibleTransferState.WRONG_CHAIN,
-  FungibleTransferState.WRONG_DESTINATION_ADDRESS,
-  FungibleTransferState.WALLET_NOT_CONNECTED,
   FungibleTransferState.PENDING_APPROVALS,
   FungibleTransferState.PENDING_TRANSFER,
   FungibleTransferState.COMPLETED
+];
+
+const disabledState = [
+  FungibleTransferState.WRONG_CHAIN,
+  FungibleTransferState.WRONG_DESTINATION_ADDRESS,
+  FungibleTransferState.WALLET_NOT_CONNECTED
 ];
 
 const loadingStates = [
@@ -29,9 +32,12 @@ export class FungibleTransferButton extends BaseComponent {
   @property({ type: Object })
   onClick: () => void = () => {};
 
+  handleDisabledState = (): boolean =>
+    !enabledStates.includes(this.state) || disabledState.includes(this.state);
+
   render(): HTMLTemplateResult {
     return html`<sygma-action-button
-      .disabled=${!enabledStates.includes(this.state)}
+      .disabled=${this.handleDisabledState()}
       .isLoading=${loadingStates.includes(this.state)}
       .text=${choose(
         this.state,
@@ -55,6 +61,10 @@ export class FungibleTransferButton extends BaseComponent {
           ],
           [FungibleTransferState.WALLET_NOT_CONNECTED, () => 'Connect Wallet'],
           [FungibleTransferState.WRONG_CHAIN, () => 'Switch chain'],
+          [
+            FungibleTransferState.WRONG_DESTINATION_ADDRESS,
+            () => 'Wrong Address'
+          ],
           [FungibleTransferState.PENDING_APPROVALS, () => 'Approve token'],
           [FungibleTransferState.PENDING_TRANSFER, () => 'Transfer'],
           [
@@ -68,7 +78,7 @@ export class FungibleTransferButton extends BaseComponent {
           [FungibleTransferState.COMPLETED, () => 'Start new transfer']
         ],
         () => 'Loading'
-      )!}
+      )}
       @click=${this.onClick}
     ></sygma-action-button>`;
   }
