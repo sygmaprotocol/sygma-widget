@@ -114,8 +114,10 @@ export class FungibleTransferDetail extends BaseComponent {
           this.estimatedGasFee !== undefined,
           () =>
             html`<div class="transferDetailContainer">
-              <div class="transferDetailContainerLabel">Gas Fee</div>
-              <div class="transferDetailContainerValue">
+              <div class="transferDetailContainerLabel" id="gasFeeLabel">
+                Gas Fee
+              </div>
+              <div class="transferDetailContainerValue" id="gasFeeValue">
                 ${this.getEstimatedGasFee()}
               </div>
             </div>`
