@@ -9,6 +9,8 @@ import { html } from 'lit';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
 import { AddressInput } from '../../../../src/components';
 
+const errorMessageInvalidAddress = 'invalid Ethereum address';
+
 describe('address-input component', function () {
   afterEach(() => {
     fixtureCleanup();
@@ -110,9 +112,13 @@ describe('address-input component', function () {
     await listener;
 
     assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['0x123']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], [
+      '0x123',
+      errorMessageInvalidAddress
+    ]);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
-      '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'
+      '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492',
+      null
     ]);
   });
 
@@ -137,8 +143,8 @@ describe('address-input component', function () {
     await listener;
 
     assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['', null]);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['', null]);
 
     const errorMessage = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -154,9 +160,10 @@ describe('address-input component', function () {
 
     assert.equal(mockAddressChangeHandler.mock.calls.length, 4);
     assert.deepEqual(mockAddressChangeHandler.mock.calls[2], [
-      '0xebFC7A970CAAbC18C8e8b7367147C18FC7'
+      '0xebFC7A970CAAbC18C8e8b7367147C18FC7',
+      errorMessageInvalidAddress
     ]);
-    assert.deepEqual(mockAddressChangeHandler.mock.lastCall, ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.lastCall, ['', null]);
 
     const errorMessageAfterClean = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -188,9 +195,10 @@ describe('address-input component', function () {
     await listener;
 
     assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['', null]);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
-      '42sydUvocBuEorweEPqxY5vZae1VaTtWoJFiKMrPbRamy2BL'
+      '42sydUvocBuEorweEPqxY5vZae1VaTtWoJFiKMrPbRamy2BL',
+      null
     ]);
   });
 
@@ -216,9 +224,10 @@ describe('address-input component', function () {
     await listener;
 
     assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['', null]);
     assert.deepEqual(mockAddressChangeHandler.mock.lastCall, [
-      '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492'
+      '0xebFC7A970CAAbC18C8e8b7367147C18FC7585492',
+      null
     ]);
   });
 
@@ -245,8 +254,8 @@ describe('address-input component', function () {
     await listener;
 
     assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['', null]);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['', null]);
 
     const errorMessage = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -277,8 +286,8 @@ describe('address-input component', function () {
     await listener;
 
     assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['', null]);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['', null]);
 
     const errorMessage = el.shadowRoot!.querySelector(
       '.errorMessage'
@@ -308,8 +317,8 @@ describe('address-input component', function () {
     await listener;
 
     assert.equal(mockAddressChangeHandler.mock.calls.length, 3);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['']);
-    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['']);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[0], ['', null]);
+    assert.deepEqual(mockAddressChangeHandler.mock.calls[1], ['', null]);
 
     el.networkType = Network.SUBSTRATE;
 
