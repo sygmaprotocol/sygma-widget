@@ -76,6 +76,9 @@ export class FungibleTransferDetail extends BaseComponent {
     let _fee = '';
 
     if (decimals) {
+      // * BigNumber.from(fee.toString()) from
+      // * substrate gas
+      // * hex doesn't start with 0x :shrug:
       _fee = tokenBalanceToNumber(BigNumber.from(fee.toString()), decimals, 4);
     }
 
@@ -86,10 +89,8 @@ export class FungibleTransferDetail extends BaseComponent {
     if (!this.estimatedGasFee) return '';
     const { symbol, decimals } = this.getGasFeeParams();
 
-    let gasFee;
     if (decimals && this.estimatedGasFee) {
-      gasFee = tokenBalanceToNumber(this.estimatedGasFee, decimals, 4);
-
+      const gasFee = tokenBalanceToNumber(this.estimatedGasFee, decimals, 4);
       return `${gasFee} ${symbol}`;
     }
 

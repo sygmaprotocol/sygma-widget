@@ -2,7 +2,7 @@ import { css } from 'lit';
 
 export const styles = css`
   .transferDetail {
-    gap: var(--spacing-md, 8px);
+    gap: 0.5rem;
     display: flex;
     flex-direction: column;
   }
