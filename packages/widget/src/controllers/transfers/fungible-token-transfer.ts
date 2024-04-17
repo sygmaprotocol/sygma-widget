@@ -22,12 +22,12 @@ import type {
   ParachainID,
   SubstrateFee
 } from '@buildwithsygma/sygma-sdk-core/substrate';
-import { configContext, walletContext } from '../../context';
+import type { WalletContext } from '../../context';
+import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { SdkInitializedEvent } from '../../interfaces';
 import { substrateProviderContext } from '../../context/wallet';
-import type { WalletContext } from '../../context';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
   buildSubstrateFungibleTransactions,
@@ -91,9 +91,12 @@ export class FungibleTokenTransferController implements ReactiveController {
   //source network chain id -> Route[]
   protected routesCache: Map<number, Route[]> = new Map();
 
+  protected whitelistedSourceNetworks?: string[] = [];
+  protected whitelistedDestinationNetworks?: string[] = [];
+  protected whitelistedSourceResources?: string[] = [];
+
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
-  configContext: ContextConsumer<typeof configContext, ReactiveElement>;
   substrateProviderContext: ContextConsumer<
     typeof substrateProviderContext,
     ReactiveElement
@@ -113,7 +116,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   /**
    * Provides substrate provider
    * based on parachain id
-   * @param {ParachainId} parachainId
+   * @param {parachainId} parachainId
    * @returns {ApiPromise | undefined}
    */
   getSubstrateProvider(parachainId: ParachainID): ApiPromise | undefined {
@@ -132,11 +135,6 @@ export class FungibleTokenTransferController implements ReactiveController {
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
-
-    this.configContext = new ContextConsumer(host, {
-      context: configContext,
-      subscribe: true
-    });
 
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
@@ -209,26 +207,28 @@ export class FungibleTokenTransferController implements ReactiveController {
     );
   };
 
-  async init(env: Environment): Promise<void> {
+  async init(
+    env: Environment,
+    whitelistedSourceNetworks?: string[],
+    whitelistedDestinationNetworks?: string[],
+    whitelistedSourceResources?: string[]
+  ): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
+    this.whitelistedSourceNetworks = whitelistedSourceNetworks;
+    this.whitelistedDestinationNetworks = whitelistedDestinationNetworks;
+    this.whitelistedSourceResources = whitelistedSourceResources;
+
     await this.retryInitSdk();
-    await this.config.init(1, this.env);
     this.supportedSourceNetworks = this.config
       .getDomains()
       .filter((network) =>
-        this.filterWhitelistedNetworks(
-          this.configContext.value?.whitelistedSourceNetworks,
-          network
-        )
+        this.filterWhitelistedNetworks(whitelistedSourceNetworks, network)
       );
     this.supportedDestinationNetworks = this.config
       .getDomains()
       .filter((network) =>
-        this.filterWhitelistedNetworks(
-          this.configContext.value?.whitelistedDestinationNetworks,
-          network
-        )
+        this.filterWhitelistedNetworks(whitelistedDestinationNetworks, network)
       );
     this.host.requestUpdate();
   }
@@ -425,7 +425,7 @@ export class FungibleTokenTransferController implements ReactiveController {
         .filter((route) => route.toDomain.chainId !== sourceNetwork.chainId)
         .filter((route) =>
           this.filterWhitelistedNetworks(
-            this.configContext.value?.whitelistedDestinationNetworks,
+            this.whitelistedDestinationNetworks,
             route.toDomain
           )
         )
@@ -457,11 +457,10 @@ export class FungibleTokenTransferController implements ReactiveController {
             !this.supportedResources.includes(route.resource))
       )
       .filter((route) => {
-        const { whitelistedSourceResources } = this.configContext.value ?? {};
         // skip filter if resources are not specified
-        if (!whitelistedSourceResources?.length) return true;
+        if (!this.whitelistedSourceResources?.length) return true;
 
-        return whitelistedSourceResources.includes(route.resource.symbol!);
+        return this.whitelistedSourceResources.includes(route.resource.symbol!);
       })
       .map((route) => route.resource);
 

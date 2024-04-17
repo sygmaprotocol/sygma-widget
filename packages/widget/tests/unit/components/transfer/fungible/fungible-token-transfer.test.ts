@@ -1,10 +1,10 @@
-import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
+import { aTimeout, fixture, fixtureCleanup } from '@open-wc/testing-helpers';
 import { afterEach, assert, describe, it, vi } from 'vitest';
 import { html } from 'lit';
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { Network } from '@buildwithsygma/sygma-sdk-core';
-import type { AddressInput } from '../../../../../src/components';
+import { Environment, Network } from '@buildwithsygma/sygma-sdk-core';
 import { FungibleTokenTransfer } from '../../../../../src/components';
+import type { AddressInput } from '../../../../../src/components';
 import type { WalletContextProvider } from '../../../../../src/context';
 import { WalletUpdateEvent } from '../../../../../src/context';
 import { getMockedEvmWallet } from '../../../../utils';
@@ -100,5 +100,39 @@ describe('Fungible token Transfer', function () {
     ) as AddressInput;
 
     assert(sygmaAddressInput.address === '');
+  });
+
+  it('should filter whitelisted networks and resources', async () => {
+    const whitelistedSourceNetworks = ['cronos'];
+    const whitelistedDestinationNetworks = ['sepolia'];
+
+    const fungibleTransfer = await fixture<FungibleTokenTransfer>(
+      html`<sygma-fungible-transfer
+        .whitelistedSourceNetworks=${whitelistedSourceNetworks}
+        .whitelistedDestinationNetworks=${whitelistedDestinationNetworks}
+        .whitelistedSourceResources=${['ERC20LRTest']}
+        .environment=${Environment.TESTNET}
+      ></sygma-fungible-transfer>`
+    );
+
+    const [sygmaSourceNetwork, sygmaDestinationNetwork] =
+      fungibleTransfer.shadowRoot!.querySelectorAll('sygma-network-selector');
+
+    // Wait for sdk init
+    await aTimeout(1000);
+
+    assert.isTrue(
+      whitelistedSourceNetworks.includes(
+        sygmaSourceNetwork.networks?.[0]?.name
+      ),
+      `Expected source network to be one of ${whitelistedSourceNetworks.join(', ')}, but got ${sygmaSourceNetwork.networks?.[0]?.name}`
+    );
+
+    assert.isTrue(
+      whitelistedDestinationNetworks.includes(
+        sygmaDestinationNetwork.networks?.[0]?.name
+      ),
+      `Expected destination network to be one of ${whitelistedDestinationNetworks.join(', ')}, but got ${sygmaDestinationNetwork.networks?.[0]?.name}`
+    );
   });
 });

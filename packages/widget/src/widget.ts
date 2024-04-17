@@ -100,9 +100,6 @@ class SygmaProtocolWidget
         .appMetadata=${this.appMetadata}
         .theme=${this.theme}
         .walletConnectOptions=${this.walletConnectOptions}
-        .whitelistedSourceNetworks=${this.whitelistedSourceNetworks}
-        .whitelistedDestinationNetworks=${this.whitelistedDestinationNetworks}
-        .whitelistedSourceResources=${this.whitelistedSourceResources}
       >
         <sygma-wallet-context-provider
           .walletModules=${this.walletModules}
@@ -124,6 +121,10 @@ class SygmaProtocolWidget
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
                 environment=${Environment.TESTNET}
+                .whitelistedSourceNetworks=${this.whitelistedSourceNetworks}
+                .whitelistedDestinationNetworks=${this
+                  .whitelistedDestinationNetworks}
+                .whitelistedSourceResources=${this.whitelistedSourceResources}
               >
               </sygma-fungible-transfer>
             </section>

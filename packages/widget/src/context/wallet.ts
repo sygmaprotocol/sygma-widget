@@ -78,7 +78,8 @@ export class WalletContextProvider extends BaseComponent {
   @property({ attribute: false })
   substrateProviders?: Array<ApiPromise> = [];
 
-  @property({ type: String }) environment?: Environment;
+  @property({ type: String })
+  environment?: Environment;
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();

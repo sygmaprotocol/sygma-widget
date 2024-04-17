@@ -31,6 +31,15 @@ export class FungibleTokenTransfer extends BaseComponent {
   @property({ type: String })
   environment?: Environment = Environment.MAINNET;
 
+  @property({ attribute: false, type: Object })
+  whitelistedSourceNetworks?: string[];
+
+  @property({ attribute: false, type: Object })
+  whitelistedDestinationNetworks?: string[];
+
+  @property({ attribute: false, type: Object })
+  whitelistedSourceResources?: string[];
+
   @property({ type: Object })
   onSourceNetworkSelected?: (domain: Domain) => void;
 
@@ -39,7 +48,12 @@ export class FungibleTokenTransfer extends BaseComponent {
 
   connectedCallback(): void {
     super.connectedCallback();
-    void this.transferController.init(this.environment!);
+    void this.transferController.init(
+      this.environment!,
+      this.whitelistedSourceNetworks,
+      this.whitelistedDestinationNetworks,
+      this.whitelistedSourceResources
+    );
   }
 
   private onClick = (): void => {

@@ -29,15 +29,6 @@ export class ConfigContextProvider extends BaseComponent {
   });
 
   @property({ attribute: false, type: Object })
-  whitelistedSourceNetworks?: string[];
-
-  @property({ attribute: false, type: Object })
-  whitelistedDestinationNetworks?: string[];
-
-  @property({ attribute: false, type: Object })
-  whitelistedSourceResources?: string[];
-
-  @property({ attribute: false, type: Object })
   walletConnectOptions?: WalletConnectOptions;
 
   @property({ attribute: false, type: Object })
@@ -56,10 +47,7 @@ export class ConfigContextProvider extends BaseComponent {
       theme: this.theme,
       walletConnectOptions: this.walletConnectOptions,
       appMetaData: this.appMetadata,
-      walletModules: this.walletModules,
-      whitelistedSourceNetworks: this.whitelistedSourceNetworks,
-      whitelistedDestinationNetworks: this.whitelistedDestinationNetworks,
-      whitelistedSourceResources: this.whitelistedSourceResources
+      walletModules: this.walletModules
     });
   }
 
