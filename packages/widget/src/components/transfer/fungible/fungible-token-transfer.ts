@@ -5,6 +5,7 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
+import type { Eip1193Provider } from 'packages/widget/src/interfaces';
 import {
   FungibleTokenTransferController,
   FungibleTransferState
@@ -59,22 +60,17 @@ export class FungibleTokenTransfer extends BaseComponent {
         break;
       case FungibleTransferState.WRONG_CHAIN:
         {
-          this.walletController.switchChain(
-            this.transferController.sourceNetwork!.chainId
-          );
-        }
-        break;
-      case FungibleTransferState.COMPLETED:
-        {
-          this.walletController.switchChain(
-            this.transferController.sourceNetwork!.chainId
+          void this.walletController.switchEvmChain(
+            this.transferController.sourceNetwork!.chainId,
+            this.transferController.walletContext.value?.evmWallet
+              ?.provider as Eip1193Provider
           );
         }
         break;
     }
 
     if (state === FungibleTransferState.COMPLETED) {
-      this.transferController.reset();
+      this.transferController.reset({ omitSourceNetworkReset: true });
     }
   };
 
@@ -101,13 +97,18 @@ export class FungibleTokenTransfer extends BaseComponent {
     return html` <form @submit=${() => {}}>
       <section class="networkSelectionWrapper">
         <sygma-network-selector
+          .selectedNetwork=${this.transferController.sourceNetwork?.name}
           .direction=${Directions.FROM}
           .icons=${true}
           .onNetworkSelected=${(network?: Domain) => {
             if (network) {
               this.onSourceNetworkSelected?.(network);
               this.transferController.onSourceNetworkSelected(network);
-              void this.walletController.switchChain(network?.chainId);
+              void this.walletController.switchEvmChain(
+                network?.chainId,
+                this.transferController.walletContext.value?.evmWallet
+                  ?.provider as Eip1193Provider
+              );
             }
           }}
           .networks=${this.transferController.supportedSourceNetworks}

@@ -11,6 +11,20 @@ import type { WalletInit, AppMetadata } from '@web3-onboard/common';
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
 import { utils } from 'ethers';
 import { WalletUpdateEvent, walletContext } from '../../context';
+import type { Eip1193Provider } from '../../interfaces';
+import { CHAIN_ID_URL } from '../../constants';
+
+/**
+ * This is a stripped version of the response that is returned from chainId service
+ */
+type ChainData = {
+  chainId: number;
+  name: string;
+  rpc: string[];
+  nativeCurrency: { name: string; symbol: string; decimals: number };
+};
+
+type ChainDataResponse = Array<ChainData>;
 
 export class WalletController implements ReactiveController {
   host: ReactiveElement;
@@ -110,12 +124,27 @@ export class WalletController implements ReactiveController {
     }
   };
 
-  switchChain(chainId: number): void {
+  async switchEvmChain(
+    chainId: number,
+    provider: Eip1193Provider
+  ): Promise<void> {
     if (this.walletContext.value?.evmWallet) {
-      void this.walletContext.value.evmWallet.provider.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: utils.hexValue(chainId) }]
-      });
+      try {
+        await provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: utils.hexValue(chainId) }]
+        });
+      } catch (switchError) {
+        const chainData = (await (
+          await fetch(CHAIN_ID_URL)
+        ).json()) as ChainDataResponse;
+
+        const selectedChain = chainData.find(
+          (chain) => chain.chainId === chainId
+        ) as ChainData;
+
+        void this.addEvmChain(selectedChain, provider);
+      }
     }
   }
 
@@ -160,10 +189,7 @@ export class WalletController implements ReactiveController {
         })
       );
       if (network.chainId !== providerChainId) {
-        void provider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: utils.hexValue(network.chainId) }]
-        });
+        await this.switchEvmChain(network.chainId, provider);
       }
       this.host.requestUpdate();
     }
@@ -248,6 +274,37 @@ export class WalletController implements ReactiveController {
       this.disconnectSubstrateWallet();
     }
   };
+
+  private async addEvmChain(
+    chainData: ChainData,
+    provider: Eip1193Provider
+  ): Promise<void> {
+    const {
+      chainId,
+      name,
+      nativeCurrency: { name: tokenName, symbol, decimals },
+      rpc
+    } = chainData;
+    try {
+      await provider.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: `0x${chainId.toString(16)}`,
+            chainName: name,
+            rpcUrls: [rpc[0]],
+            nativeCurrency: {
+              name: tokenName,
+              symbol: symbol,
+              decimals: decimals
+            }
+          }
+        ]
+      });
+    } catch (addEvmError) {
+      console.error('Failed to add evm network into wallet', addEvmError);
+    }
+  }
 
   onSubstrateAccountSelected = (account: Account): void => {
     if (this.walletContext.value?.substrateWallet) {
