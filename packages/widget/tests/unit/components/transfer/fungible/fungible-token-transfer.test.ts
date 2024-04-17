@@ -4,12 +4,29 @@ import { html } from 'lit';
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Environment, Network } from '@buildwithsygma/sygma-sdk-core';
 import { FungibleTokenTransfer } from '../../../../../src/components';
-import type { AddressInput } from '../../../../../src/components';
+import type {
+  AddressInput,
+  ResourceAmountSelector
+} from '../../../../../src/components';
 import type { WalletContextProvider } from '../../../../../src/context';
 import { WalletUpdateEvent } from '../../../../../src/context';
 import { getMockedEvmWallet } from '../../../../utils';
 
 vi.mock('@polkadot/api');
+
+const sepoliaNetwork: Domain = {
+  id: 2,
+  chainId: 11155111,
+  name: 'sepolia',
+  type: Network.EVM
+};
+
+const cronosNetwork: Domain = {
+  id: 5,
+  chainId: 338,
+  name: 'cronos',
+  type: Network.EVM
+};
 
 describe('Fungible token Transfer', function () {
   afterEach(() => {
@@ -27,18 +44,6 @@ describe('Fungible token Transfer', function () {
   });
 
   it('Fill the destination address -> when networks types are the same', async () => {
-    const sourceNetwork: Domain = {
-      id: 2,
-      chainId: 11155111,
-      name: 'sepolia',
-      type: Network.EVM
-    };
-    const destinationNetwork: Domain = {
-      id: 5,
-      chainId: 338,
-      name: 'cronos',
-      type: Network.EVM
-    };
     const connectedAddress = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
     const walletContext = await fixture<WalletContextProvider>(html`
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
@@ -61,9 +66,9 @@ describe('Fungible token Transfer', function () {
     );
 
     // Set Source and Destination Networks
-    fungibleTransfer.transferController.onSourceNetworkSelected(sourceNetwork);
+    fungibleTransfer.transferController.onSourceNetworkSelected(sepoliaNetwork);
     fungibleTransfer.transferController.onDestinationNetworkSelected(
-      destinationNetwork
+      cronosNetwork
     );
     fungibleTransfer.requestUpdate();
     await fungibleTransfer.updateComplete;
@@ -111,22 +116,49 @@ describe('Fungible token Transfer', function () {
   it('should filter whitelisted networks and resources', async () => {
     const whitelistedSourceNetworks = ['cronos'];
     const whitelistedDestinationNetworks = ['sepolia'];
+    const whitelistedResources = ['ERC20LRTest'];
+    const connectedAddress = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
+    const walletContext = await fixture<WalletContextProvider>(html`
+      <sygma-wallet-context-provider></sygma-wallet-context-provider>
+    `);
 
     const fungibleTransfer = await fixture<FungibleTokenTransfer>(
       html`<sygma-fungible-transfer
         .whitelistedSourceNetworks=${whitelistedSourceNetworks}
         .whitelistedDestinationNetworks=${whitelistedDestinationNetworks}
-        .whitelistedSourceResources=${['ERC20LRTest']}
+        .whitelistedSourceResources=${whitelistedResources}
         .environment=${Environment.TESTNET}
-      ></sygma-fungible-transfer>`
+      ></sygma-fungible-transfer>`,
+      { parentNode: walletContext }
     );
+
+    walletContext.dispatchEvent(
+      new WalletUpdateEvent({
+        evmWallet: {
+          address: connectedAddress,
+          providerChainId: 11155111,
+          provider: getMockedEvmWallet().provider
+        }
+      })
+    );
+
+    // Set Source and Destination Networks
+    fungibleTransfer.transferController.onSourceNetworkSelected(cronosNetwork);
+    fungibleTransfer.transferController.onDestinationNetworkSelected(
+      sepoliaNetwork
+    );
+    fungibleTransfer.requestUpdate();
+    await fungibleTransfer.updateComplete;
 
     const [sygmaSourceNetwork, sygmaDestinationNetwork] =
       fungibleTransfer.shadowRoot!.querySelectorAll('sygma-network-selector');
 
-    await fungibleTransfer.updateComplete;
+    const resourceSelector = fungibleTransfer.shadowRoot!.querySelector(
+      'sygma-resource-amount-selector'
+    ) as ResourceAmountSelector;
+
     // Wait for sdk init
-    await aTimeout(500);
+    await aTimeout(1000);
 
     assert.isTrue(
       whitelistedSourceNetworks.includes(
@@ -134,12 +166,17 @@ describe('Fungible token Transfer', function () {
       ),
       `Expected source network to be one of ${whitelistedSourceNetworks.join(', ')}, but got ${sygmaSourceNetwork.networks?.[0]?.name}`
     );
-
     assert.isTrue(
       whitelistedDestinationNetworks.includes(
         sygmaDestinationNetwork.networks?.[0]?.name
       ),
       `Expected destination network to be one of ${whitelistedDestinationNetworks.join(', ')}, but got ${sygmaDestinationNetwork.networks?.[0]?.name}`
+    );
+    assert.isTrue(
+      whitelistedResources.includes(
+        resourceSelector.resources[0]?.symbol || ''
+      ),
+      `Expected destination network to be one of ${whitelistedResources.join(', ')}, but got ${resourceSelector.resources.join(', ')}`
     );
   });
 });
