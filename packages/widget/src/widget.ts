@@ -106,9 +106,9 @@ class SygmaProtocolWidget
         .appMetadata=${this.appMetadata}
         .theme=${this.theme}
         .walletConnectOptions=${this.walletConnectOptions}
-        .walletModules=${this.walletModules}
       >
         <sygma-wallet-context-provider
+          .walletModules=${this.walletModules}
           .substrateProviders=${this.substrateProviders}
           .environment=${this.environment}
         >

@@ -5,6 +5,7 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
+import { when } from 'lit/directives/when.js';
 import type { Eip1193Provider } from 'packages/widget/src/interfaces';
 import {
   FungibleTokenTransferController,
@@ -16,9 +17,10 @@ import '../../resource-amount-selector';
 import './transfer-button';
 import './transfer-status';
 import '../../network-selector';
+import { BaseComponent } from '../../common';
 import { Directions } from '../../network-selector/network-selector';
 import { WalletController } from '../../../controllers';
-import { BaseComponent } from '../../common/base-component';
+import { tokenBalanceToNumber } from '../../../utils/token';
 import { styles } from './styles';
 
 @customElement('sygma-fungible-transfer')
@@ -72,6 +74,28 @@ export class FungibleTokenTransfer extends BaseComponent {
       this.transferController.reset({ omitSourceNetworkReset: true });
     }
   };
+
+  renderAmountOnDestination(): HTMLTemplateResult | null {
+    if (
+      this.transferController.selectedResource &&
+      this.transferController.pendingTransferTransaction !== undefined
+    ) {
+      const { decimals, symbol } = this.transferController.selectedResource;
+      return html`
+        <div class="amountOnDestination">
+          <span> Amount to receive: </span>
+          <span>
+            ${tokenBalanceToNumber(
+              this.transferController.resourceAmount,
+              decimals!
+            )}
+            ${symbol}
+          </span>
+        </div>
+      `;
+    }
+    return null;
+  }
 
   renderTransferStatus(): HTMLTemplateResult {
     return html` <section>
@@ -143,6 +167,9 @@ export class FungibleTokenTransfer extends BaseComponent {
         </sygma-address-input>
       </section>
       <section>
+        ${when(this.transferController.destinationAddress, () =>
+          this.renderAmountOnDestination()
+        )}
         <sygma-fungible-transfer-detail
           .selectedResource=${this.transferController.selectedResource}
           .fee=${this.transferController.fee}
