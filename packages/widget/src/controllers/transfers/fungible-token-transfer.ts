@@ -473,7 +473,6 @@ export class FungibleTokenTransferController implements ReactiveController {
         return this.whitelistedSourceResources.includes(route.resource.symbol!);
       })
       .map((route) => route.resource);
-    console.log('this.supportedResources', this.supportedResources);
     void this.buildTransactions();
     this.host.requestUpdate();
   };
