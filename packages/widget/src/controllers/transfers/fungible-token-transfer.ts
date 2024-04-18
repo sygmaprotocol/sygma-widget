@@ -184,6 +184,11 @@ export class FungibleTokenTransferController implements ReactiveController {
   };
 
   getTransferState(): FungibleTransferState {
+    // Enabled state
+    if (this.transferTransactionId) {
+      return FungibleTransferState.COMPLETED;
+    }
+
     // Loading states
     if (this.waitingUserConfirmation) {
       return FungibleTransferState.WAITING_USER_CONFIRMATION;
@@ -215,10 +220,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     }
 
     // Enabled States
-    if (this.transferTransactionId) {
-      return FungibleTransferState.COMPLETED;
-    }
-
     if (
       !this.walletContext.value?.evmWallet &&
       !this.walletContext.value?.substrateWallet
