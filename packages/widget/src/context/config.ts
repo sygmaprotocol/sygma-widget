@@ -12,9 +12,6 @@ export interface ConfigContext {
   walletConnectOptions?: WalletConnectOptions;
   appMetaData?: AppMetadata;
   walletModules?: WalletInit[];
-  whitelistedSourceNetworks?: string[];
-  whitelistedDestinationNetworks?: string[];
-  whitelistedSourceResources?: string[];
 }
 
 export const configContext = createContext<ConfigContext>(

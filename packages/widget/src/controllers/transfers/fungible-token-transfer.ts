@@ -175,7 +175,6 @@ export class FungibleTokenTransferController implements ReactiveController {
    * {@link Config} from `@buildwithsygma/sygma-sdk-core`
    * and emits a {@link SdkInitializedEvent}
    * @returns {void}
-   * @param retryMs
    */
   async retryInitSdk(retryMs = 100): Promise<void> {
     try {
@@ -209,26 +208,36 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   async init(
     env: Environment,
-    whitelistedSourceNetworks?: string[],
-    whitelistedDestinationNetworks?: string[],
-    whitelistedSourceResources?: string[]
+    options?: {
+      whitelistedSourceNetworks?: string[];
+      whitelistedDestinationNetworks?: string[];
+      whitelistedSourceResources?: string[];
+    }
   ): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
-    this.whitelistedSourceNetworks = whitelistedSourceNetworks;
-    this.whitelistedDestinationNetworks = whitelistedDestinationNetworks;
-    this.whitelistedSourceResources = whitelistedSourceResources;
+
+    this.whitelistedSourceNetworks = options?.whitelistedSourceNetworks;
+    this.whitelistedDestinationNetworks =
+      options?.whitelistedDestinationNetworks;
+    this.whitelistedSourceResources = options?.whitelistedSourceResources;
 
     await this.retryInitSdk();
     this.supportedSourceNetworks = this.config
       .getDomains()
       .filter((network) =>
-        this.filterWhitelistedNetworks(whitelistedSourceNetworks, network)
+        this.filterWhitelistedNetworks(
+          options?.whitelistedSourceNetworks,
+          network
+        )
       );
     this.supportedDestinationNetworks = this.config
       .getDomains()
       .filter((network) =>
-        this.filterWhitelistedNetworks(whitelistedDestinationNetworks, network)
+        this.filterWhitelistedNetworks(
+          options?.whitelistedDestinationNetworks,
+          network
+        )
       );
     this.host.requestUpdate();
   }
@@ -463,7 +472,7 @@ export class FungibleTokenTransferController implements ReactiveController {
         return this.whitelistedSourceResources.includes(route.resource.symbol!);
       })
       .map((route) => route.resource);
-
+    console.log('this.supportedResources', this.supportedResources);
     void this.buildTransactions();
     this.host.requestUpdate();
   };

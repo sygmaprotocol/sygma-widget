@@ -114,6 +114,22 @@ describe('Fungible token Transfer', function () {
   });
 
   it('should filter whitelisted networks and resources', async () => {
+    function containsWhitelistedData<T>(
+      data: T[],
+      whitelist: string[],
+      dataExtractor: (item: T) => string,
+      errorMessageContext: string
+    ): void {
+      assert.isNotEmpty(data, 'Data must not be empty.');
+      data.forEach((item) => {
+        const key = dataExtractor(item);
+        assert.isTrue(
+          whitelist.includes(key),
+          `${key} expected to be whitelisted in ${errorMessageContext}`
+        );
+      });
+    }
+
     const whitelistedSourceNetworks = ['cronos'];
     const whitelistedDestinationNetworks = ['sepolia'];
     const whitelistedResources = ['ERC20LRTest'];
@@ -142,6 +158,23 @@ describe('Fungible token Transfer', function () {
       })
     );
 
+    await fungibleTransfer.updateComplete;
+    await aTimeout(1000);
+
+    containsWhitelistedData(
+      fungibleTransfer.transferController.supportedSourceNetworks,
+      whitelistedSourceNetworks,
+      (network) => network.name,
+      'transfer controller for source networks'
+    );
+
+    containsWhitelistedData(
+      fungibleTransfer.transferController.supportedDestinationNetworks,
+      whitelistedDestinationNetworks,
+      (network) => network.name,
+      'transfer controller for destination networks'
+    );
+
     // Set Source and Destination Networks
     fungibleTransfer.transferController.onSourceNetworkSelected(cronosNetwork);
     fungibleTransfer.transferController.onDestinationNetworkSelected(
@@ -159,6 +192,13 @@ describe('Fungible token Transfer', function () {
 
     // Wait for sdk init
     await aTimeout(1000);
+
+    containsWhitelistedData(
+      fungibleTransfer.transferController.supportedResources,
+      whitelistedResources,
+      (resource) => resource.symbol!,
+      'transfer controller for resources'
+    );
 
     assert.isTrue(
       whitelistedSourceNetworks.includes(

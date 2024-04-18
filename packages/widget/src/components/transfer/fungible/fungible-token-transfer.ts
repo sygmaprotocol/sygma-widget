@@ -48,12 +48,11 @@ export class FungibleTokenTransfer extends BaseComponent {
 
   connectedCallback(): void {
     super.connectedCallback();
-    void this.transferController.init(
-      this.environment!,
-      this.whitelistedSourceNetworks,
-      this.whitelistedDestinationNetworks,
-      this.whitelistedSourceResources
-    );
+    void this.transferController.init(this.environment!, {
+      whitelistedSourceNetworks: this.whitelistedSourceNetworks,
+      whitelistedDestinationNetworks: this.whitelistedDestinationNetworks,
+      whitelistedSourceResources: this.whitelistedSourceResources
+    });
   }
 
   private onClick = (): void => {
