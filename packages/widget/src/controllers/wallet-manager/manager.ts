@@ -147,7 +147,6 @@ export class WalletController implements ReactiveController {
       }
     }
   }
-
   connectEvmWallet = async (
     network: Domain,
     options?: {
