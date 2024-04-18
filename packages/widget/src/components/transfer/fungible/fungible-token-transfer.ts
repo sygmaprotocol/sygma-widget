@@ -5,7 +5,6 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
-import { utils } from 'ethers';
 import { when } from 'lit/directives/when.js';
 import type { Eip1193Provider } from 'packages/widget/src/interfaces';
 import {
@@ -21,6 +20,7 @@ import '../../network-selector';
 import { BaseComponent } from '../../common';
 import { Directions } from '../../network-selector/network-selector';
 import { WalletController } from '../../../controllers';
+import { tokenBalanceToNumber } from '../../../utils/token';
 import { styles } from './styles';
 
 @customElement('sygma-fungible-transfer')
@@ -85,9 +85,9 @@ export class FungibleTokenTransfer extends BaseComponent {
         <div class="amountOnDestination">
           <span> Amount to receive: </span>
           <span>
-            ${utils.formatUnits(
+            ${tokenBalanceToNumber(
               this.transferController.resourceAmount,
-              decimals
+              decimals!
             )}
             ${symbol}
           </span>
