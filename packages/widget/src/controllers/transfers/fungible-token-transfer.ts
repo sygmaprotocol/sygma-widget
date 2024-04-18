@@ -174,6 +174,7 @@ export class FungibleTokenTransferController implements ReactiveController {
    * Infinite Try/catch wrapper around
    * {@link Config} from `@buildwithsygma/sygma-sdk-core`
    * and emits a {@link SdkInitializedEvent}
+   * @param {number} time to wait before retrying request in ms
    * @returns {void}
    */
   async retryInitSdk(retryMs = 100): Promise<void> {
