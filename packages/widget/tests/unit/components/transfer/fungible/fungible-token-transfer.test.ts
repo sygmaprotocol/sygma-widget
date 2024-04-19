@@ -1,34 +1,83 @@
-import { aTimeout, fixture, fixtureCleanup } from '@open-wc/testing-helpers';
-import { afterEach, assert, describe, it, vi } from 'vitest';
-import { html } from 'lit';
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Environment, Network } from '@buildwithsygma/sygma-sdk-core';
-import { FungibleTokenTransfer } from '../../../../../src/components';
+import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
+import { html } from 'lit';
+import { afterEach, assert, describe, it, vi } from 'vitest';
 import type {
   AddressInput,
   ResourceAmountSelector
 } from '../../../../../src/components';
+import { FungibleTokenTransfer } from '../../../../../src/components';
 import type { WalletContextProvider } from '../../../../../src/context';
 import { WalletUpdateEvent } from '../../../../../src/context';
 import { getMockedEvmWallet } from '../../../../utils';
 
 vi.mock('@polkadot/api');
+vi.mock(
+  '@buildwithsygma/sygma-sdk-core',
 
-const sepoliaNetwork: Domain = {
-  id: 2,
-  chainId: 11155111,
-  name: 'sepolia',
-  type: Network.EVM
-};
-
-const cronosNetwork: Domain = {
-  id: 5,
-  chainId: 338,
-  name: 'cronos',
-  type: Network.EVM
-};
+  async (importOriginal) => {
+    const mod =
+      // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+      await importOriginal<typeof import('@buildwithsygma/sygma-sdk-core')>();
+    const modConfig = vi.fn<[], typeof mod.Config>();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    modConfig.prototype.init = vi.fn();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    modConfig.prototype.getDomains = vi.fn().mockReturnValue([
+      { id: 2, chainId: 11155111, name: 'sepolia', type: 'evm' },
+      { id: 3, chainId: 5231, name: 'rococo-phala', type: 'substrate' },
+      { id: 5, chainId: 338, name: 'cronos', type: 'evm' },
+      { id: 6, chainId: 17000, name: 'holesky', type: 'evm' },
+      { id: 8, chainId: 421614, name: 'arbitrum_sepolia', type: 'evm' },
+      { id: 9, chainId: 10200, name: 'gnosis_chiado', type: 'evm' },
+      { id: 10, chainId: 84532, name: 'base_sepolia', type: 'evm' }
+    ]);
+    const modGetRoutes = vi.fn().mockReturnValue([
+      {
+        fromDomain: { id: 2, chainId: 11155111, name: 'sepolia', type: 'evm' },
+        toDomain: { id: 10, chainId: 84532, name: 'base_sepolia', type: 'evm' },
+        resource: {
+          resourceId: '123',
+          type: 'fungible',
+          address: '0x123',
+          symbol: 'sygUSDC'
+        }
+      },
+      {
+        fromDomain: { id: 2, chainId: 11155111, name: 'sepolia', type: 'evm' },
+        toDomain: { id: 10, chainId: 84532, name: 'base_sepolia', type: 'evm' },
+        resource: {
+          resourceId: '124',
+          type: 'fungible',
+          address: '0x123',
+          symbol: 'ERC20LRTest'
+        }
+      }
+    ]);
+    return {
+      ...mod,
+      Config: modConfig,
+      getRoutes: modGetRoutes
+    };
+  }
+);
 
 describe('Fungible token Transfer', function () {
+  const sepoliaNetwork: Domain = {
+    id: 2,
+    chainId: 11155111,
+    name: 'sepolia',
+    type: Network.EVM
+  };
+
+  const baseSepolia: Domain = {
+    id: 10,
+    chainId: 84532,
+    name: 'base_sepolia',
+    type: Network.EVM
+  };
+
   afterEach(() => {
     fixtureCleanup();
   });
@@ -68,7 +117,7 @@ describe('Fungible token Transfer', function () {
     // Set Source and Destination Networks
     fungibleTransfer.transferController.onSourceNetworkSelected(sepoliaNetwork);
     fungibleTransfer.transferController.onDestinationNetworkSelected(
-      cronosNetwork
+      baseSepolia
     );
     fungibleTransfer.requestUpdate();
     await fungibleTransfer.updateComplete;
@@ -130,8 +179,8 @@ describe('Fungible token Transfer', function () {
       });
     }
 
-    const whitelistedSourceNetworks = ['cronos'];
-    const whitelistedDestinationNetworks = ['sepolia'];
+    const whitelistedSourceNetworks = ['sepolia'];
+    const whitelistedDestinationNetworks = ['base_sepolia'];
     const whitelistedResources = ['ERC20LRTest'];
     const connectedAddress = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
     const walletContext = await fixture<WalletContextProvider>(html`
@@ -159,7 +208,19 @@ describe('Fungible token Transfer', function () {
     );
 
     await fungibleTransfer.updateComplete;
-    await aTimeout(1000);
+
+    // await waitUntil(
+    //   () => {
+    //     if (
+    //       fungibleTransfer.transferController.supportedSourceNetworks.length > 0
+    //     ) {
+    //       return true;
+    //     }
+    //     return undefined;
+    //   },
+    //   '',
+    //   { interval: 1, timeout: 100 }
+    // );
 
     containsWhitelistedData(
       fungibleTransfer.transferController.supportedSourceNetworks,
@@ -176,9 +237,9 @@ describe('Fungible token Transfer', function () {
     );
 
     // Set Source and Destination Networks
-    fungibleTransfer.transferController.onSourceNetworkSelected(cronosNetwork);
+    fungibleTransfer.transferController.onSourceNetworkSelected(sepoliaNetwork);
     fungibleTransfer.transferController.onDestinationNetworkSelected(
-      sepoliaNetwork
+      baseSepolia
     );
     fungibleTransfer.requestUpdate();
     await fungibleTransfer.updateComplete;
@@ -189,9 +250,6 @@ describe('Fungible token Transfer', function () {
     const resourceSelector = fungibleTransfer.shadowRoot!.querySelector(
       'sygma-resource-amount-selector'
     ) as ResourceAmountSelector;
-
-    // Wait for sdk init
-    await aTimeout(1000);
 
     containsWhitelistedData(
       fungibleTransfer.transferController.supportedResources,
