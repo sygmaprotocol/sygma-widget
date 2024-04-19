@@ -33,6 +33,8 @@ export async function buildSubstrateFungibleTransactions(
   );
 
   this.fee = await substrateTransfer.getFee(transfer);
+
+  this.resourceAmount = this.resourceAmount.sub(this.fee.fee.toString());
   this.pendingTransferTransaction = substrateTransfer.buildTransferTransaction(
     transfer,
     this.fee

@@ -78,7 +78,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected buildEvmTransactions = buildEvmFungibleTransactions;
   protected executeNextEvmTransaction = executeNextEvmTransaction;
   protected pendingEvmApprovalTransactions: UnsignedTransaction[] = [];
-  protected pendingTransferTransaction?:
+  public pendingTransferTransaction?:
     | UnsignedTransaction
     | SubstrateTransaction;
 
@@ -97,13 +97,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     typeof substrateProviderContext,
     ReactiveElement
   >;
-
-  isWalletDisconnected(context: WalletContext): boolean {
-    // Skip the method call during init
-    if (Object.values(context).length === 0) return false;
-
-    return !(!!context.evmWallet || !!context.substrateWallet);
-  }
 
   get sourceSubstrateProvider(): ApiPromise | undefined {
     if (this.sourceNetwork && this.sourceNetwork.type === Network.SUBSTRATE) {
@@ -126,6 +119,13 @@ export class FungibleTokenTransferController implements ReactiveController {
     return this.substrateProviderContext.value?.substrateProviders?.get(
       parachainId
     );
+  }
+
+  isWalletDisconnected(context: WalletContext): boolean {
+    // Skip the method call during init
+    if (Object.values(context).length === 0) return false;
+
+    return !(!!context.evmWallet || !!context.substrateWallet);
   }
 
   constructor(host: ReactiveElement) {
