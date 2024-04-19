@@ -20,8 +20,7 @@ export class AddressInput extends BaseComponent {
   address: string = '';
 
   @property({ attribute: false })
-  onAddressChange: (address: string, errorMessage?: string | null) => void =
-    () => {};
+  onAddressChange: (address: string) => void = () => {};
 
   @property({ attribute: false })
   networkType: Network = Network.EVM;
@@ -42,12 +41,12 @@ export class AddressInput extends BaseComponent {
     }
 
     if (!trimedValue) {
-      void this.onAddressChange('', null);
+      void this.onAddressChange('');
       return;
     }
 
     this.errorMessage = validateAddress(trimedValue, this.networkType);
-    this.onAddressChange(trimedValue, this.errorMessage);
+    this.onAddressChange(trimedValue);
   };
 
   protected updated(changedProperties: PropertyValues): void {

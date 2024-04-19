@@ -12,6 +12,7 @@ import type { ReactiveController, ReactiveElement } from 'lit';
 import type { WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
+import { validateAddress } from '../../utils';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
 export enum FungibleTransferState {
@@ -20,7 +21,7 @@ export enum FungibleTransferState {
   MISSING_RESOURCE,
   MISSING_RESOURCE_AMOUNT,
   MISSING_DESTINATION_ADDRESS,
-  WRONG_DESTINATION_ADDRESS,
+  INVALID_DESTINATION_ADDRESS,
   WALLET_NOT_CONNECTED,
   WRONG_CHAIN,
   PENDING_APPROVALS,
@@ -36,13 +37,12 @@ export class FungibleTokenTransferController implements ReactiveController {
   public waitingTxExecution: boolean = false;
   public transferTransactionId?: string;
   public errorMessage: string | null = null;
-  public invalidDestinationAddressErrorMessage: string | null = null;
 
   public sourceNetwork?: Domain;
   public destinationNetwork?: Domain;
   public selectedResource?: Resource;
   public resourceAmount: BigNumber = ethers.constants.Zero;
-  public destinationAddress: string = '';
+  public destinationAddress?: string | null = '';
 
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
@@ -167,17 +167,13 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
   };
 
-  onDestinationAddressChange = (
-    address: string,
-    errorMessage: string | null
-  ): void => {
+  onDestinationAddressChange = (address: string): void => {
     this.destinationAddress = address;
-    this.invalidDestinationAddressErrorMessage = errorMessage;
 
     if (this.destinationAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
       this.pendingEvmTransferTransaction = undefined;
-      this.invalidDestinationAddressErrorMessage = null;
+      this.destinationAddress = null;
     }
     void this.buildTransactions();
     this.host.requestUpdate();
@@ -208,15 +204,20 @@ export class FungibleTokenTransferController implements ReactiveController {
       return FungibleTransferState.MISSING_RESOURCE;
     }
 
-    if (this.invalidDestinationAddressErrorMessage?.length) {
-      return FungibleTransferState.WRONG_DESTINATION_ADDRESS;
+    if (this.destinationAddress === '') {
+      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
+    }
+
+    if (
+      this.destinationAddress === null ||
+      this.destinationAddress === undefined ||
+      validateAddress(this.destinationAddress, this.destinationNetwork.type)
+    ) {
+      return FungibleTransferState.INVALID_DESTINATION_ADDRESS;
     }
 
     if (this.resourceAmount.eq(0)) {
       return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
-    }
-    if (this.destinationAddress === '') {
-      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
     }
 
     // Enabled States

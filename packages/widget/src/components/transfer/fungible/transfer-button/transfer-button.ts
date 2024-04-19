@@ -55,8 +55,8 @@ export class FungibleTransferButton extends BaseComponent {
           [FungibleTransferState.WALLET_NOT_CONNECTED, () => 'Connect Wallet'],
           [FungibleTransferState.WRONG_CHAIN, () => 'Switch chain'],
           [
-            FungibleTransferState.WRONG_DESTINATION_ADDRESS,
-            () => 'Wrong Address'
+            FungibleTransferState.INVALID_DESTINATION_ADDRESS,
+            () => 'Invalid Address'
           ],
           [FungibleTransferState.PENDING_APPROVALS, () => 'Approve token'],
           [FungibleTransferState.PENDING_TRANSFER, () => 'Transfer'],
