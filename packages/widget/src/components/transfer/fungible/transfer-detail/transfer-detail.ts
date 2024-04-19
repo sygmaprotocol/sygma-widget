@@ -11,6 +11,7 @@ import { html } from 'lit';
 import { when } from 'lit/directives/when.js';
 import { customElement, property } from 'lit/decorators.js';
 import { BigNumber } from 'ethers';
+import type { SubstrateFee } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { tokenBalanceToNumber } from '../../../../utils/token';
 import { BaseComponent } from '../../../common/base-component';
 import { styles } from './styles';
@@ -20,7 +21,7 @@ export class FungibleTransferDetail extends BaseComponent {
   static styles = styles;
 
   @property({ type: Object })
-  fee?: EvmFee;
+  fee?: EvmFee | SubstrateFee | null;
 
   @property({ type: Object })
   selectedResource?: Resource;
@@ -101,7 +102,7 @@ export class FungibleTransferDetail extends BaseComponent {
     return html`
       <section class="transferDetail">
         ${when(
-          this.fee !== undefined,
+          this.fee !== null,
           () =>
             html`<div class="transferDetailContainer">
               <div class="transferDetailContainerLabel">Bridge Fee</div>
