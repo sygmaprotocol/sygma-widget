@@ -12,6 +12,7 @@ import type { ReactiveController, ReactiveElement } from 'lit';
 import type { WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
+import { validateAddress } from '../../utils';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 
 export enum FungibleTransferState {
@@ -20,6 +21,7 @@ export enum FungibleTransferState {
   MISSING_RESOURCE,
   MISSING_RESOURCE_AMOUNT,
   MISSING_DESTINATION_ADDRESS,
+  INVALID_DESTINATION_ADDRESS,
   WALLET_NOT_CONNECTED,
   WRONG_CHAIN,
   PENDING_APPROVALS,
@@ -40,7 +42,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public destinationNetwork?: Domain;
   public selectedResource?: Resource;
   public resourceAmount: BigNumber = ethers.constants.Zero;
-  public destinationAddress: string = '';
+  public destinationAddress?: string | null = '';
 
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
@@ -110,6 +112,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       this.sourceNetwork = undefined;
     }
     this.destinationNetwork = undefined;
+    this.selectedResource = undefined;
     this.pendingEvmApprovalTransactions = [];
     this.pendingEvmTransferTransaction = undefined;
     this.destinationAddress = '';
@@ -166,30 +169,31 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   onDestinationAddressChange = (address: string): void => {
     this.destinationAddress = address;
-    if (this.destinationAddress.length === 0) {
+
+    if (this.destinationAddress && this.destinationAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
       this.pendingEvmTransferTransaction = undefined;
+      this.destinationAddress = null;
     }
     void this.buildTransactions();
     this.host.requestUpdate();
   };
 
   getTransferState(): FungibleTransferState {
+    // Enabled state
     if (this.transferTransactionId) {
       return FungibleTransferState.COMPLETED;
     }
+
+    // Loading states
     if (this.waitingUserConfirmation) {
       return FungibleTransferState.WAITING_USER_CONFIRMATION;
     }
     if (this.waitingTxExecution) {
       return FungibleTransferState.WAITING_TX_EXECUTION;
     }
-    if (this.pendingEvmApprovalTransactions.length > 0) {
-      return FungibleTransferState.PENDING_APPROVALS;
-    }
-    if (this.pendingEvmTransferTransaction) {
-      return FungibleTransferState.PENDING_TRANSFER;
-    }
+
+    // Error States
     if (!this.sourceNetwork) {
       return FungibleTransferState.MISSING_SOURCE_NETWORK;
     }
@@ -199,12 +203,24 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (!this.selectedResource) {
       return FungibleTransferState.MISSING_RESOURCE;
     }
-    if (this.resourceAmount.eq(0)) {
-      return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
-    }
+
     if (this.destinationAddress === '') {
       return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
     }
+
+    if (
+      this.destinationAddress === null ||
+      this.destinationAddress === undefined ||
+      validateAddress(this.destinationAddress, this.destinationNetwork.type)
+    ) {
+      return FungibleTransferState.INVALID_DESTINATION_ADDRESS;
+    }
+
+    if (this.resourceAmount.eq(0)) {
+      return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
+    }
+
+    // Enabled States
     if (
       !this.walletContext.value?.evmWallet &&
       !this.walletContext.value?.substrateWallet
@@ -218,6 +234,14 @@ export class FungibleTokenTransferController implements ReactiveController {
     ) {
       return FungibleTransferState.WRONG_CHAIN;
     }
+
+    if (this.pendingEvmApprovalTransactions.length > 0) {
+      return FungibleTransferState.PENDING_APPROVALS;
+    }
+    if (this.pendingEvmTransferTransaction) {
+      return FungibleTransferState.PENDING_TRANSFER;
+    }
+
     return FungibleTransferState.UNKNOWN;
   }
 

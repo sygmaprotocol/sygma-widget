@@ -7,11 +7,11 @@ import type { Button } from '../../../common';
 import { BaseComponent } from '../../../common';
 
 const enabledStates = [
-  FungibleTransferState.WRONG_CHAIN,
-  FungibleTransferState.WALLET_NOT_CONNECTED,
   FungibleTransferState.PENDING_APPROVALS,
   FungibleTransferState.PENDING_TRANSFER,
-  FungibleTransferState.COMPLETED
+  FungibleTransferState.COMPLETED,
+  FungibleTransferState.WRONG_CHAIN,
+  FungibleTransferState.WALLET_NOT_CONNECTED
 ];
 
 const loadingStates = [
@@ -54,6 +54,10 @@ export class FungibleTransferButton extends BaseComponent {
           ],
           [FungibleTransferState.WALLET_NOT_CONNECTED, () => 'Connect Wallet'],
           [FungibleTransferState.WRONG_CHAIN, () => 'Switch chain'],
+          [
+            FungibleTransferState.INVALID_DESTINATION_ADDRESS,
+            () => 'Invalid Address'
+          ],
           [FungibleTransferState.PENDING_APPROVALS, () => 'Approve token'],
           [FungibleTransferState.PENDING_TRANSFER, () => 'Transfer'],
           [
@@ -67,7 +71,7 @@ export class FungibleTransferButton extends BaseComponent {
           [FungibleTransferState.COMPLETED, () => 'Start new transfer']
         ],
         () => 'Loading'
-      )!}
+      )}
       @click=${this.onClick}
     ></sygma-action-button>`;
   }

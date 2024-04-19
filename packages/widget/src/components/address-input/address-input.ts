@@ -6,7 +6,7 @@ import { when } from 'lit/directives/when.js';
 
 import type { PropertyValues } from '@lit/reactive-element';
 import { validateAddress } from '../../utils';
-import { BaseComponent } from '../common/base-component/base-component';
+import { BaseComponent } from '../common';
 
 import { styles } from './styles';
 
@@ -22,9 +22,7 @@ export class AddressInput extends BaseComponent {
   @property({ attribute: false })
   onAddressChange: (address: string) => void = () => {};
 
-  @property({
-    type: String
-  })
+  @property({ attribute: false })
   networkType: Network = Network.EVM;
 
   @state()
@@ -48,7 +46,6 @@ export class AddressInput extends BaseComponent {
     }
 
     this.errorMessage = validateAddress(trimedValue, this.networkType);
-
     this.onAddressChange(trimedValue);
   };
 
@@ -60,13 +57,13 @@ export class AddressInput extends BaseComponent {
   }
 
   render(): HTMLTemplateResult {
-    return html` <section class="inputAddressSection">
+    return html`<section class="inputAddressSection">
       <div class="inputAddressContainer">
         <label class="labelContainer">
           <span>Send to </span>
           ${when(
             this.errorMessage,
-            () => html` <span class="errorMessage">${this.errorMessage}</span>`
+            () => html`<span class="errorMessage">${this.errorMessage}</span>`
           )}</label
         >
         <textarea
@@ -79,7 +76,7 @@ export class AddressInput extends BaseComponent {
             }
           }}
           @input=${(evt: Event) =>
-            this.handleAddressChange((evt.target as HTMLInputElement).value)}
+            this.handleAddressChange((evt.target as HTMLTextAreaElement).value)}
         ></textarea>
       </div>
     </section>`;
