@@ -99,6 +99,6 @@ describe('Fungible token Transfer', function () {
       'sygma-address-input'
     ) as AddressInput;
 
-    assert(sygmaAddressInput.address === '');
+    assert.equal(sygmaAddressInput.address, '');
   });
 });
