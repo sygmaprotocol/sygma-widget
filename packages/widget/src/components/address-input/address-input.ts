@@ -63,7 +63,7 @@ export class AddressInput extends BaseComponent {
           <span>Send to </span>
           ${when(
             this.errorMessage,
-            () => html` <span class="errorMessage">${this.errorMessage}</span>`
+            () => html`<span class="errorMessage">${this.errorMessage}</span>`
           )}</label
         >
         <textarea

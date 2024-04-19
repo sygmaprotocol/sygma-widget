@@ -170,7 +170,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   onDestinationAddressChange = (address: string): void => {
     this.destinationAddress = address;
 
-    if (this.destinationAddress.length === 0) {
+    if (this.destinationAddress && this.destinationAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
       this.pendingEvmTransferTransaction = undefined;
       this.destinationAddress = null;
