@@ -31,13 +31,13 @@ export class FungibleTokenTransfer extends BaseComponent {
   @property({ type: String })
   environment?: Environment = Environment.MAINNET;
 
-  @property({ attribute: false, type: Object })
+  @property({ type: Object })
   whitelistedSourceNetworks?: string[];
 
-  @property({ attribute: false, type: Object })
+  @property({ type: Object })
   whitelistedDestinationNetworks?: string[];
 
-  @property({ attribute: false, type: Object })
+  @property({ type: Object })
   whitelistedSourceResources?: string[];
 
   @property({ type: Object })
