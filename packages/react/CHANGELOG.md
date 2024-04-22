@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.2](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-react-widget-v0.1.1...sygmaprotocol-react-widget-v0.1.2) (2024-04-22)
+
+
+### Miscellaneous Chores
+
+* release 0.1.2 ([aefacb7](https://github.com/sygmaprotocol/sygma-widget/commit/aefacb76910ecc107a7f778e381fa244eb75a02a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @buildwithsygma/sygmaprotocol-widget bumped to 0.1.2
+
 ## [0.1.1](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-react-widget-v0.1.0...sygmaprotocol-react-widget-v0.1.1) (2024-04-22)
 
 
