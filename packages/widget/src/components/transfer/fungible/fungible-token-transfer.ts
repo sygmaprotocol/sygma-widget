@@ -15,6 +15,7 @@ import '../../common/buttons/button';
 import '../../address-input';
 import '../../resource-amount-selector';
 import './transfer-button';
+import './transfer-detail';
 import './transfer-status';
 import '../../network-selector';
 import { BaseComponent } from '../../common';
@@ -171,6 +172,7 @@ export class FungibleTokenTransfer extends BaseComponent {
           this.renderAmountOnDestination()
         )}
         <sygma-fungible-transfer-detail
+          .estimatedGasFee=${this.transferController.estimatedGas}
           .selectedResource=${this.transferController.selectedResource}
           .fee=${this.transferController.fee}
           .sourceDomainConfig=${this.transferController.sourceDomainConfig}

@@ -16,6 +16,8 @@ export async function buildSubstrateFungibleTransactions(
     !substrateProvider ||
     !address
   ) {
+    this.estimatedGas = undefined;
+    this.resetFee();
     return;
   }
 
@@ -37,5 +39,6 @@ export async function buildSubstrateFungibleTransactions(
     transfer,
     this.fee
   );
+  await this.estimateGas();
   this.host.requestUpdate();
 }

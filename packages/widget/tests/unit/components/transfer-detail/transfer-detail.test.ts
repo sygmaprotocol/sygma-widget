@@ -11,8 +11,9 @@ import {
   Network,
   ResourceType
 } from '@buildwithsygma/sygma-sdk-core';
+import type { BigNumber } from 'ethers';
 import { constants } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
+import { parseEther, parseUnits } from 'ethers/lib/utils';
 import { FungibleTransferDetail } from '../../../../src/components/transfer/fungible/transfer-detail';
 
 describe('sygma-fungible-transfer-detail', function () {
@@ -42,6 +43,8 @@ describe('sygma-fungible-transfer-detail', function () {
     resources: []
   };
 
+  const mockedEstimatedGas: BigNumber = parseEther('0.0004');
+
   afterEach(() => {
     fixtureCleanup();
   });
@@ -67,7 +70,7 @@ describe('sygma-fungible-transfer-detail', function () {
     assert.isNotNull(transferDetail);
   });
 
-  it('shows fee correctly', async () => {
+  it('shows sygma fee correctly', async () => {
     const value = '1.02 ETH';
     mockedFee.fee = parseUnits('1.02', 18);
 
@@ -84,5 +87,24 @@ describe('sygma-fungible-transfer-detail', function () {
     ) as HTMLElement;
 
     assert.include(transferDetail.innerHTML, value);
+  });
+
+  it('shows gas fee correctly', async () => {
+    const MOCKED_GAS = '0.0004 ETH';
+
+    const el = await fixture(html`
+      <sygma-fungible-transfer-detail
+        .fee=${mockedFee}
+        .selectedResource=${mockedResource}
+        .sourceDomainConfig=${mockedSourceDomainConfig}
+        .estimatedGasFee=${mockedEstimatedGas}
+      ></sygma-fungible-transfer-detail>
+    `);
+
+    const valueElements = el.shadowRoot!.querySelector(
+      '#gasFeeValue'
+    ) as HTMLElement;
+
+    assert.equal(valueElements.textContent?.trim(), MOCKED_GAS);
   });
 });
