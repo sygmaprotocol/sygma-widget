@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-widget-v0.1.1...sygmaprotocol-widget-v0.1.2) (2024-04-22)
+
+
+### Miscellaneous Chores
+
+* release 0.1.2 ([aefacb7](https://github.com/sygmaprotocol/sygma-widget/commit/aefacb76910ecc107a7f778e381fa244eb75a02a))
+
 ## [0.1.1](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-widget-v0.1.0...sygmaprotocol-widget-v0.1.1) (2024-04-22)
 
 
