@@ -93,6 +93,9 @@ body, html {
 }
 
 #open-sidebar-button {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    border-spacing: 0;
     position: fixed; 
     top: 2rem; 
     left: 2rem; 
@@ -105,6 +108,9 @@ body, html {
 }
 
 #close-icon{
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    border-spacing: 0;
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
