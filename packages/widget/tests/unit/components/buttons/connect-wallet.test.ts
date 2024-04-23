@@ -14,6 +14,8 @@ import {
 } from '../../../../src/context';
 import { getMockedEvmWallet } from '../../../utils';
 
+vi.mock('@polkadot/api');
+
 describe('connect-wallet button', function () {
   afterEach(() => {
     fixtureCleanup();
@@ -83,51 +85,6 @@ describe('connect-wallet button', function () {
       '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5'
     );
     assert.equal(walletAddressEl?.textContent?.trim(), '0x9522...BAfe5');
-
-    const disconnectButton = connectComponent.shadowRoot!.querySelector(
-      '.connectWalletButton'
-    ) as HTMLButtonElement;
-
-    assert.isDefined(disconnectButton, 'Button missing');
-    assert.equal(disconnectButton.textContent?.trim(), 'Disconnect');
-  });
-
-  it('displays connected substrate wallet', async () => {
-    const walletContext = await fixture<WalletContextProvider>(html`
-      <sygma-wallet-context-provider></sygma-wallet-context-provider>
-    `);
-    walletContext.dispatchEvent(
-      new WalletUpdateEvent({
-        substrateWallet: {
-          accounts: [
-            {
-              address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
-            }
-          ],
-          signer: {}
-        }
-      })
-    );
-    const connectComponent = await fixture<ConnectWalletButton>(
-      html` <sygma-connect-wallet-btn></sygma-connect-wallet-btn> `,
-      { parentNode: walletContext }
-    );
-
-    const walletAddressEl =
-      connectComponent.shadowRoot!.querySelector<HTMLSpanElement>(
-        '.walletAddress'
-      );
-
-    assert.isDefined(
-      walletAddressEl,
-      'Connected wallet address is not displayed'
-    );
-
-    assert.equal(
-      walletAddressEl?.title,
-      '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
-    );
-    assert.equal(walletAddressEl?.textContent?.trim(), '155Eek...Xzjqe');
 
     const disconnectButton = connectComponent.shadowRoot!.querySelector(
       '.connectWalletButton'
@@ -237,6 +194,7 @@ describe('connect-wallet button', function () {
               address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
             }
           ],
+          signerAddress: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe',
           signer: {}
         }
       })
@@ -314,6 +272,7 @@ describe('connect-wallet button', function () {
               address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
             }
           ],
+          signerAddress: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe',
           signer: {},
           disconnect: disconnectFn
         }

@@ -22,7 +22,9 @@ export class AddressInput extends BaseComponent {
   @property({ attribute: false })
   onAddressChange: (address: string) => void = () => {};
 
-  @property({ attribute: false })
+  @property({
+    type: String
+  })
   networkType: Network = Network.EVM;
 
   @state()
@@ -76,7 +78,7 @@ export class AddressInput extends BaseComponent {
             }
           }}
           @input=${(evt: Event) =>
-            this.handleAddressChange((evt.target as HTMLTextAreaElement).value)}
+            this.handleAddressChange((evt.target as HTMLInputElement).value)}
         ></textarea>
       </div>
     </section>`;

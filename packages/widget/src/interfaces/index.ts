@@ -28,7 +28,7 @@ export interface ISygmaProtocolWidget {
   whitelistedSourceNetworks?: string[];
   whitelistedDestinationNetworks?: string[];
   evmProvider?: Eip1193Provider;
-  substrateProvider?: ApiPromise | string;
+  substrateProviders?: Array<ApiPromise>;
   substrateSigner?: Signer;
   show?: boolean;
   whitelistedSourceResources?: Array<EvmResource | SubstrateResource>;
@@ -37,4 +37,12 @@ export interface ISygmaProtocolWidget {
   customLogo?: SVGElement;
   theme?: Theme;
   walletConnectOptions?: WalletConnectOptions;
+}
+
+export class SdkInitializedEvent extends CustomEvent<{
+  hasInitialized: boolean;
+}> {
+  constructor(update: { hasInitialized: boolean }) {
+    super('sdk-initialized', { detail: update, composed: true, bubbles: true });
+  }
 }

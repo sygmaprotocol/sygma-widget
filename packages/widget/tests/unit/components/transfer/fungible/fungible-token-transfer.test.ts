@@ -1,5 +1,5 @@
 import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
-import { afterEach, assert, describe, it } from 'vitest';
+import { afterEach, assert, describe, it, vi } from 'vitest';
 import { html } from 'lit';
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Network } from '@buildwithsygma/sygma-sdk-core';
@@ -8,6 +8,8 @@ import { FungibleTokenTransfer } from '../../../../../src/components';
 import type { WalletContextProvider } from '../../../../../src/context';
 import { WalletUpdateEvent } from '../../../../../src/context';
 import { getMockedEvmWallet } from '../../../../utils';
+
+vi.mock('@polkadot/api');
 
 describe('Fungible token Transfer', function () {
   afterEach(() => {
@@ -49,7 +51,6 @@ describe('Fungible token Transfer', function () {
         }
       })
     );
-
     const fungibleTransfer = await fixture<FungibleTokenTransfer>(
       html` <sygma-fungible-transfer></sygma-fungible-transfer>`,
       { parentNode: walletContext }
@@ -83,7 +84,8 @@ describe('Fungible token Transfer', function () {
               address: '155EekKo19tWKAPonRFywNVsVduDegYChrDVsLE8HKhXzjqe'
             }
           ],
-          signer: {}
+          signer: {},
+          signerAddress: '155EekK'
         }
       })
     );
@@ -97,6 +99,6 @@ describe('Fungible token Transfer', function () {
       'sygma-address-input'
     ) as AddressInput;
 
-    assert.equal(sygmaAddressInput.address, '');
+    assert(sygmaAddressInput.address === '');
   });
 });

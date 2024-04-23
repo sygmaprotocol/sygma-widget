@@ -28,6 +28,8 @@ export async function buildEvmFungibleTransactions(
     !address ||
     providerChaiId !== this.sourceNetwork.chainId
   ) {
+    this.estimatedGas = undefined;
+    this.resetFee();
     return;
   }
 
@@ -73,12 +75,15 @@ export async function buildEvmFungibleTransactions(
     this.selectedResource.resourceId,
     this.resourceAmount.toString()
   );
-  const fee = await evmTransfer.getFee(transfer);
+  this.fee = await evmTransfer.getFee(transfer);
   this.pendingEvmApprovalTransactions = await evmTransfer.buildApprovals(
     transfer,
-    fee
+    this.fee
   );
-  this.pendingEvmTransferTransaction =
-    await evmTransfer.buildTransferTransaction(transfer, fee);
+  this.pendingTransferTransaction = await evmTransfer.buildTransferTransaction(
+    transfer,
+    this.fee
+  );
+  await this.estimateGas();
   this.host.requestUpdate();
 }

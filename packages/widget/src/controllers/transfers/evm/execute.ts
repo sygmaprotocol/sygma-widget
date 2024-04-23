@@ -28,6 +28,7 @@ export async function executeNextEvmTransaction(
       this.host.requestUpdate();
       await tx.wait();
       this.pendingEvmApprovalTransactions.shift();
+      await this.estimateGas();
     } catch (e) {
       console.log(e);
       this.errorMessage = 'Approval transaction reverted or rejected';
@@ -43,13 +44,13 @@ export async function executeNextEvmTransaction(
     this.host.requestUpdate();
     try {
       const tx = await signer.sendTransaction(
-        this.pendingEvmTransferTransaction! as TransactionRequest
+        this.pendingTransferTransaction! as TransactionRequest
       );
       this.waitingUserConfirmation = false;
       this.waitingTxExecution = true;
       this.host.requestUpdate();
       const receipt = await tx.wait();
-      this.pendingEvmTransferTransaction = undefined;
+      this.pendingTransferTransaction = undefined;
       this.transferTransactionId = receipt.transactionHash;
     } catch (e) {
       console.log(e);

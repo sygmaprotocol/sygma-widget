@@ -3,9 +3,8 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
-    branches:
-      - main
 
 jobs:
   deploy:
@@ -33,5 +32,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: sygma-react-widget
           directory: ./examples/react-widget-app/dist
-          branch: main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

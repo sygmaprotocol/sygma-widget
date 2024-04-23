@@ -1,4 +1,9 @@
-import type { Resource } from '@buildwithsygma/sygma-sdk-core';
+import {
+  Network,
+  type EthereumConfig,
+  type Resource,
+  type SubstrateConfig
+} from '@buildwithsygma/sygma-sdk-core';
 import type { PropertyValues } from '@lit/reactive-element';
 import { BigNumber, utils } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
@@ -13,7 +18,7 @@ import {
   TokenBalanceController
 } from '../../controllers/wallet-manager/token-balance';
 import { tokenBalanceToNumber } from '../../utils/token';
-import { BaseComponent } from '../common';
+import { BaseComponent } from '../common/base-component/base-component';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { styles } from './styles';
 
@@ -36,6 +41,9 @@ export class ResourceAmountSelector extends BaseComponent {
    */
   onResourceSelected: (resource: Resource, amount: BigNumber) => void =
     () => {};
+
+  @property({ type: Object })
+  sourceDomainConfig?: EthereumConfig | SubstrateConfig;
 
   @state() selectedResource: Resource | null = null;
   @state() validationMessage: string | null = null;
@@ -95,7 +103,12 @@ export class ResourceAmountSelector extends BaseComponent {
     if (option) {
       this.selectedResource = option.value;
       this.amount = '';
-      this.tokenBalanceController.startBalanceUpdates(this.selectedResource);
+      this.tokenBalanceController.startBalanceUpdates(
+        this.selectedResource,
+        this.sourceDomainConfig?.type === Network.SUBSTRATE
+          ? this.sourceDomainConfig
+          : undefined
+      );
     } else {
       this.selectedResource = null;
       this.tokenBalanceController.resetBalance();
@@ -144,7 +157,8 @@ export class ResourceAmountSelector extends BaseComponent {
   _renderErrorMessages(): HTMLTemplateResult {
     return when(
       this.validationMessage,
-      () => html`<div class="validationMessage">${this.validationMessage}</div>`
+      () =>
+        html` <div class="validationMessage">${this.validationMessage}</div>`
     );
   }
 

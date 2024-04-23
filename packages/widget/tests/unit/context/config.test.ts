@@ -41,7 +41,8 @@ describe('config context provider', function () {
     assert.deepEqual(context.value, {
       theme: undefined,
       walletConnectOptions: undefined,
-      appMetaData: { name: 'My Dapp' }
+      appMetaData: { name: 'My Dapp' },
+      walletModules: undefined
     });
   });
 });
