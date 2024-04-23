@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "yarn run lint:types && yarn run lint:code",
     "lint:types": "tsc -p ./tsconfig.json --noEmit",
-    "lint:code": "eslint '{src,tests}/**/*.ts'",
+    "lint:code": "eslint '{src,tests}/**/*.{ts,tsx}'",
     "preview": "vite preview"
   },
   "dependencies": {
