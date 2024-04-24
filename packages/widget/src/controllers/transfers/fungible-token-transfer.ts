@@ -190,6 +190,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   async init(env: Environment): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
+    await this.retryInitSdk();
     await this.config.init(1, this.env);
     this.supportedSourceNetworks = this.config.getDomains();
     this.supportedDestinationNetworks = this.config.getDomains();
