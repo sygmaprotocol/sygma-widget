@@ -306,6 +306,10 @@ export class FungibleTokenTransferController implements ReactiveController {
       return FungibleTransferState.MISSING_RESOURCE;
     }
 
+    if (this.destinationAddress === '') {
+      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
+    }
+
     if (
       this.destinationAddress === null ||
       this.destinationAddress === undefined ||
@@ -316,9 +320,6 @@ export class FungibleTokenTransferController implements ReactiveController {
 
     if (this.resourceAmount.eq(0)) {
       return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
-    }
-    if (this.destinationAddress === '') {
-      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
     }
 
     // Enabled States
