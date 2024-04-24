@@ -324,6 +324,8 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.destinationAddress === '') {
       return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
     }
+
+    // Enabled States
     if (
       !this.walletContext.value?.evmWallet &&
       !this.walletContext.value?.substrateWallet
