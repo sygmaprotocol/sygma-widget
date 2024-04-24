@@ -1,8 +1,8 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import { Environment, Network } from '@buildwithsygma/sygma-sdk-core';
-import { fixture, fixtureCleanup } from '@open-wc/testing-helpers';
+import { fixture, fixtureCleanup, waitUntil } from '@open-wc/testing-helpers';
 import { html } from 'lit';
-import { afterEach, assert, describe, it, vi } from 'vitest';
+import { afterEach, assert, describe, expect, it, vi } from 'vitest';
 import type {
   AddressInput,
   ResourceAmountSelector
@@ -63,21 +63,49 @@ vi.mock(
   }
 );
 
+const sepoliaNetwork: Domain = {
+  id: 2,
+  chainId: 11155111,
+  name: 'sepolia',
+  type: Network.EVM
+};
+
+const baseSepolia: Domain = {
+  id: 10,
+  chainId: 84532,
+  name: 'base_sepolia',
+  type: Network.EVM
+};
+
+const cronosNetwork: Domain = {
+  id: 5,
+  chainId: 338,
+  name: 'cronos',
+  type: Network.EVM
+};
+
+const whitelistedSourceNetworks = ['sepolia'];
+const whitelistedDestinationNetworks = ['base_sepolia'];
+const whitelistedResources = ['ERC20LRTest'];
+const connectedAddress = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
+
+function containsWhitelistedData<T>(
+  data: T[],
+  whitelist: string[],
+  dataExtractor: (item: T) => string,
+  errorMessageContext: string
+): void {
+  assert.isNotEmpty(data, 'Data must not be empty.');
+  data.forEach((item) => {
+    const key = dataExtractor(item);
+    assert.isTrue(
+      whitelist.includes(key),
+      `${key} expected to be whitelisted in ${errorMessageContext}`
+    );
+  });
+}
+
 describe('Fungible token Transfer', function () {
-  const sepoliaNetwork: Domain = {
-    id: 2,
-    chainId: 11155111,
-    name: 'sepolia',
-    type: Network.EVM
-  };
-
-  const baseSepolia: Domain = {
-    id: 10,
-    chainId: 84532,
-    name: 'base_sepolia',
-    type: Network.EVM
-  };
-
   afterEach(() => {
     fixtureCleanup();
   });
@@ -163,32 +191,12 @@ describe('Fungible token Transfer', function () {
   });
 
   it('should filter whitelisted networks and resources', async () => {
-    function containsWhitelistedData<T>(
-      data: T[],
-      whitelist: string[],
-      dataExtractor: (item: T) => string,
-      errorMessageContext: string
-    ): void {
-      assert.isNotEmpty(data, 'Data must not be empty.');
-      data.forEach((item) => {
-        const key = dataExtractor(item);
-        assert.isTrue(
-          whitelist.includes(key),
-          `${key} expected to be whitelisted in ${errorMessageContext}`
-        );
-      });
-    }
-
-    const whitelistedSourceNetworks = ['sepolia'];
-    const whitelistedDestinationNetworks = ['base_sepolia'];
-    const whitelistedResources = ['ERC20LRTest'];
-    const connectedAddress = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
     const walletContext = await fixture<WalletContextProvider>(html`
       <sygma-wallet-context-provider></sygma-wallet-context-provider>
     `);
 
     const fungibleTransfer = await fixture<FungibleTokenTransfer>(
-      html`<sygma-fungible-transfer
+      html` <sygma-fungible-transfer
         .whitelistedSourceNetworks=${whitelistedSourceNetworks}
         .whitelistedDestinationNetworks=${whitelistedDestinationNetworks}
         .whitelistedSourceResources=${whitelistedResources}
@@ -208,19 +216,6 @@ describe('Fungible token Transfer', function () {
     );
 
     await fungibleTransfer.updateComplete;
-
-    // await waitUntil(
-    //   () => {
-    //     if (
-    //       fungibleTransfer.transferController.supportedSourceNetworks.length > 0
-    //     ) {
-    //       return true;
-    //     }
-    //     return undefined;
-    //   },
-    //   '',
-    //   { interval: 1, timeout: 100 }
-    // );
 
     containsWhitelistedData(
       fungibleTransfer.transferController.supportedSourceNetworks,
@@ -276,5 +271,77 @@ describe('Fungible token Transfer', function () {
       ),
       `Expected Resource to be one of ${whitelistedResources.join(', ')}, but got ${resourceSelector.resources.join(', ')}`
     );
+  });
+
+  it('should re-init the transfer controller -> when networks or resources are updated', async () => {
+    const walletContext = await fixture<WalletContextProvider>(html`
+      <sygma-wallet-context-provider></sygma-wallet-context-provider>
+    `);
+
+    const fungibleTransfer = await fixture<FungibleTokenTransfer>(
+      html` <sygma-fungible-transfer
+        .whitelistedSourceNetworks=${whitelistedSourceNetworks}
+        .whitelistedDestinationNetworks=${whitelistedDestinationNetworks}
+        .whitelistedSourceResources=${whitelistedResources}
+        .environment=${Environment.TESTNET}
+      ></sygma-fungible-transfer>`,
+      { parentNode: walletContext }
+    );
+    const spyInit = vi.spyOn(fungibleTransfer.transferController, 'init');
+
+    fungibleTransfer.whitelistedSourceNetworks = ['cronos'];
+    fungibleTransfer.whitelistedDestinationNetworks = ['sepolia'];
+    fungibleTransfer.whitelistedSourceResources = ['ERC20LRTest'];
+
+    fungibleTransfer.requestUpdate();
+    await fungibleTransfer.updateComplete;
+
+    expect(spyInit).toHaveBeenCalledTimes(1);
+    expect(spyInit).toHaveBeenCalledWith(Environment.TESTNET, {
+      whitelistedSourceNetworks: ['cronos'],
+      whitelistedDestinationNetworks: ['sepolia'],
+      whitelistedSourceResources: ['ERC20LRTest']
+    });
+
+    await waitUntil(
+      () => {
+        if (
+          fungibleTransfer.transferController.supportedSourceNetworks.length > 0
+        ) {
+          return true;
+        }
+        return undefined;
+      },
+      '',
+      { interval: 1, timeout: 100 }
+    );
+
+    containsWhitelistedData(
+      fungibleTransfer.transferController.supportedSourceNetworks,
+      ['cronos'],
+      (network) => network.name,
+      'transfer controller for source networks'
+    );
+
+    containsWhitelistedData(
+      fungibleTransfer.transferController.supportedDestinationNetworks,
+      ['sepolia'],
+      (network) => network.name,
+      'transfer controller for source networks'
+    );
+
+    // Set Source Network
+    fungibleTransfer.transferController.onSourceNetworkSelected(cronosNetwork);
+    fungibleTransfer.requestUpdate();
+    await fungibleTransfer.updateComplete;
+
+    containsWhitelistedData(
+      fungibleTransfer.transferController.supportedResources,
+      ['ERC20LRTest'],
+      (resource) => resource.symbol!,
+      'transfer controller for resources'
+    );
+
+    spyInit.mockRestore();
   });
 });
