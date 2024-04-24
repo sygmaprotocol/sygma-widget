@@ -23,7 +23,7 @@ import type {
   SdkInitializedEvent
 } from './interfaces';
 import { styles } from './styles';
-import { BaseComponent } from './components/common/base-component';
+import { BaseComponent } from './components/common';
 
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget

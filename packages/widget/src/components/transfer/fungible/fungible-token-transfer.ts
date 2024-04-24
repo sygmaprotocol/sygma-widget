@@ -7,6 +7,7 @@ import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
 import { when } from 'lit/directives/when.js';
 import type { Eip1193Provider } from 'packages/widget/src/interfaces';
+import type { PropertyValues } from '@lit/reactive-element';
 import {
   FungibleTokenTransferController,
   FungibleTransferState
@@ -53,6 +54,21 @@ export class FungibleTokenTransfer extends BaseComponent {
       whitelistedDestinationNetworks: this.whitelistedDestinationNetworks,
       whitelistedSourceResources: this.whitelistedSourceResources
     });
+  }
+
+  updated(changedProperties: PropertyValues<this>): void {
+    super.updated(changedProperties);
+    if (
+      changedProperties.has('whitelistedSourceNetworks') ||
+      changedProperties.has('whitelistedDestinationNetworks') ||
+      changedProperties.has('whitelistedSourceResources')
+    ) {
+      void this.transferController.init(this.environment!, {
+        whitelistedSourceNetworks: this.whitelistedSourceNetworks,
+        whitelistedDestinationNetworks: this.whitelistedDestinationNetworks,
+        whitelistedSourceResources: this.whitelistedSourceResources
+      });
+    }
   }
 
   private onClick = (): void => {
