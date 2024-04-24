@@ -78,7 +78,7 @@ export class AddressInput extends BaseComponent {
             }
           }}
           @input=${(evt: Event) =>
-            this.handleAddressChange((evt.target as HTMLInputElement).value)}
+            this.handleAddressChange((evt.target as HTMLTextAreaElement).value)}
         ></textarea>
       </div>
     </section>`;

@@ -68,7 +68,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   public destinationNetwork?: Domain;
   public selectedResource?: Resource;
   public resourceAmount: BigNumber = ethers.constants.Zero;
-  public destinationAddress: string = '';
+  public destinationAddress?: string | null = '';
 
   public supportedSourceNetworks: Domain[] = [];
   public supportedDestinationNetworks: Domain[] = [];
@@ -265,18 +265,23 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   onDestinationAddressChange = (address: string): void => {
     this.destinationAddress = address;
-    if (this.destinationAddress.length === 0) {
+
+    if (this.destinationAddress && this.destinationAddress.length === 0) {
       this.pendingEvmApprovalTransactions = [];
       this.pendingTransferTransaction = undefined;
+      this.destinationAddress = null;
     }
     void this.buildTransactions();
     this.host.requestUpdate();
   };
 
   getTransferState(): FungibleTransferState {
+    // Enabled state
     if (this.transferTransactionId) {
       return FungibleTransferState.COMPLETED;
     }
+
+    // Loading states
     if (this.waitingUserConfirmation) {
       return FungibleTransferState.WAITING_USER_CONFIRMATION;
     }
@@ -289,6 +294,8 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.pendingTransferTransaction) {
       return FungibleTransferState.PENDING_TRANSFER;
     }
+
+    // Error States
     if (!this.sourceNetwork) {
       return FungibleTransferState.MISSING_SOURCE_NETWORK;
     }
