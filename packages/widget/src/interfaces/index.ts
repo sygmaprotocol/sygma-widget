@@ -1,8 +1,4 @@
-import type {
-  Environment,
-  EvmResource,
-  SubstrateResource
-} from '@buildwithsygma/sygma-sdk-core';
+import type { Environment } from '@buildwithsygma/sygma-sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
 import type { WalletConnectOptions } from '@web3-onboard/walletconnect/dist/types';
@@ -27,11 +23,11 @@ export interface ISygmaProtocolWidget {
   environment?: Environment;
   whitelistedSourceNetworks?: string[];
   whitelistedDestinationNetworks?: string[];
+  whitelistedSourceResources?: string[];
   evmProvider?: Eip1193Provider;
   substrateProviders?: Array<ApiPromise>;
   substrateSigner?: Signer;
   show?: boolean;
-  whitelistedSourceResources?: Array<EvmResource | SubstrateResource>;
   expandable?: boolean;
   darkTheme?: boolean;
   customLogo?: SVGElement;

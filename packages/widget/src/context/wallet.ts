@@ -78,7 +78,8 @@ export class WalletContextProvider extends BaseComponent {
   @property({ attribute: false })
   substrateProviders?: Array<ApiPromise> = [];
 
-  @property({ type: String }) environment?: Environment;
+  @property({ type: String })
+  environment?: Environment;
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -174,7 +175,6 @@ export class WalletContextProvider extends BaseComponent {
     // if not already specified by the user
     const parachainIds = Object.keys(SUBSTRATE_RPCS[environment]);
     for (const parachainId of parachainIds) {
-      console.log(`creating default provider for ${parachainId}`);
       const _parachainId = parseInt(parachainId);
 
       if (!substrateProviders.has(_parachainId)) {
