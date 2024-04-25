@@ -7,6 +7,7 @@ import '../../../context/wallet';
 import { choose } from 'lit/directives/choose.js';
 import { when } from 'lit/directives/when.js';
 import type { Eip1193Provider } from 'packages/widget/src/interfaces';
+import type { PropertyValues } from '@lit/reactive-element';
 import {
   FungibleTokenTransferController,
   FungibleTransferState
@@ -28,10 +29,17 @@ import { styles } from './styles';
 export class FungibleTokenTransfer extends BaseComponent {
   static styles = styles;
 
-  @property({ type: Array }) whitelistedSourceResources?: Array<string>;
-
   @property({ type: String })
   environment?: Environment = Environment.MAINNET;
+
+  @property({ type: Object })
+  whitelistedSourceNetworks?: string[];
+
+  @property({ type: Object })
+  whitelistedDestinationNetworks?: string[];
+
+  @property({ type: Object })
+  whitelistedSourceResources?: string[];
 
   @property({ type: Object })
   onSourceNetworkSelected?: (domain: Domain) => void;
@@ -41,7 +49,26 @@ export class FungibleTokenTransfer extends BaseComponent {
 
   connectedCallback(): void {
     super.connectedCallback();
-    void this.transferController.init(this.environment!);
+    void this.transferController.init(this.environment!, {
+      whitelistedSourceNetworks: this.whitelistedSourceNetworks,
+      whitelistedDestinationNetworks: this.whitelistedDestinationNetworks,
+      whitelistedSourceResources: this.whitelistedSourceResources
+    });
+  }
+
+  updated(changedProperties: PropertyValues<this>): void {
+    super.updated(changedProperties);
+    if (
+      changedProperties.has('whitelistedSourceNetworks') ||
+      changedProperties.has('whitelistedDestinationNetworks') ||
+      changedProperties.has('whitelistedSourceResources')
+    ) {
+      void this.transferController.init(this.environment!, {
+        whitelistedSourceNetworks: this.whitelistedSourceNetworks,
+        whitelistedDestinationNetworks: this.whitelistedDestinationNetworks,
+        whitelistedSourceResources: this.whitelistedSourceResources
+      });
+    }
   }
 
   private onClick = (): void => {

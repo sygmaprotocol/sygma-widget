@@ -9,8 +9,8 @@ import type {
 import {
   Config,
   Environment,
-  Network,
-  getRoutes
+  getRoutes,
+  Network
 } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
 import { BigNumber, ethers } from 'ethers';
@@ -22,12 +22,12 @@ import type {
   ParachainID,
   SubstrateFee
 } from '@buildwithsygma/sygma-sdk-core/substrate';
+import type { WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 
 import { SdkInitializedEvent } from '../../interfaces';
 import { substrateProviderContext } from '../../context/wallet';
-import type { WalletContext } from '../../context';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
   buildSubstrateFungibleTransactions,
@@ -91,6 +91,10 @@ export class FungibleTokenTransferController implements ReactiveController {
   //source network chain id -> Route[]
   protected routesCache: Map<number, Route[]> = new Map();
 
+  protected whitelistedSourceNetworks?: string[] = [];
+  protected whitelistedDestinationNetworks?: string[] = [];
+  protected whitelistedSourceResources?: string[] = [];
+
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
   substrateProviderContext: ContextConsumer<
@@ -112,7 +116,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   /**
    * Provides substrate provider
    * based on parachain id
-   * @param {ParachainId} parachainId
+   * @param {parachainId} parachainId
    * @returns {ApiPromise | undefined}
    */
   getSubstrateProvider(parachainId: ParachainID): ApiPromise | undefined {
@@ -131,6 +135,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
+
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
       subscribe: true,
@@ -185,13 +190,56 @@ export class FungibleTokenTransferController implements ReactiveController {
     }
   }
 
-  async init(env: Environment): Promise<void> {
+  /**
+   * Filter source and destination networks specified by User
+   * @param whitelistedNetworks
+   * @param network
+   */
+  filterWhitelistedNetworks = (
+    whitelistedNetworks: string[] | undefined,
+    network: Domain
+  ): boolean => {
+    // skip filtering if whitelisted networks are empty
+    if (!whitelistedNetworks?.length) return true;
+
+    return whitelistedNetworks.some(
+      (networkName) => networkName.toLowerCase() === network.name.toLowerCase()
+    );
+  };
+
+  async init(
+    env: Environment,
+    options?: {
+      whitelistedSourceNetworks?: string[];
+      whitelistedDestinationNetworks?: string[];
+      whitelistedSourceResources?: string[];
+    }
+  ): Promise<void> {
     this.host.requestUpdate();
     this.env = env;
+
+    this.whitelistedSourceNetworks = options?.whitelistedSourceNetworks;
+    this.whitelistedDestinationNetworks =
+      options?.whitelistedDestinationNetworks;
+    this.whitelistedSourceResources = options?.whitelistedSourceResources;
+
     await this.retryInitSdk();
-    await this.config.init(1, this.env);
-    this.supportedSourceNetworks = this.config.getDomains();
-    this.supportedDestinationNetworks = this.config.getDomains();
+    this.supportedSourceNetworks = this.config
+      .getDomains()
+      .filter((network) =>
+        this.filterWhitelistedNetworks(
+          options?.whitelistedSourceNetworks,
+          network
+        )
+      );
+    this.supportedDestinationNetworks = this.config
+      .getDomains()
+      .filter((network) =>
+        this.filterWhitelistedNetworks(
+          options?.whitelistedDestinationNetworks,
+          network
+        )
+      );
     this.host.requestUpdate();
   }
 
@@ -385,6 +433,12 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (!this.destinationNetwork) {
       this.supportedDestinationNetworks = routes
         .filter((route) => route.toDomain.chainId !== sourceNetwork.chainId)
+        .filter((route) =>
+          this.filterWhitelistedNetworks(
+            this.whitelistedDestinationNetworks,
+            route.toDomain
+          )
+        )
         .map((route) => route.toDomain);
     } // source change but not destination, check if route is supported
     else if (this.supportedDestinationNetworks.length && routes.length) {
@@ -412,8 +466,13 @@ export class FungibleTokenTransferController implements ReactiveController {
           (route.toDomain.chainId === this.destinationNetwork?.chainId &&
             !this.supportedResources.includes(route.resource))
       )
-      .map((route) => route.resource);
+      .filter((route) => {
+        // skip filter if resources are not specified
+        if (!this.whitelistedSourceResources?.length) return true;
 
+        return this.whitelistedSourceResources.includes(route.resource.symbol!);
+      })
+      .map((route) => route.resource);
     void this.buildTransactions();
     this.host.requestUpdate();
   };
