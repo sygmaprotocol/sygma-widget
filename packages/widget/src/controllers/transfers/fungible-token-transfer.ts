@@ -288,6 +288,10 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.waitingTxExecution) {
       return FungibleTransferState.WAITING_TX_EXECUTION;
     }
+    if (this.pendingEvmApprovalTransactions.length > 0) {
+      return FungibleTransferState.PENDING_APPROVALS;
+    }
+
     if (this.pendingTransferTransaction) {
       return FungibleTransferState.PENDING_TRANSFER;
     }
