@@ -291,7 +291,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.pendingEvmApprovalTransactions.length > 0) {
       return FungibleTransferState.PENDING_APPROVALS;
     }
-
     if (this.pendingTransferTransaction) {
       return FungibleTransferState.PENDING_TRANSFER;
     }
@@ -336,13 +335,6 @@ export class FungibleTokenTransferController implements ReactiveController {
         this.sourceNetwork.chainId
     ) {
       return FungibleTransferState.WRONG_CHAIN;
-    }
-
-    if (this.pendingEvmApprovalTransactions.length > 0) {
-      return FungibleTransferState.PENDING_APPROVALS;
-    }
-    if (this.pendingTransferTransaction) {
-      return FungibleTransferState.PENDING_TRANSFER;
     }
 
     return FungibleTransferState.UNKNOWN;
