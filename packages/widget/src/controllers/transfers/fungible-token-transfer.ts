@@ -103,20 +103,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     ReactiveElement
   >;
 
-  isWalletDisconnected(context: WalletContext): boolean {
-    // Skip the method call during init
-    if (Object.values(context).length === 0) return false;
-
-    return !(!!context.evmWallet || !!context.substrateWallet);
-  }
-
-  get sourceDomainConfig(): EthereumConfig | SubstrateConfig | undefined {
-    if (this.sourceNetwork) {
-      return this.config.getDomainConfig(this.sourceNetwork.id);
-    }
-    return undefined;
-  }
-
   get sourceSubstrateProvider(): ApiPromise | undefined {
     if (this.sourceNetwork && this.sourceNetwork.type === Network.SUBSTRATE) {
       const domainConfig = this.config.getDomainConfig(

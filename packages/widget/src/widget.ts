@@ -24,7 +24,6 @@ import type {
   Theme
 } from './interfaces';
 import { styles } from './styles';
-import { BaseComponent } from './components/common';
 
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget

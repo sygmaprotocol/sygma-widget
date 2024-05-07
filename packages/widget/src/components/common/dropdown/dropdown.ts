@@ -43,9 +43,6 @@ export class Dropdown extends BaseComponent {
   @property({ type: Object })
   actionOption: HTMLTemplateResult | null = null;
 
-  @property({ type: String })
-  preSelectedOption = '';
-
   @state()
   selectedOption: DropdownOption | null = null;
 
