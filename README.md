@@ -17,7 +17,7 @@ You can pass props to the Widget to customize the behaviour of the Widget. You c
 ```ts
 import { SygmaProtocolReactWidget } from "@buildwithsygma/sygmaprotocol-react-widget";
 
-function App() {
+function MyDapp() {
   const [count, setCount] = useState(0);
 
   return (
