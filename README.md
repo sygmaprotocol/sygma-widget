@@ -1,1 +1,30 @@
 # Sygma Widget UI
+
+This repository is divided into two packages. The [Widget](./packages/widget/) package is a Lit based webapp that allows you to have a widget for the `Sygma` protocol project as `web component`. The [React](./packages/react/) package is a wrapper around the Lit Widget that allows developers to use this application inside react projects.
+
+## How to integrate
+
+Check respective readmes to follow instructions on how to integrate the Widget into your codebase. 
+
+* for Lit based projects you can directly install, import and use the web component version of the Widget. You can find further instructions [here](./packages/widget/README.md)
+* for React based projects, please refer to this [README](./packages/react/README.md) file to get further instructions
+* a react example is provided [here](/examples/react-widget-app/)
+
+### Configuration through props
+
+You can pass props to the Widget to customize the behaviour of the Widget. You can find the complete reference of the properties avialable [here](./packages/widget/src/widget.ts). Below there is an example passing props to whitelist the source and destination network in the react component:
+
+```ts
+import { SygmaProtocolReactWidget } from "@buildwithsygma/sygmaprotocol-react-widget";
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <SygmaProtocolReactWidget
+      whitelistedSourceNetworks={["sepolia"]}
+      whitelistedDestinationNetworks={["cronos"]}
+    />
+  );
+}
+```
