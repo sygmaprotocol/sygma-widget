@@ -4,7 +4,7 @@ import {
   type PercentageFee
 } from '@buildwithsygma/sygma-sdk-core';
 import { Web3Provider } from '@ethersproject/providers';
-import { constants, utils } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 import { type FungibleTokenTransferController } from '../fungible-token-transfer';
 
 /**
@@ -46,9 +46,15 @@ export async function buildEvmFungibleTransactions(
     this.resourceAmount.toString()
   );
   const originalFee = await evmTransfer.getFee(originalTransfer);
+  // NOTE: for percentage fee, if both are equal, it means we can calculate the amount with fee avoiding second subtraction
+  const calculateAmountWithFee =
+    originalFee.type === FeeHandlerType.PERCENTAGE &&
+    this.resourceAmount.toString() ===
+      BigNumber.from(originalTransfer.details.amount).toString();
+
   //in case of percentage fee handler, we are calculating what amount + fee will result int user inputed amount
   //in case of fixed(basic) fee handler, fee is taken from native token
-  if (originalFee.type === FeeHandlerType.PERCENTAGE) {
+  if (calculateAmountWithFee) {
     const { lowerBound, upperBound, percentage } = originalFee as PercentageFee;
     const userInputAmount = this.resourceAmount;
     //calculate amount without fee (percentage)
