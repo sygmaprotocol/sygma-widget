@@ -13,11 +13,11 @@ import { ethers, BigNumber } from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { ParachainID } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { getAssetBalance } from '@buildwithsygma/sygma-sdk-core/substrate';
+import Keyring from '@polkadot/keyring';
 import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
 import { substrateProviderContext } from '../../context/wallet';
 import type { SubstrateWallet } from '../../context/wallet';
-import Keyring from '@polkadot/keyring';
 
 const BALANCE_REFRESH_MS = 5_000;
 
