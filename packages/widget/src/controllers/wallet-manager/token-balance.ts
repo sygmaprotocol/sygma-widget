@@ -17,6 +17,7 @@ import { walletContext } from '../../context';
 import { isEvmResource } from '../../utils';
 import { substrateProviderContext } from '../../context/wallet';
 import type { SubstrateWallet } from '../../context/wallet';
+import Keyring from '@polkadot/keyring';
 
 const BALANCE_REFRESH_MS = 5_000;
 
@@ -165,6 +166,8 @@ export class TokenBalanceController implements ReactiveController {
       return;
     }
 
+    const prefix = substrateProvider.consts.ss58Prefix as unknown as number;
+
     void async function (this: TokenBalanceController) {
       try {
         this.loadingBalance = true;
@@ -172,7 +175,7 @@ export class TokenBalanceController implements ReactiveController {
         const tokenBalance = await getAssetBalance(
           substrateProvider,
           resource.assetID as number,
-          signerAddress
+          new Keyring().encodeAddress(signerAddress, prefix)
         );
         this.loadingBalance = false;
         this.balance = BigNumber.from(tokenBalance.balance.toString());
