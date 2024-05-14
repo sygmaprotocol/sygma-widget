@@ -32,8 +32,6 @@ export async function buildSubstrateFungibleTransactions(
     String(this.resourceAmount)
   );
 
-  console.log('substrate transfer', transfer);
-
   this.fee = await substrateTransfer.getFee(transfer);
 
   if (this.resourceAmount.toString() === transfer.details.amount.toString()) {
