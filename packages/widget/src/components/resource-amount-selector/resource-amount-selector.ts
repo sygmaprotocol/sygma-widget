@@ -163,14 +163,23 @@ export class ResourceAmountSelector extends BaseComponent {
   }
 
   _normalizeOptions(): DropdownOption<Resource>[] {
-    return when(this.resources, () =>
-      this.resources.map((entry) => ({
+    return when(this.resources, () => {
+      const resources = this.resources.map((entry) => ({
         id: entry.resourceId,
         name: entry.symbol!,
         icon: networkIconsMap.default,
         value: entry
-      }))
-    );
+      }));
+
+      resources.unshift({
+        id: '',
+        name: 'Select token',
+        value: {} as unknown as Resource,
+        icon: html``
+      });
+
+      return resources;
+    });
   }
 
   updated(changedProperties: PropertyValues<this>): void {
