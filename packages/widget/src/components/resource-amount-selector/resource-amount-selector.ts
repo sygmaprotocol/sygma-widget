@@ -205,7 +205,7 @@ export class ResourceAmountSelector extends BaseComponent {
             />
             <section class="selectorSection">
               <dropdown-component
-                .placeholder=${'Select the token'}
+                .placeholder=${'Select token'}
                 ?disabled=${this.disabled}
                 .onOptionSelected=${this._onResourceSelectedHandler}
                 .options=${this._normalizeOptions()}
