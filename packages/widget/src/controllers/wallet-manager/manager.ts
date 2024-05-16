@@ -22,6 +22,7 @@ type ChainData = {
   name: string;
   rpc: string[];
   nativeCurrency: { name: string; symbol: string; decimals: number };
+  explorers: Array<{ name: string; standard: string; url: string }>;
 };
 
 type ChainDataResponse = Array<ChainData>;
@@ -282,7 +283,8 @@ export class WalletController implements ReactiveController {
       chainId,
       name,
       nativeCurrency: { name: tokenName, symbol, decimals },
-      rpc
+      rpc,
+      explorers
     } = chainData;
     try {
       await provider.request({
@@ -296,7 +298,8 @@ export class WalletController implements ReactiveController {
               name: tokenName,
               symbol: symbol,
               decimals: decimals
-            }
+            },
+            blockExplorerUrls: explorers.map((explorer) => explorer.url)
           }
         ]
       });
