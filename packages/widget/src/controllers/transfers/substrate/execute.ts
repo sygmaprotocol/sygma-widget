@@ -20,33 +20,38 @@ export async function executeNextSubstrateTransaction(
 
   const provider = this.sourceSubstrateProvider;
   this.waitingTxExecution = true;
-  await (this.pendingTransferTransaction as SubstrateTransaction).signAndSend(
-    sender,
-    { signer: signer },
-    ({ blockNumber, txIndex, status, dispatchError }) => {
-      if (status.isInBlock) {
-        this.waitingTxExecution = false;
-        this.pendingTransferTransaction = undefined;
-        this.transferTransactionId = `${blockNumber?.toString()}-${txIndex?.toString()}`;
-        this.host.requestUpdate();
-      }
-
-      if (status.isBroadcast) {
-        this.waitingUserConfirmation = false;
-        this.host.requestUpdate();
-      }
-
-      if (dispatchError) {
-        if (dispatchError.isModule) {
-          const decoded = provider?.registry.findMetaError(
-            dispatchError.asModule
-          );
-          const [docs] = decoded?.docs || ['Transfer failed'];
-          this.errorMessage = docs;
+  try {
+    await (this.pendingTransferTransaction as SubstrateTransaction).signAndSend(
+      sender,
+      { signer: signer },
+      ({ blockNumber, txIndex, status, dispatchError }) => {
+        if (status.isInBlock) {
           this.waitingTxExecution = false;
+          this.pendingTransferTransaction = undefined;
+          this.transferTransactionId = `${blockNumber?.toString()}-${txIndex?.toString()}`;
           this.host.requestUpdate();
         }
+
+        if (status.isBroadcast) {
+          this.waitingUserConfirmation = false;
+          this.host.requestUpdate();
+        }
+
+        if (dispatchError) {
+          if (dispatchError.isModule) {
+            const decoded = provider?.registry.findMetaError(
+              dispatchError.asModule
+            );
+            const [docs] = decoded?.docs || ['Transfer failed'];
+            this.errorMessage = docs;
+            this.waitingTxExecution = false;
+            this.host.requestUpdate();
+          }
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    this.waitingUserConfirmation = false;
+    this.waitingTxExecution = false;
+  }
 }
