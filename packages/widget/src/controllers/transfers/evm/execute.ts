@@ -2,6 +2,7 @@ import {
   Web3Provider,
   type TransactionRequest
 } from '@ethersproject/providers';
+import type { Domain } from '@buildwithsygma/sygma-sdk-core';
 import {
   FungibleTransferState,
   type FungibleTokenTransferController
@@ -28,7 +29,7 @@ export async function executeNextEvmTransaction(
       this.host.requestUpdate();
       await tx.wait();
       this.pendingEvmApprovalTransactions.shift();
-      await this.estimateGas();
+      await this.estimateGas(this.sourceNetwork as Domain);
     } catch (e) {
       console.log(e);
       this.errorMessage = 'Approval transaction reverted or rejected';
