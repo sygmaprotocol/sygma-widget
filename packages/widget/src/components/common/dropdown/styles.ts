@@ -95,9 +95,6 @@ export const styles = css`
 
   .optionName {
     margin-left: 0.5rem;
-  }
-
-  .optionNameEllipsis {
     overflow: hidden;
     text-overflow: ellipsis;
   }
