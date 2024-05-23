@@ -2,7 +2,9 @@ import {
   Web3Provider,
   type TransactionRequest
 } from '@ethersproject/providers';
-import type { Domain } from '@buildwithsygma/sygma-sdk-core';
+import type { UnsignedTransaction } from 'ethers';
+import type { Eip1193Provider } from '../../../interfaces';
+import { estimateEvmGas } from '../../../utils/gas';
 import {
   FungibleTransferState,
   type FungibleTokenTransferController
@@ -29,7 +31,14 @@ export async function executeNextEvmTransaction(
       this.host.requestUpdate();
       await tx.wait();
       this.pendingEvmApprovalTransactions.shift();
-      await this.estimateGas(this.sourceNetwork as Domain);
+      await estimateEvmGas(
+        this.getTransferState(),
+        this.sourceNetwork?.chainId as number,
+        this.walletContext.value?.evmWallet?.provider as Eip1193Provider,
+        this.walletContext.value?.evmWallet?.address as string,
+        this.pendingEvmApprovalTransactions,
+        this.pendingTransferTransaction as UnsignedTransaction
+      );
     } catch (e) {
       console.log(e);
       this.errorMessage = 'Approval transaction reverted or rejected';
