@@ -135,7 +135,10 @@ export class Dropdown extends BaseComponent {
       this.selectedOption,
       () =>
         html`${this.selectedOption!.icon || networkIconsMap.default}
-          <span part="optionName" class="optionName">
+          <span
+            part="optionName"
+            class=${`${this.selectedOption!.name.length > 6 ? 'optionName optionNameEllipsis' : 'optionName'}`}
+          >
             ${capitalize(this.selectedOption!.name)}
           </span>`,
       () =>
@@ -156,7 +159,10 @@ export class Dropdown extends BaseComponent {
       () => customOptionHtml,
       () => html`
         ${icon || ''}
-        <span class="optionName">${capitalize(name)}</span>
+        <span
+          class=${`${name.length > 6 ? 'optionName optionNameEllipsis' : 'optionName'}`}
+          >${capitalize(name)}</span
+        >
       `
     );
   }
