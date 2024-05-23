@@ -95,6 +95,7 @@ export const styles = css`
 
   .optionName {
     margin-left: 0.5rem;
+    overflow: hidden;
   }
 
   .dropdownLabel {
