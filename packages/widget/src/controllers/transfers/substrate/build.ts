@@ -30,8 +30,6 @@ export async function buildSubstrateFungibleTransactions({
   resourceAmount: BigNumber;
   fee: SubstrateFee;
 }> {
-  console.log('buildSubstrateFungibleTransactions');
-
   const substrateTransfer = new SubstrateAssetTransfer();
   await substrateTransfer.init(substrateProvider, env);
 
