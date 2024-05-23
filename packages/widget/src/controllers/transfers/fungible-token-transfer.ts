@@ -514,6 +514,9 @@ export class FungibleTokenTransferController implements ReactiveController {
           const providerChainId =
             this.walletContext.value?.evmWallet?.providerChainId;
           if (
+            !this.sourceNetwork?.chainId ||
+            !this.walletContext.value?.evmWallet?.provider ||
+            !this.walletContext.value.evmWallet.address ||
             !address ||
             !provider ||
             providerChainId !== this.sourceNetwork.chainId
@@ -549,7 +552,14 @@ export class FungibleTokenTransferController implements ReactiveController {
           this.pendingEvmApprovalTransactions = pendingEvmApprovalTransactions;
           this.pendingTransferTransaction = pendingTransferTransaction;
 
-          await this.estimateGas(this.sourceNetwork);
+          this.estimatedGas = await estimateEvmGas(
+            this.getTransferState(),
+            this.sourceNetwork?.chainId,
+            this.walletContext.value?.evmWallet?.provider,
+            this.walletContext.value.evmWallet.address,
+            this.pendingEvmApprovalTransactions,
+            this.pendingTransferTransaction
+          );
 
           this.host.requestUpdate();
         }
@@ -583,41 +593,18 @@ export class FungibleTokenTransferController implements ReactiveController {
           this.resourceAmount = resourceAmount;
           this.pendingTransferTransaction = pendingTransferTransaction;
 
-          await this.estimateGas(this.sourceNetwork);
+          if (!this.walletContext.value?.substrateWallet?.signerAddress) return;
+
+          this.estimatedGas = await estimateSubstrateGas(
+            this.walletContext.value?.substrateWallet?.signerAddress,
+            this.pendingTransferTransaction
+          );
+
           this.host.requestUpdate();
         }
         break;
       default:
         throw new Error('Unsupported network type');
-    }
-  }
-
-  public async estimateGas(sourceNetwork: Domain): Promise<void> {
-    if (!sourceNetwork) return;
-    switch (sourceNetwork.type) {
-      case Network.EVM:
-        if (
-          !sourceNetwork?.chainId ||
-          !this.walletContext.value?.evmWallet?.provider ||
-          !this.walletContext.value.evmWallet.address
-        )
-          return;
-        this.estimatedGas = await estimateEvmGas(
-          this.getTransferState(),
-          sourceNetwork?.chainId,
-          this.walletContext.value?.evmWallet?.provider,
-          this.walletContext.value.evmWallet.address,
-          this.pendingEvmApprovalTransactions,
-          this.pendingTransferTransaction as UnsignedTransaction
-        );
-        break;
-      case Network.SUBSTRATE:
-        if (!this.walletContext.value?.substrateWallet?.signerAddress) return;
-        this.estimatedGas = await estimateSubstrateGas(
-          this.walletContext.value?.substrateWallet?.signerAddress,
-          this.pendingTransferTransaction as SubstrateTransaction
-        );
-        break;
     }
   }
 }
