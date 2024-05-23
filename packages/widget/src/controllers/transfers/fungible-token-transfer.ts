@@ -597,14 +597,14 @@ export class FungibleTokenTransferController implements ReactiveController {
     switch (sourceNetwork.type) {
       case Network.EVM:
         if (
-          !this.sourceNetwork?.chainId ||
+          !sourceNetwork?.chainId ||
           !this.walletContext.value?.evmWallet?.provider ||
           !this.walletContext.value.evmWallet.address
         )
           return;
         this.estimatedGas = await estimateEvmGas(
           this.getTransferState(),
-          this.sourceNetwork?.chainId,
+          sourceNetwork?.chainId,
           this.walletContext.value?.evmWallet?.provider,
           this.walletContext.value.evmWallet.address,
           this.pendingEvmApprovalTransactions,
