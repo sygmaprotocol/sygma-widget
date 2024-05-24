@@ -31,13 +31,19 @@ export async function executeNextEvmTransaction(
       this.host.requestUpdate();
       await tx.wait();
       this.pendingEvmApprovalTransactions.shift();
-      await estimateEvmGas(
-        this.getTransferState(),
+
+      const transactions = [];
+
+      transactions.push(
+        ...this.pendingEvmApprovalTransactions,
+        this.pendingTransferTransaction
+      );
+
+      this.estimatedGas = await estimateEvmGas(
         this.sourceNetwork?.chainId as number,
         this.walletContext.value?.evmWallet?.provider as Eip1193Provider,
         this.walletContext.value?.evmWallet?.address as string,
-        this.pendingEvmApprovalTransactions,
-        this.pendingTransferTransaction as UnsignedTransaction
+        transactions as UnsignedTransaction[]
       );
     } catch (e) {
       console.log(e);
