@@ -2,7 +2,6 @@ import { BigNumber, ethers } from 'ethers';
 import type { UnsignedTransaction, PopulatedTransaction } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
 import type { SubstrateTransaction } from '../controllers/transfers/fungible-token-transfer';
-import { FungibleTransferState } from '../controllers/transfers/fungible-token-transfer';
 import type { Eip1193Provider } from '../interfaces';
 
 /**
@@ -34,24 +33,11 @@ export async function estimateEvmTransactionsGasCost(
 }
 
 export async function estimateEvmGas(
-  state: FungibleTransferState,
   chainId: number,
   provider: Eip1193Provider,
   address: string,
-  pendingEvmApprovalTransactions: UnsignedTransaction[],
-  pendingTransferTransaction: UnsignedTransaction
+  transactions: UnsignedTransaction[]
 ): Promise<BigNumber> {
-  const transactions = [];
-
-  switch (state) {
-    case FungibleTransferState.PENDING_APPROVALS:
-      transactions.push(...pendingEvmApprovalTransactions);
-      break;
-    case FungibleTransferState.PENDING_TRANSFER:
-      transactions.push(pendingTransferTransaction);
-      break;
-  }
-
   const estimatedGas = await estimateEvmTransactionsGasCost(
     chainId,
     provider,

@@ -552,13 +552,22 @@ export class FungibleTokenTransferController implements ReactiveController {
           this.pendingEvmApprovalTransactions = pendingEvmApprovalTransactions;
           this.pendingTransferTransaction = pendingTransferTransaction;
 
+          const transactions = [];
+
+          switch (this.getTransferState()) {
+            case FungibleTransferState.PENDING_APPROVALS:
+              transactions.push(...pendingEvmApprovalTransactions);
+              break;
+            case FungibleTransferState.PENDING_TRANSFER:
+              transactions.push(pendingTransferTransaction);
+              break;
+          }
+
           this.estimatedGas = await estimateEvmGas(
-            this.getTransferState(),
             this.sourceNetwork?.chainId,
             this.walletContext.value?.evmWallet?.provider,
             this.walletContext.value.evmWallet.address,
-            this.pendingEvmApprovalTransactions,
-            this.pendingTransferTransaction
+            transactions
           );
 
           this.host.requestUpdate();
