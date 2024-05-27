@@ -96,6 +96,8 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected whitelistedDestinationNetworks?: string[] = [];
   protected whitelistedSourceResources?: string[] = [];
 
+  public resourceAmountToDisplay = ethers.constants.Zero;
+
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
   substrateProviderContext: ContextConsumer<
@@ -547,7 +549,7 @@ export class FungibleTokenTransferController implements ReactiveController {
           });
 
           this.fee = fee;
-          this.resourceAmount = resourceAmount;
+          this.resourceAmountToDisplay = resourceAmount;
 
           this.pendingEvmApprovalTransactions = pendingEvmApprovalTransactions;
           this.pendingTransferTransaction = pendingTransferTransaction;
