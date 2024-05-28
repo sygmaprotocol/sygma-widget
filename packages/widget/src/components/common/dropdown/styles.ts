@@ -15,6 +15,7 @@ export const styles = css`
   }
 
   .dropdownTrigger {
+    white-space: nowrap;
     height: 100%;
     width: 100%;
     display: flex;
