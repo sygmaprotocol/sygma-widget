@@ -15,6 +15,7 @@ export const styles = css`
   }
 
   .dropdownTrigger {
+    white-space: nowrap;
     height: 100%;
     width: 100%;
     display: flex;
@@ -95,6 +96,8 @@ export const styles = css`
 
   .optionName {
     margin-left: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .dropdownLabel {
