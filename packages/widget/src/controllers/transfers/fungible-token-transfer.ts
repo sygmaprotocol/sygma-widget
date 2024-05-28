@@ -601,7 +601,7 @@ export class FungibleTokenTransferController implements ReactiveController {
             });
 
           this.fee = fee;
-          this.resourceAmount = resourceAmount;
+          this.resourceAmountToDisplay = resourceAmount;
           this.pendingTransferTransaction = pendingTransferTransaction;
 
           if (!this.walletContext.value?.substrateWallet?.signerAddress) return;
