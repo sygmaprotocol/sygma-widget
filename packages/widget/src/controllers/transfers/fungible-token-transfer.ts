@@ -97,6 +97,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected whitelistedSourceResources?: string[] = [];
 
   public resourceAmountToDisplay = ethers.constants.Zero;
+  public isBuildingTransactions = false;
 
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
@@ -306,9 +307,11 @@ export class FungibleTokenTransferController implements ReactiveController {
   };
 
   onResourceSelected = (resource: Resource, amount: BigNumber): void => {
-    this.selectedResource = resource;
-    this.resourceAmount = amount;
-    void this.buildTransactions();
+    if (!this.isBuildingTransactions) {
+      this.selectedResource = resource;
+      this.resourceAmount = amount;
+      void this.buildTransactions();
+    }
     this.host.requestUpdate();
   };
 
@@ -507,6 +510,8 @@ export class FungibleTokenTransferController implements ReactiveController {
       return;
     }
 
+    this.isBuildingTransactions = true;
+
     switch (this.sourceNetwork.type) {
       case Network.EVM:
         {
@@ -617,5 +622,7 @@ export class FungibleTokenTransferController implements ReactiveController {
       default:
         throw new Error('Unsupported network type');
     }
+
+    this.isBuildingTransactions = false;
   }
 }
