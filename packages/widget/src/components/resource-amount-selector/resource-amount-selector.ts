@@ -88,7 +88,7 @@ export class ResourceAmountSelector extends BaseComponent {
     }
   };
 
-  debouncedHandler = debounce(this._onInputAmountChangeHandler, 300)
+  debouncedHandler = debounce(this._onInputAmountChangeHandler, 600)
 
   requestUpdate(
     name?: PropertyKey,
