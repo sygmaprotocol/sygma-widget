@@ -372,6 +372,7 @@ __metadata:
     "@polkadot/extension-dapp": "npm:^0.46.6"
     "@polkadot/keyring": "npm:^12.6.2"
     "@polkadot/util": "npm:^12.6.2"
+    "@types/lodash": "npm:^4"
     "@web3-onboard/core": "npm:^2.21.2"
     "@web3-onboard/injected-wallets": "npm:^2.10.11"
     "@web3-onboard/walletconnect": "npm:^2.5.3"
@@ -382,6 +383,7 @@ __metadata:
     happy-dom: "npm:^13.3.1"
     lit: "npm:3.0.0"
     lit-analyzer: "npm:^2.0.3"
+    lodash: "npm:^4.17.21"
     rollup-plugin-visualizer: "npm:^5.9.2"
     typescript: "npm:5.2.2"
     vite: "npm:4.4.11"
@@ -3963,6 +3965,13 @@ __metadata:
     "@types/koa-compose": "npm:*"
     "@types/node": "npm:*"
   checksum: 783536ea905244ec8edcda5f6063f34b3f4bfe16ff75f4d8faaa9b3ce58455ff140b20e63064a31491c1e7f34de4e869bce410fb116012887b9792c98591f744
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:^4":
+  version: 4.17.4
+  resolution: "@types/lodash@npm:4.17.4"
+  checksum: 0124c64cb9fe7a0f78b6777955abd05ef0d97844d49118652eae45f8fa57bfb7f5a7a9bccc0b5a84c0a6dc09631042e4590cb665acb9d58dfd5e6543c75341ec
   languageName: node
   linkType: hard
 
@@ -8951,7 +8960,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:~4.17.15":
+"lodash@npm:^4.17.21, lodash@npm:~4.17.15":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c

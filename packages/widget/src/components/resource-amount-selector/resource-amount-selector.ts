@@ -21,7 +21,7 @@ import { tokenBalanceToNumber } from '../../utils/token';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { BaseComponent } from '../common/base-component';
 import { styles } from './styles';
-
+import { debounce } from 'lodash';
 @customElement('sygma-resource-amount-selector')
 export class ResourceAmountSelector extends BaseComponent {
   static styles = styles;
@@ -67,25 +67,8 @@ export class ResourceAmountSelector extends BaseComponent {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private _debounceAmountChange(
-    callback: (...args: Event[]) => Promise<Event>,
-    wait: number
-  ) {
-    let timer: ReturnType<typeof setTimeout>;
 
-    return (...args: Event[]): Promise<Event> => {
-      clearTimeout(timer);
-      return new Promise((resolve) => {
-        timer = setTimeout(() => resolve(callback(...args)), wait);
-      });
-    };
-  }
-
-  _onInputAmountChangeHandler = (event: Event): void => {
-    let { value } = event.target as HTMLInputElement;
-    console.log('event', value);
-
+  _onInputAmountChangeHandler = (value: string): void => {
     if (value === '') {
       value = '0';
     }
@@ -104,6 +87,8 @@ export class ResourceAmountSelector extends BaseComponent {
       this.validationMessage = 'Invalid amount value';
     }
   };
+
+  debouncedHandler = debounce(this._onInputAmountChangeHandler, 300)
 
   requestUpdate(
     name?: PropertyKey,
@@ -217,14 +202,10 @@ export class ResourceAmountSelector extends BaseComponent {
               type="number"
               class="amountSelectorInput"
               placeholder="0.000"
-              @input=${
-                (event: Event) =>
-                  this._debounceAmountChange(
-                    this._onInputAmountChangeHandler(event),
-                    5000
-                  )
-                // this._onInputAmountChangeHandler
-              }
+              @input=${(_evt: any) => {
+                this.debouncedHandler(_evt.target.value)
+              }}
+              .disabled=${this.disabled}
               .value=${this.amount}
             />
             <section class="selectorSection">
