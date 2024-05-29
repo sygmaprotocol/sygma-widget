@@ -35,7 +35,7 @@ export async function executeNextEvmTransaction(
       this.waitingUserConfirmation = false;
       this.waitingTxExecution = false;
       this.host.requestUpdate();
-      this.estimateGas();
+      await this.estimateGas();
     }
     return;
   }
