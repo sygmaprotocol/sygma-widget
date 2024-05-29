@@ -96,6 +96,9 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected whitelistedDestinationNetworks?: string[] = [];
   protected whitelistedSourceResources?: string[] = [];
 
+  public resourceAmountToDisplay = ethers.constants.Zero;
+  public isBuildingTransactions = false;
+
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
   substrateProviderContext: ContextConsumer<
@@ -304,9 +307,11 @@ export class FungibleTokenTransferController implements ReactiveController {
   };
 
   onResourceSelected = (resource: Resource, amount: BigNumber): void => {
-    this.selectedResource = resource;
-    this.resourceAmount = amount;
-    void this.buildTransactions();
+    if (!this.isBuildingTransactions) {
+      this.selectedResource = resource;
+      this.resourceAmount = amount;
+      void this.buildTransactions();
+    }
     this.host.requestUpdate();
   };
 
@@ -505,6 +510,8 @@ export class FungibleTokenTransferController implements ReactiveController {
       return;
     }
 
+    this.isBuildingTransactions = true;
+
     switch (this.sourceNetwork.type) {
       case Network.EVM:
         {
@@ -514,6 +521,9 @@ export class FungibleTokenTransferController implements ReactiveController {
           const providerChainId =
             this.walletContext.value?.evmWallet?.providerChainId;
           if (
+            !this.sourceNetwork?.chainId ||
+            !this.walletContext.value?.evmWallet?.provider ||
+            !this.walletContext.value.evmWallet.address ||
             !address ||
             !provider ||
             providerChainId !== this.sourceNetwork.chainId
@@ -544,12 +554,28 @@ export class FungibleTokenTransferController implements ReactiveController {
           });
 
           this.fee = fee;
-          this.resourceAmount = resourceAmount;
+          this.resourceAmountToDisplay = resourceAmount;
 
           this.pendingEvmApprovalTransactions = pendingEvmApprovalTransactions;
           this.pendingTransferTransaction = pendingTransferTransaction;
 
-          await this.estimateGas(this.sourceNetwork);
+          const transactions = [];
+
+          switch (this.getTransferState()) {
+            case FungibleTransferState.PENDING_APPROVALS:
+              transactions.push(...pendingEvmApprovalTransactions);
+              break;
+            case FungibleTransferState.PENDING_TRANSFER:
+              transactions.push(pendingTransferTransaction);
+              break;
+          }
+
+          this.estimatedGas = await estimateEvmGas(
+            this.sourceNetwork?.chainId,
+            this.walletContext.value?.evmWallet?.provider,
+            this.walletContext.value.evmWallet.address,
+            transactions
+          );
 
           this.host.requestUpdate();
         }
@@ -580,44 +606,23 @@ export class FungibleTokenTransferController implements ReactiveController {
             });
 
           this.fee = fee;
-          this.resourceAmount = resourceAmount;
+          this.resourceAmountToDisplay = resourceAmount;
           this.pendingTransferTransaction = pendingTransferTransaction;
 
-          await this.estimateGas(this.sourceNetwork);
+          if (!this.walletContext.value?.substrateWallet?.signerAddress) return;
+
+          this.estimatedGas = await estimateSubstrateGas(
+            this.walletContext.value?.substrateWallet?.signerAddress,
+            this.pendingTransferTransaction
+          );
+
           this.host.requestUpdate();
         }
         break;
       default:
         throw new Error('Unsupported network type');
     }
-  }
 
-  public async estimateGas(sourceNetwork: Domain): Promise<void> {
-    if (!sourceNetwork) return;
-    switch (sourceNetwork.type) {
-      case Network.EVM:
-        if (
-          !this.sourceNetwork?.chainId ||
-          !this.walletContext.value?.evmWallet?.provider ||
-          !this.walletContext.value.evmWallet.address
-        )
-          return;
-        this.estimatedGas = await estimateEvmGas(
-          this.getTransferState(),
-          this.sourceNetwork?.chainId,
-          this.walletContext.value?.evmWallet?.provider,
-          this.walletContext.value.evmWallet.address,
-          this.pendingEvmApprovalTransactions,
-          this.pendingTransferTransaction as UnsignedTransaction
-        );
-        break;
-      case Network.SUBSTRATE:
-        if (!this.walletContext.value?.substrateWallet?.signerAddress) return;
-        this.estimatedGas = await estimateSubstrateGas(
-          this.walletContext.value?.substrateWallet?.signerAddress,
-          this.pendingTransferTransaction as SubstrateTransaction
-        );
-        break;
-    }
+    this.isBuildingTransactions = false;
   }
 }
