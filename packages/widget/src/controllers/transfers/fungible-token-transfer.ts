@@ -499,130 +499,141 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
   };
 
-  private async buildTransactions(): Promise<void> {
+  private canBuildTransactions(): boolean {
     if (
       !this.sourceNetwork ||
       !this.destinationNetwork ||
       !this.resourceAmount ||
       !this.selectedResource ||
-      !this.destinationAddress
+      !this.destinationAddress ||
+      this.isBuildingTransactions
     ) {
-      return;
+      return false;
     }
-
-    this.isBuildingTransactions = true;
 
     switch (this.sourceNetwork.type) {
       case Network.EVM:
-        {
-          //we already check that but this prevents those typescript errors
-          const address = this.walletContext.value?.evmWallet?.address;
-          const provider = this.walletContext.value?.evmWallet?.provider;
-          const providerChainId =
+        const address = this.walletContext.value?.evmWallet?.address;
+        const provider = this.walletContext.value?.evmWallet?.provider;
+        const providerChainId =
             this.walletContext.value?.evmWallet?.providerChainId;
-          if (
-            !this.sourceNetwork?.chainId ||
-            !this.walletContext.value?.evmWallet?.provider ||
-            !this.walletContext.value.evmWallet.address ||
-            !address ||
-            !provider ||
-            providerChainId !== this.sourceNetwork.chainId
-          ) {
-            this.estimatedGas = undefined;
-            this.resetFee();
-            return;
+          if (!address || !provider || !providerChainId) return false;
+          return true;
+      case Network.SUBSTRATE:
+        const substrateProvider = this.sourceSubstrateProvider;
+        const substrateAddress =
+          this.walletContext.value?.substrateWallet?.signerAddress;
+        if (!substrateProvider || !substrateAddress) return false;
+        return true;
+    }
+  }
+
+  private async buildTransactions(): Promise<void> {
+    const isAbleToBuildTransactions = this.canBuildTransactions();
+
+    if (!isAbleToBuildTransactions) {
+      this.estimatedGas = undefined;
+      this.resetFee();
+      return;
+    }
+
+    switch (this.sourceNetwork!.type) {
+      case Network.EVM:
+        {
+          const address = this.walletContext.value?.evmWallet?.address!;
+          const provider = this.walletContext.value?.evmWallet?.provider!;
+          const providerChainId = this.walletContext.value?.evmWallet?.providerChainId!;
+          this.isBuildingTransactions = true;
+
+          try {
+            const evmTransferArtifacts = await this.buildEvmTransactions({
+              address,
+              chainId: this.destinationNetwork!.chainId,
+              destinationAddress: this.destinationAddress!,
+              resourceId: this.selectedResource!.resourceId,
+              resourceAmount: this.resourceAmount,
+              provider,
+              providerChainId,
+              env: this.env,
+              fee: this.fee,
+              pendingEvmApprovalTransactions: this.pendingEvmApprovalTransactions,
+              pendingTransferTransaction: this
+                .pendingTransferTransaction as UnsignedTransaction,
+              sourceNetwork: this.sourceNetwork!
+            })
+
+            this.fee = evmTransferArtifacts.fee;
+            this.pendingEvmApprovalTransactions = evmTransferArtifacts.pendingEvmApprovalTransactions;
+            this.pendingTransferTransaction = evmTransferArtifacts.pendingTransferTransaction;
+            this.resourceAmount = evmTransferArtifacts.resourceAmount;
+            this.resourceAmountToDisplay = evmTransferArtifacts.resourceAmount;
+            const state = this.getTransferState();
+            const transactions = [];
+
+            if (state === FungibleTransferState.PENDING_APPROVALS) {
+              transactions.push(this.pendingEvmApprovalTransactions[0])
+            } else {
+              transactions.push(this.pendingTransferTransaction)
+            }
+
+            this.estimatedGas = await estimateEvmGas(
+              this.sourceNetwork?.chainId!,
+              this.walletContext.value?.evmWallet?.provider!,
+              this.walletContext.value?.evmWallet?.address!,
+              transactions
+            )
+
+          } catch (error) {
+            console.error('Error Building transactions: ', error);
+          } finally {
+            this.isBuildingTransactions = false;
+            this.host.requestUpdate();
           }
-          const {
-            pendingEvmApprovalTransactions,
-            pendingTransferTransaction,
-            fee,
-            resourceAmount
-          } = await this.buildEvmTransactions({
-            address,
-            chainId: this.destinationNetwork.chainId,
-            destinationAddress: this.destinationAddress,
-            resourceId: this.selectedResource.resourceId,
-            resourceAmount: this.resourceAmount,
-            provider,
-            providerChainId,
-            env: this.env,
-            fee: this.fee,
-            pendingEvmApprovalTransactions: this.pendingEvmApprovalTransactions,
-            pendingTransferTransaction: this
-              .pendingTransferTransaction as UnsignedTransaction,
-            sourceNetwork: this.sourceNetwork
-          });
-
-          this.fee = fee;
-          this.resourceAmountToDisplay = resourceAmount;
-
-          this.pendingEvmApprovalTransactions = pendingEvmApprovalTransactions;
-          this.pendingTransferTransaction = pendingTransferTransaction;
-
-          const transactions = [];
-
-          switch (this.getTransferState()) {
-            case FungibleTransferState.PENDING_APPROVALS:
-              transactions.push(...pendingEvmApprovalTransactions);
-              break;
-            case FungibleTransferState.PENDING_TRANSFER:
-              transactions.push(pendingTransferTransaction);
-              break;
-          }
-
-          this.estimatedGas = await estimateEvmGas(
-            this.sourceNetwork?.chainId,
-            this.walletContext.value?.evmWallet?.provider,
-            this.walletContext.value.evmWallet.address,
-            transactions
-          );
-
-          this.host.requestUpdate();
         }
         break;
       case Network.SUBSTRATE:
         {
-          const substrateProvider = this.sourceSubstrateProvider;
+          this.isBuildingTransactions = true;
+          const substrateProvider = this.sourceSubstrateProvider!;
           const address =
-            this.walletContext.value?.substrateWallet?.signerAddress;
+            this.walletContext.value?.substrateWallet?.signerAddress!;
 
-          if (!substrateProvider || !address) {
-            this.estimatedGas = undefined;
-            this.resetFee();
-            return;
+          try {
+            const { pendingTransferTransaction, fee, resourceAmount } =
+              await this.buildSubstrateTransactions({
+                address,
+                substrateProvider,
+                env: this.env,
+                chainId: this.destinationNetwork!.chainId,
+                destinationAddress: this.destinationAddress!,
+                resourceId: this.selectedResource!.resourceId,
+                resourceAmount: this.resourceAmount,
+                fee: this.fee as SubstrateFee,
+                pendingTransferTransaction: this
+                  .pendingTransferTransaction as SubstrateTransaction
+              });
+
+              this.fee = fee;
+              this.resourceAmountToDisplay = resourceAmount;
+              this.pendingTransferTransaction = pendingTransferTransaction;
+              this.resourceAmount = resourceAmount;
+            
+              this.estimatedGas = await estimateSubstrateGas(
+                address,
+                this.pendingTransferTransaction
+              );
+          } catch (error) {
+            console.error('Error Building transactions: ', error);
+          } finally {
+            this.isBuildingTransactions = false;
+            this.host.requestUpdate();
           }
-          const { pendingTransferTransaction, fee, resourceAmount } =
-            await this.buildSubstrateTransactions({
-              address,
-              substrateProvider,
-              env: this.env,
-              chainId: this.destinationNetwork.chainId,
-              destinationAddress: this.destinationAddress,
-              resourceId: this.selectedResource.resourceId,
-              resourceAmount: this.resourceAmount,
-              fee: this.fee as SubstrateFee,
-              pendingTransferTransaction: this
-                .pendingTransferTransaction as SubstrateTransaction
-            });
 
-          this.fee = fee;
-          this.resourceAmountToDisplay = resourceAmount;
-          this.pendingTransferTransaction = pendingTransferTransaction;
-
-          if (!this.walletContext.value?.substrateWallet?.signerAddress) return;
-
-          this.estimatedGas = await estimateSubstrateGas(
-            this.walletContext.value?.substrateWallet?.signerAddress,
-            this.pendingTransferTransaction
-          );
-
-          this.host.requestUpdate();
         }
         break;
       default:
         throw new Error('Unsupported network type');
     }
 
-    this.isBuildingTransactions = false;
   }
 }
