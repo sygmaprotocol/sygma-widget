@@ -11,6 +11,8 @@ import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
+// @ts-expect-error will remove this
+import { debounce } from 'lodash';
 import { networkIconsMap } from '../../assets';
 import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import {
@@ -21,7 +23,7 @@ import { tokenBalanceToNumber } from '../../utils/token';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { BaseComponent } from '../common/base-component';
 import { styles } from './styles';
-import { debounce } from 'lodash';
+
 @customElement('sygma-resource-amount-selector')
 export class ResourceAmountSelector extends BaseComponent {
   static styles = styles;
@@ -67,6 +69,18 @@ export class ResourceAmountSelector extends BaseComponent {
     }
   };
 
+  debounceAmountChange = <Args extends string>(
+    cb: (args: Args) => void,
+    delay?: number
+  ): ((value: Args) => void) => {
+    let timeout: NodeJS.Timeout;
+    return (args: Args): void => {
+      if (timeout !== undefined) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(() => cb(args), delay);
+    };
+  };
 
   _onInputAmountChangeHandler = (value: string): void => {
     if (value === '') {
@@ -88,7 +102,11 @@ export class ResourceAmountSelector extends BaseComponent {
     }
   };
 
-  debouncedHandler = debounce(this._onInputAmountChangeHandler, 600)
+  // debouncedHandler = debounce(this._onInputAmountChangeHandler, 600);
+  debouncedHandler = this.debounceAmountChange(
+    this._onInputAmountChangeHandler,
+    600
+  );
 
   requestUpdate(
     name?: PropertyKey,
@@ -202,8 +220,9 @@ export class ResourceAmountSelector extends BaseComponent {
               type="number"
               class="amountSelectorInput"
               placeholder="0.000"
-              @input=${(_evt: any) => {
-                this.debouncedHandler(_evt.target.value)
+              @input=${(_evt: Event) => {
+                // this.debouncedHandler(_evt.target.value);
+                this.debouncedHandler((_evt.target as HTMLInputElement).value);
               }}
               .disabled=${this.disabled}
               .value=${this.amount}
