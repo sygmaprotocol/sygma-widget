@@ -383,7 +383,6 @@ __metadata:
     happy-dom: "npm:^13.3.1"
     lit: "npm:3.0.0"
     lit-analyzer: "npm:^2.0.3"
-    lodash: "npm:^4.17.21"
     rollup-plugin-visualizer: "npm:^5.9.2"
     typescript: "npm:5.2.2"
     vite: "npm:4.4.11"
@@ -8960,7 +8959,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.21, lodash@npm:~4.17.15":
+"lodash@npm:~4.17.15":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c

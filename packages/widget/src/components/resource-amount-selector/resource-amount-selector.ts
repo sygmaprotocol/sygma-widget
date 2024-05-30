@@ -11,8 +11,6 @@ import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
-// @ts-expect-error will remove this
-import { debounce } from 'lodash';
 import { networkIconsMap } from '../../assets';
 import { DEFAULT_ETH_DECIMALS } from '../../constants';
 import {
@@ -102,7 +100,6 @@ export class ResourceAmountSelector extends BaseComponent {
     }
   };
 
-  // debouncedHandler = debounce(this._onInputAmountChangeHandler, 600);
   debouncedHandler = this.debounceAmountChange(
     this._onInputAmountChangeHandler,
     600

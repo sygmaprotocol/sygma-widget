@@ -181,7 +181,7 @@ export class FungibleTokenTransfer extends BaseComponent {
           .sourceDomainConfig=${this.transferController.sourceDomainConfig}
           .disabled=${!this.transferController.sourceNetwork ||
           !this.transferController.destinationNetwork ||
-         this.transferController.isBuildingTransactions}
+          this.transferController.isBuildingTransactions}
           .resources=${this.transferController.supportedResources}
           .onResourceSelected=${this.transferController.onResourceSelected}
         >
