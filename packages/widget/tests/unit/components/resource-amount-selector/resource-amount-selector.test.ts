@@ -1,6 +1,11 @@
 import type { Resource } from '@buildwithsygma/sygma-sdk-core';
 import { ResourceType } from '@buildwithsygma/sygma-sdk-core';
-import { fixture, fixtureCleanup, nextFrame } from '@open-wc/testing-helpers';
+import {
+  aTimeout,
+  fixture,
+  fixtureCleanup,
+  nextFrame
+} from '@open-wc/testing-helpers';
 import { utils } from 'ethers';
 import { html } from 'lit';
 import { afterEach, assert, describe, expect, it, vi } from 'vitest';
@@ -152,6 +157,8 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
     input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     await el.updateComplete;
 
+    await aTimeout(600);
+
     expect(mockOptionSelectHandler).toHaveBeenCalledTimes(1);
     expect(mockOptionSelectHandler).toHaveBeenCalledWith(
       el.selectedResource,
@@ -161,7 +168,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
 
   describe('Validation', () => {
     it('validates input amount when balance is low', async () => {
-      const el = await fixture(
+      const el = await fixture<ResourceAmountSelector>(
         html` <sygma-resource-amount-selector></sygma-resource-amount-selector>`
       );
 
@@ -173,9 +180,12 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       input.dispatchEvent(new Event('input'));
       await nextFrame();
 
+      await aTimeout(600);
+
       const validationMessage = el.shadowRoot!.querySelector(
         '.validationMessage'
       ) as HTMLDivElement;
+
       assert.strictEqual(
         validationMessage.textContent,
         'Amount exceeds account balance'
@@ -193,6 +203,8 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       input.value = '150';
       input.dispatchEvent(new Event('input'));
       await nextFrame();
+
+      await aTimeout(600);
 
       const validationMessage = el.shadowRoot!.querySelector(
         '.validationMessage'
@@ -220,6 +232,8 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       input.value = '150';
       input.dispatchEvent(new Event('input'));
       await nextFrame();
+
+      await aTimeout(600);
 
       const validationMessage = el.shadowRoot!.querySelector(
         '.validationMessage'
@@ -246,6 +260,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       ) as HTMLInputElement;
       input.value = '-2';
       input.dispatchEvent(new Event('input'));
+      await aTimeout(600);
       await el.updateComplete;
 
       const validationMessage = el.shadowRoot!.querySelector(
@@ -268,6 +283,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       ) as HTMLInputElement;
       input.value = 'nonParseableValue';
       input.dispatchEvent(new Event('input'));
+      await aTimeout(600);
       await el.updateComplete;
 
       const validationMessage = el.shadowRoot!.querySelector(
