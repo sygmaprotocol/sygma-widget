@@ -52,7 +52,6 @@
   "devDependencies": {
     "@open-wc/semantic-dom-diff": "^0.20.1",
     "@open-wc/testing-helpers": "^3.0.0",
-    "@types/lodash": "^4",
     "eslint": "^8.48.0",
     "eslint-plugin-lit": "^1.9.1",
     "happy-dom": "^13.3.1",

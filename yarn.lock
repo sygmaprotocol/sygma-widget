@@ -372,7 +372,6 @@ __metadata:
     "@polkadot/extension-dapp": "npm:^0.46.6"
     "@polkadot/keyring": "npm:^12.6.2"
     "@polkadot/util": "npm:^12.6.2"
-    "@types/lodash": "npm:^4"
     "@web3-onboard/core": "npm:^2.21.2"
     "@web3-onboard/injected-wallets": "npm:^2.10.11"
     "@web3-onboard/walletconnect": "npm:^2.5.3"
@@ -3964,13 +3963,6 @@ __metadata:
     "@types/koa-compose": "npm:*"
     "@types/node": "npm:*"
   checksum: 783536ea905244ec8edcda5f6063f34b3f4bfe16ff75f4d8faaa9b3ce58455ff140b20e63064a31491c1e7f34de4e869bce410fb116012887b9792c98591f744
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:^4":
-  version: 4.17.4
-  resolution: "@types/lodash@npm:4.17.4"
-  checksum: 0124c64cb9fe7a0f78b6777955abd05ef0d97844d49118652eae45f8fa57bfb7f5a7a9bccc0b5a84c0a6dc09631042e4590cb665acb9d58dfd5e6543c75341ec
   languageName: node
   linkType: hard
 
