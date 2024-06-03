@@ -27,6 +27,9 @@ export class FungibleTransferDetail extends BaseComponent {
   selectedResource?: Resource;
 
   @property({ type: Object })
+  amountToReceive!: BigNumber;
+
+  @property({ type: Object })
   sourceDomainConfig?: BaseConfig<Network>;
 
   @property({ type: Object })
@@ -101,6 +104,23 @@ export class FungibleTransferDetail extends BaseComponent {
   render(): HTMLTemplateResult {
     return html`
       <section class="transferDetail">
+        ${
+          when(
+            this.fee !== null,
+            () => html `
+            <div class="transferDetailContainer">
+              <div class="transferDetailContainerLabel">Amount to receive: </div>
+              <div class="transferDetailContainerValue">
+              ${tokenBalanceToNumber(
+                this.amountToReceive,
+                this.selectedResource?.decimals!
+              )}
+              ${this.selectedResource?.symbol}
+              </div>
+            </div>`
+          )
+        }
+
         ${when(
           this.fee !== null,
           () =>

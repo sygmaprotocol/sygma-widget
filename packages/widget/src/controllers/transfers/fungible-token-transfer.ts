@@ -250,6 +250,7 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   resetFee(): void {
     this.fee = null;
+    this.estimatedGas = undefined;
   }
 
   reset({ omitSourceNetworkReset } = { omitSourceNetworkReset: false }): void {
@@ -264,7 +265,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
     this.transferTransactionId = undefined;
-    this.estimatedGas = undefined;
     this.resetFee();
     void this.init(this.env);
   }
@@ -400,7 +400,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.pendingTransferTransaction) {
       return FungibleTransferState.PENDING_TRANSFER;
     }
-
     return FungibleTransferState.UNKNOWN;
   }
 
@@ -590,6 +589,10 @@ export class FungibleTokenTransferController implements ReactiveController {
             );
           } catch (error) {
             console.error('Error Building transactions: ', error);
+            this.fee = null;
+            this.estimatedGas = undefined;
+            this.pendingEvmApprovalTransactions = [];
+            this.pendingTransferTransaction = undefined;
           } finally {
             this.isBuildingTransactions = false;
             this.host.requestUpdate();
@@ -628,6 +631,10 @@ export class FungibleTokenTransferController implements ReactiveController {
             );
           } catch (error) {
             console.error('Error Building transactions: ', error);
+            this.fee = null;
+            this.estimatedGas = undefined;
+            this.pendingEvmApprovalTransactions = [];
+            this.pendingTransferTransaction = undefined;
           } finally {
             this.isBuildingTransactions = false;
             this.host.requestUpdate();
