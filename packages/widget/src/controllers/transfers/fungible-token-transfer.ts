@@ -557,7 +557,7 @@ export class FungibleTokenTransferController implements ReactiveController {
 
     switch (state) {
       case FungibleTransferState.PENDING_APPROVALS:
-        transactions.push(...this.pendingEvmApprovalTransactions);
+        transactions.push(this.pendingEvmApprovalTransactions[0]);
         break;
       case FungibleTransferState.PENDING_TRANSFER:
         transactions.push(this.pendingTransferTransaction);
