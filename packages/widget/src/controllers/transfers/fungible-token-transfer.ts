@@ -572,7 +572,6 @@ export class FungibleTokenTransferController implements ReactiveController {
               evmTransferArtifacts.pendingEvmApprovalTransactions;
             this.pendingTransferTransaction =
               evmTransferArtifacts.pendingTransferTransaction;
-            this.resourceAmount = evmTransferArtifacts.resourceAmount;
             this.resourceAmountToDisplay = evmTransferArtifacts.resourceAmount;
             const state = this.getTransferState();
             const transactions = [];
@@ -622,7 +621,6 @@ export class FungibleTokenTransferController implements ReactiveController {
             this.fee = fee;
             this.resourceAmountToDisplay = resourceAmount;
             this.pendingTransferTransaction = pendingTransferTransaction;
-            this.resourceAmount = resourceAmount;
 
             this.estimatedGas = await estimateSubstrateGas(
               address as string,
