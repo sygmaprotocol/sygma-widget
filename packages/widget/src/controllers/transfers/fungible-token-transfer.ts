@@ -563,7 +563,8 @@ export class FungibleTokenTransferController implements ReactiveController {
                 this.pendingEvmApprovalTransactions,
               pendingTransferTransaction: this
                 .pendingTransferTransaction as UnsignedTransaction,
-              sourceNetwork: this.sourceNetwork!
+              sourceNetwork: this.sourceNetwork!,
+              fee: this.fee as EvmFee
             });
 
             this.fee = evmTransferArtifacts.fee;
@@ -614,7 +615,8 @@ export class FungibleTokenTransferController implements ReactiveController {
                 resourceId: this.selectedResource!.resourceId,
                 resourceAmount: this.resourceAmount,
                 pendingTransferTransaction: this
-                  .pendingTransferTransaction as SubstrateTransaction
+                  .pendingTransferTransaction as SubstrateTransaction,
+                fee: this.fee as SubstrateFee
               });
 
             this.fee = fee;

@@ -27,7 +27,8 @@ export async function buildEvmFungibleTransactions({
   providerChainId,
   env,
   pendingEvmApprovalTransactions,
-  pendingTransferTransaction
+  pendingTransferTransaction,
+  fee
 }: {
   address: string;
   chainId: number;
@@ -40,6 +41,7 @@ export async function buildEvmFungibleTransactions({
   pendingEvmApprovalTransactions: UnsignedTransaction[];
   pendingTransferTransaction: UnsignedTransaction;
   sourceNetwork: Domain | null;
+  fee: EvmFee;
 }): Promise<{
   pendingEvmApprovalTransactions: UnsignedTransaction[];
   pendingTransferTransaction: UnsignedTransaction;
@@ -91,21 +93,21 @@ export async function buildEvmFungibleTransactions({
     resourceId,
     resourceAmount.toString()
   );
-  const transferFee = await evmTransfer.getFee(transfer);
+  fee = await evmTransfer.getFee(transfer);
 
   pendingEvmApprovalTransactions = await evmTransfer.buildApprovals(
     transfer,
-    transferFee
+    fee
   );
 
   pendingTransferTransaction = await evmTransfer.buildTransferTransaction(
     transfer,
-    transferFee
+    fee
   );
   return {
     pendingEvmApprovalTransactions,
     pendingTransferTransaction,
-    fee: transferFee,
+    fee,
     resourceAmount
   };
 }
