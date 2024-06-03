@@ -95,7 +95,6 @@ export class ResourceAmountSelector extends BaseComponent {
         this.onResourceSelected(this.selectedResource, BigNumber.from(amount));
       }
     } catch (error) {
-      console.log('error', error);
       this.validationMessage = 'Invalid amount value';
     }
   };
@@ -218,7 +217,6 @@ export class ResourceAmountSelector extends BaseComponent {
               class="amountSelectorInput"
               placeholder="0.000"
               @input=${(_evt: Event) => {
-                // this.debouncedHandler(_evt.target.value);
                 this.debouncedHandler((_evt.target as HTMLInputElement).value);
               }}
               .disabled=${this.disabled}
