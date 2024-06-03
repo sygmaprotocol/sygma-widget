@@ -559,7 +559,6 @@ export class FungibleTokenTransferController implements ReactiveController {
               provider: provider!,
               providerChainId: providerChainId!,
               env: this.env,
-              fee: this.fee,
               pendingEvmApprovalTransactions:
                 this.pendingEvmApprovalTransactions,
               pendingTransferTransaction: this
@@ -614,7 +613,6 @@ export class FungibleTokenTransferController implements ReactiveController {
                 destinationAddress: this.destinationAddress!,
                 resourceId: this.selectedResource!.resourceId,
                 resourceAmount: this.resourceAmount,
-                fee: this.fee as SubstrateFee,
                 pendingTransferTransaction: this
                   .pendingTransferTransaction as SubstrateTransaction
               });

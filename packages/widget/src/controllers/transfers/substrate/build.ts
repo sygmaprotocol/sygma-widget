@@ -13,7 +13,6 @@ export async function buildSubstrateFungibleTransactions({
   destinationAddress,
   resourceId,
   resourceAmount,
-  fee,
   pendingTransferTransaction
 }: {
   address: string;
@@ -23,7 +22,6 @@ export async function buildSubstrateFungibleTransactions({
   destinationAddress: string;
   resourceId: string;
   resourceAmount: BigNumber;
-  fee: SubstrateFee;
   pendingTransferTransaction: SubstrateTransaction;
 }): Promise<{
   pendingTransferTransaction: SubstrateTransaction;
@@ -41,20 +39,20 @@ export async function buildSubstrateFungibleTransactions({
     String(resourceAmount)
   );
 
-  fee = await substrateTransfer.getFee(transfer);
+  const transferFee = await substrateTransfer.getFee(transfer);
 
   if (resourceAmount.toString() === transfer.details.amount.toString()) {
-    resourceAmount = resourceAmount.sub(fee.fee.toString());
+    resourceAmount = resourceAmount.sub(transferFee.fee.toString());
   }
 
   pendingTransferTransaction = substrateTransfer.buildTransferTransaction(
     transfer,
-    fee
+    transferFee
   );
 
   return {
     pendingTransferTransaction,
     resourceAmount,
-    fee
+    fee: transferFee
   };
 }

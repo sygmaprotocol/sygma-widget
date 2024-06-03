@@ -11,7 +11,6 @@ import type {
 import { Web3Provider } from '@ethersproject/providers';
 import type { UnsignedTransaction, BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
-import type { SubstrateFee } from '@buildwithsygma/sygma-sdk-core/substrate';
 import type { Eip1193Provider } from '../../../interfaces';
 
 /**
@@ -27,7 +26,6 @@ export async function buildEvmFungibleTransactions({
   provider,
   providerChainId,
   env,
-  fee,
   pendingEvmApprovalTransactions,
   pendingTransferTransaction
 }: {
@@ -39,7 +37,6 @@ export async function buildEvmFungibleTransactions({
   provider: Eip1193Provider;
   providerChainId: number;
   env: Environment;
-  fee: EvmFee | SubstrateFee | null;
   pendingEvmApprovalTransactions: UnsignedTransaction[];
   pendingTransferTransaction: UnsignedTransaction;
   sourceNetwork: Domain | null;
@@ -94,21 +91,21 @@ export async function buildEvmFungibleTransactions({
     resourceId,
     resourceAmount.toString()
   );
-  fee = await evmTransfer.getFee(transfer);
+  const transferFee = await evmTransfer.getFee(transfer);
 
   pendingEvmApprovalTransactions = await evmTransfer.buildApprovals(
     transfer,
-    fee
+    transferFee
   );
 
   pendingTransferTransaction = await evmTransfer.buildTransferTransaction(
     transfer,
-    fee
+    transferFee
   );
   return {
     pendingEvmApprovalTransactions,
     pendingTransferTransaction,
-    fee,
+    fee: transferFee,
     resourceAmount
   };
 }
