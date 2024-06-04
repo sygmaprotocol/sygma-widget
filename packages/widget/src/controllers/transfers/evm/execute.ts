@@ -22,6 +22,7 @@ export async function executeNextEvmTransaction(
   if (this.getTransferState() === FungibleTransferState.PENDING_APPROVALS) {
     this.waitingUserConfirmation = true;
     this.host.requestUpdate();
+    const transactions = [];
     try {
       const tx = await signer.sendTransaction(
         this.pendingEvmApprovalTransactions[0] as TransactionRequest
@@ -31,8 +32,6 @@ export async function executeNextEvmTransaction(
       this.host.requestUpdate();
       await tx.wait();
       this.pendingEvmApprovalTransactions.shift();
-
-      const transactions = [];
 
       transactions.push(
         ...this.pendingEvmApprovalTransactions,
@@ -52,6 +51,12 @@ export async function executeNextEvmTransaction(
       this.waitingUserConfirmation = false;
       this.waitingTxExecution = false;
       this.host.requestUpdate();
+      await estimateEvmGas(
+        this.sourceNetwork?.chainId as number,
+        this.walletContext.value?.evmWallet?.provider as Eip1193Provider,
+        this.walletContext.value?.evmWallet?.address as string,
+        transactions as UnsignedTransaction[]
+      );
     }
     return;
   }
