@@ -60,6 +60,7 @@ describe('sygma-fungible-transfer-detail', function () {
         .fee=${mockedFee}
         .selectedResource=${mockedResource}
         .sourceDomainConfig=${mockedSourceDomainConfig}
+        .amountToReceive=${constants.Zero}
       ></sygma-fungible-transfer-detail>
     `);
 
@@ -79,11 +80,12 @@ describe('sygma-fungible-transfer-detail', function () {
         .fee=${mockedFee}
         .selectedResource=${mockedResource}
         .sourceDomainConfig=${mockedSourceDomainConfig}
+        .amountToReceive=${parseUnits('12', 18)}
       ></sygma-fungible-transfer-detail>
     `);
 
     const transferDetail = el.shadowRoot!.querySelector(
-      '.transferDetailContainerValue'
+      '.transferDetail'
     ) as HTMLElement;
 
     assert.include(transferDetail.innerHTML, value);
@@ -98,6 +100,7 @@ describe('sygma-fungible-transfer-detail', function () {
         .selectedResource=${mockedResource}
         .sourceDomainConfig=${mockedSourceDomainConfig}
         .estimatedGasFee=${mockedEstimatedGas}
+        .amountToReceive=${constants.Zero}
       ></sygma-fungible-transfer-detail>
     `);
 
