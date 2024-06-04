@@ -101,7 +101,6 @@ export class FungibleTokenTransfer extends BaseComponent {
     }
   };
 
-
   renderTransferStatus(): HTMLTemplateResult {
     return html` <section>
       <sygma-transfer-status

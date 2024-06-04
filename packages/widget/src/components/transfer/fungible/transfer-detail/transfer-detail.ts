@@ -104,23 +104,20 @@ export class FungibleTransferDetail extends BaseComponent {
   render(): HTMLTemplateResult {
     return html`
       <section class="transferDetail">
-        ${
-          when(
-            this.fee !== null,
-            () => html `
-            <div class="transferDetailContainer">
-              <div class="transferDetailContainerLabel">Amount to receive: </div>
+        ${when(
+          this.fee !== null,
+          () =>
+            html` <div class="transferDetailContainer">
+              <div class="transferDetailContainerLabel">Amount to receive:</div>
               <div class="transferDetailContainerValue">
-              ${tokenBalanceToNumber(
-                this.amountToReceive,
-                this.selectedResource?.decimals!
-              )}
-              ${this.selectedResource?.symbol}
+                ${tokenBalanceToNumber(
+                  this.amountToReceive,
+                  this.selectedResource?.decimals as number
+                )}
+                ${this.selectedResource?.symbol}
               </div>
             </div>`
-          )
-        }
-
+        )}
         ${when(
           this.fee !== null,
           () =>
