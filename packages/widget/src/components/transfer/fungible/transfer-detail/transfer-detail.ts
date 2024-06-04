@@ -107,20 +107,6 @@ export class FungibleTransferDetail extends BaseComponent {
         ${when(
           this.fee !== null,
           () =>
-            html` <div class="transferDetailContainer">
-              <div class="transferDetailContainerLabel">Amount to receive:</div>
-              <div class="transferDetailContainerValue">
-                ${tokenBalanceToNumber(
-                  this.amountToReceive,
-                  this.selectedResource?.decimals as number
-                )}
-                ${this.selectedResource?.symbol}
-              </div>
-            </div>`
-        )}
-        ${when(
-          this.fee !== null,
-          () =>
             html`<div class="transferDetailContainer">
               <div class="transferDetailContainerLabel">Bridge Fee</div>
               <div class="transferDetailContainerValue">
