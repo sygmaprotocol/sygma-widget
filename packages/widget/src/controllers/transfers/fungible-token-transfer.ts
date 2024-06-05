@@ -149,7 +149,7 @@ export class FungibleTokenTransferController implements ReactiveController {
         this.host.requestUpdate();
 
         if (this.isWalletDisconnected(context)) {
-          this.reset();
+          this.reset({ omitSourceNetworkReset: true });
           this.supportedResources = [];
         }
       }
