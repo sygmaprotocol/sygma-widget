@@ -115,7 +115,8 @@ export class FungibleTokenTransfer extends BaseComponent {
           <span>
             ${tokenBalanceToNumber(
               this.transferController.resourceAmount,
-              decimals!
+              decimals!,
+              4
             )}
             ${symbol}
           </span>
