@@ -26,7 +26,7 @@ import type {
   ParachainID,
   SubstrateFee
 } from '@buildwithsygma/sygma-sdk-core/substrate';
-import type { WalletContext } from '../../context';
+import type { EvmWallet, WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { validateAddress } from '../../utils';
@@ -547,21 +547,20 @@ export class FungibleTokenTransferController implements ReactiveController {
     switch (this.sourceNetwork!.type) {
       case Network.EVM:
         {
-          const address = this.walletContext.value?.evmWallet?.address;
-          const provider = this.walletContext.value?.evmWallet?.provider;
-          const providerChainId =
-            this.walletContext.value?.evmWallet?.providerChainId;
           this.isBuildingTransactions = true;
 
           try {
-            const evmTransferArtifacts = await buildEvmFungibleTransactions({
-              address: address!,
+            const {
+              pendingEvmApprovalTransactions,
+              pendingTransferTransaction,
+              fee,
+              resourceAmount
+            } = await buildEvmFungibleTransactions({
+              evmWallet: this.walletContext.value?.evmWallet as EvmWallet,
               chainId: this.destinationNetwork!.chainId,
               destinationAddress: this.destinationAddress!,
               resourceId: this.selectedResource!.resourceId,
               resourceAmount: this.resourceAmount,
-              provider: provider!,
-              providerChainId: providerChainId!,
               env: this.env,
               pendingEvmApprovalTransactions:
                 this.pendingEvmApprovalTransactions,
@@ -571,12 +570,11 @@ export class FungibleTokenTransferController implements ReactiveController {
               fee: this.fee as EvmFee
             });
 
-            this.fee = evmTransferArtifacts.fee;
+            this.fee = fee;
             this.pendingEvmApprovalTransactions =
-              evmTransferArtifacts.pendingEvmApprovalTransactions;
-            this.pendingTransferTransaction =
-              evmTransferArtifacts.pendingTransferTransaction;
-            this.resourceAmountToDisplay = evmTransferArtifacts.resourceAmount;
+              pendingEvmApprovalTransactions;
+            this.pendingTransferTransaction = pendingTransferTransaction;
+            this.resourceAmountToDisplay = resourceAmount;
             const state = this.getTransferState();
             const transactions = [];
 

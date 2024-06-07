@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from 'ethers';
-import type { UnsignedTransaction, PopulatedTransaction } from 'ethers';
+import type { PopulatedTransaction } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
 import type { SubstrateTransaction } from '../controllers/transfers/fungible-token-transfer';
 import type { Eip1193Provider } from '../interfaces';

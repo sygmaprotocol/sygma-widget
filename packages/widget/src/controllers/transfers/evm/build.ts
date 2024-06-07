@@ -11,7 +11,7 @@ import type {
 import { Web3Provider } from '@ethersproject/providers';
 import type { UnsignedTransaction, BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
-import type { Eip1193Provider } from '../../../interfaces';
+import type { EvmWallet } from 'packages/widget/src/context';
 
 type BuildEvmFungibleTransactionsArtifacts = {
   pendingEvmApprovalTransactions: UnsignedTransaction[];
@@ -25,25 +25,21 @@ type BuildEvmFungibleTransactionsArtifacts = {
  * Not sure how to handle if it throws :shrug:
  */
 export async function buildEvmFungibleTransactions({
-  address,
+  evmWallet,
   chainId,
   destinationAddress,
   resourceId,
   resourceAmount,
-  provider,
-  providerChainId,
   env,
   pendingEvmApprovalTransactions,
   pendingTransferTransaction,
   fee
 }: {
-  address: string;
+  evmWallet: EvmWallet;
   chainId: number;
   destinationAddress: string;
   resourceId: string;
   resourceAmount: BigNumber;
-  provider: Eip1193Provider;
-  providerChainId: number;
   env: Environment;
   pendingEvmApprovalTransactions: UnsignedTransaction[];
   pendingTransferTransaction: UnsignedTransaction;
@@ -51,12 +47,15 @@ export async function buildEvmFungibleTransactions({
   fee: EvmFee;
 }): Promise<BuildEvmFungibleTransactionsArtifacts> {
   const evmTransfer = new EVMAssetTransfer();
-  await evmTransfer.init(new Web3Provider(provider, providerChainId), env);
+  await evmTransfer.init(
+    new Web3Provider(evmWallet.provider, evmWallet.providerChainId),
+    env
+  );
 
   // Hack to make fungible transfer behave like it does on substrate side
   // where fee is deducted from user inputted amount rather than added on top
   const originalTransfer = await evmTransfer.createFungibleTransfer(
-    address,
+    evmWallet.address,
     chainId,
     destinationAddress,
     resourceId,
@@ -89,7 +88,7 @@ export async function buildEvmFungibleTransactions({
   }
 
   const transfer = await evmTransfer.createFungibleTransfer(
-    address,
+    evmWallet.address,
     chainId,
     destinationAddress,
     resourceId,
