@@ -318,8 +318,8 @@ export class FungibleTokenTransferController implements ReactiveController {
       this.selectedResource = resource;
       this.resourceAmount = amount;
       void this.buildTransactions();
+      this.host.requestUpdate();
     }
-    this.host.requestUpdate();
   };
 
   onDestinationAddressChange = (address: string): void => {
