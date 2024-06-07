@@ -20,7 +20,7 @@ import {
 import { tokenBalanceToNumber } from '../../utils/token';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { BaseComponent } from '../common/base-component';
-import { debounceAmountChange } from '../../utils';
+import { debounce } from '../../utils';
 import { styles } from './styles';
 
 @customElement('sygma-resource-amount-selector')
@@ -87,7 +87,7 @@ export class ResourceAmountSelector extends BaseComponent {
     }
   };
 
-  debouncedHandler = debounceAmountChange(
+  debouncedHandler = debounce(
     this._onInputAmountChangeHandler,
     INPUT_DEBOUNCE_TIME
   );
