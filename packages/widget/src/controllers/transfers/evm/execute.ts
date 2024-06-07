@@ -2,9 +2,9 @@ import {
   Web3Provider,
   type TransactionRequest
 } from '@ethersproject/providers';
-import type { UnsignedTransaction } from 'ethers';
+import type { PopulatedTransaction } from 'ethers';
 import type { Eip1193Provider } from '../../../interfaces';
-import { estimateEvmGas } from '../../../utils/gas';
+import { estimateEvmTransactionsGasCost } from '../../../utils/gas';
 import {
   FungibleTransferState,
   type FungibleTokenTransferController
@@ -38,11 +38,11 @@ export async function executeNextEvmTransaction(
         this.pendingTransferTransaction
       );
 
-      this.estimatedGas = await estimateEvmGas(
+      this.estimatedGas = await estimateEvmTransactionsGasCost(
         this.sourceNetwork?.chainId as number,
         this.walletContext.value?.evmWallet?.provider as Eip1193Provider,
         this.walletContext.value?.evmWallet?.address as string,
-        transactions as UnsignedTransaction[]
+        transactions as PopulatedTransaction[]
       );
     } catch (e) {
       console.log(e);
@@ -51,11 +51,11 @@ export async function executeNextEvmTransaction(
       this.waitingUserConfirmation = false;
       this.waitingTxExecution = false;
       this.host.requestUpdate();
-      await estimateEvmGas(
+      await estimateEvmTransactionsGasCost(
         this.sourceNetwork?.chainId as number,
         this.walletContext.value?.evmWallet?.provider as Eip1193Provider,
         this.walletContext.value?.evmWallet?.address as string,
-        transactions as UnsignedTransaction[]
+        transactions as PopulatedTransaction[]
       );
     }
     return;

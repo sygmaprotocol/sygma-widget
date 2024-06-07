@@ -5,6 +5,12 @@ import type { ApiPromise } from '@polkadot/api';
 import type { BigNumber } from 'ethers';
 import type { SubstrateTransaction } from '../fungible-token-transfer';
 
+type BuildSubstrateFungibleTransactionsArtifacts = {
+  pendingTransferTransaction: SubstrateTransaction;
+  resourceAmount: BigNumber;
+  fee: SubstrateFee;
+};
+
 export async function buildSubstrateFungibleTransactions({
   address,
   substrateProvider,
@@ -25,11 +31,7 @@ export async function buildSubstrateFungibleTransactions({
   resourceAmount: BigNumber;
   pendingTransferTransaction: SubstrateTransaction;
   fee: SubstrateFee;
-}): Promise<{
-  pendingTransferTransaction: SubstrateTransaction;
-  resourceAmount: BigNumber;
-  fee: SubstrateFee;
-}> {
+}): Promise<BuildSubstrateFungibleTransactionsArtifacts> {
   const substrateTransfer = new SubstrateAssetTransfer();
   await substrateTransfer.init(substrateProvider, env);
 

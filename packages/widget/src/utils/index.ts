@@ -87,7 +87,7 @@ export const validateAddress = (
 
 export const debounceAmountChange = <Args extends string>(
   cb: (args: Args) => void,
-  delay?: number
+  delay: number
 ): ((value: Args) => void) => {
   let timeout: NodeJS.Timeout;
   return (args: Args): void => {

@@ -14,7 +14,11 @@ import {
 } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
 import { ethers } from 'ethers';
-import type { UnsignedTransaction, BigNumber } from 'ethers';
+import type {
+  UnsignedTransaction,
+  BigNumber,
+  PopulatedTransaction
+} from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ApiPromise, SubmittableResult } from '@polkadot/api';
@@ -29,7 +33,10 @@ import { validateAddress } from '../../utils';
 import type { Eip1193Provider } from '../../interfaces';
 import { SdkInitializedEvent } from '../../interfaces';
 import { substrateProviderContext } from '../../context/wallet';
-import { estimateEvmGas, estimateSubstrateGas } from '../../utils/gas';
+import {
+  estimateEvmTransactionsGasCost,
+  estimateSubstrateGas
+} from '../../utils/gas';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
   buildSubstrateFungibleTransactions,
@@ -77,7 +84,6 @@ export class FungibleTokenTransferController implements ReactiveController {
   public estimatedGas: BigNumber | undefined;
 
   //Evm transfer
-  protected buildEvmTransactions = buildEvmFungibleTransactions;
   protected executeNextEvmTransaction = executeNextEvmTransaction;
   protected pendingEvmApprovalTransactions: UnsignedTransaction[] = [];
   public pendingTransferTransaction?:
@@ -548,7 +554,7 @@ export class FungibleTokenTransferController implements ReactiveController {
           this.isBuildingTransactions = true;
 
           try {
-            const evmTransferArtifacts = await this.buildEvmTransactions({
+            const evmTransferArtifacts = await buildEvmFungibleTransactions({
               address: address!,
               chainId: this.destinationNetwork!.chainId,
               destinationAddress: this.destinationAddress!,
@@ -580,11 +586,11 @@ export class FungibleTokenTransferController implements ReactiveController {
               transactions.push(this.pendingTransferTransaction);
             }
 
-            this.estimatedGas = await estimateEvmGas(
+            this.estimatedGas = await estimateEvmTransactionsGasCost(
               this.sourceNetwork?.chainId as number,
               this.walletContext.value?.evmWallet?.provider as Eip1193Provider,
               this.walletContext.value?.evmWallet?.address as string,
-              transactions
+              transactions as PopulatedTransaction[]
             );
           } catch (error) {
             console.error('Error Building transactions: ', error);

@@ -13,6 +13,13 @@ import type { UnsignedTransaction, BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import type { Eip1193Provider } from '../../../interfaces';
 
+type BuildEvmFungibleTransactionsArtifacts = {
+  pendingEvmApprovalTransactions: UnsignedTransaction[];
+  pendingTransferTransaction: UnsignedTransaction;
+  fee: EvmFee;
+  resourceAmount: BigNumber;
+};
+
 /**
  * @dev If we did proper validation this shouldn't throw.
  * Not sure how to handle if it throws :shrug:
@@ -42,12 +49,7 @@ export async function buildEvmFungibleTransactions({
   pendingTransferTransaction: UnsignedTransaction;
   sourceNetwork: Domain | null;
   fee: EvmFee;
-}): Promise<{
-  pendingEvmApprovalTransactions: UnsignedTransaction[];
-  pendingTransferTransaction: UnsignedTransaction;
-  fee: EvmFee;
-  resourceAmount: BigNumber;
-}> {
+}): Promise<BuildEvmFungibleTransactionsArtifacts> {
   const evmTransfer = new EVMAssetTransfer();
   await evmTransfer.init(new Web3Provider(provider, providerChainId), env);
 

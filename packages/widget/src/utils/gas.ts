@@ -32,22 +32,6 @@ export async function estimateEvmTransactionsGasCost(
   return gasPrice.mul(cost);
 }
 
-export async function estimateEvmGas(
-  chainId: number,
-  provider: Eip1193Provider,
-  address: string,
-  transactions: UnsignedTransaction[]
-): Promise<BigNumber> {
-  const estimatedGas = await estimateEvmTransactionsGasCost(
-    chainId,
-    provider,
-    address,
-    transactions as PopulatedTransaction[]
-  );
-
-  return estimatedGas;
-}
-
 export async function estimateSubstrateGas(
   signerAddress: string,
   pendingTransferTransaction: SubstrateTransaction
