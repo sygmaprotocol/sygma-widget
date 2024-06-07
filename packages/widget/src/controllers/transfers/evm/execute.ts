@@ -22,7 +22,7 @@ export async function executeNextEvmTransaction(
   if (this.getTransferState() === FungibleTransferState.PENDING_APPROVALS) {
     this.waitingUserConfirmation = true;
     this.host.requestUpdate();
-    const transactions = [];
+    const transactions: UnsignedTransaction[] = [];
     try {
       const tx = await signer.sendTransaction(
         this.pendingEvmApprovalTransactions[0] as TransactionRequest
