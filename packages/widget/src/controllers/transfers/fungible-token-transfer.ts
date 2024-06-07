@@ -513,12 +513,12 @@ export class FungibleTokenTransferController implements ReactiveController {
 
     switch (this.sourceNetwork.type) {
       case Network.EVM: {
-        const address = this.walletContext.value?.evmWallet?.address;
-        const provider = this.walletContext.value?.evmWallet?.provider;
-        const providerChainId =
-          this.walletContext.value?.evmWallet?.providerChainId;
-        if (!address || !provider || !providerChainId) return false;
-        return true;
+        if (!this.walletContext.value?.evmWallet) return false;
+
+        const { address, provider, providerChainId } =
+          this.walletContext.value.evmWallet;
+
+        return !!(address && provider && providerChainId);
       }
       case Network.SUBSTRATE: {
         return !!(
