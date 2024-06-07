@@ -52,10 +52,8 @@ export async function estimateSubstrateGas(
   signerAddress: string,
   pendingTransferTransaction: SubstrateTransaction
 ): Promise<BigNumber> {
-  const paymentInfo =
+  const { partialFee } =
     await pendingTransferTransaction.paymentInfo(signerAddress);
-
-  const { partialFee } = paymentInfo;
   const estimatedGas = BigNumber.from(partialFee.toString());
 
   return estimatedGas;
