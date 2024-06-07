@@ -12,7 +12,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
 import { networkIconsMap } from '../../assets';
-import { DEFAULT_ETH_DECIMALS } from '../../constants';
+import { DEFAULT_ETH_DECIMALS, INPUT_DEBOUNCE_TIME } from '../../constants';
 import {
   BALANCE_UPDATE_KEY,
   TokenBalanceController
@@ -20,6 +20,7 @@ import {
 import { tokenBalanceToNumber } from '../../utils/token';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { BaseComponent } from '../common/base-component';
+import { debounceAmountChange } from '../../utils';
 import { styles } from './styles';
 
 @customElement('sygma-resource-amount-selector')
@@ -99,9 +100,9 @@ export class ResourceAmountSelector extends BaseComponent {
     }
   };
 
-  debouncedHandler = this.debounceAmountChange(
+  debouncedHandler = debounceAmountChange(
     this._onInputAmountChangeHandler,
-    600
+    INPUT_DEBOUNCE_TIME
   );
 
   requestUpdate(
