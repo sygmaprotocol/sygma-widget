@@ -521,11 +521,10 @@ export class FungibleTokenTransferController implements ReactiveController {
         return true;
       }
       case Network.SUBSTRATE: {
-        const substrateProvider = this.sourceSubstrateProvider;
-        const substrateAddress =
-          this.walletContext.value?.substrateWallet?.signerAddress;
-        if (!substrateProvider || !substrateAddress) return false;
-        return true;
+        return !!(
+          this.sourceSubstrateProvider &&
+          this.walletContext.value?.substrateWallet?.signerAddress
+        );
       }
     }
   }
