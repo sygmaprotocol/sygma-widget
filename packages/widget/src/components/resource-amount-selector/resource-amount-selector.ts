@@ -68,19 +68,6 @@ export class ResourceAmountSelector extends BaseComponent {
     }
   };
 
-  debounceAmountChange = <Args extends string>(
-    cb: (args: Args) => void,
-    delay?: number
-  ): ((value: Args) => void) => {
-    let timeout: NodeJS.Timeout;
-    return (args: Args): void => {
-      if (timeout !== undefined) {
-        clearTimeout(timeout);
-      }
-      timeout = setTimeout(() => cb(args), delay);
-    };
-  };
-
   _onInputAmountChangeHandler = (value: string): void => {
     if (value === '') {
       value = '0';
