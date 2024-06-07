@@ -9,6 +9,7 @@ import {
 import { utils } from 'ethers';
 import { html } from 'lit';
 import { afterEach, assert, describe, expect, it, vi } from 'vitest';
+import { INPUT_DEBOUNCE_TIME } from '../../../../src/constants';
 import { ResourceAmountSelector } from '../../../../src/components/resource-amount-selector/resource-amount-selector';
 import type { DropdownOption } from '../../../../src/components/common/dropdown/dropdown';
 import { BALANCE_UPDATE_KEY } from '../../../../src/controllers/wallet-manager/token-balance';
@@ -157,7 +158,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
     input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     await el.updateComplete;
 
-    await aTimeout(600);
+    await aTimeout(INPUT_DEBOUNCE_TIME);
 
     expect(mockOptionSelectHandler).toHaveBeenCalledTimes(1);
     expect(mockOptionSelectHandler).toHaveBeenCalledWith(
@@ -180,7 +181,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       input.dispatchEvent(new Event('input'));
       await nextFrame();
 
-      await aTimeout(600);
+      await aTimeout(INPUT_DEBOUNCE_TIME);
 
       const validationMessage = el.shadowRoot!.querySelector(
         '.validationMessage'
@@ -204,7 +205,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       input.dispatchEvent(new Event('input'));
       await nextFrame();
 
-      await aTimeout(600);
+      await aTimeout(INPUT_DEBOUNCE_TIME);
 
       const validationMessage = el.shadowRoot!.querySelector(
         '.validationMessage'
@@ -233,7 +234,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       input.dispatchEvent(new Event('input'));
       await nextFrame();
 
-      await aTimeout(600);
+      await aTimeout(INPUT_DEBOUNCE_TIME);
 
       const validationMessage = el.shadowRoot!.querySelector(
         '.validationMessage'
@@ -260,7 +261,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       ) as HTMLInputElement;
       input.value = '-2';
       input.dispatchEvent(new Event('input'));
-      await aTimeout(600);
+      await aTimeout(INPUT_DEBOUNCE_TIME);
       await el.updateComplete;
 
       const validationMessage = el.shadowRoot!.querySelector(
@@ -283,7 +284,7 @@ describe('Resource amount selector component - sygma-resource-amount-selector', 
       ) as HTMLInputElement;
       input.value = 'nonParseableValue';
       input.dispatchEvent(new Event('input'));
-      await aTimeout(600);
+      await aTimeout(INPUT_DEBOUNCE_TIME);
       await el.updateComplete;
 
       const validationMessage = el.shadowRoot!.querySelector(
