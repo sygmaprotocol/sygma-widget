@@ -204,8 +204,8 @@ export class ResourceAmountSelector extends BaseComponent {
               type="number"
               class="amountSelectorInput"
               placeholder="0.000"
-              @input=${(_evt: Event) => {
-                this.debouncedHandler((_evt.target as HTMLInputElement).value);
+              @input=${(event: Event) => {
+                this.debouncedHandler((event.target as HTMLInputElement).value);
               }}
               .disabled=${this.disabled}
               .value=${this.amount}
