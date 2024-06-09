@@ -25,7 +25,11 @@ type BuildEvmFungibleTransactionsArtifacts = {
  * Not sure how to handle if it throws :shrug:
  */
 export async function buildEvmFungibleTransactions({
-  evmWallet,
+  evmWallet: {
+    address,
+    provider,
+    providerChainId
+  },
   chainId,
   destinationAddress,
   resourceId,
