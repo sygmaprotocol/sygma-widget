@@ -25,11 +25,7 @@ type BuildEvmFungibleTransactionsArtifacts = {
  * Not sure how to handle if it throws :shrug:
  */
 export async function buildEvmFungibleTransactions({
-  evmWallet: {
-    address,
-    provider,
-    providerChainId
-  },
+  evmWallet: { address, provider, providerChainId },
   chainId,
   destinationAddress,
   resourceId,
@@ -51,15 +47,12 @@ export async function buildEvmFungibleTransactions({
   fee: EvmFee;
 }): Promise<BuildEvmFungibleTransactionsArtifacts> {
   const evmTransfer = new EVMAssetTransfer();
-  await evmTransfer.init(
-    new Web3Provider(evmWallet.provider, evmWallet.providerChainId),
-    env
-  );
+  await evmTransfer.init(new Web3Provider(provider, providerChainId), env);
 
   // Hack to make fungible transfer behave like it does on substrate side
   // where fee is deducted from user inputted amount rather than added on top
   const originalTransfer = await evmTransfer.createFungibleTransfer(
-    evmWallet.address,
+    address,
     chainId,
     destinationAddress,
     resourceId,
@@ -92,7 +85,7 @@ export async function buildEvmFungibleTransactions({
   }
 
   const transfer = await evmTransfer.createFungibleTransfer(
-    evmWallet.address,
+    address,
     chainId,
     destinationAddress,
     resourceId,
