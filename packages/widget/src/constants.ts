@@ -22,3 +22,5 @@ export const SUBSTRATE_RPCS: {
     2035: 'wss://phala.api.onfinality.io/public-ws'
   }
 };
+
+export const INPUT_DEBOUNCE_TIME = 600;
