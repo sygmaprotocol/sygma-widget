@@ -2,6 +2,9 @@ import {
   Web3Provider,
   type TransactionRequest
 } from '@ethersproject/providers';
+import type { PopulatedTransaction } from 'ethers';
+import type { Eip1193Provider } from '../../../interfaces';
+import { estimateEvmTransactionsGasCost } from '../../../utils/gas';
 import {
   FungibleTransferState,
   type FungibleTokenTransferController
@@ -19,6 +22,7 @@ export async function executeNextEvmTransaction(
   if (this.getTransferState() === FungibleTransferState.PENDING_APPROVALS) {
     this.waitingUserConfirmation = true;
     this.host.requestUpdate();
+    const transactions: PopulatedTransaction[] = [];
     try {
       const tx = await signer.sendTransaction(
         this.pendingEvmApprovalTransactions[0] as TransactionRequest
@@ -28,7 +32,18 @@ export async function executeNextEvmTransaction(
       this.host.requestUpdate();
       await tx.wait();
       this.pendingEvmApprovalTransactions.shift();
-      await this.estimateGas();
+
+      transactions.push(
+        ...(this.pendingEvmApprovalTransactions as PopulatedTransaction[]),
+        this.pendingTransferTransaction as PopulatedTransaction
+      );
+
+      this.estimatedGas = await estimateEvmTransactionsGasCost(
+        this.sourceNetwork?.chainId as number,
+        this.walletContext.value?.evmWallet?.provider as Eip1193Provider,
+        this.walletContext.value?.evmWallet?.address as string,
+        transactions
+      );
     } catch (e) {
       console.log(e);
       this.errorMessage = 'Approval transaction reverted or rejected';
@@ -36,6 +51,12 @@ export async function executeNextEvmTransaction(
       this.waitingUserConfirmation = false;
       this.waitingTxExecution = false;
       this.host.requestUpdate();
+      await estimateEvmTransactionsGasCost(
+        this.sourceNetwork?.chainId as number,
+        this.walletContext.value?.evmWallet?.provider as Eip1193Provider,
+        this.walletContext.value?.evmWallet?.address as string,
+        transactions
+      );
     }
     return;
   }
