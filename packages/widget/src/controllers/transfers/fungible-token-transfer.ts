@@ -338,6 +338,28 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.transferTransactionId) {
       return FungibleTransferState.COMPLETED;
     }
+    if (!this.sourceNetwork) {
+      return FungibleTransferState.MISSING_SOURCE_NETWORK;
+    }
+    if (!this.destinationNetwork) {
+      return FungibleTransferState.MISSING_DESTINATION_NETWORK;
+    }
+    if (!this.selectedResource) {
+      return FungibleTransferState.MISSING_RESOURCE;
+    }
+    if (this.resourceAmount.eq(0)) {
+      return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
+    }
+    if (
+      this.destinationAddress === null ||
+      this.destinationAddress === undefined ||
+      validateAddress(this.destinationAddress, this.destinationNetwork.type)
+    ) {
+      return FungibleTransferState.INVALID_DESTINATION_ADDRESS;
+    }
+    if (this.destinationAddress === '') {
+      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
+    }
     if (this.waitingUserConfirmation) {
       return FungibleTransferState.WAITING_USER_CONFIRMATION;
     }
@@ -349,34 +371,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     }
     if (this.pendingTransferTransaction) {
       return FungibleTransferState.PENDING_TRANSFER;
-    }
-    if (!this.sourceNetwork) {
-      return FungibleTransferState.MISSING_SOURCE_NETWORK;
-    }
-    if (!this.destinationNetwork) {
-      return FungibleTransferState.MISSING_DESTINATION_NETWORK;
-    }
-    if (!this.selectedResource) {
-      return FungibleTransferState.MISSING_RESOURCE;
-    }
-
-    if (this.destinationAddress === '') {
-      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
-    }
-
-    if (
-      this.destinationAddress === null ||
-      this.destinationAddress === undefined ||
-      validateAddress(this.destinationAddress, this.destinationNetwork.type)
-    ) {
-      return FungibleTransferState.INVALID_DESTINATION_ADDRESS;
-    }
-
-    if (this.resourceAmount.eq(0)) {
-      return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
-    }
-    if (this.destinationAddress === '') {
-      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
     }
     if (
       !this.walletContext.value?.evmWallet &&
