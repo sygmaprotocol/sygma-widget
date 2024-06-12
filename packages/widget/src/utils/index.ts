@@ -84,3 +84,16 @@ export const validateAddress = (
       return 'unsupported network';
   }
 };
+
+export const debounce = <T>(
+  cb: (args: T) => void,
+  delay: number
+): ((value: T) => void) => {
+  let timeout: NodeJS.Timeout;
+  return (args: T): void => {
+    if (timeout !== undefined) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => cb(args), delay);
+  };
+};
