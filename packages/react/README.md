@@ -17,7 +17,7 @@ yarn add @polkadot/extension-inject
 You can install the Widget by simply adding the dependency to your project:
 
 ```bash
-yarn add @buildwithsygma/sygmaprotocol-react-widget @buildwithsygma/sygma-sdk-core
+yarn add @buildwithsygma/sygmaprotocol-react-widget
 ```
 
 ### Code integration
