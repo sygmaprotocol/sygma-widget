@@ -10,7 +10,7 @@ This repository is divided into two packages. The [Widget](./packages/widget/) p
 yarn create vite my-dapp --template react-ts
 cd ./my-dapp
 yarn install
-yarn add @buildwithsygma/sygmaprotocol-react-widget @buildwithsygma/sygma-sdk-core
+yarn add @buildwithsygma/sygmaprotocol-react-widget
 yarn dev
 ```
 
