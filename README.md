@@ -30,8 +30,6 @@ You can pass props to the Widget to customize the behaviour of the Widget. You c
 import { SygmaProtocolReactWidget } from "@buildwithsygma/sygmaprotocol-react-widget";
 
 function MyDapp() {
-  const [count, setCount] = useState(0);
-
   return (
     <SygmaProtocolReactWidget
       whitelistedSourceNetworks={["sepolia"]}
