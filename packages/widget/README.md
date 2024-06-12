@@ -2,7 +2,7 @@
 
 ### Dependencies
  
-To integrate the Widget to any lit project that you have, you will need to add the following dependencies:
+To integrate the Widget into any project that uses web components you will need to add the following dependencies:
 
 ```bash
 yarn add @buildwithsygma/sygmaprotocol-widget @buildwithsygma/sygma-sdk-core
@@ -10,7 +10,7 @@ yarn add @buildwithsygma/sygmaprotocol-widget @buildwithsygma/sygma-sdk-core
 
 ### Code integration
 
-To add the Wdiget to your existing codebase just import the dependency and add the custom tag into your render method.
+To add the Wdiget to your existing codebase import the dependency and add the custom tag into your render method.
 
 ```ts
 import { LitElement, html } from 'lit'
@@ -43,7 +43,7 @@ render() {
     return html`
       <div>
         <sygmaprotocol-widget 
-        .environment=${Environment.MAINNET} 
+        .environment=${'mainnet'} 
         .whitelistedSourceNetworks=${['sepolia']} 
         .whitelistedDestinationNetworks=${['cronos']}
         ></sygmaprotocol-widget>

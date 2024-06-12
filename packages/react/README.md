@@ -2,7 +2,7 @@
 
 ## Quick setup
 
-To integrate this Widget into any react project follow this instructions below
+To integrate this Widget into any React project follow this instructions below
 
 ### Dependencies
 
@@ -40,7 +40,7 @@ You can also pass props to the Widget component to customize it:
 function MyDapp(){
   return (
     <SygmaProtocolReactWidget
-      environment={Environment.MAINNET}
+      environment={'mainnet'}
       whitelistedSourceNetworks={["sepolia"]}
       whitelistedDestinationNetworks={["cronos"]}
       evmProvider={myEip1193Provider}

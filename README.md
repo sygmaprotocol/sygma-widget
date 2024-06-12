@@ -2,7 +2,7 @@
 
 The Sygma Widget is a customizable frontend that leverages the `Sygma protocol` and can be integrated into any Dapp regardless of the framework used. More information can be found in our [docs](https://docs.buildwithsygma.com/)
 
-This repository is divided into two packages. The [Widget](./packages/widget/) package is a web component built using Lit framework that allows you to have a widget for the `Sygma` protocol project`. The [React](./packages/react/) package is a wrapper around the Lit Widget that allows developers to use this application inside react projects.
+This repository is divided into two packages. The [Widget](./packages/widget/) package is a web component built using Lit framework that allows you to have a widget for the `Sygma` protocol project. The [React](./packages/react/) package is a wrapper around the Lit Widget that allows developers to use this application inside react projects.
 
 ## Quick setup
 
@@ -16,9 +16,9 @@ yarn dev
 
 ## How to integrate
 
-Check respective readmes to follow instructions on how to integrate the Widget into your codebase. 
+Check respective READMES to follow instructions on how to integrate the Widget into your codebase. 
 
-* for Lit based projects you can directly install, import and use the web component version of the Widget. You can find further instructions [here](./packages/widget/README.md)
+* for web component based projects, you can directly install, import and use the Widget. You can find further instructions [here](./packages/widget/README.md)
 * for React based projects, please refer to this [README](./packages/react/README.md) file to get further instructions
 * a react example is provided [here](/examples/react-widget-app/) for a more detailed reference
 
