@@ -21,6 +21,7 @@ Check respective READMES to follow instructions on how to integrate the Widget i
 * for web component based projects, you can directly install, import and use the Widget. You can find further instructions [here](./packages/widget/README.md)
 * for React based projects, please refer to this [README](./packages/react/README.md) file to get further instructions
 * a react example is provided [here](/examples/react-widget-app/) for a more detailed reference
+* a vanilla example is provided [here](/examples/vanilla-widget-app/) for a more detailed reference on a bare bones implementation
 
 ### Configuration through props
 
