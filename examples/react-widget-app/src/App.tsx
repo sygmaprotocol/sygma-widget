@@ -18,7 +18,7 @@ function App() {
 
   const obtainTokensClick = () => {
     window.open(
-      'https://docs.buildwithsygma.com/environments/testnet/obtain-testnet-tokens',
+      'https://docs.buildwithsygma.com/resources/environments/testnet/obtain-testnet-tokens',
       '_blank',
     );
   };
