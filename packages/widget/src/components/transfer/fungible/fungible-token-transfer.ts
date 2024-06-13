@@ -1,5 +1,5 @@
 import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { Environment } from '@buildwithsygma/sygma-sdk-core';
+import { Environment, Network } from '@buildwithsygma/sygma-sdk-core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -131,11 +131,12 @@ export class FungibleTokenTransfer extends BaseComponent {
             if (network) {
               this.onSourceNetworkSelected?.(network);
               this.transferController.onSourceNetworkSelected(network);
-              void this.walletController.switchEvmChain(
-                network?.chainId,
-                this.transferController.walletContext.value?.evmWallet
-                  ?.provider as Eip1193Provider
-              );
+              network.type === Network.EVM &&
+                void this.walletController.switchEvmChain(
+                  network?.chainId,
+                  this.transferController.walletContext.value?.evmWallet
+                    ?.provider as Eip1193Provider
+                );
             }
           }}
           .networks=${this.transferController.supportedSourceNetworks}
