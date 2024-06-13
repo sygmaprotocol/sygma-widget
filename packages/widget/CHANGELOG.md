@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.2.0](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-widget-v0.1.2...sygmaprotocol-widget-v0.2.0) (2024-06-13)
+
+
+### Features
+
+* automatically add unknown source evm network into wallet  ([#162](https://github.com/sygmaprotocol/sygma-widget/issues/162)) ([d5886bd](https://github.com/sygmaprotocol/sygma-widget/commit/d5886bd9fb9a771364221d15f49669181123be42))
+* display amount to be received on destination ([#168](https://github.com/sygmaprotocol/sygma-widget/issues/168)) ([347f7a5](https://github.com/sygmaprotocol/sygma-widget/commit/347f7a549cfcb2f68bb73156e0b895bacd7e96de))
+* Display Fee ([#145](https://github.com/sygmaprotocol/sygma-widget/issues/145)) ([872703d](https://github.com/sygmaprotocol/sygma-widget/commit/872703db140261cce1ba1b2c0adc0101e1551d26))
+* display transfer gas cost estimation ([#174](https://github.com/sygmaprotocol/sygma-widget/issues/174)) ([b154555](https://github.com/sygmaprotocol/sygma-widget/commit/b154555f669029fa815d1717a6833890d6e4f884))
+* enable developers to configure network whitelisting ([#170](https://github.com/sygmaprotocol/sygma-widget/issues/170)) ([5db505f](https://github.com/sygmaprotocol/sygma-widget/commit/5db505f09fe997d64e883822e9d81deeadd1040a))
+* enable user to specify wallets ([#161](https://github.com/sygmaprotocol/sygma-widget/issues/161)) ([8a02170](https://github.com/sygmaprotocol/sygma-widget/commit/8a02170703d2f640c06a1a158c327e586f5be1c1))
+* Retry loading bridge routes ([#136](https://github.com/sygmaprotocol/sygma-widget/issues/136)) ([8e0101f](https://github.com/sygmaprotocol/sygma-widget/commit/8e0101fdd8084dded072542e5afd1d5170c26cad))
+* substrate fungible transfer ([#134](https://github.com/sygmaprotocol/sygma-widget/issues/134)) ([337f1b7](https://github.com/sygmaprotocol/sygma-widget/commit/337f1b73d79981066bc462c9b8be4fb8a8e6486d))
+* wallet account selector for substrate ([#106](https://github.com/sygmaprotocol/sygma-widget/issues/106)) ([79127fd](https://github.com/sygmaprotocol/sygma-widget/commit/79127fd135ffc29784967b2fd10c5f49ba761663)), closes [#74](https://github.com/sygmaprotocol/sygma-widget/issues/74)
+
+
+### Bug Fixes
+
+* amount to receive ([#196](https://github.com/sygmaprotocol/sygma-widget/issues/196)) ([8c2cdad](https://github.com/sygmaprotocol/sygma-widget/commit/8c2cdad24d52b12eb015c07b7fc9f2babac2db08))
+* destination address format ([#197](https://github.com/sygmaprotocol/sygma-widget/issues/197)) ([250ea35](https://github.com/sygmaprotocol/sygma-widget/commit/250ea3511bf2af71af5a5f6f51660aaef5ba49e9))
+* explorer urls when adding networks ([#200](https://github.com/sygmaprotocol/sygma-widget/issues/200)) ([d65d99a](https://github.com/sygmaprotocol/sygma-widget/commit/d65d99af1083342ad3f5c79fa518729688b28bef))
+* Fixed amount to receive decimals ([#208](https://github.com/sygmaprotocol/sygma-widget/issues/208)) ([be23500](https://github.com/sygmaprotocol/sygma-widget/commit/be235009a63c6f83479f290329bdf7d10aa5683d))
+* Gas Fee estimation behavior, is not consistent for the actual transfer TX ([#204](https://github.com/sygmaprotocol/sygma-widget/issues/204)) ([d57233e](https://github.com/sygmaprotocol/sygma-widget/commit/d57233e8ecb879159608e8f60b793a24b7326180))
+* handling transfer cancellation on substrate ([#195](https://github.com/sygmaprotocol/sygma-widget/issues/195)) ([6ce25cb](https://github.com/sygmaprotocol/sygma-widget/commit/6ce25cbff5bfb1ffd50c30ee9e30d9cf4a9a35eb))
+* resource name ([#201](https://github.com/sygmaprotocol/sygma-widget/issues/201)) ([1215dcc](https://github.com/sygmaprotocol/sygma-widget/commit/1215dcce26a89df542a39f2888a9e09a60ac4d1d))
+* resource selector ([#199](https://github.com/sygmaprotocol/sygma-widget/issues/199)) ([81bae38](https://github.com/sygmaprotocol/sygma-widget/commit/81bae380f638a0078433bd0e1b0aa5a29f8db0e8))
+* small fix for tangle connection ([#212](https://github.com/sygmaprotocol/sygma-widget/issues/212)) ([557d71e](https://github.com/sygmaprotocol/sygma-widget/commit/557d71e3faeadcc09909c6d3c178773de864622e))
+* source switch reset ([#206](https://github.com/sygmaprotocol/sygma-widget/issues/206)) ([1b1f92c](https://github.com/sygmaprotocol/sygma-widget/commit/1b1f92ca222ea015065194c667d8222af8e80e60)), closes [#205](https://github.com/sygmaprotocol/sygma-widget/issues/205)
+* typesafety when handling changed properties ([#141](https://github.com/sygmaprotocol/sygma-widget/issues/141)) ([692e269](https://github.com/sygmaprotocol/sygma-widget/commit/692e269887c9070cfd8b3d08af10e67c30c0d104))
+
 ## [0.1.2](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-widget-v0.1.1...sygmaprotocol-widget-v0.1.2) (2024-04-22)
 
 
