@@ -120,7 +120,7 @@ class SygmaProtocolWidget
                 .environment=${this.environment as Environment}
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
-                environment=${this.environment}
+                environment=${this.environment ?? Environment.MAINNET}
                 .whitelistedSourceNetworks=${this.whitelistedSourceNetworks}
                 .whitelistedDestinationNetworks=${this
                   .whitelistedDestinationNetworks}

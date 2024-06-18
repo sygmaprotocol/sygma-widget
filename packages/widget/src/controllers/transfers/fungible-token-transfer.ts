@@ -37,12 +37,12 @@ import {
   estimateEvmTransactionsGasCost,
   estimateSubstrateGas
 } from '../../utils/gas';
+import type { FungibleTokenTransfer } from '../../components';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
   buildSubstrateFungibleTransactions,
   executeNextSubstrateTransaction
 } from './substrate';
-import { FungibleTokenTransfer } from '../../components';
 
 export type SubstrateTransaction = SubmittableExtrinsic<
   'promise',
@@ -147,7 +147,8 @@ export class FungibleTokenTransferController implements ReactiveController {
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
-    this.env = (this.host as FungibleTokenTransfer).environment ?? Environment.MAINNET;
+    this.env =
+      (this.host as FungibleTokenTransfer).environment ?? Environment.MAINNET;
 
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
