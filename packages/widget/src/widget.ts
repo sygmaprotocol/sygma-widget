@@ -84,7 +84,7 @@ class SygmaProtocolWidget
 
   connectedCallback(): void {
     super.connectedCallback();
-    const env = import.meta.env.VITE_BRIDGE_ENV ?? Environment.MAINNET;
+    const env = this.environment ?? Environment.MAINNET;
     if (Object.values(Environment).includes(env as Environment)) {
       this.environment = env as Environment;
     } else {
@@ -120,7 +120,7 @@ class SygmaProtocolWidget
                 .environment=${this.environment as Environment}
                 .onSourceNetworkSelected=${(domain: Domain) =>
                   (this.sourceNetwork = domain)}
-                environment=${Environment.TESTNET}
+                environment=${this.environment}
                 .whitelistedSourceNetworks=${this.whitelistedSourceNetworks}
                 .whitelistedDestinationNetworks=${this
                   .whitelistedDestinationNetworks}
