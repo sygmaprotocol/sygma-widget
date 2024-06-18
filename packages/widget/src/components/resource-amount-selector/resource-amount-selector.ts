@@ -12,7 +12,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
 import { networkIconsMap } from '../../assets';
-import { DEFAULT_ETH_DECIMALS } from '../../constants';
+import { DEFAULT_ETH_DECIMALS, INPUT_DEBOUNCE_TIME } from '../../constants';
 import {
   BALANCE_UPDATE_KEY,
   TokenBalanceController
@@ -20,6 +20,7 @@ import {
 import { tokenBalanceToNumber } from '../../utils/token';
 import type { DropdownOption } from '../common/dropdown/dropdown';
 import { BaseComponent } from '../common/base-component';
+import { debounce } from '../../utils';
 import { styles } from './styles';
 
 @customElement('sygma-resource-amount-selector')
@@ -67,9 +68,7 @@ export class ResourceAmountSelector extends BaseComponent {
     }
   };
 
-  _onInputAmountChangeHandler = (event: Event): void => {
-    let { value } = event.target as HTMLInputElement;
-
+  _onInputAmountChangeHandler = (value: string): void => {
     if (value === '') {
       value = '0';
     }
@@ -87,6 +86,11 @@ export class ResourceAmountSelector extends BaseComponent {
       this.validationMessage = 'Invalid amount value';
     }
   };
+
+  debouncedHandler = debounce(
+    this._onInputAmountChangeHandler,
+    INPUT_DEBOUNCE_TIME
+  );
 
   requestUpdate(
     name?: PropertyKey,
@@ -200,7 +204,10 @@ export class ResourceAmountSelector extends BaseComponent {
               type="number"
               class="amountSelectorInput"
               placeholder="0.000"
-              @input=${this._onInputAmountChangeHandler}
+              @input=${(event: Event) => {
+                this.debouncedHandler((event.target as HTMLInputElement).value);
+              }}
+              .disabled=${this.disabled}
               .value=${this.amount}
             />
             <section class="selectorSection">

@@ -13,8 +13,12 @@ import {
   Network
 } from '@buildwithsygma/sygma-sdk-core';
 import { ContextConsumer } from '@lit/context';
-import { BigNumber, ethers } from 'ethers';
-import type { UnsignedTransaction, PopulatedTransaction } from 'ethers';
+import { ethers } from 'ethers';
+import type {
+  UnsignedTransaction,
+  BigNumber,
+  PopulatedTransaction
+} from 'ethers';
 import type { ReactiveController, ReactiveElement } from 'lit';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ApiPromise, SubmittableResult } from '@polkadot/api';
@@ -22,18 +26,22 @@ import type {
   ParachainID,
   SubstrateFee
 } from '@buildwithsygma/sygma-sdk-core/substrate';
-import type { WalletContext } from '../../context';
+import type { EvmWallet, WalletContext } from '../../context';
 import { walletContext } from '../../context';
 import { MAINNET_EXPLORER_URL, TESTNET_EXPLORER_URL } from '../../constants';
 import { validateAddress } from '../../utils';
+import type { Eip1193Provider } from '../../interfaces';
 import { SdkInitializedEvent } from '../../interfaces';
 import { substrateProviderContext } from '../../context/wallet';
+import {
+  estimateEvmTransactionsGasCost,
+  estimateSubstrateGas
+} from '../../utils/gas';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
   buildSubstrateFungibleTransactions,
   executeNextSubstrateTransaction
 } from './substrate';
-import { estimateEvmTransactionsGasCost } from './evm/gas-estimate';
 import { FungibleTokenTransfer } from '../../components';
 
 export type SubstrateTransaction = SubmittableExtrinsic<
@@ -77,7 +85,6 @@ export class FungibleTokenTransferController implements ReactiveController {
   public estimatedGas: BigNumber | undefined;
 
   //Evm transfer
-  protected buildEvmTransactions = buildEvmFungibleTransactions;
   protected executeNextEvmTransaction = executeNextEvmTransaction;
   protected pendingEvmApprovalTransactions: UnsignedTransaction[] = [];
   public pendingTransferTransaction?:
@@ -96,6 +103,9 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected whitelistedSourceNetworks?: string[] = [];
   protected whitelistedDestinationNetworks?: string[] = [];
   protected whitelistedSourceResources?: string[] = [];
+
+  public resourceAmountToDisplay = ethers.constants.Zero;
+  public isBuildingTransactions = false;
 
   host: ReactiveElement;
   walletContext: ContextConsumer<typeof walletContext, ReactiveElement>;
@@ -144,14 +154,14 @@ export class FungibleTokenTransferController implements ReactiveController {
       subscribe: true,
       callback: (context: Partial<WalletContext>) => {
         try {
-          this.buildTransactions();
+          void this.buildTransactions();
         } catch (e) {
           console.error(e);
         }
         this.host.requestUpdate();
 
         if (this.isWalletDisconnected(context)) {
-          this.reset();
+          this.reset({ omitSourceNetworkReset: true });
           this.supportedResources = [];
         }
       }
@@ -248,6 +258,7 @@ export class FungibleTokenTransferController implements ReactiveController {
 
   resetFee(): void {
     this.fee = null;
+    this.estimatedGas = undefined;
   }
 
   reset({ omitSourceNetworkReset } = { omitSourceNetworkReset: false }): void {
@@ -262,7 +273,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.waitingTxExecution = false;
     this.waitingUserConfirmation = false;
     this.transferTransactionId = undefined;
-    this.estimatedGas = undefined;
     this.resetFee();
     void this.init(this.env);
   }
@@ -306,10 +316,12 @@ export class FungibleTokenTransferController implements ReactiveController {
   };
 
   onResourceSelected = (resource: Resource, amount: BigNumber): void => {
-    this.selectedResource = resource;
-    this.resourceAmount = amount;
-    void this.buildTransactions();
-    this.host.requestUpdate();
+    if (!this.isBuildingTransactions) {
+      this.selectedResource = resource;
+      this.resourceAmount = amount;
+      void this.buildTransactions();
+      this.host.requestUpdate();
+    }
   };
 
   onDestinationAddressChange = (address: string): void => {
@@ -328,6 +340,28 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.transferTransactionId) {
       return FungibleTransferState.COMPLETED;
     }
+    if (!this.sourceNetwork) {
+      return FungibleTransferState.MISSING_SOURCE_NETWORK;
+    }
+    if (!this.destinationNetwork) {
+      return FungibleTransferState.MISSING_DESTINATION_NETWORK;
+    }
+    if (!this.selectedResource) {
+      return FungibleTransferState.MISSING_RESOURCE;
+    }
+    if (this.resourceAmount.eq(0)) {
+      return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
+    }
+    if (
+      this.destinationAddress === null ||
+      this.destinationAddress === undefined ||
+      validateAddress(this.destinationAddress, this.destinationNetwork.type)
+    ) {
+      return FungibleTransferState.INVALID_DESTINATION_ADDRESS;
+    }
+    if (this.destinationAddress === '') {
+      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
+    }
     if (this.waitingUserConfirmation) {
       return FungibleTransferState.WAITING_USER_CONFIRMATION;
     }
@@ -339,34 +373,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     }
     if (this.pendingTransferTransaction) {
       return FungibleTransferState.PENDING_TRANSFER;
-    }
-    if (!this.sourceNetwork) {
-      return FungibleTransferState.MISSING_SOURCE_NETWORK;
-    }
-    if (!this.destinationNetwork) {
-      return FungibleTransferState.MISSING_DESTINATION_NETWORK;
-    }
-    if (!this.selectedResource) {
-      return FungibleTransferState.MISSING_RESOURCE;
-    }
-
-    if (this.destinationAddress === '') {
-      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
-    }
-
-    if (
-      this.destinationAddress === null ||
-      this.destinationAddress === undefined ||
-      validateAddress(this.destinationAddress, this.destinationNetwork.type)
-    ) {
-      return FungibleTransferState.INVALID_DESTINATION_ADDRESS;
-    }
-
-    if (this.resourceAmount.eq(0)) {
-      return FungibleTransferState.MISSING_RESOURCE_AMOUNT;
-    }
-    if (this.destinationAddress === '') {
-      return FungibleTransferState.MISSING_DESTINATION_ADDRESS;
     }
     if (
       !this.walletContext.value?.evmWallet &&
@@ -396,7 +402,6 @@ export class FungibleTokenTransferController implements ReactiveController {
     if (this.pendingTransferTransaction) {
       return FungibleTransferState.PENDING_TRANSFER;
     }
-
     return FungibleTransferState.UNKNOWN;
   }
 
@@ -496,83 +501,147 @@ export class FungibleTokenTransferController implements ReactiveController {
     this.host.requestUpdate();
   };
 
-  private buildTransactions(): void {
+  private canBuildTransactions(): boolean {
     if (
       !this.sourceNetwork ||
       !this.destinationNetwork ||
       !this.resourceAmount ||
       !this.selectedResource ||
-      !this.destinationAddress
+      !this.destinationAddress ||
+      this.isBuildingTransactions
     ) {
+      return false;
+    }
+
+    switch (this.sourceNetwork.type) {
+      case Network.EVM: {
+        if (!this.walletContext.value?.evmWallet) return false;
+
+        const { address, provider, providerChainId } =
+          this.walletContext.value.evmWallet;
+
+        return !!(address && provider && providerChainId);
+      }
+      case Network.SUBSTRATE: {
+        return !!(
+          this.sourceSubstrateProvider &&
+          this.walletContext.value?.substrateWallet?.signerAddress
+        );
+      }
+    }
+  }
+
+  private async buildTransactions(): Promise<void> {
+    const isAbleToBuildTransactions = this.canBuildTransactions();
+
+    if (!isAbleToBuildTransactions) {
+      this.estimatedGas = undefined;
+      this.resetFee();
       return;
     }
-    switch (this.sourceNetwork.type) {
+
+    switch (this.sourceNetwork!.type) {
       case Network.EVM:
         {
-          void this.buildEvmTransactions();
+          this.isBuildingTransactions = true;
+
+          try {
+            const {
+              pendingEvmApprovalTransactions,
+              pendingTransferTransaction,
+              fee,
+              resourceAmount
+            } = await buildEvmFungibleTransactions({
+              evmWallet: this.walletContext.value?.evmWallet as EvmWallet,
+              chainId: this.destinationNetwork!.chainId,
+              destinationAddress: this.destinationAddress!,
+              resourceId: this.selectedResource!.resourceId,
+              resourceAmount: this.resourceAmount,
+              env: this.env,
+              pendingEvmApprovalTransactions:
+                this.pendingEvmApprovalTransactions,
+              pendingTransferTransaction: this
+                .pendingTransferTransaction as UnsignedTransaction,
+              sourceNetwork: this.sourceNetwork!,
+              fee: this.fee as EvmFee
+            });
+
+            this.fee = fee;
+            this.pendingEvmApprovalTransactions =
+              pendingEvmApprovalTransactions;
+            this.pendingTransferTransaction = pendingTransferTransaction;
+            this.resourceAmountToDisplay = resourceAmount;
+            const state = this.getTransferState();
+            const transactions = [];
+
+            if (state === FungibleTransferState.PENDING_APPROVALS) {
+              transactions.push(this.pendingEvmApprovalTransactions[0]);
+            } else {
+              transactions.push(this.pendingTransferTransaction);
+            }
+
+            this.estimatedGas = await estimateEvmTransactionsGasCost(
+              this.sourceNetwork?.chainId as number,
+              this.walletContext.value?.evmWallet?.provider as Eip1193Provider,
+              this.walletContext.value?.evmWallet?.address as string,
+              transactions as PopulatedTransaction[]
+            );
+          } catch (error) {
+            console.error('Error Building transactions: ', error);
+            this.fee = null;
+            this.estimatedGas = undefined;
+            this.pendingEvmApprovalTransactions = [];
+            this.pendingTransferTransaction = undefined;
+          } finally {
+            this.isBuildingTransactions = false;
+            this.host.requestUpdate();
+          }
         }
         break;
       case Network.SUBSTRATE:
         {
-          void this.buildSubstrateTransactions();
+          this.isBuildingTransactions = true;
+          const substrateProvider = this.sourceSubstrateProvider!;
+          const address =
+            this.walletContext.value?.substrateWallet?.signerAddress;
+
+          try {
+            const { pendingTransferTransaction, fee, resourceAmount } =
+              await this.buildSubstrateTransactions({
+                address: address!,
+                substrateProvider,
+                env: this.env,
+                chainId: this.destinationNetwork!.chainId,
+                destinationAddress: this.destinationAddress!,
+                resourceId: this.selectedResource!.resourceId,
+                resourceAmount: this.resourceAmount,
+                pendingTransferTransaction: this
+                  .pendingTransferTransaction as SubstrateTransaction,
+                fee: this.fee as SubstrateFee
+              });
+
+            this.fee = fee;
+            this.resourceAmountToDisplay = resourceAmount;
+            this.pendingTransferTransaction = pendingTransferTransaction;
+
+            this.estimatedGas = await estimateSubstrateGas(
+              address as string,
+              this.pendingTransferTransaction
+            );
+          } catch (error) {
+            console.error('Error Building transactions: ', error);
+            this.fee = null;
+            this.estimatedGas = undefined;
+            this.pendingEvmApprovalTransactions = [];
+            this.pendingTransferTransaction = undefined;
+          } finally {
+            this.isBuildingTransactions = false;
+            this.host.requestUpdate();
+          }
         }
         break;
       default:
         throw new Error('Unsupported network type');
     }
-  }
-
-  public async estimateGas(): Promise<void> {
-    if (!this.sourceNetwork) return;
-    switch (this.sourceNetwork.type) {
-      case Network.EVM:
-        await this.estimateEvmGas();
-        break;
-      case Network.SUBSTRATE:
-        await this.estimateSubstrateGas();
-        break;
-    }
-  }
-
-  private async estimateSubstrateGas(): Promise<void> {
-    if (!this.walletContext.value?.substrateWallet?.signerAddress) return;
-    const sender = this.walletContext.value?.substrateWallet?.signerAddress;
-
-    const paymentInfo = await (
-      this.pendingTransferTransaction as SubstrateTransaction
-    ).paymentInfo(sender);
-
-    const { partialFee } = paymentInfo;
-    this.estimatedGas = BigNumber.from(partialFee.toString());
-  }
-
-  private async estimateEvmGas(): Promise<void> {
-    if (
-      !this.sourceNetwork?.chainId ||
-      !this.walletContext.value?.evmWallet?.provider ||
-      !this.walletContext.value.evmWallet.address
-    )
-      return;
-
-    const state = this.getTransferState();
-    const transactions = [];
-
-    switch (state) {
-      case FungibleTransferState.PENDING_APPROVALS:
-        transactions.push(...this.pendingEvmApprovalTransactions);
-        break;
-      case FungibleTransferState.PENDING_TRANSFER:
-        transactions.push(this.pendingTransferTransaction);
-        break;
-    }
-
-    const estimatedGas = await estimateEvmTransactionsGasCost(
-      this.sourceNetwork?.chainId,
-      this.walletContext.value?.evmWallet?.provider,
-      this.walletContext.value.evmWallet.address,
-      transactions as PopulatedTransaction[]
-    );
-
-    this.estimatedGas = estimatedGas;
   }
 }

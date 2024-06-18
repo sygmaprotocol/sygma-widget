@@ -1,44 +1,62 @@
+import type { Environment } from '@buildwithsygma/sygma-sdk-core';
+import type { SubstrateFee } from '@buildwithsygma/sygma-sdk-core/substrate';
 import { SubstrateAssetTransfer } from '@buildwithsygma/sygma-sdk-core/substrate';
-import { type FungibleTokenTransferController } from '../fungible-token-transfer';
+import type { ApiPromise } from '@polkadot/api';
+import type { BigNumber } from 'ethers';
+import type { SubstrateTransaction } from '../fungible-token-transfer';
 
-export async function buildSubstrateFungibleTransactions(
-  this: FungibleTokenTransferController
-): Promise<void> {
-  const substrateProvider = this.sourceSubstrateProvider;
-  const address = this.walletContext.value?.substrateWallet?.signerAddress;
+type BuildSubstrateFungibleTransactionsArtifacts = {
+  pendingTransferTransaction: SubstrateTransaction;
+  resourceAmount: BigNumber;
+  fee: SubstrateFee;
+};
 
-  if (
-    !this.sourceNetwork ||
-    !this.destinationNetwork ||
-    !this.resourceAmount ||
-    !this.selectedResource ||
-    !this.destinationAddress ||
-    !substrateProvider ||
-    !address
-  ) {
-    this.estimatedGas = undefined;
-    this.resetFee();
-    return;
-  }
-
+export async function buildSubstrateFungibleTransactions({
+  address,
+  substrateProvider,
+  env,
+  chainId,
+  destinationAddress,
+  resourceId,
+  resourceAmount,
+  pendingTransferTransaction,
+  fee
+}: {
+  address: string;
+  substrateProvider: ApiPromise;
+  env: Environment;
+  chainId: number;
+  destinationAddress: string;
+  resourceId: string;
+  resourceAmount: BigNumber;
+  pendingTransferTransaction: SubstrateTransaction;
+  fee: SubstrateFee;
+}): Promise<BuildSubstrateFungibleTransactionsArtifacts> {
   const substrateTransfer = new SubstrateAssetTransfer();
-  await substrateTransfer.init(substrateProvider, this.env);
+  await substrateTransfer.init(substrateProvider, env);
 
   const transfer = await substrateTransfer.createFungibleTransfer(
     address,
-    this.destinationNetwork.chainId,
-    this.destinationAddress,
-    this.selectedResource.resourceId,
-    String(this.resourceAmount)
+    chainId,
+    destinationAddress,
+    resourceId,
+    String(resourceAmount)
   );
 
-  this.fee = await substrateTransfer.getFee(transfer);
+  fee = await substrateTransfer.getFee(transfer);
 
-  this.resourceAmount = this.resourceAmount.sub(this.fee.fee.toString());
-  this.pendingTransferTransaction = substrateTransfer.buildTransferTransaction(
+  if (resourceAmount.toString() === transfer.details.amount.toString()) {
+    resourceAmount = resourceAmount.sub(fee.fee.toString());
+  }
+
+  pendingTransferTransaction = substrateTransfer.buildTransferTransaction(
     transfer,
-    this.fee
+    fee
   );
-  await this.estimateGas();
-  this.host.requestUpdate();
+
+  return {
+    pendingTransferTransaction,
+    resourceAmount,
+    fee
+  };
 }

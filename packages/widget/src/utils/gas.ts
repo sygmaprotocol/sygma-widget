@@ -1,6 +1,8 @@
+import { BigNumber, ethers } from 'ethers';
+import type { PopulatedTransaction } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
-import type { EIP1193Provider } from '@web3-onboard/core';
-import { ethers, type BigNumber, type PopulatedTransaction } from 'ethers';
+import type { SubstrateTransaction } from '../controllers/transfers/fungible-token-transfer';
+import type { Eip1193Provider } from '../interfaces';
 
 /**
  * This method calculate the amount of gas
@@ -13,7 +15,7 @@ import { ethers, type BigNumber, type PopulatedTransaction } from 'ethers';
  */
 export async function estimateEvmTransactionsGasCost(
   chainId: number,
-  eip1193Provider: EIP1193Provider,
+  eip1193Provider: Eip1193Provider,
   sender: string,
   transactions: PopulatedTransaction[]
 ): Promise<BigNumber> {
@@ -28,4 +30,15 @@ export async function estimateEvmTransactionsGasCost(
 
   const gasPrice = await provider.getGasPrice();
   return gasPrice.mul(cost);
+}
+
+export async function estimateSubstrateGas(
+  signerAddress: string,
+  pendingTransferTransaction: SubstrateTransaction
+): Promise<BigNumber> {
+  const { partialFee } =
+    await pendingTransferTransaction.paymentInfo(signerAddress);
+  const estimatedGas = BigNumber.from(partialFee.toString());
+
+  return estimatedGas;
 }
