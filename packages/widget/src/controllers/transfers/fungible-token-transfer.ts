@@ -37,6 +37,7 @@ import {
   estimateEvmTransactionsGasCost,
   estimateSubstrateGas
 } from '../../utils/gas';
+import type { FungibleTokenTransfer } from '../../components';
 import { buildEvmFungibleTransactions, executeNextEvmTransaction } from './evm';
 import {
   buildSubstrateFungibleTransactions,
@@ -95,7 +96,7 @@ export class FungibleTokenTransferController implements ReactiveController {
   protected executeSubstrateTransaction = executeNextSubstrateTransaction;
 
   protected config: Config;
-  protected env: Environment = Environment.MAINNET;
+  protected env: Environment;
   //source network chain id -> Route[]
   protected routesCache: Map<number, Route[]> = new Map();
 
@@ -146,6 +147,8 @@ export class FungibleTokenTransferController implements ReactiveController {
   constructor(host: ReactiveElement) {
     (this.host = host).addController(this);
     this.config = new Config();
+    this.env =
+      (this.host as FungibleTokenTransfer).environment ?? Environment.MAINNET;
 
     this.walletContext = new ContextConsumer(host, {
       context: walletContext,
