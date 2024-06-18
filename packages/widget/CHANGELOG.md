@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-widget-v0.2.0...sygmaprotocol-widget-v0.2.1) (2024-06-18)
+
+
+### Bug Fixes
+
+* removed hardcoded Environment ([#214](https://github.com/sygmaprotocol/sygma-widget/issues/214)) ([70878dc](https://github.com/sygmaprotocol/sygma-widget/commit/70878dc10f3af4181a218cebd1b04151478f88b2))
+
 ## [0.2.0](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-widget-v0.1.2...sygmaprotocol-widget-v0.2.0) (2024-06-13)
 
 
