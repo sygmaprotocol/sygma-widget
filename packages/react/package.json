@@ -1,7 +1,7 @@
 {
   "name": "@buildwithsygma/sygmaprotocol-react-widget",
   "description": "Sygma Protocol Widget",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "build/index.js",
   "module": "build/index.js",
   "license": "LGPL-3.0-or-later",

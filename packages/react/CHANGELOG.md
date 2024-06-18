@@ -6,6 +6,12 @@
   * dependencies
     * @buildwithsygma/sygmaprotocol-widget bumped to 0.2.0
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @buildwithsygma/sygmaprotocol-widget bumped to 0.2.1
+
 ## [0.1.2](https://github.com/sygmaprotocol/sygma-widget/compare/sygmaprotocol-react-widget-v0.1.1...sygmaprotocol-react-widget-v0.1.2) (2024-04-22)
 
 
