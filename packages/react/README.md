@@ -10,6 +10,7 @@ You will need to add this dependency to your project first:
 
 ```bash
 yarn add @polkadot/extension-inject
+yarn add @polkadot/types
 ```
 
 ### Installing the Widget
@@ -29,9 +30,11 @@ import { SygmaProtocolReactWidget } from '@buildwithsygma/sygmaprotocol-react-wi
 
 function MyDapp(){
   return (
-    <SygmaProtocolReactWidget />;
-  )
+    <SygmaProtocolReactWidget />
+  );
 }
+
+export default MyDapp;
 ```
 
 You can also pass props to the Widget component to customize it:
