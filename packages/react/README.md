@@ -10,7 +10,7 @@ You will need to add this dependency to your project first:
 
 ```bash
 yarn add @polkadot/extension-inject
-yarn add @polkadot/types
+yarn add -D @polkadot/types
 ```
 
 ### Installing the Widget
