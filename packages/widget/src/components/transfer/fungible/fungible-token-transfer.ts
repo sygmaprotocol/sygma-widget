@@ -1,5 +1,5 @@
-import type { Domain } from '@buildwithsygma/sygma-sdk-core';
-import { Environment, Network } from '@buildwithsygma/sygma-sdk-core';
+import type { Domain, Resource } from '@buildwithsygma/core';
+import { Environment } from '@buildwithsygma/sygma-sdk-core';
 import type { HTMLTemplateResult } from 'lit';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -22,6 +22,9 @@ import { BaseComponent } from '../../common';
 import { Directions } from '../../network-selector/network-selector';
 import { WalletController } from '../../../controllers';
 import { styles } from './styles';
+import { SelectionsController } from '../../../controllers/transfers/selections';
+import { TransferStateController } from '../../../controllers/transfers/transfer-state';
+import { BigNumber } from 'ethers';
 
 @customElement('sygma-fungible-transfer')
 export class FungibleTokenTransfer extends BaseComponent {
@@ -43,7 +46,9 @@ export class FungibleTokenTransfer extends BaseComponent {
   onSourceNetworkSelected?: (domain: Domain) => void;
 
   transferController = new FungibleTokenTransferController(this);
+  transferStateController = new TransferStateController(this);
   walletController = new WalletController(this);
+  selectionsController = new SelectionsController(this);
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -51,6 +56,10 @@ export class FungibleTokenTransfer extends BaseComponent {
       whitelistedSourceNetworks: this.whitelistedSourceNetworks,
       whitelistedDestinationNetworks: this.whitelistedDestinationNetworks,
       whitelistedSourceResources: this.whitelistedSourceResources
+    });
+
+    void this.selectionsController.initialize({
+      environment: this.environment
     });
   }
 
@@ -70,7 +79,10 @@ export class FungibleTokenTransfer extends BaseComponent {
   }
 
   private onClick = (): void => {
-    const state = this.transferController.getTransferState();
+    const state = this.transferStateController.getTransferState(
+      this.selectionsController
+    );
+
     switch (state) {
       case FungibleTransferState.PENDING_APPROVALS:
       case FungibleTransferState.PENDING_TRANSFER:
@@ -81,14 +93,14 @@ export class FungibleTokenTransfer extends BaseComponent {
       case FungibleTransferState.WALLET_NOT_CONNECTED:
         {
           this.walletController.connectWallet(
-            this.transferController.sourceNetwork!
+            this.selectionsController.selectedSource!
           );
         }
         break;
       case FungibleTransferState.WRONG_CHAIN:
         {
           void this.walletController.switchEvmChain(
-            this.transferController.sourceNetwork!.chainId,
+            this.selectionsController.selectedSource!.chainId,
             this.transferController.walletContext.value?.evmWallet
               ?.provider as Eip1193Provider
           );
@@ -104,12 +116,12 @@ export class FungibleTokenTransfer extends BaseComponent {
   renderTransferStatus(): HTMLTemplateResult {
     return html` <section>
       <sygma-transfer-status
-        .amount=${this.transferController.resourceAmount}
-        .tokenDecimals=${this.transferController.selectedResource?.decimals}
-        .destinationNetworkName=${this.transferController.destinationNetwork
+        .amount=${this.selectionsController.transferAmount}
+        .tokenDecimals=${this.selectionsController.selectedResource?.decimals}
+        .destinationNetworkName=${this.selectionsController.selectedDestination
           ?.name}
-        .sourceNetworkName=${this.transferController.sourceNetwork?.name}
-        .resourceSymbol=${this.transferController.selectedResource?.symbol}
+        .sourceNetworkName=${this.selectionsController.selectedSource?.name}
+        .resourceSymbol=${this.selectionsController.selectedResource?.symbol}
         .explorerLinkTo=${this.transferController.getExplorerLink()}
       >
       </sygma-transfer-status>
@@ -129,17 +141,13 @@ export class FungibleTokenTransfer extends BaseComponent {
           .icons=${true}
           .onNetworkSelected=${(network?: Domain) => {
             if (network) {
-              this.onSourceNetworkSelected?.(network);
-              this.transferController.onSourceNetworkSelected(network);
-              network.type === Network.EVM &&
-                void this.walletController.switchEvmChain(
-                  network?.chainId,
-                  this.transferController.walletContext.value?.evmWallet
-                    ?.provider as Eip1193Provider
-                );
+              this.selectionsController.selectSource(network);
+              if (this.onSourceNetworkSelected) {
+                this.onSourceNetworkSelected(network);
+              }
             }
           }}
-          .networks=${this.transferController.supportedSourceNetworks}
+          .networks=${this.selectionsController.selectableSourceDomains}
         >
         </sygma-network-selector>
       </section>
@@ -147,28 +155,32 @@ export class FungibleTokenTransfer extends BaseComponent {
         <sygma-network-selector
           .direction=${Directions.TO}
           .icons=${true}
-          .onNetworkSelected=${this.transferController
-            .onDestinationNetworkSelected}
-          .networks=${this.transferController.supportedDestinationNetworks}
+          .onNetworkSelected=${(network?: Domain) => {
+            if (network) {
+              this.selectionsController.selectDestination(network);
+            }
+          }}
+          .networks=${this.selectionsController.selectableDestinationDomains}
         >
         </sygma-network-selector>
       </section>
       <section>
         <sygma-resource-amount-selector
-          .sourceDomainConfig=${this.transferController.sourceDomainConfig}
-          .disabled=${!this.transferController.sourceNetwork ||
-          !this.transferController.destinationNetwork ||
-          this.transferController.isBuildingTransactions}
-          .resources=${this.transferController.supportedResources}
-          .onResourceSelected=${this.transferController.onResourceSelected}
+          .sourceDomainConfig=${this.selectionsController.sourceDomainConfig}
+          .disabled=${!this.selectionsController.selectedSource ||
+          !this.selectionsController.selectedDestination}
+          .resources=${this.selectionsController.selectableResources}
+          .onResourceSelected=${(resource: Resource, amount: BigNumber) => {
+            this.selectionsController.selectResourceAndAmount(resource, amount);
+          }}
         >
         </sygma-resource-amount-selector>
       </section>
       <section>
         <sygma-address-input
-          .networkType=${this.transferController.destinationNetwork?.type}
-          .address=${this.transferController.destinationAddress}
-          .onAddressChange=${this.transferController.onDestinationAddressChange}
+          .networkType=${this.selectionsController.selectedDestination?.type}
+          .address=${this.selectionsController.recipientAddress}
+          .onAddressChange=${this.selectionsController.setRecipientAddress}
         >
         </sygma-address-input>
       </section>
@@ -183,7 +195,9 @@ export class FungibleTokenTransfer extends BaseComponent {
       </section>
       <section>
         <sygma-fungible-transfer-button
-          .state=${this.transferController.getTransferState()}
+          .state=${this.transferStateController.getTransferState(
+            this.selectionsController
+          )}
           .onClick=${this.onClick}
         ></sygma-fungible-transfer-button>
       </section>

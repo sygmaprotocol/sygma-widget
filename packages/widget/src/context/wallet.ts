@@ -81,18 +81,8 @@ export class WalletContextProvider extends BaseComponent {
   @property({ type: String })
   environment?: Environment;
 
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-    if (this.evmWallet) {
-      this.walletContext.evmWallet = this.evmWallet;
-    }
-
-    const substrateProviders = await this.getSubstrateProviders();
-
-    this.substrateProviderContext = {
-      substrateProviders: substrateProviders
-    };
-
+  constructor() {
+    super();
     this.addEventListener('walletUpdate', (event: WalletUpdateEvent) => {
       this.walletContext = {
         ...this.walletContext,
@@ -109,6 +99,19 @@ export class WalletContextProvider extends BaseComponent {
         );
       }
     });
+  }
+
+  async connectedCallback(): Promise<void> {
+    super.connectedCallback();
+    if (this.evmWallet) {
+      this.walletContext.evmWallet = this.evmWallet;
+    }
+
+    const substrateProviders = await this.getSubstrateProviders();
+
+    this.substrateProviderContext = {
+      substrateProviders: substrateProviders
+    };
   }
 
   disconnectedCallback(): void {
