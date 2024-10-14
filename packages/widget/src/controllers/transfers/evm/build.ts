@@ -8,7 +8,7 @@ import type {
   EvmFee,
   PercentageFee
 } from '@buildwithsygma/sygma-sdk-core';
-import { Web3Provider } from '@ethersproject/providers';
+import { ethers } from 'ethers';
 import type { UnsignedTransaction, BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import type { EvmWallet } from 'packages/widget/src/context';
@@ -47,7 +47,10 @@ export async function buildEvmFungibleTransactions({
   fee: EvmFee;
 }): Promise<BuildEvmFungibleTransactionsArtifacts> {
   const evmTransfer = new EVMAssetTransfer();
-  await evmTransfer.init(new Web3Provider(provider, providerChainId), env);
+  await evmTransfer.init(
+    new ethers.providers.Web3Provider(provider, providerChainId),
+    env
+  );
 
   // Hack to make fungible transfer behave like it does on substrate side
   // where fee is deducted from user inputted amount rather than added on top

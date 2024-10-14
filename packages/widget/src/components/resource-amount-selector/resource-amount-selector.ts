@@ -1,9 +1,4 @@
-import {
-  Network,
-  type EthereumConfig,
-  type Resource,
-  type SubstrateConfig
-} from '@buildwithsygma/sygma-sdk-core';
+import { type Resource } from '@buildwithsygma/sygma-sdk-core';
 import type { PropertyValues } from '@lit/reactive-element';
 import { BigNumber, utils } from 'ethers';
 import type { HTMLTemplateResult, PropertyDeclaration } from 'lit';
@@ -22,6 +17,7 @@ import type { DropdownOption } from '../common/dropdown/dropdown';
 import { BaseComponent } from '../common/base-component';
 import { debounce } from '../../utils';
 import { styles } from './styles';
+import { EthereumConfig, SubstrateConfig } from '@buildwithsygma/core';
 
 @customElement('sygma-resource-amount-selector')
 export class ResourceAmountSelector extends BaseComponent {
@@ -107,12 +103,14 @@ export class ResourceAmountSelector extends BaseComponent {
     if (option) {
       this.selectedResource = option.value;
       this.amount = '';
-      this.tokenBalanceController.startBalanceUpdates(
-        this.selectedResource,
-        this.sourceDomainConfig?.type === Network.SUBSTRATE
-          ? this.sourceDomainConfig
-          : undefined
-      );
+
+      if (this.sourceDomainConfig) {
+        this.tokenBalanceController.startBalanceUpdates(
+          this.selectedResource,
+          this.sourceDomainConfig?.type,
+          this.sourceDomainConfig?.caipId
+        );
+      }
     } else {
       this.selectedResource = null;
       this.tokenBalanceController.resetBalance();

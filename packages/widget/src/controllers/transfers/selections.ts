@@ -4,6 +4,7 @@ import {
   Environment,
   getRoutes,
   Network,
+  RouteType,
   SygmaDomainConfig,
   type Domain,
   type Resource,
@@ -139,7 +140,9 @@ export class SelectionsController implements ReactiveController {
     if (!this.routesStorage.has(source.caipId)) {
       this.routesStorage.set(
         source.caipId,
-        await getRoutes(source, this.environment)
+        await getRoutes(source, this.environment, {
+          routeTypes: [RouteType.FUNGIBLE]
+        })
       );
     }
 
@@ -195,7 +198,8 @@ export class SelectionsController implements ReactiveController {
 
       if (
         sourceType === Network.EVM &&
-        !this.walletContext.value?.evmWallet?.provider
+        !this.walletContext.value?.evmWallet?.provider &&
+        !this.walletContext.value?.evmWallet?.address
       ) {
         this.transfer = null;
         return;
@@ -205,11 +209,12 @@ export class SelectionsController implements ReactiveController {
         sourceType === Network.EVM
           ? this.walletContext.value!.evmWallet!.provider
           : this.substrateProviderContext.value?.substrateProviders?.get(
-              this.selectedSource.parachainId!
+              this.selectedSource.caipId!
             )!;
 
       const builder = new TransferBuilder();
       const transfer = await builder.build(
+        this.walletContext.value?.evmWallet?.address!,
         this.environment,
         this.selectedSource,
         this.selectedDestination,

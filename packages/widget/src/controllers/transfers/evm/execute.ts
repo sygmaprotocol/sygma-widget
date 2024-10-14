@@ -1,7 +1,4 @@
-import {
-  Web3Provider,
-  type TransactionRequest
-} from '@ethersproject/providers';
+import { ethers } from 'ethers';
 import type { PopulatedTransaction } from 'ethers';
 import type { Eip1193Provider } from '../../../interfaces';
 import { estimateEvmTransactionsGasCost } from '../../../utils/gas';
@@ -18,14 +15,14 @@ export async function executeNextEvmTransaction(
   const address = this.walletContext.value?.evmWallet?.address;
   //TODO: should set error message
   if (!provider || !address) return;
-  const signer = new Web3Provider(provider).getSigner(address);
+  const signer = new ethers.providers.Web3Provider(provider).getSigner(address);
   if (this.getTransferState() === FungibleTransferState.PENDING_APPROVALS) {
     this.waitingUserConfirmation = true;
     this.host.requestUpdate();
     const transactions: PopulatedTransaction[] = [];
     try {
       const tx = await signer.sendTransaction(
-        this.pendingEvmApprovalTransactions[0] as TransactionRequest
+        this.pendingEvmApprovalTransactions[0] as any
       );
       this.waitingUserConfirmation = false;
       this.waitingTxExecution = true;
@@ -65,7 +62,7 @@ export async function executeNextEvmTransaction(
     this.host.requestUpdate();
     try {
       const tx = await signer.sendTransaction(
-        this.pendingTransferTransaction! as TransactionRequest
+        this.pendingTransferTransaction! as any
       );
       this.waitingUserConfirmation = false;
       this.waitingTxExecution = true;

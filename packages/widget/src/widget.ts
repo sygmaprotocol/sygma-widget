@@ -24,7 +24,6 @@ import type {
   Theme
 } from './interfaces';
 import { styles } from './styles';
-import { WalletUpdateEvent } from './context/wallet';
 
 @customElement('sygmaprotocol-widget')
 class SygmaProtocolWidget

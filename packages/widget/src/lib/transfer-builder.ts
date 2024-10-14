@@ -38,6 +38,7 @@ export class TransferBuilder {
   }
 
   public async build(
+    sourceAddress: string,
     environment: Environment,
     source: Domain,
     destination: Domain,
@@ -52,6 +53,7 @@ export class TransferBuilder {
     let params: SubstrateAssetTransferRequest | FungibleTransferParams;
     if (source.type === Network.EVM) {
       params = {
+        sourceAddress,
         amount: amount.toBigInt(),
         recipientAddress,
         source,
@@ -62,6 +64,7 @@ export class TransferBuilder {
       } as FungibleTransferParams;
     } else if (source.type === Network.SUBSTRATE) {
       params = {
+        sourceAddress,
         sourceNetworkProvider: provider as ApiPromise,
         source,
         destination,
