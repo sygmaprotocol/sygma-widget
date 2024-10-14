@@ -11,12 +11,17 @@ import {
   type Route
 } from '@buildwithsygma/core';
 import { BigNumber } from 'ethers';
-import { createFungibleAssetTransfer } from '@buildwithsygma/evm';
+import {
+  createFungibleAssetTransfer,
+  TransactionRequest
+} from '@buildwithsygma/evm';
 import { createSubstrateFungibleAssetTransfer } from '@buildwithsygma/substrate';
 import { TransferBuilder } from '../../lib/transfer-builder';
 import { ContextConsumer } from '@lit/context';
 import { walletContext } from '../../context';
 import { substrateProviderContext } from '../../context/wallet';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { SubmittableResult } from '@polkadot/api';
 
 export class SelectionsController implements ReactiveController {
   config: Config;
@@ -48,6 +53,12 @@ export class SelectionsController implements ReactiveController {
   transfer:
     | Awaited<ReturnType<typeof createFungibleAssetTransfer>>
     | Awaited<ReturnType<typeof createSubstrateFungibleAssetTransfer>>
+    | null = null;
+
+  approvalTransactions: Array<TransactionRequest> = [];
+  transferTransaction:
+    | TransactionRequest
+    | SubmittableExtrinsic<'promise', SubmittableResult>
     | null = null;
 
   get sourceDomainConfig(): SygmaDomainConfig | undefined {
@@ -225,7 +236,14 @@ export class SelectionsController implements ReactiveController {
       );
 
       this.transfer = transfer;
-      console.log(this.transfer);
+      if ('getApprovalTransactions' in transfer) {
+        this.approvalTransactions = await transfer.getApprovalTransactions();
+      } else {
+        this.approvalTransactions = [];
+      }
+
+      this.transferTransaction =
+        (await transfer.getTransferTransaction()) as TransactionRequest;
     } catch (error) {
       console.error(error);
       this.transfer = null;
